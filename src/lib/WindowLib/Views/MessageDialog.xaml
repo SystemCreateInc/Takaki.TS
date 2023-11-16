@@ -1,0 +1,109 @@
+﻿<UserControl x:Class="WindowLib.Views.MessageDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"             
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             FontFamily="{DynamicResource MaterialDesignFont}">
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window" BasedOn="{StaticResource DialogWindow}">
+            <Setter Property="ResizeMode" Value="NoResize" />
+            <Setter Property="ShowInTaskbar" Value="False" />
+            <Setter Property="SizeToContent" Value="WidthAndHeight" />
+          <Setter Property="Topmost" Value="True" />
+        </Style>
+    </prism:Dialog.WindowStyle>
+
+    <UserControl.Resources>
+        <Style x:Key="OKStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding OKVisible}" Value="False">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="CancelStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding CancelVisible}" Value="False">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="YesStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding YesVisible}" Value="False">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="NoStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding NoVisible}" Value="False">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="AbortStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding AbortVisible}" Value="False">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="NoneStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding NoneVisible}" Value="False">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="RetryStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RetryVisible}" Value="False">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="IgnoreStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IgnoreVisible}" Value="False">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <StackPanel Orientation="Vertical" Margin="5">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="20">
+            <materialDesign:PackIcon Kind="{Binding Icon, TargetNullValue='information'}" Margin="0 0 10 0" Height="30" Width="30">
+                <materialDesign:PackIcon.Style>
+                    <Style>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Icon}" Value="">
+                                <Setter Property="VirtualizingPanel.Visibility" Value="Hidden" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </materialDesign:PackIcon.Style>
+            </materialDesign:PackIcon>
+            <TextBlock Text="{Binding Message}" DockPanel.Dock="Top" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Content="OK" Width="100" Command="{Binding OK}" Margin="5" Style="{StaticResource OKStyle}" />
+            <Button Content="はい" Width="100" Command="{Binding Yes}" Margin="5" Style="{StaticResource YesStyle}"/>
+            <Button Content="いいえ" Width="100" Command="{Binding No}" Margin="5" Style="{StaticResource NoStyle}"/>
+            <Button Content="リトライ" Width="100" Command="{Binding Retry}" Margin="5" Style="{StaticResource RetryStyle}"/>
+            <Button Content="無視" Width="100" Command="{Binding Ignore}" Margin="5" Style="{StaticResource IgnoreStyle}"/>
+            <Button Content="中断" Width="100" Command="{Binding Abort}" Margin="5" Style="{StaticResource AbortStyle}"/>
+            <Button Content="何もしない" Width="100" Command="{Binding None}" Margin="5" Style="{StaticResource NoneStyle}"/>
+            <Button Content="キャンセル" Width="100" Command="{Binding Cancel}" Margin="5" Style="{StaticResource CancelStyle}"/>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

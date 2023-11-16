@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="WindowLib.Views.ProgressDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"             
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             FontFamily="{DynamicResource MaterialDesignFont}">
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window" BasedOn="{StaticResource DialogWindow}">
+            <Setter Property="ResizeMode" Value="NoResize" />
+            <Setter Property="ShowInTaskbar" Value="False" />
+            <Setter Property="SizeToContent" Value="WidthAndHeight" />
+        </Style>
+    </prism:Dialog.WindowStyle>
+
+    <StackPanel Orientation="Vertical" Margin="5">
+        <TextBlock Text="{Binding Message}" HorizontalAlignment="Center" Margin="5"/>
+        <ProgressBar IsIndeterminate="True" Height="10" Margin="5"/>
+        <Button Content="キャンセル" Width="100" Command="{Binding Cancel}" Margin="5"/>
+    </StackPanel>
+</UserControl>

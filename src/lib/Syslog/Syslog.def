@@ -1,0 +1,21 @@
+; Syslog.def : DLL 用のモジュール パラメータ宣言
+; $Id: Syslog.def,v 1.1.1.1 2004/04/11 13:10:40 hiro Exp $
+
+;LIBRARY      "Syslog"
+;DESCRIPTION  'Syslog Windows Dynamic Link Library'
+
+EXPORTS
+    ; 明示的なエクスポートはここへ記述できます
+
+	SLInit						@1
+	SLWrite						@2
+	SLTruncExpiredLog			@3
+	SLCopy						@4
+	SLWriteArg					@5
+	SLGetParams					@6
+
+	SLPrintf					@7
+	SLVPrintf					@8
+	SLSetLoglevel				@9
+	SLRawWrite					@10
+

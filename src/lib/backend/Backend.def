@@ -1,0 +1,18 @@
+; Backend.def : DLL 用のモジュール パラメータ宣言
+
+;LIBRARY      "Backend"
+;DESCRIPTION  'Backend Windows Dynamic Link Library'
+
+EXPORTS
+    ; 明示的なエクスポートはここへ記述できます
+
+;	BE_Init						@1
+;	BE_Term						@2
+;	BE_Connect					@3
+;	BE_Disconnect				@4
+;	BE_Call						@5
+;	BE_CallByName				@6
+;	BE_PostData					@7
+;	BE_PostDataByName			@8
+;	BE_GetMessage				@9
+;	BE_Cancel					@10

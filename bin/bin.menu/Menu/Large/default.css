@@ -1,0 +1,119 @@
+/*
+ *	for global settings
+ */
+body a:link		{ color:#3377bb; 	}
+body a:visited 	{ color:#3377bb; 	}
+body a:hover 	{ color:skyblue; 	}
+body a:active 	{ color:blue; 		}
+
+body  {
+	padding:0;
+	margin:0;
+/*
+	scrollbar-3dlight-color:glay;
+	scrollbar-arrow-color:#eeeedd;
+	scrollbar-base-color:white;
+	scrollbar-darkshadow-color:white;
+	scrollbar-face-color:white;
+	scrollbar-hilight-color:white;
+	scrollbar-shadow-color:glay;
+*/
+}
+
+h2 {
+	background-color:black;
+	color:white;
+	font-size:10pt;
+	padding:3px;
+	margin:0;
+}
+
+.logo {
+	backgroupd-color:#6BB6AD;
+	color: white;
+	border-top:solid 2px #abf6ed;
+	border-bottom:solid 2px black;
+}
+.logo table { 
+	background-color:#6BB6AD; 
+	color:white; 
+};
+
+/*
+ *	for navigation
+ */
+.navi 		{
+	padding-bottom:500px;
+	background-color:#eeeedd;
+}
+.navi dl {	
+	margin-left:10px;
+}
+
+.navi dt {
+/*	font-size:24pt;	*/
+	font-size:20pt;
+/*	font-weight:bold;	*/
+}
+.navi dd {
+	margin-left:0;
+	margin-bottom:30pt;
+}
+
+.subnavi
+{
+}
+
+.subnavi dl {
+	margin-left:10px;
+}
+
+.subnavi dt {
+	font-size:14pt;
+	margin-bottom:10pt;
+}
+
+/*
+ *	for menu
+ */
+.menu {
+/*
+	border-top:groove;
+	border-left:groove;
+	border-bottom:groove;
+	padding-bottom:100%;
+*/
+}
+
+.menu dt		{	
+	font-size:24pt;
+/*	font-weight:bold;	*/
+	color:#3377bb;
+	margin-bottom:0pt;
+}
+.menu dd		{
+	font-size:10pt;	color:#000000;	
+	margin-bottom:10pt;
+}
+
+/*
+ *	for footer
+ */
+.footer {
+	background-color:#6BB6AD;
+	padding-top:1px;
+	padding-bottom:1px;
+	color:white;
+	border-top:solid 2px #abf6ed;
+	border-bottom:solid 2px black;
+}
+
+.footer address {
+	font-size: 12pt;
+	text-align:	right;
+}
+
+.footer a:link		{ color:white; 	}
+.footer a:visited 	{ color:white; 	}
+.footer a:hover 	{ color:yellow;	}
+.footer a:active 	{ color:cyan; 	}

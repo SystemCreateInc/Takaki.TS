@@ -1,0 +1,2994 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Td.Dps</name>
+    </assembly>
+    <members>
+        <member name="F:Td.Dps.AsciiToString.ControlString">
+            <summary>
+            制御コード置換文字列定義
+            </summary>
+        </member>
+        <member name="M:Td.Dps.AsciiToString.ToString(System.Byte[])">
+            <summary>
+            ASCIIの文字列変換
+            </summary>
+            <param name="bytes"></param>
+            <returns></returns>
+        </member>
+        <member name="F:Td.Dps.CommandList.command">
+            <summary>
+            コマンド
+            </summary>
+        </member>
+        <member name="F:Td.Dps.CommandList.id">
+            <summary>
+            ID
+            </summary>
+        </member>
+        <member name="F:Td.Dps.CommandList.priority">
+            <summary>
+            優先度
+            </summary>
+        </member>
+        <member name="F:Td.Dps.CommandList.timeout">
+            <summary>
+            タイムアウトカウント
+            </summary>
+        </member>
+        <member name="P:Td.Dps.CommandList.Command">
+            <summary>
+            コマンド
+            </summary>
+        </member>
+        <member name="P:Td.Dps.CommandList.Id">
+            <summary>
+            コマンドのID
+            </summary>
+        </member>
+        <member name="P:Td.Dps.CommandList.Priority">
+            <summary>
+            優先度
+            </summary>
+        </member>
+        <member name="P:Td.Dps.CommandList.Timeout">
+            <summary>
+            タイムアウト時間
+            </summary>
+        </member>
+        <member name="M:Td.Dps.CommandList.#ctor(System.String,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="header">ヘッダ</param>
+            <param name="id">ID</param>
+            <param name="button">ボタン</param>
+            <param name="disp">表示</param>
+            <param name="priority">優先度</param>
+        </member>
+        <member name="T:Td.Dps.ComPort">
+            <summary>
+            RS232Cの制御
+            </summary>
+        </member>
+        <member name="F:Td.Dps.ComPort.port">
+            <summary>
+            シリアルポートのオブジェクト
+            </summary>
+        </member>
+        <member name="T:Td.Dps.ComPort.ReceivedDataHandler">
+            <summary>
+            データ受信のデリゲート宣言
+            </summary>
+            <param name="bytes">受信文字列</param>
+        </member>
+        <member name="E:Td.Dps.ComPort.ReceivedData">
+            <summary>
+            データ受信のイベントハンドラ
+            </summary>
+        </member>
+        <member name="M:Td.Dps.ComPort.#ctor(System.String,System.Int32,System.IO.Ports.Parity)">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="portName">使用するポート</param>
+            <param name="baudRate">ボーレート</param>
+            <param name="parity">パリティ</param>
+        </member>
+        <member name="M:Td.Dps.ComPort.Port_DataReceived(System.Object,System.IO.Ports.SerialDataReceivedEventArgs)">
+            <summary>
+            データ受信のイベント
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Td.Dps.ComPort.Close">
+            <summary>
+            閉じる
+            </summary>
+        </member>
+        <member name="M:Td.Dps.ComPort.Read">
+            <summary>
+            受信
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Td.Dps.ComPort.Write(System.String)">
+            <summary>
+            文字列送信
+            </summary>
+            <param name="text">文字列</param>
+        </member>
+        <member name="M:Td.Dps.ComPort.Write(System.Byte)">
+            <summary>
+            1バイト送信
+            </summary>
+            <param name="text">バイト文字</param>
+        </member>
+        <member name="T:Td.Dps.Def">
+            <summary>
+            共通定義
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.STX">
+            <summary>
+            Start Of Text（テキスト開始）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.ETX">
+            <summary>
+            End Of Text（テキスト終了）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.EOT">
+            <summary>
+            End Of Transmission（伝送終了）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.ENQ">
+            <summary>
+            Enquery（問い合わせ）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.ACK">
+            <summary>
+            Acknowledgement（肯定応答）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.NAK">
+            <summary>
+            Negative Acknowledgement（否定応答）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.BTN_ON">
+            <summary>
+            ボタン点灯（0）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.BTN_BLK">
+            <summary>
+            ボタン点滅（@）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.BTN_OFF">
+            <summary>
+            ボタン消灯（P）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.SEG_ON">
+            <summary>
+            セグメント点灯（7）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.SEG_BLK">
+            <summary>
+            セグメント点滅（G）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.SEG_OFF">
+            <summary>
+            セグメント消灯（W）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.LMP_ON">
+            <summary>
+            PICKINGランプ点灯（8）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.LMP_BLK">
+            <summary>
+            PICKINGランプ点滅（H）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.LMP_OFF">
+            <summary>
+            PICKINGランプ消灯（X）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.OUT">
+            <summary>
+            Cable Disconnect（X）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.REC_INTERVAL">
+            <summary>
+            受信インターバル
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.TRA_INTERVAL">
+            <summary>
+            送信インターバル
+            </summary>
+        </member>
+        <member name="T:Td.Dps.Def.Err">
+            <summary>
+            エラー定義
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.Err.None">
+            <summary>
+            エラー無し
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.Err.Port">
+            <summary>
+            シリアルポートのエラー
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.Err.Id">
+            <summary>
+            パラメータのエラー
+            </summary>
+        </member>
+        <member name="T:Td.Dps.Def.EventInfo">
+            <summary>
+            イベント情報
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.EventInfo.Group">
+            <summary>
+            無線グループ or 分岐アドレス
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.EventInfo.Address">
+            <summary>
+            表示器アドレス
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.EventInfo.Button">
+            <summary>
+            ボタン番号
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.EventInfo.Data">
+            <summary>
+            応答内容
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.EventInfo.Ctl">
+            <summary>
+            CTLボタン
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.EventInfo.ButtonPush">
+            <summary>
+            ボタン押下イベント
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.EventInfo.Response">
+            <summary>
+            表示器応答イベント
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.EventInfo.Log">
+            <summary>
+            ログ通知イベント
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.EventInfo.ButtonDone">
+            <summary>
+            ボタン完了イベント
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Def.EventInfo.BarCodeRcv">
+            <summary>
+            ボタン完了イベント
+            </summary>
+        </member>
+        <member name="T:Td.Dps.Event">
+            <summary>
+            イベントのデリゲート宣言
+            </summary>
+        </member>
+        <member name="T:Td.Dps.Event.ButtonPushEventHandler">
+            <summary>
+            表示器ボタン押下のデリゲート宣言
+            </summary>
+            <param name="group">
+            <para>Wireless  : 無線グループ（0～9）</para>
+            <para>Wired     : 分岐アドレス（1～20）</para>
+            <para>Wireless2 : 無線グループ（0～15）</para>
+            </param>
+            <param name="address">
+            <para>Wireless  : 表示器 アドレス（1～50）</para>
+            <para>Wired     : 表示器アドレス（1～195）</para>
+            <para>Wireless2 : 表示器 アドレス（1～150）</para>
+            </param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青、6：CTL）</param>
+        </member>
+        <member name="T:Td.Dps.Event.ButtonDoneEventHandler">
+            <summary>
+            表示器ボタン完了のデリゲート宣言
+            </summary>
+            <param name="group">
+            Wireless2 : 無線グループ（0～15）</param>
+            <param name="address">
+            Wireless2 : 表示器 アドレス（1～150）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="ctl">CTLボタン</param>
+        </member>
+        <member name="T:Td.Dps.Event.BarCoodeEventHandler">
+            <summary>
+            表示器ボタン完了のデリゲート宣言
+            </summary>
+            <param name="group">
+            Wireless2 : 無線グループ（0～15）</param>
+            <param name="address">
+            Wireless2 : 表示器 アドレス（1～150）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="ctl">CTLボタン</param>
+        </member>
+        <member name="T:Td.Dps.Event.ResponseEventHandler">
+            <summary>
+            表示器応答のデリゲート宣言
+            </summary>
+            <param name="group">
+            <para>Wireless  : 無線グループ（0～9）</para>
+            <para>Wired     : 分岐アドレス（1～20）</para>
+            <para>Wireless2 : 無線グループ（0～15）</para>
+            </param>
+            <param name="address">
+            <para>Wireless  : 表示器 アドレス（1～50）</para>
+            <para>Wired     : 表示器アドレス（1～195）</para>
+            <para>Wireless2 : 表示器 アドレス（1～150）</para>
+            </param>
+            <param name="data">応答内容（ACK：送信成功、NAK：送信失敗、TIM:タイムアウト、
+            HIG：容量大、MI D：容量中、LOW：容量小、OFF：容量無）</param>
+        </member>
+        <member name="T:Td.Dps.Event.LogEventHandler">
+            <summary>
+            通信ログ通知のデリゲート宣言
+            </summary>
+            <param name="log">通信ログ</param>
+        </member>
+        <member name="F:Td.Dps.EventWorker.sync">
+            <summary>
+            同期
+            </summary>
+        </member>
+        <member name="F:Td.Dps.EventWorker.isAsync">
+            <summary>
+            イベントの非同期
+            </summary>
+        </member>
+        <member name="M:Td.Dps.EventWorker.#ctor(System.Boolean)">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="async"></param>
+        </member>
+        <member name="M:Td.Dps.EventWorker.ButtonPushEvent(Td.Dps.Def.EventInfo)">
+            <summary>
+            ボタン押下イベント
+            </summary>
+            <param name="info"></param>
+        </member>
+        <member name="M:Td.Dps.EventWorker.ButtonPushWait(System.Object)">
+            <summary>
+            表示器ボタン押下のコールバック（同期）
+            </summary>
+            <param name="obj"></param>
+        </member>
+        <member name="M:Td.Dps.EventWorker.ButtonPushAsync(System.Object)">
+            <summary>
+            表示器ボタン押下のコールバック（非同期）
+            </summary>
+            <param name="result"></param>
+        </member>
+        <member name="M:Td.Dps.EventWorker.ResponseEvent(Td.Dps.Def.EventInfo)">
+            <summary>
+            表示器応答イベント
+            </summary>
+            <param name="info"></param>
+        </member>
+        <member name="M:Td.Dps.EventWorker.ResponseWait(System.Object)">
+            <summary>
+            表示器応答のコールバック（同期）
+            </summary>
+            <param name="obj"></param>
+        </member>
+        <member name="M:Td.Dps.EventWorker.ResponseAsync(System.Object)">
+            <summary>
+            表示器応答のコールバック（非同期）
+            </summary>
+            <param name="result"></param>
+        </member>
+        <member name="M:Td.Dps.EventWorker.LogEvent(Td.Dps.Def.EventInfo)">
+            <summary>
+            ログ通知イベント
+            </summary>
+            <param name="info"></param>
+        </member>
+        <member name="M:Td.Dps.EventWorker.LogAsync(System.Object)">
+            <summary>
+            ログ通知のコールバック（非同期）
+            </summary>
+            <param name="result"></param>
+        </member>
+        <member name="M:Td.Dps.EventWorker.ButtonDoneEvent(Td.Dps.Def.EventInfo)">
+            <summary>
+            ボタン完了イベント
+            </summary>
+            <param name="info"></param>
+        </member>
+        <member name="M:Td.Dps.EventWorker.ButtonDoneWait(System.Object)">
+            <summary>
+            表示器ボタン完了のコールバック（同期）
+            </summary>
+            <param name="obj"></param>
+        </member>
+        <member name="M:Td.Dps.EventWorker.ButtonDoneAsync(System.Object)">
+            <summary>
+            表示器ボタン完了のコールバック（非同期）
+            </summary>
+            <param name="result"></param>
+        </member>
+        <member name="M:Td.Dps.EventWorker.BarCoodeEvent(Td.Dps.Def.EventInfo)">
+            <summary>
+            表示器応答イベント
+            </summary>
+            <param name="info"></param>
+        </member>
+        <member name="M:Td.Dps.EventWorker.BarCodeWait(System.Object)">
+            <summary>
+            表示器応答のコールバック（同期）
+            </summary>
+            <param name="obj"></param>
+        </member>
+        <member name="M:Td.Dps.EventWorker.BarCodeAsync(System.Object)">
+            <summary>
+            表示器応答のコールバック（非同期）
+            </summary>
+            <param name="result"></param>
+        </member>
+        <member name="T:Td.Dps.IDps">
+            <summary>
+            インターフェースの登録
+            </summary>
+        </member>
+        <member name="P:Td.Dps.IDps.TypeDriver">
+            <summary>
+            ドライバ種別
+            </summary>
+        </member>
+        <member name="P:Td.Dps.IDps.Port">
+            <summary>
+            ポート番号
+            </summary>
+        </member>
+        <member name="E:Td.Dps.IDps.ButtonPush">
+            <summary>
+            表示器ボタン押下のイベントハンドラ
+            </summary>
+        </member>
+        <member name="E:Td.Dps.IDps.Response">
+            <summary>
+            表示器応答のイベントハンドラ
+            </summary>
+        </member>
+        <member name="E:Td.Dps.IDps.Log">
+            <summary>
+            通信ログ通知のイベントハンドラ
+            </summary>
+        </member>
+        <member name="M:Td.Dps.IDps.Open(System.String)">
+            <summary>
+            ポートを開く
+            </summary>
+        </member>
+        <member name="M:Td.Dps.IDps.Open(System.String,System.Int32)">
+            <summary>
+            ポートを開く
+            </summary>
+        </member>
+        <member name="M:Td.Dps.IDps.Close">
+            <summary>
+            ポートを閉じる
+            </summary>
+        </member>
+        <member name="M:Td.Dps.IDps.DisplayOn(System.Int32,System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器点灯
+            </summary>
+        </member>
+        <member name="M:Td.Dps.IDps.DisplayOn(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器全点灯
+            </summary>
+        </member>
+        <member name="M:Td.Dps.IDps.DisplayOff(System.Int32,System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器消灯
+            </summary>
+        </member>
+        <member name="M:Td.Dps.IDps.DisplayOff(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器全消灯
+            </summary>
+        </member>
+        <member name="M:Td.Dps.IDps.DisplayBlink(System.Int32,System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器点滅
+            </summary>
+        </member>
+        <member name="M:Td.Dps.IDps.DisplayBlink(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器全点滅
+            </summary>
+        </member>
+        <member name="M:Td.Dps.IDps.SegmentOn(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            セグメントのみ表示
+            </summary>
+        </member>
+        <member name="M:Td.Dps.IDps.SegmentBlink(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            セグメントのみ点滅
+            </summary>
+        </member>
+        <member name="M:Td.Dps.IDps.SegmentOff(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            セグメントのみクリア
+            </summary>
+        </member>
+        <member name="M:Td.Dps.IDps.WaitTransClear">
+            <summary>
+            送信待ちデータのクリア
+            </summary>
+        </member>
+        <member name="M:Td.Dps.IDps.WaitTransCount">
+            <summary>
+            送信待ちデータのカウント
+            </summary>
+        </member>
+        <member name="M:Td.Dps.IDps.WaitRespoCount">
+            <summary>
+            応答待ちデータのカウント
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Td.Dps.Wired">
+            <summary>
+            ピッキング有線表示器ドライバ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.lockObj">
+            <summary>
+            排他アクセス
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.lockObj_log">
+            <summary>
+            排他アクセス
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.TIMEOUT">
+            <summary>
+            接続エラーのタイムアウト値(ミリ秒)
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.BTN_ALL">
+            <summary>
+            全ボタン
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.worker">
+            <summary>
+            イベント実行処理
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.comPort">
+            <summary>
+            シリアルポート
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.timer">
+            <summary>
+            タイマー
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.typeDriver">
+            <summary>
+            ドライバ種別
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.portName">
+            <summary>
+            ポート番号
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.transData">
+            <summary>
+            送信中のデータ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.transList">
+            <summary>
+            送信データの格納
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.recData">
+            <summary>
+            受信データの格納
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.receiveThread">
+            <summary>
+            受信スレッド
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.transThread">
+            <summary>
+            送信スレッド
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.receiveStop">
+            <summary>
+            受信スレッドの停止フラグ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.transStop">
+            <summary>
+            送信スレッドの停止フラグ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.transEnable">
+            <summary>
+            送信許可のフラグ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.recEnable">
+            <summary>
+            受信許可のフラグ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.enqTrans">
+            <summary>
+            送信要求(ENQ)の送信フラグ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.datTrans">
+            <summary>
+            データの送信フラグ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.errCnt">
+            <summary>
+            接続エラーのカウント
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired.logList">
+            <summary>
+            GetLog用StringList
+            </summary>
+        </member>
+        <member name="P:Td.Dps.Wired.TypeDriver">
+            <summary>
+            ドライバ種別
+            </summary>
+        </member>
+        <member name="P:Td.Dps.Wired.Port">
+            <summary>
+            ポート番号
+            </summary>
+        </member>
+        <member name="E:Td.Dps.Wired.ButtonPush">
+            <summary>
+            表示器ボタン押下のイベントハンドラ
+            </summary>
+        </member>
+        <member name="E:Td.Dps.Wired.Response">
+            <summary>
+            表示器応答のイベントハンドラ
+            </summary>
+        </member>
+        <member name="E:Td.Dps.Wired.Log">
+            <summary>
+            通信ログ通知のイベントハンドラ
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.#ctor">
+            <summary>
+            コンストラクタ
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.#ctor(System.Boolean)">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="async">イベントの非同期</param>
+        </member>
+        <member name="M:Td.Dps.Wired.Timer_Elapsed(System.Object,System.Timers.ElapsedEventArgs)">
+            <summary>
+            接続エラーのタイマーイベント
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Td.Dps.Wired.Init">
+            <summary>
+            初期化
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.DataClear">
+            <summary>
+            データのクリア
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.TransThreadStart">
+            <summary>
+            送信スレッドの開始
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.TransThreadTerminate">
+            <summary>
+            送信スレッドの終了
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.TransThreadWork">
+            <summary>
+            送信スレッド処理
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.Write(Td.Dps.CommandList)">
+            <summary>
+            コマンド送信
+            </summary>
+            <param name="command"></param>
+        </member>
+        <member name="M:Td.Dps.Wired.WriteEnq">
+            <summary>
+            ENQ送信
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.WriteACK">
+            <summary>
+            ACK送信
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.WriteNAK">
+            <summary>
+            NAK送信
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.WriteEOT">
+            <summary>
+            EOT送信
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.ReceiveThreadStart">
+            <summary>
+            受信スレッドの開始
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.ReceiveThreadTerminate">
+            <summary>
+            受信スレッドの終了
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.ReceiveThreadWork">
+            <summary>
+            受信スレッド処理
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.DataAnalyze">
+            <summary>
+            データの解析
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.RecDataRemove">
+            <summary>
+            受信データの1バイト削除
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.DataAnalyzeCableOut">
+            <summary>
+            データ解析（バージョン）
+            </summary>
+            <param name="data">受信データ</param>
+        </member>
+        <member name="M:Td.Dps.Wired.DataAnalyzeAck">
+            <summary>
+            データの解析（先頭がACK）
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.DataAnalyzeNak">
+            <summary>
+            データの解析（先頭がNAK）
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.DataAnalyzeEnq">
+            <summary>
+            データの解析（先頭がENQ）
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.DataAnalyzeStx">
+            <summary>
+            データの解析（先頭がSTX）
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.BccCalc(System.String)">
+            <summary>
+            BCCの計算
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Td.Dps.Wired.Open(System.String)">
+            <summary>
+            シリアルポートの接続
+            </summary>
+            <param name="portName">使用するポート</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.Open(System.String,System.Int32)">
+            <summary>
+            シリアルポートの接続
+            </summary>
+            <param name="portName">使用するポート</param>
+            <param name="baudRate">ボーレート</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.Close">
+            <summary>
+            シリアルポートを切断
+            </summary>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.DisplayCommon(System.Int32,System.Int32,System.Int32,System.Byte,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン 共通
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="mode">動作（点灯、点滅、消灯）</param>
+            <param name="display">セグメント表示（9文字）</param>
+            <param name="priority">優先（true：する、false：しない）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.DisplayOn(System.Int32,System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン点灯
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="display">セグメント表示（9文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.DisplayOn(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン点灯（全ボタン）
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.DisplayBlink(System.Int32,System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン点滅
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="display">セグメント表示（9文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.DisplayBlink(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン点滅（全ボタン）
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.DisplayOff(System.Int32,System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン消灯
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="display">セグメント表示（9文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.DisplayOff(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン消灯（全ボタン）
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.SegmentCommon(System.Int32,System.Int32,System.Byte,System.String,System.Boolean)">
+            <summary>
+            セグメントのみ 共通
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <param name="mode">動作（表示、点滅、クリア）</param>
+            <param name="display">セグメント表示（9文字）</param>
+            <param name="priority">優先（true：する、false：しない）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.SegmentOn(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            セグメントのみ表示
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <param name="display">セグメント表示（9文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.SegmentBlink(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            セグメントのみ点滅
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <param name="display">セグメント表示（9文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.SegmentOff(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            セグメントのみクリア
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.Lamp(System.Int32,System.Int32,System.Byte,System.Boolean)">
+            <summary>
+            PICKINGランプのみ 共通
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <param name="mode">動作（表示、点滅、クリア）</param>
+            <param name="priority">優先（true：する、false：しない）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.LampOn(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            PICKINGランプのみ点灯
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.LampBlink(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            PICKINGランプのみ点滅
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.LampOff(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            PICKINGランプのみ消灯
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.LedCommon(System.Int32,System.Int32,System.Int32,System.Byte,System.Boolean)">
+            <summary>
+            LEDのみ 共通
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="mode">動作（点灯、点滅、消灯）</param>
+            <param name="priority">優先（true：する、false：しない）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.LedOn(System.Int32,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            LEDのみ点灯
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.LedBlink(System.Int32,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            LEDのみ点滅
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.LedOff(System.Int32,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            LEDのみ消灯
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.IdHantei(System.Int32,System.Int32)">
+            <summary>
+            IDの判定
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <returns>ID文字列</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.BtnHantei(System.Int32,System.Byte)">
+            <summary>
+            ボタンの判定
+            </summary>
+            <param name="button">ボタン番号</param>
+            <param name="mode">点灯モード</param>
+            <returns>ボタン文字列</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.DispHantei(System.String)">
+            <summary>
+            表示文字列の判定
+            </summary>
+            <param name="display">表示文字列</param>
+            <returns>表示文字列</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.CommandAdd(System.String,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            送信コマンドの追加
+            </summary>
+            <param name="header">COM</param>
+            <param name="id">ID</param>
+            <param name="button">BUTTON</param>
+            <param name="disp">表示</param>
+            <param name="priority">優先</param>
+        </member>
+        <member name="M:Td.Dps.Wired.WaitTransClear">
+            <summary>
+            送信待ちデータのクリア
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.WaitTransCount">
+            <summary>
+            送信待ちデータのカウント
+            </summary>
+            <returns>カウント数</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.WaitRespoCount">
+            <summary>
+            応答待ちデータのカウント
+            </summary>
+            <returns>カウント数</returns>
+        </member>
+        <member name="M:Td.Dps.Wired.TimerInit">
+            <summary>
+            タイマーの初期化
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.TimerStart">
+            <summary>
+            タイマーの開始
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.TimerStop">
+            <summary>
+            タイマーの停止
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired.ButtonPushEvent(Td.Dps.Def.EventInfo)">
+            <summary>
+            表示器ボタン押下のイベント発生
+            </summary>
+            <param name="info">イベント情報</param>
+        </member>
+        <member name="M:Td.Dps.Wired.ResponseEvent(Td.Dps.Def.EventInfo)">
+            <summary>
+            表示器応答のイベント発生
+            </summary>
+            <param name="info">イベント情報</param>
+        </member>
+        <member name="M:Td.Dps.Wired.LogEvent(System.String)">
+            <summary>
+            通信ログ通知のイベント発生
+            </summary>
+            <param name="str">文字列</param>
+        </member>
+        <member name="M:Td.Dps.Wired.GetLog">
+            <summary>
+            ログリストの取得
+            </summary>
+            <param name="info">ログリストの取得</param>
+        </member>
+        <member name="T:Td.Dps.Wired2">
+            <summary>
+            ピッキング無線表示器2ドライバ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.T_TXD1">
+            <summary>
+            送信コマンド：従来式：LED・セグメント
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.T_TXD2">
+            <summary>
+            送信コマンド：従来式：LEDのみ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.T_TXD3">
+            <summary>
+            送信コマンド：従来式：セグメントのみ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.R_RES">
+            <summary>
+            受信コマンド：表示器応答
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.R_RXD">
+            <summary>
+            受信コマンド：従来式：ボタン押下
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.R_BAR">
+            <summary>
+            受信コマンド：従来式：ボタン押下
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.R_ERR">
+            <summary>
+            受信コマンド：エラー
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.R_VER">
+            <summary>
+            受信コマンド：バージョン
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.R_OUT">
+            <summary>
+            受信コマンド：バージョン
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.T_WAKEUP">
+            <summary>
+            送信コマンド：ウェークアップ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.T_SLEEP">
+            <summary>
+            送信コマンド：スリープ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.lockObj">
+            <summary>
+            排他アクセス送信
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.TIMEOUT">
+            <summary>
+            タイムアウト時間（ミリ秒）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.RES_CNT">
+            <summary>
+            応答待ちデータのカウント
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.BTN_ALL">
+            <summary>
+            全ボタン
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.NEW_LINE">
+            <summary>
+            改行コード
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.STR_ACK">
+            <summary>
+            文字列：ACK
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.STR_NAK">
+            <summary>
+            文字列：NAK
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.STR_TIM">
+            <summary>
+            文字列：TIM
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.STR_OUT">
+            <summary>
+            文字列：OUT
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.worker">
+            <summary>
+            イベント実行処理
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.comPort">
+            <summary>
+            シリアルポート
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.TimeoutCnt">
+            <summary>
+            タイムアウトカウント
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.typeDriver">
+            <summary>
+            ドライバ種別
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.portName">
+            <summary>
+            ポート番号
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.transData">
+            <summary>
+            送信中のデータ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.transList">
+            <summary>
+            送信データの格納
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.recData">
+            <summary>
+            受信データの格納
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.receiveThread">
+            <summary>
+            受信スレッド
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.transThread">
+            <summary>
+            送信スレッド
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.receiveStop">
+            <summary>
+            受信スレッドの停止フラグ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.packet_id">
+            <summary>
+            パケットID
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.rcv_packet_id">
+            <summary>
+            受信パケットID
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wired2.transStop">
+            <summary>
+            送信スレッドの停止フラグ
+            </summary>
+        </member>
+        <member name="P:Td.Dps.Wired2.TypeDriver">
+            <summary>
+            ドライバ種別
+            </summary>
+        </member>
+        <member name="P:Td.Dps.Wired2.Port">
+            <summary>
+            ポート番号
+            </summary>
+        </member>
+        <member name="E:Td.Dps.Wired2.ButtonPush">
+            <summary>
+            表示器ボタン押下のイベントハンドラ
+            </summary>
+        </member>
+        <member name="E:Td.Dps.Wired2.ButtonDone">
+            <summary>
+            表示器ボタン完了のイベントハンドラ
+            </summary>
+        </member>
+        <member name="E:Td.Dps.Wired2.Response">
+            <summary>
+            表示器応答のイベントハンドラ
+            </summary>
+        </member>
+        <member name="E:Td.Dps.Wired2.Log">
+            <summary>
+            通信ログ通知のイベントハンドラ
+            </summary>
+        </member>
+        <member name="E:Td.Dps.Wired2.BarCodeRcv">
+            <summary>
+            バーコード受信通知のイベントハンドラ
+            </summary>
+        </member>
+        <member name="E:Td.Dps.Wired2.Version">
+            <summary>
+            バージョン表示のイベントハンドラ
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired2.#ctor">
+            <summary>
+            コンストラクタ
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired2.#ctor(System.Boolean)">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="async">イベントの非同期</param>
+        </member>
+        <member name="M:Td.Dps.Wired2.Init">
+            <summary>
+            初期化
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired2.DataClear">
+            <summary>
+            データのクリア
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired2.TransThreadStart">
+            <summary>
+            送信スレッドの開始
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired2.TransThreadTerminate">
+            <summary>
+            送信スレッドの終了
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired2.TransThreadWork">
+            <summary>
+            送信スレッド処理
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired2.Write(Td.Dps.CommandList)">
+            <summary>
+            コマンド送信
+            </summary>
+            <param name="command"></param>
+        </member>
+        <member name="M:Td.Dps.Wired2.Write(System.String)">
+            <summary>
+            コマンド送信（ACK/NAK）
+            </summary>
+            <param name="command"></param>
+        </member>
+        <member name="M:Td.Dps.Wired2.ReceiveThreadStart">
+            <summary>
+            受信スレッドの開始
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired2.ReceiveThreadTerminate">
+            <summary>
+            受信スレッドの終了
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired2.ReceiveThreadWork">
+            <summary>
+            受信処理
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired2.DataAnalyze">
+            <summary>
+            データの解析
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired2.DataAnalyzeACK(System.String)">
+            <summary>
+            データ解析(ACK/NAKの応答)
+            </summary>
+            <param name="cmd">ACK or NAK</param>
+        </member>
+        <member name="M:Td.Dps.Wired2.DataAnalyzeButtonPush(System.String)">
+            <summary>
+            データ解析（ボタン押下）
+            </summary>
+            <param name="data">受信データ</param>
+        </member>
+        <member name="M:Td.Dps.Wired2.DataAnalyzeError(System.String)">
+            <summary>
+            データ解析（エラー受信）
+            </summary>
+            <param name="data">受信データ</param>
+        </member>
+        <member name="M:Td.Dps.Wired2.DataAnalyzeBarCode(System.String)">
+            <summary>
+            データ解析（エラー受信）
+            </summary>
+            <param name="data">受信データ</param>
+        </member>
+        <member name="M:Td.Dps.Wired2.DataAnalyzeVersion(System.String)">
+            <summary>
+            データ解析（バージョン）
+            </summary>
+            <param name="data">受信データ</param>
+        </member>
+        <member name="M:Td.Dps.Wired2.DataAnalyzeCableOut(System.String)">
+            <summary>
+            データ解析（バージョン）
+            </summary>
+            <param name="data">受信データ</param>
+        </member>
+        <member name="M:Td.Dps.Wired2.TimeOutChk">
+            <summary>
+            タイムアウト監視
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired2.BccCalc(System.String)">
+            <summary>
+            BCCの計算
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.BccCheck(System.String)">
+            <summary>
+            BCCチェック
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.Open(System.String)">
+            <summary>
+            シリアルポートの接続
+            </summary>
+            <param name="portName">使用するポート</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.Open(System.String,System.Int32)">
+            <summary>
+            シリアルポートの接続
+            </summary>
+            <param name="portName">使用するポート</param>
+            <param name="baudRate">ボーレート</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.Close">
+            <summary>
+            シリアルポートを切断
+            </summary>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.DisplayCommon(System.Int32,System.Int32,System.Int32,System.Byte,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン（個別ボタン） 共通
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="mode">動作（点灯、点滅、消灯）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.DisplayOn(System.Int32,System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン点灯（個別ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.DisplayOn(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン点灯（全ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.DisplayBlink(System.Int32,System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン点滅（個別ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.DisplayBlink(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン点滅（全ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.DisplayOff(System.Int32,System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン消灯（個別ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.DisplayOff(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン消灯（全ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.LedCommon(System.Int32,System.Int32,System.Int32,System.Byte,System.Boolean)">
+            <summary>
+            LEDのみ 共通
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="mode">動作（点灯、点滅、消灯）</param>
+            <param name="priority">優先（true：する、false：しない）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.LedOn(System.Int32,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            LEDのみ点灯（個別ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.LedOn(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            LEDのみ点灯（全ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.LedBlink(System.Int32,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            LEDのみ点滅（個別ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.LedBlink(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            LEDのみ点滅（全ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.LedOff(System.Int32,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            LEDのみ消灯（個別ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.LedOff(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            LEDのみ消灯（全ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.SegmentCommon(System.Int32,System.Int32,System.Byte,System.String,System.Boolean)">
+            <summary>
+            セグメントのみ 共通
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <param name="mode">動作（表示、点滅、クリア）</param>
+            <param name="display">セグメント表示（9文字）</param>
+            <param name="priority">優先（true：する、false：しない）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.SegmentOn(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            セグメントのみ表示
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.SegmentBlink(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            セグメントのみ点滅
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.SegmentOff(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            セグメントのみクリア
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.IdHantei(System.Int32,System.Int32)">
+            <summary>
+            IDの判定
+            </summary>
+            <param name="group">分岐アドレス（1～20）</param>
+            <param name="address">表示器アドレス（1～195）</param>
+            <returns>ID文字列</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.IdHantei(System.Int32)">
+            <summary>
+            IDの判定(全表示器）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <returns>ID文字列</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.BtnHantei(System.Int32,System.Byte)">
+            <summary>
+            ボタンの判定
+            </summary>
+            <param name="button">ボタン番号</param>
+            <param name="mode">点灯モード</param>
+            <returns>ボタン文字列</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.BtnHantei(System.Int32)">
+            <summary>
+            ボタンの判定
+            </summary>
+            <param name="button">ボタン番号</param>
+            <returns>ボタン文字列</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.DispHantei(System.String)">
+            <summary>
+            表示文字列の判定
+            </summary>
+            <param name="display">表示文字列</param>
+            <returns>表示文字列</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.TimeHantei(System.Int32)">
+            <summary>
+            表示時間の判定
+            </summary>
+            <param name="time">表示時間（1～15）</param>
+            <returns>表示時間</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.CommandAdd(System.String,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            送信コマンドの追加
+            </summary>
+            <param name="header">COM</param>
+            <param name="id">ID</param>
+            <param name="button">BUTTON</param>
+            <param name="disp">表示</param>
+            <param name="priority">優先</param>
+        </member>
+        <member name="M:Td.Dps.Wired2.WaitTransClear">
+            <summary>
+            送信待ちデータのクリア
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wired2.WaitTransCount">
+            <summary>
+            送信待ちデータのカウント
+            </summary>
+            <returns>カウント数</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.WaitRespoCount">
+            <summary>
+            応答待ちデータのカウント
+            </summary>
+            <returns>カウント数</returns>
+        </member>
+        <member name="M:Td.Dps.Wired2.ButtonPushEvent(Td.Dps.Def.EventInfo)">
+            <summary>
+            表示器ボタン押下のイベント発生
+            </summary>
+            <param name="info">イベント情報</param>
+        </member>
+        <member name="M:Td.Dps.Wired2.ButtonDoneEvent(Td.Dps.Def.EventInfo)">
+            <summary>
+            表示器ボタン完了のイベント発生
+            </summary>
+            <param name="info">イベント情報</param>
+        </member>
+        <member name="M:Td.Dps.Wired2.ResponseEvent(Td.Dps.Def.EventInfo)">
+            <summary>
+            表示器応答のイベント発生
+            </summary>
+            <param name="info">イベント情報</param>
+        </member>
+        <member name="M:Td.Dps.Wired2.BarCoodeEvent(Td.Dps.Def.EventInfo)">
+            <summary>
+            バーコードデータ取得のイベント発生
+            </summary>
+            <param name="info">イベント情報</param>
+        </member>
+        <member name="M:Td.Dps.Wired2.LogEvent(System.String)">
+            <summary>
+            通信ログ通知のイベント発生
+            </summary>
+            <param name="str">文字列</param>
+        </member>
+        <member name="M:Td.Dps.Wired2.VersionEvent(Td.Dps.Def.EventInfo)">
+            <summary>
+            バージョン取得のイベント発生
+            </summary>
+            <param name="info">イベント情報</param>
+        </member>
+        <member name="T:Td.Dps.Wireless">
+            <summary>
+            ピッキング無線表示器ドライバ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless.lockObj">
+            <summary>
+            排他アクセス
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless.TIMEOUT">
+            <summary>
+            タイムアウト時間（ミリ秒）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless.RES_CNT">
+            <summary>
+            応答待ちデータのカウント
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless.BTN_ALL">
+            <summary>
+            全ボタン
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless.worker">
+            <summary>
+            イベント実行処理
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless.comPort">
+            <summary>
+            シリアルポート
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless.typeDriver">
+            <summary>
+            ドライバ種別
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless.portName">
+            <summary>
+            ポート番号
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless.transList">
+            <summary>
+            送信データの格納
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless.recData">
+            <summary>
+            受信データの格納
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless.waitDict">
+            <summary>
+            応答待ちデータの格納
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless.receiveThread">
+            <summary>
+            受信スレッド
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless.transThread">
+            <summary>
+            送信スレッド
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless.receiveStop">
+            <summary>
+            受信スレッドの停止フラグ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless.transStop">
+            <summary>
+            送信スレッドの停止フラグ
+            </summary>
+        </member>
+        <member name="P:Td.Dps.Wireless.TypeDriver">
+            <summary>
+            ドライバ種別
+            </summary>
+        </member>
+        <member name="P:Td.Dps.Wireless.Port">
+            <summary>
+            ポート番号
+            </summary>
+        </member>
+        <member name="E:Td.Dps.Wireless.ButtonPush">
+            <summary>
+            表示器ボタン押下のイベントハンドラ
+            </summary>
+        </member>
+        <member name="E:Td.Dps.Wireless.Response">
+            <summary>
+            表示器応答のイベントハンドラ
+            </summary>
+        </member>
+        <member name="E:Td.Dps.Wireless.Log">
+            <summary>
+            通信ログ通知のイベントハンドラ
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless.#ctor">
+            <summary>
+            コンストラクタ
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless.#ctor(System.Boolean)">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="async">イベントの非同期</param>
+        </member>
+        <member name="M:Td.Dps.Wireless.Init">
+            <summary>
+            初期化
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless.DataClear">
+            <summary>
+            データのクリア
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless.TransThreadStart">
+            <summary>
+            送信スレッドの開始
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless.TransThreadTerminate">
+            <summary>
+            送信スレッドの終了
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless.TransThreadWork">
+            <summary>
+            送信スレッド処理
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless.TransListChk">
+            <summary>
+            送信可能なデータのチェック
+            </summary>
+            <returns>送信データのインデックス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.Write(Td.Dps.CommandList)">
+            <summary>
+            コマンド送信
+            </summary>
+            <param name="command"></param>
+        </member>
+        <member name="M:Td.Dps.Wireless.ReceiveThreadStart">
+            <summary>
+            受信スレッドの開始
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless.ReceiveThreadTerminate">
+            <summary>
+            受信スレッドの終了
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless.ReceiveThreadWork">
+            <summary>
+            受信処理
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless.DataAnalyze">
+            <summary>
+            データの解析
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless.TimeOutChk">
+            <summary>
+            タイムアウト監視
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless.Open(System.String)">
+            <summary>
+            シリアルポートの接続
+            </summary>
+            <param name="portName">使用するポート</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.Open(System.String,System.Int32)">
+            <summary>
+            シリアルポートの接続
+            </summary>
+            <param name="portName">使用するポート</param>
+            <param name="baudRate">ボーレート</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.Close">
+            <summary>
+            シリアルポートを切断
+            </summary>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.DisplayCommon(System.Int32,System.Int32,System.Int32,System.Byte,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン（個別ボタン） 共通
+            </summary>
+            <param name="group">無線グループ（0～9）</param>
+            <param name="address">表示器アドレス（1～50）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="mode">動作（点灯、点滅、消灯）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.DisplayOn(System.Int32,System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン点灯（個別ボタン）
+            </summary>
+            <param name="group">無線グループ（0～9）</param>
+            <param name="address">表示器アドレス（1～50）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.DisplayOn(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン点灯（全ボタン）
+            </summary>
+            <param name="group">無線グループ（0～9）</param>
+            <param name="address">表示器アドレス（1～50）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.DisplayBlink(System.Int32,System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン点滅（個別ボタン）
+            </summary>
+            <param name="group">無線グループ（0～9）</param>
+            <param name="address">表示器アドレス（1～50）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.DisplayBlink(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン点滅（全ボタン）
+            </summary>
+            <param name="group">無線グループ（0～9）</param>
+            <param name="address">表示器アドレス（1～50）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.DisplayOff(System.Int32,System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン消灯（個別ボタン）
+            </summary>
+            <param name="group">無線グループ（0～9）</param>
+            <param name="address">表示器アドレス（1～50）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.DisplayOff(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン消灯（全ボタン）
+            </summary>
+            <param name="group">無線グループ（0～9）</param>
+            <param name="address">表示器アドレス（1～50）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.Segment(System.Int32,System.Int32,System.Byte,System.String,System.Boolean)">
+            <summary>
+            セグメントのみ 共通
+            </summary>
+            <param name="group">無線グループ（0～9）</param>
+            <param name="address">表示器アドレス（1～50）</param>
+            <param name="mode">動作（表示、点滅、クリア）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.SegmentOn(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            セグメントのみ表示
+            </summary>
+            <param name="group">無線グループ（0～9）</param>
+            <param name="address">表示器アドレス（1～50）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.SegmentBlink(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            セグメントのみ点滅
+            </summary>
+            <param name="group">無線グループ（0～9）</param>
+            <param name="address">表示器アドレス（1～50）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.SegmentOff(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            セグメントのみクリア
+            </summary>
+            <param name="group">無線グループ（0～9）</param>
+            <param name="address">表示器アドレス（1～50）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.BatteryCheck(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            バッテリチェック
+            </summary>
+            <param name="group">無線グループ（0～9）</param>
+            <param name="address">表示器アドレス（1～50）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.WakeUp(System.Int32,System.Boolean)">
+            <summary>
+            ウェークアップ
+            </summary>
+            <param name="group">無線グループ（0～9）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.Extension(System.Int32,System.Boolean)">
+            <summary>
+            延長
+            </summary>
+            <param name="group">無線グループ（0～9）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.IdHantei(System.Int32,System.Int32)">
+            <summary>
+            IDの判定（個別表示器）
+            </summary>
+            <param name="group">無線グループ（0～9）</param>
+            <param name="address">表示器アドレス（1～50）</param>
+            <returns>ID文字列</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.IdHantei(System.Int32)">
+            <summary>
+            IDの判定(全表示器）
+            </summary>
+            <param name="group">無線グループ（0～9）</param>
+            <returns>ID文字列</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.BtnHantei(System.Int32,System.Byte)">
+            <summary>
+            ボタンの判定
+            </summary>
+            <param name="button">ボタン番号</param>
+            <param name="mode">点灯モード</param>
+            <returns>ボタン文字列</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.DispHantei(System.String)">
+            <summary>
+            表示文字列の判定
+            </summary>
+            <param name="display">表示文字列</param>
+            <returns>表示文字列</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.CommandAdd(System.String,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            送信コマンドの追加
+            </summary>
+            <param name="header">COM</param>
+            <param name="id">ID</param>
+            <param name="button">BUTTON</param>
+            <param name="disp">表示</param>
+            <param name="priority">優先</param>
+        </member>
+        <member name="M:Td.Dps.Wireless.WaitTransClear">
+            <summary>
+            送信待ちデータのクリア
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless.WaitTransCount">
+            <summary>
+            送信待ちデータのカウント
+            </summary>
+            <returns>カウント数</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.WaitRespoCount">
+            <summary>
+            応答待ちデータのカウント
+            </summary>
+            <returns>カウント数</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless.ButtonPushEvent(Td.Dps.Def.EventInfo)">
+            <summary>
+            表示器ボタン押下のイベント発生
+            </summary>
+            <param name="info">イベント情報</param>
+        </member>
+        <member name="M:Td.Dps.Wireless.ResponseEvent(Td.Dps.Def.EventInfo)">
+            <summary>
+            表示器応答のイベント発生
+            </summary>
+            <param name="info">イベント情報</param>
+        </member>
+        <member name="M:Td.Dps.Wireless.LogEvent(System.String)">
+            <summary>
+            通信ログ通知のイベント発生
+            </summary>
+            <param name="str">文字列</param>
+        </member>
+        <member name="T:Td.Dps.Wireless2">
+            <summary>
+            ピッキング無線表示器2ドライバ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.T_TXD1">
+            <summary>
+            送信コマンド：従来式：LED・セグメント
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.T_TXD2">
+            <summary>
+            送信コマンド：従来式：LEDのみ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.T_TXD3">
+            <summary>
+            送信コマンド：従来式：セグメントのみ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.T_SET1">
+            <summary>
+            送信コマンド：自走式パターン1
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.T_SET2">
+            <summary>
+            送信コマンド：自走式パターン2
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.T_SET3">
+            <summary>
+            送信コマンド：自走式パターン3
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.T_RESET">
+            <summary>
+            送信コマンド：自走式：リセット
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.T_RST1">
+            <summary>
+            送信コマンド：自走式：リセットLED1
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.T_RST2">
+            <summary>
+            送信コマンド：自走式：リセットLED2
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.T_RST3">
+            <summary>
+            送信コマンド：自走式：リセットLED3
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.T_RST4">
+            <summary>
+            送信コマンド：自走式：リセットLED4
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.T_RST5">
+            <summary>
+            送信コマンド：自走式：リセットLED5
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.T_END">
+            <summary>
+            送信コマンド：自走式：END表示
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.T_BATTERY">
+            <summary>
+            送信コマンド：バッテリ情報要求
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.T_WAKEUP">
+            <summary>
+            送信コマンド：ウェークアップ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.T_SLEEP">
+            <summary>
+            送信コマンド：スリープ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.T_VER">
+            <summary>
+            送信コマンド：バージョン
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.R_RES">
+            <summary>
+            受信コマンド：表示器応答
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.R_RXD">
+            <summary>
+            受信コマンド：従来式：ボタン押下
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.R_RXT">
+            <summary>
+            受信コマンド：無線式：ターミナルボックスボタン押下
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.R_RET">
+            <summary>
+            受信コマンド：自走式：ボタン完了
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.R_CTL">
+            <summary>
+            受信コマンド：自走式：CTLボタン完了
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.R_VER">
+            <summary>
+            受信コマンド：バージョン
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.lockObj">
+            <summary>
+            排他アクセス送信
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.TIMEOUT">
+            <summary>
+            タイムアウト時間（ミリ秒）
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.RES_CNT">
+            <summary>
+            応答待ちデータのカウント
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.BTN_ALL">
+            <summary>
+            全ボタン
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.NEW_LINE">
+            <summary>
+            改行コード
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.STR_ACK">
+            <summary>
+            文字列：ACK
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.STR_NAK">
+            <summary>
+            文字列：NAK
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.STR_TIM">
+            <summary>
+            文字列：TIM
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.worker">
+            <summary>
+            イベント実行処理
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.comPort">
+            <summary>
+            シリアルポート
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.TimeoutCnt">
+            <summary>
+            タイムアウトカウント
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.typeDriver">
+            <summary>
+            ドライバ種別
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.portName">
+            <summary>
+            ポート番号
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.transData">
+            <summary>
+            送信中のデータ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.Dsp_timer">
+            <summary>
+            タイマー
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.transList">
+            <summary>
+            送信データの格納
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.recData">
+            <summary>
+            受信データの格納
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.waitIdList">
+            <summary>
+            応答待ちのIDリスト
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.receiveThread">
+            <summary>
+            受信スレッド
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.transThread">
+            <summary>
+            送信スレッド
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.receiveStop">
+            <summary>
+            受信スレッドの停止フラグ
+            </summary>
+        </member>
+        <member name="F:Td.Dps.Wireless2.transStop">
+            <summary>
+            送信スレッドの停止フラグ
+            </summary>
+        </member>
+        <member name="P:Td.Dps.Wireless2.TypeDriver">
+            <summary>
+            ドライバ種別
+            </summary>
+        </member>
+        <member name="P:Td.Dps.Wireless2.Port">
+            <summary>
+            ポート番号
+            </summary>
+        </member>
+        <member name="E:Td.Dps.Wireless2.ButtonPush">
+            <summary>
+            表示器ボタン押下のイベントハンドラ
+            </summary>
+        </member>
+        <member name="E:Td.Dps.Wireless2.ButtonDone">
+            <summary>
+            表示器ボタン完了のイベントハンドラ
+            </summary>
+        </member>
+        <member name="E:Td.Dps.Wireless2.Response">
+            <summary>
+            表示器応答のイベントハンドラ
+            </summary>
+        </member>
+        <member name="E:Td.Dps.Wireless2.Log">
+            <summary>
+            通信ログ通知のイベントハンドラ
+            </summary>
+        </member>
+        <member name="E:Td.Dps.Wireless2.Version">
+            <summary>
+            バージョン表示のイベントハンドラ
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless2.#ctor">
+            <summary>
+            コンストラクタ
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless2.#ctor(System.Boolean)">
+            <summary>
+            コンストラクタ
+            </summary>
+            <param name="async">イベントの非同期</param>
+        </member>
+        <member name="M:Td.Dps.Wireless2.Dsp_Timer_Elapsed(System.Object,System.Timers.ElapsedEventArgs)">
+            <summary>
+            接続エラーのタイマーイベント
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:Td.Dps.Wireless2.Init">
+            <summary>
+            初期化
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless2.DataClear">
+            <summary>
+            データのクリア
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless2.TransThreadStart">
+            <summary>
+            送信スレッドの開始
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless2.TransThreadTerminate">
+            <summary>
+            送信スレッドの終了
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless2.TransThreadWork">
+            <summary>
+            送信スレッド処理
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless2.TransListChk">
+            <summary>
+            送信可能なデータのチェック
+            </summary>
+            <returns>送信データのインデックス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.Write(Td.Dps.CommandList)">
+            <summary>
+            コマンド送信
+            </summary>
+            <param name="command"></param>
+        </member>
+        <member name="M:Td.Dps.Wireless2.Write(System.String)">
+            <summary>
+            コマンド送信（ACK/NAK）
+            </summary>
+            <param name="command"></param>
+        </member>
+        <member name="M:Td.Dps.Wireless2.ReceiveThreadStart">
+            <summary>
+            受信スレッドの開始
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless2.ReceiveThreadTerminate">
+            <summary>
+            受信スレッドの終了
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless2.ReceiveThreadWork">
+            <summary>
+            受信処理
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless2.DataAnalyze">
+            <summary>
+            データの解析
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless2.DataAnalyzeACK(System.String)">
+            <summary>
+            データ解析(ACK/NAKの応答)
+            </summary>
+            <param name="cmd">ACK or NAK</param>
+        </member>
+        <member name="M:Td.Dps.Wireless2.DataAnalyzeResponse(System.String)">
+            <summary>
+            データ解析(表示器の応答)
+            </summary>
+            <param name="data">受信データ</param>
+        </member>
+        <member name="M:Td.Dps.Wireless2.DataAnalyzeButtonPush(System.String)">
+            <summary>
+            データ解析（ボタン押下）
+            </summary>
+            <param name="data">受信データ</param>
+        </member>
+        <member name="M:Td.Dps.Wireless2.DataAnalyzeButtonDone(System.String,System.Boolean)">
+            <summary>
+            データ解析（ボタン完了）
+            </summary>
+            <param name="data">受信データ</param>
+            <param name="ctl">CTLボタン</param>
+        </member>
+        <member name="M:Td.Dps.Wireless2.DataAnalyzeVersion(System.String)">
+            <summary>
+            データ解析（バージョン）
+            </summary>
+            <param name="data">受信データ</param>
+        </member>
+        <member name="M:Td.Dps.Wireless2.TimeOutChk">
+            <summary>
+            タイムアウト監視
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless2.BccCalc(System.String)">
+            <summary>
+            BCCの計算
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.BccCheck(System.String)">
+            <summary>
+            BCCチェック
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.Open(System.String)">
+            <summary>
+            シリアルポートの接続
+            </summary>
+            <param name="portName">使用するポート</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.Open(System.String,System.Int32)">
+            <summary>
+            シリアルポートの接続
+            </summary>
+            <param name="portName">使用するポート</param>
+            <param name="baudRate">ボーレート</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.Close">
+            <summary>
+            シリアルポートを切断
+            </summary>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.DisplayCommon(System.Int32,System.Int32,System.Int32,System.Byte,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン（個別ボタン） 共通
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="mode">動作（点灯、点滅、消灯）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.DisplayOn(System.Int32,System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン点灯（個別ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.DisplayOn(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン点灯（全ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.DisplayBlink(System.Int32,System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン点滅（個別ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.DisplayBlink(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン点滅（全ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.DisplayOff(System.Int32,System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン消灯（個別ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.DisplayOff(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器ボタン消灯（全ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.LedCommon(System.Int32,System.Int32,System.Int32,System.Byte,System.Boolean)">
+            <summary>
+            LEDのみ 共通
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="mode">動作（点灯、点滅、消灯）</param>
+            <param name="priority">優先（true：する、false：しない）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.LedOn(System.Int32,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            LEDのみ点灯（個別ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.LedOn(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            LEDのみ点灯（全ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.LedBlink(System.Int32,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            LEDのみ点滅（個別ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.LedBlink(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            LEDのみ点滅（全ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.LedOff(System.Int32,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            LEDのみ消灯（個別ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.LedOff(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            LEDのみ消灯（全ボタン）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.SegmentCommon(System.Int32,System.Int32,System.Byte,System.String,System.Boolean)">
+            <summary>
+            セグメントのみ 共通
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="mode">動作（表示、点滅、クリア）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.SegmentOn(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            セグメントのみ表示
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.SegmentBlink(System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            セグメントのみ点滅
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.SegmentOff(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            セグメントのみクリア
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.BatteryCheck(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            バッテリチェック
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.VersionDisp(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            バージョン表示
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.WakeUp(System.Int32,System.Boolean)">
+            <summary>
+            ウェークアップ
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.Sleep(System.Int32,System.Boolean)">
+            <summary>
+            スリープ
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.SelfSet(System.Int32,System.Int32,System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            表示器に点灯指示をセット
+            </summary>
+            <param name="pattern">動作パターン</param>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="button">ボタン番号（1：赤、2：黄、3：緑、4：白、5：青）</param>
+            <param name="display">セグメント表示（6文字）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.SelfReset(System.Int32,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            SETコマンドの解除
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.SelfReset(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            SETコマンドの解除
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.SelfEnd(System.Int32,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            表示器にEND表示
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <param name="time">表示時間（1～15）</param>
+            <param name="priority">優先（true：する、false：しない、デフォルト：false）</param>
+            <returns>ステータス</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.IdHantei(System.Int32,System.Int32)">
+            <summary>
+            IDの判定（個別表示器）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <param name="address">表示器アドレス（1～100）</param>
+            <returns>ID文字列</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.IdHantei(System.Int32)">
+            <summary>
+            IDの判定(全表示器）
+            </summary>
+            <param name="group">無線グループ（0～15）</param>
+            <returns>ID文字列</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.BtnHantei(System.Int32,System.Byte)">
+            <summary>
+            ボタンの判定
+            </summary>
+            <param name="button">ボタン番号</param>
+            <param name="mode">点灯モード</param>
+            <returns>ボタン文字列</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.BtnHantei(System.Int32)">
+            <summary>
+            ボタンの判定
+            </summary>
+            <param name="button">ボタン番号</param>
+            <returns>ボタン文字列</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.DispHantei(System.String)">
+            <summary>
+            表示文字列の判定
+            </summary>
+            <param name="display">表示文字列</param>
+            <returns>表示文字列</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.TimeHantei(System.Int32)">
+            <summary>
+            表示時間の判定
+            </summary>
+            <param name="time">表示時間（1～15）</param>
+            <returns>表示時間</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.CommandAdd(System.String,System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            送信コマンドの追加
+            </summary>
+            <param name="header">COM</param>
+            <param name="id">ID</param>
+            <param name="button">BUTTON</param>
+            <param name="disp">表示</param>
+            <param name="priority">優先</param>
+        </member>
+        <member name="M:Td.Dps.Wireless2.WaitTransClear">
+            <summary>
+            送信待ちデータのクリア
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless2.WaitTransCount">
+            <summary>
+            送信待ちデータのカウント
+            </summary>
+            <returns>カウント数</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.WaitRespoCount">
+            <summary>
+            応答待ちデータのカウント
+            </summary>
+            <returns>カウント数</returns>
+        </member>
+        <member name="M:Td.Dps.Wireless2.Dsp_timer_init">
+            <summary>
+            タイマーの初期化
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless2.Dsp_timer_Start">
+            <summary>
+            タイマーの開始
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless2.Dsp_timer_Stop">
+            <summary>
+            タイマーの停止
+            </summary>
+        </member>
+        <member name="M:Td.Dps.Wireless2.ButtonPushEvent(Td.Dps.Def.EventInfo)">
+            <summary>
+            表示器ボタン押下のイベント発生
+            </summary>
+            <param name="info">イベント情報</param>
+        </member>
+        <member name="M:Td.Dps.Wireless2.ButtonDoneEvent(Td.Dps.Def.EventInfo)">
+            <summary>
+            表示器ボタン完了のイベント発生
+            </summary>
+            <param name="info">イベント情報</param>
+        </member>
+        <member name="M:Td.Dps.Wireless2.ResponseEvent(Td.Dps.Def.EventInfo)">
+            <summary>
+            表示器応答のイベント発生
+            </summary>
+            <param name="info">イベント情報</param>
+        </member>
+        <member name="M:Td.Dps.Wireless2.LogEvent(System.String)">
+            <summary>
+            通信ログ通知のイベント発生
+            </summary>
+            <param name="str">文字列</param>
+        </member>
+        <member name="M:Td.Dps.Wireless2.VersionEvent(Td.Dps.Def.EventInfo)">
+            <summary>
+            バージョン取得のイベント発生
+            </summary>
+            <param name="info">イベント情報</param>
+        </member>
+    </members>
+</doc>

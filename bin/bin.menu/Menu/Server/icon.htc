@@ -1,0 +1,53 @@
+<html>
+<head>
+<public:component tagName=ICON>
+	<public:defaults viewLinkContent/>
+	<public:property name="filename" put="setFilename"/>
+	<public:property name="label" put="setLabel"/>
+	<public:property name="key" put="setKey"/>
+	<public:attach event="oncontentready" onevent="init()"/>
+<!--	<public:attach event="onclick" onevent="doOnClick()"/>	-->
+	<public:method name="execute" internalname="go_execute"/>
+</public:component>
+
+<script language="javascript">
+
+/* event handlers */
+function init()
+{
+//	__a.innerHTML = key + " " + label;
+}
+
+/* methods */
+function go_execute()
+{
+	__scm.Execute(wait);
+}
+
+function doOnClick()
+{
+	go_execute();
+}
+
+/* properties */
+function setFilename(v)
+{
+	__scm.FileName = v;
+}
+
+function setLabel(v)
+{
+	label = v;
+}
+
+function setKey(v)
+{
+	key = v;
+}
+</script>
+</head>
+
+<body id=__body>
+<OBJECT ID="__scm" CLASSID="CLSID:32C4FDBF-EBE0-451F-A9E3-52369B0D4974"></object>
+</body>
+</html>
