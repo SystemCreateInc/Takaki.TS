@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<configuration>
-  <connectionStrings>
-    <add name="data" providerName="System.Data.SqlClient" connectionString="Server=(local)\mssql2019; User=sa; Password=sc; Database=Strixinc"/>
-  </connectionStrings>
-</configuration>
