@@ -17,75 +17,6 @@ namespace DbLib.DbEntities
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Collections.Generic;
     /// <summary>
-    /// Represents the 'actionLogs' table.
-    /// </summary>
-    [Table("actionLogs")]
-    public partial class ActionLogEntity
-    {
-        /// <summary>
-        /// Represents the column 'id'.
-        /// </summary>
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Column("id")]
-        public virtual long Id { get; set; }
-
-        /// <summary>
-        /// Represents the column 'personid'.
-        /// </summary>
-        [Column("personid")]
-        public virtual string? Personid { get; set; }
-
-        /// <summary>
-        /// Represents the column 'personnm'.
-        /// </summary>
-        [Column("personnm")]
-        public virtual string? Personnm { get; set; }
-
-        /// <summary>
-        /// Represents the column 'terminal'.
-        /// </summary>
-        [Column("terminal")]
-        public virtual string? Terminal { get; set; }
-
-        /// <summary>
-        /// Represents the column 'work'.
-        /// </summary>
-        [Column("work")]
-        public virtual string? Work { get; set; }
-
-        /// <summary>
-        /// Represents the column 'operation'.
-        /// </summary>
-        [Column("operation")]
-        public virtual string? Operation { get; set; }
-
-        /// <summary>
-        /// Represents the column 'status'.
-        /// </summary>
-        [Column("status")]
-        public virtual string? Status { get; set; }
-
-        /// <summary>
-        /// Represents the column 'description'.
-        /// </summary>
-        [Column("description")]
-        public virtual string? Description { get; set; }
-
-        /// <summary>
-        /// Represents the column 'createdAt'.
-        /// </summary>
-        [Column("createdAt")]
-        public virtual DateTime CreatedAt { get; set; }
-
-        /// <summary>
-        /// Represents the column 'updatedAt'.
-        /// </summary>
-        [Column("updatedAt")]
-        public virtual DateTime UpdatedAt { get; set; }
-    }
-
-    /// <summary>
     /// Represents the 'interface_logs' table.
     /// </summary>
     [Table("interface_logs")]
@@ -250,22 +181,22 @@ namespace DbLib.DbEntities
         public virtual string CDBLOCK { get; set; }
 
         /// <summary>
-        /// Represents the column 'ST_BLOCKTYPE'.
+        /// Represents the column 'ST_TDUNIT_TYPE'.
         /// </summary>
-        [Column("ST_BLOCKTYPE")]
-        public virtual int STBLOCKTYPE { get; set; }
+        [Column("ST_TDUNIT_TYPE")]
+        public virtual int STTDUNITTYPE { get; set; }
 
         /// <summary>
-        /// Represents the column 'NM_TDUNIT_CNT'.
+        /// Represents the column 'NU_TDUNIT_CNT'.
         /// </summary>
-        [Column("NM_TDUNIT_CNT")]
-        public virtual int NMTDUNITCNT { get; set; }
+        [Column("NU_TDUNIT_CNT")]
+        public virtual int NUTDUNITCNT { get; set; }
 
         /// <summary>
-        /// Represents the column 'NM_THRESHOLD'.
+        /// Represents the column 'NU_THRESHOLD'.
         /// </summary>
-        [Column("NM_THRESHOLD")]
-        public virtual int NMTHRESHOLD { get; set; }
+        [Column("NU_THRESHOLD")]
+        public virtual int NUTHRESHOLD { get; set; }
 
         /// <summary>
         /// Represents the column 'DT_TEKIYOKAISHI'.
@@ -379,10 +310,10 @@ namespace DbLib.DbEntities
         public virtual short STBOXTYPE { get; set; }
 
         /// <summary>
-        /// Represents the column 'NM_BOXUNIT'.
+        /// Represents the column 'NU_BOXUNIT'.
         /// </summary>
-        [Column("NM_BOXUNIT")]
-        public virtual int NMBOXUNIT { get; set; }
+        [Column("NU_BOXUNIT")]
+        public virtual int NUBOXUNIT { get; set; }
 
         /// <summary>
         /// Represents the column 'CD_SUM_TOKUISAKI'.
@@ -391,46 +322,46 @@ namespace DbLib.DbEntities
         public virtual string CDSUMTOKUISAKI { get; set; }
 
         /// <summary>
-        /// Represents the column 'NM_OPS'.
+        /// Represents the column 'NU_OPS'.
         /// </summary>
-        [Column("NM_OPS")]
-        public virtual int NMOPS { get; set; }
+        [Column("NU_OPS")]
+        public virtual int NUOPS { get; set; }
 
         /// <summary>
-        /// Represents the column 'NM_LOPS'.
+        /// Represents the column 'NU_LOPS'.
         /// </summary>
-        [Column("NM_LOPS")]
-        public virtual int NMLOPS { get; set; }
+        [Column("NU_LOPS")]
+        public virtual int NULOPS { get; set; }
 
         /// <summary>
-        /// Represents the column 'NM_LRPS'.
+        /// Represents the column 'NU_LRPS'.
         /// </summary>
-        [Column("NM_LRPS")]
-        public virtual int NMLRPS { get; set; }
+        [Column("NU_LRPS")]
+        public virtual int NULRPS { get; set; }
 
         /// <summary>
-        /// Represents the column 'NM_DOPS'.
+        /// Represents the column 'NU_DOPS'.
         /// </summary>
-        [Column("NM_DOPS")]
-        public virtual int NMDOPS { get; set; }
+        [Column("NU_DOPS")]
+        public virtual int NUDOPS { get; set; }
 
         /// <summary>
-        /// Represents the column 'NM_DRPS'.
+        /// Represents the column 'NU_DRPS'.
         /// </summary>
-        [Column("NM_DRPS")]
-        public virtual int NMDRPS { get; set; }
+        [Column("NU_DRPS")]
+        public virtual int NUDRPS { get; set; }
 
         /// <summary>
-        /// Represents the column 'NM_LSTATUS'.
+        /// Represents the column 'FG_LSTATUS'.
         /// </summary>
-        [Column("NM_LSTATUS")]
-        public virtual short NMLSTATUS { get; set; }
+        [Column("FG_LSTATUS")]
+        public virtual short FGLSTATUS { get; set; }
 
         /// <summary>
-        /// Represents the column 'NM_DSTATUS'.
+        /// Represents the column 'FG_DSTATUS'.
         /// </summary>
-        [Column("NM_DSTATUS")]
-        public virtual short NMDSTATUS { get; set; }
+        [Column("FG_DSTATUS")]
+        public virtual short FGDSTATUS { get; set; }
 
         /// <summary>
         /// Represents the column 'CD_BLOCK'.
@@ -577,11 +508,11 @@ namespace DbLib.DbEntities
         public virtual long IDDISTBLOCK { get; set; }
 
         /// <summary>
-        /// Represents the column 'NM_COURSE_SEQ'.
+        /// Represents the column 'NU_COURSE_SEQ'.
         /// </summary>
         [Key]
-        [Column("NM_COURSE_SEQ", Order = 2)]
-        public virtual int NMCOURSESEQ { get; set; }
+        [Column("NU_COURSE_SEQ", Order = 2)]
+        public virtual int NUCOURSESEQ { get; set; }
 
         /// <summary>
         /// Represents the column 'CD_COURSE'.
@@ -646,10 +577,10 @@ namespace DbLib.DbEntities
         public virtual string CDDISTGROUP { get; set; }
 
         /// <summary>
-        /// Represents the column 'CD_DIST_GROUP_NAME'.
+        /// Represents the column 'NM_DIST_GROUP'.
         /// </summary>
-        [Column("CD_DIST_GROUP_NAME")]
-        public virtual string CDDISTGROUPNAME { get; set; }
+        [Column("NM_DIST_GROUP")]
+        public virtual string NMDISTGROUP { get; set; }
 
         /// <summary>
         /// Represents the column 'CD_BIN_SUM'.
@@ -721,11 +652,11 @@ namespace DbLib.DbEntities
         public virtual long IDDISTGROUP { get; set; }
 
         /// <summary>
-        /// Represents the column 'NM_COURSE_SEQ'.
+        /// Represents the column 'NU_COURSE_SEQ'.
         /// </summary>
         [Key]
-        [Column("NM_COURSE_SEQ", Order = 2)]
-        public virtual int NMCOURSESEQ { get; set; }
+        [Column("NU_COURSE_SEQ", Order = 2)]
+        public virtual int NUCOURSESEQ { get; set; }
 
         /// <summary>
         /// Represents the column 'CD_COURSE'.
@@ -766,11 +697,11 @@ namespace DbLib.DbEntities
         public virtual long IDDISTGROUP { get; set; }
 
         /// <summary>
-        /// Represents the column 'NM_LARGE_GROUP_SEQ'.
+        /// Represents the column 'NU_LARGE_GROUP_SEQ'.
         /// </summary>
         [Key]
-        [Column("NM_LARGE_GROUP_SEQ", Order = 2)]
-        public virtual int NMLARGEGROUPSEQ { get; set; }
+        [Column("NU_LARGE_GROUP_SEQ", Order = 2)]
+        public virtual int NULARGEGROUPSEQ { get; set; }
 
         /// <summary>
         /// Represents the column 'CD_LARGE_GROUP'.
@@ -811,11 +742,11 @@ namespace DbLib.DbEntities
         public virtual long IDDISTGROUP { get; set; }
 
         /// <summary>
-        /// Represents the column 'NM_SHUKKA_BATCH_SEQ'.
+        /// Represents the column 'NU_SHUKKA_BATCH_SEQ'.
         /// </summary>
         [Key]
-        [Column("NM_SHUKKA_BATCH_SEQ", Order = 2)]
-        public virtual int NMSHUKKABATCHSEQ { get; set; }
+        [Column("NU_SHUKKA_BATCH_SEQ", Order = 2)]
+        public virtual int NUSHUKKABATCHSEQ { get; set; }
 
         /// <summary>
         /// Represents the column 'CD_SHUKKA_BATCH'.
@@ -3758,6 +3689,12 @@ namespace DbLib.DbEntities
         public virtual string? CDHENKOSHA { get; set; }
 
         /// <summary>
+        /// Represents the column 'NM_SYAIN'.
+        /// </summary>
+        [Column("NM_SYAIN")]
+        public virtual string? NMSYAIN { get; set; }
+
+        /// <summary>
         /// Represents the column 'createdAt'.
         /// </summary>
         [Column("createdAt")]
@@ -3990,16 +3927,16 @@ namespace DbLib.DbEntities
         public virtual short STBOXTYPE { get; set; }
 
         /// <summary>
-        /// Represents the column 'NO_OBOXCNT'.
+        /// Represents the column 'NU_OBOXCNT'.
         /// </summary>
-        [Column("NO_OBOXCNT")]
-        public virtual int NOOBOXCNT { get; set; }
+        [Column("NU_OBOXCNT")]
+        public virtual int NUOBOXCNT { get; set; }
 
         /// <summary>
-        /// Represents the column 'NO_RBOXCNT'.
+        /// Represents the column 'NU_RBOXCNT'.
         /// </summary>
-        [Column("NO_RBOXCNT")]
-        public virtual int NORBOXCNT { get; set; }
+        [Column("NU_RBOXCNT")]
+        public virtual int NURBOXCNT { get; set; }
 
         /// <summary>
         /// Represents the column 'CD_SHAIN'.

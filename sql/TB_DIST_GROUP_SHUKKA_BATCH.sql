@@ -8,7 +8,7 @@
 create table TB_DIST_GROUP_SHUKKA_BATCH (
 	ID_DIST_GROUP			bigint 			 		not null,	/* id							*/
 	
-	NM_SHUKKA_BATCH_SEQ		integer					not null,	/* 出荷バッチ表示順				*/
+	NU_SHUKKA_BATCH_SEQ		integer					not null,	/* 出荷バッチ表示順				*/
 	CD_SHUKKA_BATCH			char(5)					not null,	/* 出荷バッチ					*/
 
 	createdAt 				datetime 				not null,	/*	データ挿入日				*/
@@ -16,6 +16,6 @@ create table TB_DIST_GROUP_SHUKKA_BATCH (
 
 	constraint fk_TB_DIST_GROUP_SHUKKA_BATCH foreign key (ID_DIST_GROUP) references TB_DIST_GROUP(ID_DIST_GROUP) on delete cascade,
 	
-	constraint pk_TB_DIST_GROUP_SHUKKA_BATCH primary key (ID_DIST_GROUP,NM_SHUKKA_BATCH_SEQ)
+	constraint pk_TB_DIST_GROUP_SHUKKA_BATCH primary key (ID_DIST_GROUP,NU_SHUKKA_BATCH_SEQ)
 );
 

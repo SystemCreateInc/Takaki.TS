@@ -9,7 +9,7 @@ create table TB_DIST_GROUP (
 	ID_DIST_GROUP			bigint identity(1,1) 	not null,	/* id 拠点、仕分けグループ、適用開始日でユニーク	*/
 	CD_KYOTEN				char(4)					not null,	/* 拠点コード					*/
 	CD_DIST_GROUP			char(5)					not null,	/* 仕分グループ					*/
-	CD_DIST_GROUP_NAME		nvarchar(40)			not null,	/* 仕分グループ名称				*/
+	NM_DIST_GROUP			nvarchar(40)			not null,	/* 仕分グループ名称				*/
 	CD_BIN_SUM				smallint				not null,	/* 配送便集計
 																	1:便集計する 2:便集計しない	*/
 

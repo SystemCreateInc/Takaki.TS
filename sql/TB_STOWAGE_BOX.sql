@@ -9,8 +9,8 @@ create table TB_STOWAGE_BOX (
 	ID_STOWAGE			bigint 					not null,	/* id							*/
 	ST_BOXTYPE			smallint				not null,	/* ‰^”À—eŠíí•Ê
 															0:‚»‚Ì‘¼ 1:”–”  2:ˆ³”  3:Â” 	*/
-	NO_OBOXCNT			integer					not null,	/* —\’è” ”						*/
-	NO_RBOXCNT			integer					not null,	/* ÀÑ” ”						*/
+	NU_OBOXCNT			integer					not null,	/* —\’è” ”						*/
+	NU_RBOXCNT			integer					not null,	/* ÀÑ” ”						*/
 
 	CD_SHAIN			char(7)					not null,	/* •ÏXÒ						*/
 

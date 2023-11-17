@@ -177,13 +177,13 @@ insert into TB_BLOCK values('4201','11',5,128,13,'20230101','29991231','',getdat
 insert into TB_BLOCK values('4201','15',6,256, 4,'20230101','29991231','',getdate(),getdate());
 
 -- PCî•ñ
-insert into TB_PC values(0,'4201','00',NULL,getdate(),getdate());
-insert into TB_PC values(1,'4201','01',NULL,getdate(),getdate());
-insert into TB_PC values(2,'4201','02',NULL,getdate(),getdate());
-insert into TB_PC values(3,'4201','03',NULL,getdate(),getdate());
-insert into TB_PC values(4,'4201','04',NULL,getdate(),getdate());
-insert into TB_PC values(5,'4201','05',NULL,getdate(),getdate());
-insert into TB_PC values(6,'4201','06',NULL,getdate(),getdate());
+insert into TB_PC values(0,'4201','00',NULL,NULL,getdate(),getdate());
+insert into TB_PC values(1,'4201','01',NULL,NULL,getdate(),getdate());
+insert into TB_PC values(2,'4201','02',NULL,NULL,getdate(),getdate());
+insert into TB_PC values(3,'4201','03',NULL,NULL,getdate(),getdate());
+insert into TB_PC values(4,'4201','04',NULL,NULL,getdate(),getdate());
+insert into TB_PC values(5,'4201','05',NULL,NULL,getdate(),getdate());
+insert into TB_PC values(6,'4201','06',NULL,NULL,getdate(),getdate());
 
 
 

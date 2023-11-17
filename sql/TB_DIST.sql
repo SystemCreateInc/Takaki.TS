@@ -20,22 +20,22 @@ create table TB_DIST (
 	CD_GTIN14			nvarchar(14)			not null,	/* 	GTIN-14						*/
 	ST_BOXTYPE			smallint				not null,	/* 運搬容器種別
 															0:その他 1:薄箱 2:圧箱 3:青箱	*/
-	NM_BOXUNIT			integer					not null,	/* 運搬容器入り数				*/
+	NU_BOXUNIT			integer					not null,	/* 運搬容器入り数				*/
 
 	CD_SUM_TOKUISAKI	char(6)					not null,	/* 集約得意先コード				*/
 
-	NM_OPS				integer					not null,	/* 出荷予定数					*/
-	NM_LOPS				integer					not null,	/* 大仕分け予定数				*/
-	NM_LRPS				integer					not null,	/* 大仕分け実績数				*/
-	NM_DOPS				integer					not null,	/* 配分予定数					*/
-	NM_DRPS				integer					not null,	/* 配分実績数					*/
+	NU_OPS				integer					not null,	/* 出荷予定数					*/
+	NU_LOPS				integer					not null,	/* 大仕分け予定数				*/
+	NU_LRPS				integer					not null,	/* 大仕分け実績数				*/
+	NU_DOPS				integer					not null,	/* 配分予定数					*/
+	NU_DRPS				integer					not null,	/* 配分実績数					*/
 
-	NM_LSTATUS			smallint				not null,	/*	大仕分けステータス
+	FG_LSTATUS			smallint				not null,	/*	大仕分けステータス
 																0:未処理
 																1:欠品
 																2:完了						*/
 
-	NM_DSTATUS			smallint				not null,	/*	仕分ステータス
+	FG_DSTATUS			smallint				not null,	/*	仕分ステータス
 																0:未処理
 																1:欠品
 																2:完了						*/

@@ -8,7 +8,7 @@
 create table TB_DIST_BLOCK_COURSE_SEQ (
 	ID_DIST_BLOCK			bigint 			 		not null,	/* id							*/
 	
-	NM_COURSE_SEQ			integer					not null,	/* コース順						*/
+	NU_COURSE_SEQ			integer					not null,	/* コース順						*/
 	CD_COURSE				char(3),							/* コース						*/
 	CD_ADDR_FROM			char(4),							/* 開始アドレス					*/
 	CD_ADDR_TO				char(3),							/* 終了アドレス					*/
@@ -18,6 +18,6 @@ create table TB_DIST_BLOCK_COURSE_SEQ (
 	
 	constraint fk_TB_DIST_BLOCK_COURSE_SEQ foreign key (ID_DIST_BLOCK) references TB_DIST_BLOCK(ID_DIST_BLOCK) on delete cascade,
 	
-	constraint pk_TB_DIST_BLOCK_COURSE_SEQ primary key (ID_DIST_BLOCK,NM_COURSE_SEQ)
+	constraint pk_TB_DIST_BLOCK_COURSE_SEQ primary key (ID_DIST_BLOCK,NU_COURSE_SEQ)
 );
 

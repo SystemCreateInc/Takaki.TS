@@ -12,8 +12,8 @@ create table TB_BLOCK (
 	ST_TDUNIT_TYPE			integer					not null,	/* ブロック種別
 																		5:天吊　6：棚			*/
 
-	NM_TDUNIT_CNT			integer					not null,	/* 表示器数						*/
-	NM_THRESHOLD			integer					not null,	/* 閾値							*/
+	NU_TDUNIT_CNT			integer					not null,	/* 表示器数						*/
+	NU_THRESHOLD			integer					not null,	/* 閾値							*/
 
 	DT_TEKIYOKAISHI			char(8)					not null,	/* 適用開始日					*/
 	DT_TEKIYOMUKO			char(8)					not null,	/* 適用無効日					*/

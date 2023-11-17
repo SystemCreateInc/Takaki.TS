@@ -1,8 +1,9 @@
 {
 	// ＤＢ接続
 	"ConnectionStrings": {
-		"data": "Server=(local)\\mssql2022; User=sa; Password=sc; Database=Takaki_TS; Connect Timeout=60;TrustServerCertificate=True"
+		"data": "Server=(local)\\mssql2022ex; User=sa; Password=sc; Database=Takaki_TS; Connect Timeout=60;TrustServerCertificate=True"
 	},
+	// LOG設定
 	"syslog": {
 		"logExpDays": 60,
 		"distExpDays": 60,
@@ -12,7 +13,7 @@
 	"backend": {
 		"address": "localhost"
 	},
-	// PCNO 0:サーバー 1～:仕分ブロックＰＣ
+	// PC環境 pcid=0:サーバー 1～:仕分ブロックＰＣ
 	"pc": {
 		"pcid": "1",
 	}
