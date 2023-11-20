@@ -1,5 +1,20 @@
 delete from interface_logs;
 
+-- 受信ファイル
+insert into interfaceFiles (dataType, name, sortOrder, direction, fileName, expdays, comment, createdAt, updatedAt) values(0, '拠点マスタ', 0, 0, 'Kyoten.txt', 0, '', getdate(), getdate());
+insert into interfaceFiles (dataType, name, sortOrder, direction, fileName, expdays, comment, createdAt, updatedAt) values(1, '社員マスタ', 0, 0, 'Syain.txt', 0, '', getdate(), getdate());
+insert into interfaceFiles (dataType, name, sortOrder, direction, fileName, expdays, comment, createdAt, updatedAt) values(2, '得意先マスタ', 0, 0, 'Tokuisaki.txt', 0, '', getdate(), getdate());
+insert into interfaceFiles (dataType, name, sortOrder, direction, fileName, expdays, comment, createdAt, updatedAt) values(3, '品目マスタ', 0, 0, 'Seihin.txt', 0, '', getdate(), getdate());
+insert into interfaceFiles (dataType, name, sortOrder, direction, fileName, expdays, comment, createdAt, updatedAt) values(4, '出荷バッチマスタ', 0, 0, 'Batch.txt', 0, '', getdate(), getdate());
+insert into interfaceFiles (dataType, name, sortOrder, direction, fileName, expdays, comment, createdAt, updatedAt) values(5, '固定名称マスタ', 0, 0, 'Kname.txt', 0, '', getdate(), getdate());
+
+insert into interfaceFiles (dataType, name, sortOrder, direction, fileName, expdays, comment, createdAt, updatedAt) values(10, '出荷予定データ', 0, 0, 'Pick*.dat', 100, '', getdate(), getdate());
+insert into interfaceFiles (dataType, name, sortOrder, direction, fileName, expdays, comment, createdAt, updatedAt) values(11, '箱数予定データ', 0, 0, 'hako*.dat', 100, '', getdate(), getdate());
+
+-- 実績ファイル
+insert into interfaceFiles (dataType, name, sortOrder, direction, fileName, expdays, comment, createdAt, updatedAt) values(100, '出荷実績データ', 0, 1, 'pickresult.txt', 0, '', getdate(), getdate());
+insert into interfaceFiles (dataType, name, sortOrder, direction, fileName, expdays, comment, createdAt, updatedAt) values(101, '箱数実績データ', 0, 1, 'hakoresult.txt', 0, '', getdate(), getdate());
+
 -- 色
 insert into typelists values('distcolor','1','赤',1, getdate(), getdate());
 insert into typelists values('distcolor','2','黄',2, getdate(), getdate());
@@ -16,7 +31,8 @@ insert into typelists values('usageid','3','配順',3, getdate(), getdate());
 insert into typelists values('usageid','4','ｿﾞｰﾝﾎﾞﾀﾝ',4, getdate(), getdate());
 insert into typelists values('usageid','5','天吊',5, getdate(), getdate());
 insert into typelists values('usageid','6','棚',6, getdate(), getdate());
-insert into typelists values('usageid','7','天吊ｽﾀｰﾄBOX',1, getdate(), getdate());
+insert into typelists values('usageid','7','天吊ｽﾀｰﾄBOX',7, getdate(), getdate());
+insert into typelists values('usageid','8','棚ｽﾀｰﾄBOX',8, getdate(), getdate());
 
 -- TDポート区分
 insert into typelists values('tdunitporttype','0','WIRELESS',0, getdate(), getdate());
@@ -50,16 +66,16 @@ insert into tdunitmst values('10019',1,1,19,5, getdate(), getdate());
 insert into tdunitmst values('10020',1,1,20,5, getdate(), getdate());
 
 -- TD表示器(天吊りスタートBOX）
-insert into tdunitmst values('TS0001',1,1,101,7, getdate(), getdate());
-insert into tdunitmst values('TS0002',1,1,102,7, getdate(), getdate());
-insert into tdunitmst values('TS0003',1,1,103,7, getdate(), getdate());
-insert into tdunitmst values('TS0004',1,1,104,7, getdate(), getdate());
-insert into tdunitmst values('TS0005',1,1,105,7, getdate(), getdate());
-insert into tdunitmst values('TS0006',1,1,106,7, getdate(), getdate());
-insert into tdunitmst values('TS0007',1,1,107,7, getdate(), getdate());
-insert into tdunitmst values('TS0008',1,1,108,7, getdate(), getdate());
-insert into tdunitmst values('TS0009',1,1,109,7, getdate(), getdate());
-insert into tdunitmst values('TS0010',1,1,110,7, getdate(), getdate());
+insert into tdunitmst values('TS0001',1,1,101,1, getdate(), getdate());
+insert into tdunitmst values('TS0002',1,1,102,1, getdate(), getdate());
+insert into tdunitmst values('TS0003',1,1,103,1, getdate(), getdate());
+insert into tdunitmst values('TS0004',1,1,104,1, getdate(), getdate());
+insert into tdunitmst values('TS0005',1,1,105,1, getdate(), getdate());
+insert into tdunitmst values('TS0006',1,1,106,1, getdate(), getdate());
+insert into tdunitmst values('TS0007',1,1,107,1, getdate(), getdate());
+insert into tdunitmst values('TS0008',1,1,108,1, getdate(), getdate());
+insert into tdunitmst values('TS0009',1,1,109,1, getdate(), getdate());
+insert into tdunitmst values('TS0010',1,1,110,1, getdate(), getdate());
 
 -- TD表示器マスタ(棚)
 insert into tdunitmst values('20001',1,1, 1,5, getdate(), getdate());
@@ -118,16 +134,16 @@ insert into tdunitaddr values('0019','10019',0,2, 7,5,getdate(), getdate());
 insert into tdunitaddr values('0020','10020',0,2, 6,5,getdate(), getdate());
 
 -- TD表示器(天吊りスタートBOX）
-insert into tdunitaddr values('S001','TS0001',0,1,1,1,getdate(), getdate());
-insert into tdunitaddr values('S002','TS0002',0,1,1,1,getdate(), getdate());
-insert into tdunitaddr values('S003','TS0003',0,1,1,1,getdate(), getdate());
-insert into tdunitaddr values('S004','TS0004',0,1,1,1,getdate(), getdate());
-insert into tdunitaddr values('S005','TS0005',0,1,1,1,getdate(), getdate());
-insert into tdunitaddr values('S006','TS0006',0,2,2,1,getdate(), getdate());
-insert into tdunitaddr values('S007','TS0007',0,2,2,1,getdate(), getdate());
-insert into tdunitaddr values('S008','TS0008',0,2,2,1,getdate(), getdate());
-insert into tdunitaddr values('S009','TS0009',0,2,2,1,getdate(), getdate());
-insert into tdunitaddr values('S010','TS0010',0,2,2,1,getdate(), getdate());
+insert into tdunitaddr values('S001','TS0001',0,1,1,7,getdate(), getdate());
+insert into tdunitaddr values('S002','TS0002',0,1,1,7,getdate(), getdate());
+insert into tdunitaddr values('S003','TS0003',0,1,1,7,getdate(), getdate());
+insert into tdunitaddr values('S004','TS0004',0,1,1,7,getdate(), getdate());
+insert into tdunitaddr values('S005','TS0005',0,1,1,7,getdate(), getdate());
+insert into tdunitaddr values('S006','TS0006',0,2,2,7,getdate(), getdate());
+insert into tdunitaddr values('S007','TS0007',0,2,2,7,getdate(), getdate());
+insert into tdunitaddr values('S008','TS0008',0,2,2,7,getdate(), getdate());
+insert into tdunitaddr values('S009','TS0009',0,2,2,7,getdate(), getdate());
+insert into tdunitaddr values('S010','TS0010',0,2,2,7,getdate(), getdate());
 
 -- TD表示器(棚)
 insert into tdunitaddr values('0001','20001',0,1, 1,6,getdate(), getdate());
@@ -140,29 +156,29 @@ insert into tdunitaddr values('0007','20007',0,1, 2,6,getdate(), getdate());
 insert into tdunitaddr values('0008','20008',0,1, 3,6,getdate(), getdate());
 insert into tdunitaddr values('0009','20009',0,1, 4,6,getdate(), getdate());
 insert into tdunitaddr values('0010','20010',0,1, 5,6,getdate(), getdate());
-insert into tdunitaddr values('0001','20011',0,2,10,6,getdate(), getdate());
-insert into tdunitaddr values('0002','20012',0,2, 9,6,getdate(), getdate());
-insert into tdunitaddr values('0003','20013',0,2, 8,6,getdate(), getdate());
-insert into tdunitaddr values('0004','20014',0,2, 7,6,getdate(), getdate());
-insert into tdunitaddr values('0005','20015',0,2, 6,6,getdate(), getdate());
-insert into tdunitaddr values('0006','20016',0,2,10,6,getdate(), getdate());
-insert into tdunitaddr values('0007','20017',0,2, 9,6,getdate(), getdate());
-insert into tdunitaddr values('0008','20018',0,2, 8,6,getdate(), getdate());
-insert into tdunitaddr values('0009','20019',0,2, 7,6,getdate(), getdate());
-insert into tdunitaddr values('0010','20020',0,2, 6,6,getdate(), getdate());
+insert into tdunitaddr values('0011','20011',0,2,10,6,getdate(), getdate());
+insert into tdunitaddr values('0012','20012',0,2, 9,6,getdate(), getdate());
+insert into tdunitaddr values('0013','20013',0,2, 8,6,getdate(), getdate());
+insert into tdunitaddr values('0014','20014',0,2, 7,6,getdate(), getdate());
+insert into tdunitaddr values('0015','20015',0,2, 6,6,getdate(), getdate());
+insert into tdunitaddr values('0016','20016',0,2,10,6,getdate(), getdate());
+insert into tdunitaddr values('0017','20017',0,2, 9,6,getdate(), getdate());
+insert into tdunitaddr values('0018','20018',0,2, 8,6,getdate(), getdate());
+insert into tdunitaddr values('0019','20019',0,2, 7,6,getdate(), getdate());
+insert into tdunitaddr values('0020','20020',0,2, 6,6,getdate(), getdate());
 
 
 -- TD表示器(棚スタートBOX）
-insert into tdunitaddr values('S001','RS0001',0,1,1,1,getdate(), getdate());
-insert into tdunitaddr values('S002','RS0002',0,1,1,1,getdate(), getdate());
-insert into tdunitaddr values('S003','RS0003',0,1,1,1,getdate(), getdate());
-insert into tdunitaddr values('S004','RS0004',0,1,1,1,getdate(), getdate());
-insert into tdunitaddr values('S005','RS0005',0,1,1,1,getdate(), getdate());
-insert into tdunitaddr values('S006','RS0006',0,2,2,1,getdate(), getdate());
-insert into tdunitaddr values('S007','RS0007',0,2,2,1,getdate(), getdate());
-insert into tdunitaddr values('S008','RS0008',0,2,2,1,getdate(), getdate());
-insert into tdunitaddr values('S009','RS0009',0,2,2,1,getdate(), getdate());
-insert into tdunitaddr values('S010','RS0010',0,2,2,1,getdate(), getdate());
+insert into tdunitaddr values('S001','RS0001',0,1,1,8,getdate(), getdate());
+insert into tdunitaddr values('S002','RS0002',0,1,1,8,getdate(), getdate());
+insert into tdunitaddr values('S003','RS0003',0,1,1,8,getdate(), getdate());
+insert into tdunitaddr values('S004','RS0004',0,1,1,8,getdate(), getdate());
+insert into tdunitaddr values('S005','RS0005',0,1,1,8,getdate(), getdate());
+insert into tdunitaddr values('S006','RS0006',0,2,2,8,getdate(), getdate());
+insert into tdunitaddr values('S007','RS0007',0,2,2,8,getdate(), getdate());
+insert into tdunitaddr values('S008','RS0008',0,2,2,8,getdate(), getdate());
+insert into tdunitaddr values('S009','RS0009',0,2,2,8,getdate(), getdate());
+insert into tdunitaddr values('S010','RS0010',0,2,2,8,getdate(), getdate());
 
 
 
@@ -177,13 +193,13 @@ insert into TB_BLOCK values('4201','11',5,128,13,'20230101','29991231','',getdat
 insert into TB_BLOCK values('4201','15',6,256, 4,'20230101','29991231','',getdate(),getdate());
 
 -- PC情報
-insert into TB_PC values(0,'4201','00',NULL,NULL,getdate(),getdate());
-insert into TB_PC values(1,'4201','01',NULL,NULL,getdate(),getdate());
-insert into TB_PC values(2,'4201','02',NULL,NULL,getdate(),getdate());
-insert into TB_PC values(3,'4201','03',NULL,NULL,getdate(),getdate());
-insert into TB_PC values(4,'4201','04',NULL,NULL,getdate(),getdate());
-insert into TB_PC values(5,'4201','05',NULL,NULL,getdate(),getdate());
-insert into TB_PC values(6,'4201','06',NULL,NULL,getdate(),getdate());
+insert into TB_PC values(0,'00',NULL,NULL,getdate(),getdate());
+insert into TB_PC values(1,'01',NULL,NULL,getdate(),getdate());
+insert into TB_PC values(2,'02',NULL,NULL,getdate(),getdate());
+insert into TB_PC values(3,'03',NULL,NULL,getdate(),getdate());
+insert into TB_PC values(4,'04',NULL,NULL,getdate(),getdate());
+insert into TB_PC values(5,'05',NULL,NULL,getdate(),getdate());
+insert into TB_PC values(6,'06',NULL,NULL,getdate(),getdate());
 
 
 

@@ -6,7 +6,7 @@
  */
 
 create table settings (
-	value			nvarchar(50)		not null,	/* ñºèÃ						*/
+	value			nvarchar(50)	not null,	/* ñºèÃ						*/
 	data			nvarchar(255),				/* íl						*/
 	id				nvarchar(255)	not null,	/* id						*/
 	comment			nvarchar(max),				/* comment					*/

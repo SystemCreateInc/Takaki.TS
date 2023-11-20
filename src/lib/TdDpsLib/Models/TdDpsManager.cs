@@ -1,8 +1,10 @@
-﻿using FastExpressionCompiler.LightExpression;
+﻿using DbLib.Defs;
+using FastExpressionCompiler.LightExpression;
 using ImTools;
 using LogLib;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using TdDpsLib.Defs;
@@ -22,6 +24,7 @@ namespace TdDpsLib.Models
         public List<TdAreaData>? TdAreas { get; set; } = null;
         public List<TdAreaData>? TdZoneBtns { get; set; } = null;
         private bool _bIdle { get; set; } = false;
+        public int Tdunittype { get; set; } = (int)TdUnitType.TdRack;
 
         public TdDpsManager()
         {
@@ -58,8 +61,12 @@ namespace TdDpsLib.Models
             Syslog.Info(@"TdDriverManager:Init");
             try
             {
+                // 天吊,棚取得
+                Tdunittype = TdLoader.LoadTdUnitType();
+
+
                 TdPorts = TdLoader.LoadTdComs();
-                TdAddrs = TdLoader.LoadTdAddrs();
+                TdAddrs = TdLoader.LoadTdAddrs(Tdunittype);
                 TdAreas = TdLoader.LoadTdAreas(TdAddrs);
 
                 if (TdPorts != null && TdAddrs != null)

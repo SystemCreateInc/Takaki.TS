@@ -7,7 +7,7 @@
 
 create table TB_DIST (
 	ID_DIST				bigint identity(1,1) 	not null,	/* id							*/
-	DT_DELIVERY			char(10)				not null,	/* 納品日						*/
+	DT_DELIVERY			char(8)					not null,	/* 納品日						*/
 	
 	CD_SHUKKA_BATCH		char(5)					not null,	/* 出荷バッチ					*/
 	CD_KYOTEN			char(4)					not null,	/* 仕分け拠点					*/

@@ -7,7 +7,7 @@
 	"syslog": {
 		"logExpDays": 60,
 		"distExpDays": 60,
-		"root": "..\\logs"
+		"root": "..\\..\\logs"
 	},
 	// バックエンド接続
 	"backend": {

@@ -7,7 +7,7 @@
 
 create table TB_STOWAGE (
 	ID_STOWAGE			bigint identity(1,1) 	not null,	/* id							*/
-	DT_DELIVERY			char(10)				not null,	/* 納品日						*/
+	DT_DELIVERY			char(8)					not null,	/* 納品日						*/
 	
 	CD_SHUKKA_BATCH		char(5)					not null,	/* 出荷バッチ					*/
 	CD_KYOTEN			char(4)					not null,	/* 仕分け拠点					*/
@@ -20,7 +20,9 @@ create table TB_STOWAGE (
 	CD_BLOCK			char(2)					not null,	/* ブロックコード				*/
 	CD_DIST_GROUP		char(5)					not null,	/* 仕分グループ					*/
 
-	tdunitaddrcode		nvarchar(10)				not null,	/* アドレスCD(論理アドレス)		*/
+	CD_SUM_TOKUISAKI	char(6)					not null,	/* 集約得意先コード				*/
+
+	tdunitaddrcode		nvarchar(10)			not null,	/* アドレスCD(論理アドレス)		*/
 
 	createdAt 			datetime 				not null,	/*	データ挿入日				*/
 	updatedAt 			datetime 				not null,	/*	データ更新日				*/

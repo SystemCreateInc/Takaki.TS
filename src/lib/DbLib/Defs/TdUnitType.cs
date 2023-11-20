@@ -13,5 +13,9 @@ namespace DbLib.Defs
         TdCeiling = 5,
         [Description("棚")]
         TdRack = 6,
+        [Description("天吊ｽﾀｰﾄBOX")]
+        TdCeilingBox = 7,
+        [Description("棚ｽﾀｰﾄBOX")]
+        TdRackBox = 8,
     }
 }

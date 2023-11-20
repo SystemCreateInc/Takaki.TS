@@ -122,6 +122,68 @@ namespace DbLib.DbEntities
     }
 
     /// <summary>
+    /// Represents the 'interfaceFiles' table.
+    /// </summary>
+    [Table("interfaceFiles")]
+    public partial class InterfaceFileEntity
+    {
+        /// <summary>
+        /// Represents the column 'dataType'.
+        /// </summary>
+        [Key]
+        [Column("dataType")]
+        public virtual short DataType { get; set; }
+
+        /// <summary>
+        /// Represents the column 'name'.
+        /// </summary>
+        [Column("name")]
+        public virtual string Name { get; set; }
+
+        /// <summary>
+        /// Represents the column 'sortOrder'.
+        /// </summary>
+        [Column("sortOrder")]
+        public virtual int? SortOrder { get; set; }
+
+        /// <summary>
+        /// Represents the column 'direction'.
+        /// </summary>
+        [Column("direction")]
+        public virtual short Direction { get; set; }
+
+        /// <summary>
+        /// Represents the column 'fileName'.
+        /// </summary>
+        [Column("fileName")]
+        public virtual string FileName { get; set; }
+
+        /// <summary>
+        /// Represents the column 'expdays'.
+        /// </summary>
+        [Column("expdays")]
+        public virtual int? Expdays { get; set; }
+
+        /// <summary>
+        /// Represents the column 'comment'.
+        /// </summary>
+        [Column("comment")]
+        public virtual string? Comment { get; set; }
+
+        /// <summary>
+        /// Represents the column 'createdAt'.
+        /// </summary>
+        [Column("createdAt")]
+        public virtual DateTime CreatedAt { get; set; }
+
+        /// <summary>
+        /// Represents the column 'updatedAt'.
+        /// </summary>
+        [Column("updatedAt")]
+        public virtual DateTime UpdatedAt { get; set; }
+    }
+
+    /// <summary>
     /// Represents the 'settings' table.
     /// </summary>
     [Table("settings")]
@@ -725,6 +787,129 @@ namespace DbLib.DbEntities
         /// Represents the navigation property for the child-parent relationship involving <seealso cref="TBDISTGROUPEntity"/>
         /// </summary>
         public virtual TBDISTGROUPEntity TBDISTGROUP { get; set; }
+    }
+
+    /// <summary>
+    /// Represents the 'TB_DIST_GROUP_PROGRESS' table.
+    /// </summary>
+    [Table("TB_DIST_GROUP_PROGRESS")]
+    public partial class TBDISTGROUPPROGRESSEntity
+    {
+        /// <summary>
+        /// Represents the column 'ID_DIST_GROUP_PROGRESS'.
+        /// </summary>
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column("ID_DIST_GROUP_PROGRESS")]
+        public virtual long IDDISTGROUPPROGRESS { get; set; }
+
+        /// <summary>
+        /// Represents the column 'DT_DELIVERY'.
+        /// </summary>
+        [Column("DT_DELIVERY")]
+        public virtual string DTDELIVERY { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_KYOTEN'.
+        /// </summary>
+        [Column("CD_KYOTEN")]
+        public virtual string CDKYOTEN { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_DIST_GROUP'.
+        /// </summary>
+        [Column("CD_DIST_GROUP")]
+        public virtual string CDDISTGROUP { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_DIST_GROUP'.
+        /// </summary>
+        [Column("NM_DIST_GROUP")]
+        public virtual string NMDISTGROUP { get; set; }
+
+        /// <summary>
+        /// Represents the column 'ID_PC'.
+        /// </summary>
+        [Column("ID_PC")]
+        public virtual int? IDPC { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_BLOCK'.
+        /// </summary>
+        [Column("CD_BLOCK")]
+        public virtual string? CDBLOCK { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_SHAIN'.
+        /// </summary>
+        [Column("CD_SHAIN")]
+        public virtual string? CDSHAIN { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_SHAIN'.
+        /// </summary>
+        [Column("NM_SHAIN")]
+        public virtual string? NMSHAIN { get; set; }
+
+        /// <summary>
+        /// Represents the column 'DT_START'.
+        /// </summary>
+        [Column("DT_START")]
+        public virtual DateTime? DTSTART { get; set; }
+
+        /// <summary>
+        /// Represents the column 'DT_END'.
+        /// </summary>
+        [Column("DT_END")]
+        public virtual DateTime? DTEND { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NU_OITEMCNT'.
+        /// </summary>
+        [Column("NU_OITEMCNT")]
+        public virtual DateTime? NUOITEMCNT { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NU_RITEMCNT'.
+        /// </summary>
+        [Column("NU_RITEMCNT")]
+        public virtual DateTime? NURITEMCNT { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NU_OPS'.
+        /// </summary>
+        [Column("NU_OPS")]
+        public virtual DateTime? NUOPS { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NU_RPS'.
+        /// </summary>
+        [Column("NU_RPS")]
+        public virtual DateTime? NURPS { get; set; }
+
+        /// <summary>
+        /// Represents the column 'FG_DSTATUS'.
+        /// </summary>
+        [Column("FG_DSTATUS")]
+        public virtual short FGDSTATUS { get; set; }
+
+        /// <summary>
+        /// Represents the column 'FG_WORKING'.
+        /// </summary>
+        [Column("FG_WORKING")]
+        public virtual short FGWORKING { get; set; }
+
+        /// <summary>
+        /// Represents the column 'createdAt'.
+        /// </summary>
+        [Column("createdAt")]
+        public virtual DateTime CreatedAt { get; set; }
+
+        /// <summary>
+        /// Represents the column 'updatedAt'.
+        /// </summary>
+        [Column("updatedAt")]
+        public virtual DateTime UpdatedAt { get; set; }
     }
 
     /// <summary>
@@ -3671,12 +3856,6 @@ namespace DbLib.DbEntities
         public virtual int IDPC { get; set; }
 
         /// <summary>
-        /// Represents the column 'CD_KYOTEN'.
-        /// </summary>
-        [Column("CD_KYOTEN")]
-        public virtual string CDKYOTEN { get; set; }
-
-        /// <summary>
         /// Represents the column 'CD_BLOCK'.
         /// </summary>
         [Column("CD_BLOCK")]
@@ -3879,6 +4058,12 @@ namespace DbLib.DbEntities
         /// </summary>
         [Column("CD_DIST_GROUP")]
         public virtual string CDDISTGROUP { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_SUM_TOKUISAKI'.
+        /// </summary>
+        [Column("CD_SUM_TOKUISAKI")]
+        public virtual string CDSUMTOKUISAKI { get; set; }
 
         /// <summary>
         /// Represents the column 'tdunitaddrcode'.
