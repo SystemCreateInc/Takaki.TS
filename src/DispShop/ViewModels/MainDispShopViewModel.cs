@@ -29,12 +29,16 @@ using Microsoft.Extensions.Configuration;
 using SelDistGroupLib.Services.Auth;
 using System.Windows.Shapes;
 using SelDistGroupLib.Models;
+using System.Windows.Media.Media3D;
 
 namespace DispShop.ViewModels
 {
     public class MainDispShopViewModel : BindableBase
     {
-        public DelegateCommand? LightOn { get; }
+        public DelegateCommand? CourseLightOn { get; }
+        public DelegateCommand? TokuisakiLightOn { get; }
+        public DelegateCommand? HakoLightOn { get; }
+        public DelegateCommand? PsLightOn { get; }
         public DelegateCommand? LightOff { get; }
         public DelegateCommand? Exit { get; }
 
@@ -90,6 +94,12 @@ namespace DispShop.ViewModels
             get => _canList;
             set => SetProperty(ref _canList, value);
         }
+        private int _lightType = 0;
+        public int LightType
+        {
+            get => _lightType;
+            set => SetProperty(ref _lightType, value);
+        }
 
         private List<TdShowPortData> _tdunitports = new List<TdShowPortData>();
 
@@ -140,22 +150,28 @@ namespace DispShop.ViewModels
 
             LoadDatas();
 
-            LightOn = new DelegateCommand(() =>
+            CourseLightOn = new DelegateCommand(() =>
             {
-                bTdConnectionError = false;
-                CanLight = false;
-                CanList = false;
+                Syslog.Debug("MainDispShopViewModel:CourseLightOn");
+                LightOn(0);
+            }).ObservesCanExecute(() => CanLight);
 
-                WaitProgressDialog.ShowProgress(
-                    "表示器点灯",
-                    "表示器点灯中です。しばらくお待ちください。",
-                    DpsLightOn,
-                    DspWait,
-                    null,
-                    _dialogService,
-                    _eventAggregator);
+            TokuisakiLightOn = new DelegateCommand(() =>
+            {
+                Syslog.Debug("MainDispShopViewModel:TokuisakiLightOn");
+                LightOn(1);
+            }).ObservesCanExecute(() => CanLight);
 
-                Syslog.Debug("MainDispShopViewModel:LightOn");
+            HakoLightOn = new DelegateCommand(() =>
+            {
+                Syslog.Debug("MainDispShopViewModel:HakoLightOn");
+                LightOn(2);
+            }).ObservesCanExecute(() => CanLight);
+
+            PsLightOn = new DelegateCommand(() =>
+            {
+                Syslog.Debug("MainDispShopViewModel:PsLightOn");
+                LightOn(3);
             }).ObservesCanExecute(() => CanLight);
 
             LightOff = new DelegateCommand(() =>
@@ -206,7 +222,8 @@ namespace DispShop.ViewModels
                     {
                         try
                         {
-                            TdUnitManager.TdUnitRcv(TdDps, stno, group, addr, color);
+                            //反応なしとする
+//                            TdUnitManager.TdUnitRcv(TdDps, stno, group, addr, color);
                         }
                         catch (Exception ex)
                         {
@@ -381,10 +398,29 @@ namespace DispShop.ViewModels
                 if (ct.IsCancellationRequested)
                     break;
 
-                string tddsplay = string.Format("{0,6}", p.Zps % 1000000);
+                string tddsplay = "";
+                int ledColor = (int)TdLedColor.Red;
+                switch (LightType)
+                {
+                    case 0:
+                        tddsplay = string.Format("{0,3}{1,3}", p.CD_COURSE, p.CD_ROUTE);
+                        ledColor = (int)TdLedColor.Red;
+                        break;
+                    case 1:
+                        tddsplay = string.Format("{0,6}", p.CD_TOKUISAKI);
+                        ledColor = (int)TdLedColor.Yellow;
+                        break;
+                    case 2:
+                        tddsplay = string.Format("{0,6}", p.BoxCnt % 1000000);
+                        ledColor = (int)TdLedColor.Green;
+                        break;
+                    case 3:
+                        tddsplay = string.Format("{0,6}", p.Ops % 1000000);
+                        ledColor = (int)TdLedColor.White;
+                        break;
+                }
 
-                int ledColor = (int)TdLedColor.Green;
-                bool ledBlink = p.Zps >= 1000 ? true : false;
+                bool ledBlink = true;
 
                 Syslog.Info($"DpsLightOn: addr:{p.TdUnitAddrCode} ledColor:{ledColor} ledBlink:{ledBlink} display:{tddsplay}");
 
@@ -467,6 +503,25 @@ namespace DispShop.ViewModels
 
             CanLight = true;
         }
+
+        private void LightOn(int lighttype)
+        {
+            bTdConnectionError = false;
+            CanLight = false;
+            CanList = false;
+            LightType = lighttype;
+
+            WaitProgressDialog.ShowProgress(
+                "表示器点灯",
+                "表示器点灯中です。しばらくお待ちください。",
+                DpsLightOn,
+                DspWait,
+                null,
+                _dialogService,
+                _eventAggregator);
+
+        }
+
         private bool SelectDistGroup()
         {
             if (AuthenticateService.AuthDistGroupDialog(_dialogService) is DistGroup distgroup)

@@ -34,10 +34,31 @@
                         </Style>
                     </ToolBar.Resources>
 
-                    <Button Command="{Binding LightOn}">
+                    <Button Command="{Binding CourseLightOn}">
                         <StackPanel Orientation="Vertical">
                             <materialDesign:PackIcon Kind="Lightbulb"/>
-                            <TextBlock Text="点灯"/>
+                            <TextBlock Text="ｺｰｽ配送順点灯"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Command="{Binding TokuisakiLightOn}">
+                        <StackPanel Orientation="Vertical">
+                            <materialDesign:PackIcon Kind="Lightbulb"/>
+                            <TextBlock Text="得意先点灯"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Command="{Binding HakoLightOn}">
+                        <StackPanel Orientation="Vertical">
+                            <materialDesign:PackIcon Kind="Lightbulb"/>
+                            <TextBlock Text="箱数点灯"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Command="{Binding PsLightOn}">
+                        <StackPanel Orientation="Vertical">
+                            <materialDesign:PackIcon Kind="Lightbulb"/>
+                            <TextBlock Text="総数点灯"/>
                         </StackPanel>
                     </Button>
 
