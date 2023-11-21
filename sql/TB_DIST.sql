@@ -30,6 +30,11 @@ create table TB_DIST (
 	NU_DOPS				integer					not null,	/* 配分予定数					*/
 	NU_DRPS				integer					not null,	/* 配分実績数					*/
 
+	FG_MAPSTATUS		smallint				not null,	/*	座席マッピングステータス
+																0:未設定
+																1:あふれ
+																2:マッピング完了			*/
+
 	FG_LSTATUS			smallint				not null,	/*	大仕分けステータス
 																0:未処理
 																1:欠品

@@ -414,6 +414,12 @@ namespace DbLib.DbEntities
         public virtual int NUDRPS { get; set; }
 
         /// <summary>
+        /// Represents the column 'FG_MAPSTATUS'.
+        /// </summary>
+        [Column("FG_MAPSTATUS")]
+        public virtual short FGMAPSTATUS { get; set; }
+
+        /// <summary>
         /// Represents the column 'FG_LSTATUS'.
         /// </summary>
         [Column("FG_LSTATUS")]
@@ -4070,6 +4076,12 @@ namespace DbLib.DbEntities
         /// </summary>
         [Column("tdunitaddrcode")]
         public virtual string Tdunitaddrcode { get; set; }
+
+        /// <summary>
+        /// Represents the column 'FG_SSTATUS'.
+        /// </summary>
+        [Column("FG_SSTATUS")]
+        public virtual short FGSSTATUS { get; set; }
 
         /// <summary>
         /// Represents the column 'createdAt'.

@@ -27,7 +27,7 @@ create table TB_DIST_GROUP_PROGRESS (
 	NU_OPS					datetime,							/* 	予定仕分け個数				*/
 	NU_RPS					datetime,							/*  済みアイテム数				*/
 
-	FG_DSTATUS				smallint				not null,	/*	作業状態
+	FG_DSTATUS				smallint				not null,	/*	仕分作業状態
 																	0:未処理
 																	1:欠品
 																	2:完了						*/

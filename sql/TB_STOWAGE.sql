@@ -24,6 +24,11 @@ create table TB_STOWAGE (
 
 	tdunitaddrcode		nvarchar(10)			not null,	/* アドレスCD(論理アドレス)		*/
 
+	FG_SSTATUS			smallint				not null,	/*	積み付け作業状態
+																	0:未処理
+																	2:完了					*/
+
+
 	createdAt 			datetime 				not null,	/*	データ挿入日				*/
 	updatedAt 			datetime 				not null,	/*	データ更新日				*/
 
