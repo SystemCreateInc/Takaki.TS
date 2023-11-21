@@ -3874,10 +3874,10 @@ namespace DbLib.DbEntities
         public virtual string? CDHENKOSHA { get; set; }
 
         /// <summary>
-        /// Represents the column 'NM_SYAIN'.
+        /// Represents the column 'NM_SHAIN'.
         /// </summary>
-        [Column("NM_SYAIN")]
-        public virtual string? NMSYAIN { get; set; }
+        [Column("NM_SHAIN")]
+        public virtual string? NMSHAIN { get; set; }
 
         /// <summary>
         /// Represents the column 'createdAt'.
