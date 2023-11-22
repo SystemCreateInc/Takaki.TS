@@ -7,7 +7,7 @@
 	"syslog": {
 		"logExpDays": 60,
 		"distExpDays": 60,
-		"root": "..\\logs"
+		"root": "..\\..\\logs"
 	},
 	// バックエンド接続
 	"backend": {
@@ -15,6 +15,6 @@
 	},
 	// PC環境 pcid=0:サーバー 1～:仕分ブロックＰＣ
 	"pc": {
-		"pcid": "1",
+		"idpc": "1",
 	}
 }

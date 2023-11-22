@@ -138,16 +138,16 @@ namespace TdDpsLib.Models
                 .AddJsonFile("common.json", true, true)
                 .Build();
 
-            var pcid = int.Parse(config.GetSection("pc")?["pcid"] ?? "1");
+            var idpc = int.Parse(config.GetSection("pc")?["idpc"] ?? "1");
 
 
             using (var con = DbFactory.CreateConnection())
             {
                 string sql = @"select ST_TDUNIT_TYPE from TB_PC"
                             + " inner join TB_BLOCK on TB_PC.CD_BLOCK=TB_BLOCK.CD_BLOCK"
-                            + " where TB_PC.ID_PC = @pcid;";
+                            + " where TB_PC.ID_PC = @idpc;";
 
-                var r = con.Query(sql, new { @pcid = pcid })
+                var r = con.Query(sql, new { idpc = idpc })
                     .Select(q => new TBBLOCKEntity
                     {
                         STTDUNITTYPE = q.ST_TDUNIT_TYPE,

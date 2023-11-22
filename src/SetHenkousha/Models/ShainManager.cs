@@ -16,14 +16,14 @@ namespace SetHenkosha.Models
                 .AddJsonFile("common.json", true, true)
                 .Build();
 
-            var pcid = int.Parse(config.GetSection("pc")?["pcid"] ?? "1");
+            var idpc = int.Parse(config.GetSection("pc")?["idpc"] ?? "1");
 
             using (var con = DbFactory.CreateConnection())
             using (var tr = con.BeginTransaction())
             {
                 try
                 {
-                    var pc = GetPcEntity(tr, pcid) ??
+                    var pc = GetPcEntity(tr, idpc) ??
                         throw new Exception("対象のPCデータがありません");
 
                     pc.CDHENKOSHA = shain?.CD_SHAIN;
@@ -43,9 +43,9 @@ namespace SetHenkosha.Models
             }
         }
 
-        public static TBPCEntity? GetPcEntity(System.Data.IDbTransaction tr, int pcid)
+        public static TBPCEntity? GetPcEntity(System.Data.IDbTransaction tr, int idpc)
         {
-            return tr.Connection!.Get(new TBPCEntity { IDPC = pcid }, x => x.AttachToTransaction(tr));
+            return tr.Connection!.Get(new TBPCEntity { IDPC = idpc }, x => x.AttachToTransaction(tr));
         }
     }
 }
