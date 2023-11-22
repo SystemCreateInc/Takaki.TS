@@ -15,7 +15,7 @@ namespace DbLib.Defs
             Kyoten,
 
             [Description("社員マスタ")]
-            Syain,
+            Shain,
 
             [Description("得意先マスタ")]
             Tokuisaki,
