@@ -93,3 +93,9 @@ function g_onkeydown()
 	}
 }
 
+function run_syain()
+{
+	location="exec://SetHenkosha.exe?wait=1&child=0";
+	
+	location.href = "menu_mnt.html";
+}
