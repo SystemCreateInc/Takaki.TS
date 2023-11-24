@@ -13,7 +13,8 @@ create table TB_DIST_BLOCK (
 	DT_TEKIYOKAISHI			char(8)					not null,	/* 適用開始日					*/
 	DT_TEKIYOMUKO			char(8)					not null,	/* 適用無効日					*/
 
-	CD_HENKOSHA				char(7)					not null,	/* 	変更者コード				*/
+	CD_HENKOSHA				char(7)					not null,	/* 変更者コード					*/
+	NM_HENKOSHA				nvarchar(40)			not null,	/* 変更者名称					*/
 
 	createdAt 				datetime 				not null,	/*	データ挿入日				*/
 	updatedAt 				datetime 				not null,	/*	データ更新日				*/

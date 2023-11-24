@@ -183,14 +183,14 @@ insert into tdunitaddr values('S010','RS0010',0,2,2,8,getdate(), getdate());
 
 
 -- ƒuƒƒbƒN
-insert into TB_BLOCK values('4201','01',5,128,13,'20230101','29991231','',getdate(),getdate());
-insert into TB_BLOCK values('4201','02',5,128,13,'20230101','29991231','',getdate(),getdate());
-insert into TB_BLOCK values('4201','03',5,128,13,'20230101','29991231','',getdate(),getdate());
-insert into TB_BLOCK values('4201','04',5,128,13,'20230101','29991231','',getdate(),getdate());
-insert into TB_BLOCK values('4201','05',6,256, 4,'20230101','29991231','',getdate(),getdate());
-insert into TB_BLOCK values('4201','06',6,256, 4,'20230101','29991231','',getdate(),getdate());
-insert into TB_BLOCK values('4201','11',5,128,13,'20230101','29991231','',getdate(),getdate());
-insert into TB_BLOCK values('4201','15',6,256, 4,'20230101','29991231','',getdate(),getdate());
+insert into TB_BLOCK values('4201','01',5,128,13,'20230101','29991231','','',getdate(),getdate());
+insert into TB_BLOCK values('4201','02',5,128,13,'20230101','29991231','','',getdate(),getdate());
+insert into TB_BLOCK values('4201','03',5,128,13,'20230101','29991231','','',getdate(),getdate());
+insert into TB_BLOCK values('4201','04',5,128,13,'20230101','29991231','','',getdate(),getdate());
+insert into TB_BLOCK values('4201','05',6,256, 4,'20230101','29991231','','',getdate(),getdate());
+insert into TB_BLOCK values('4201','06',6,256, 4,'20230101','29991231','','',getdate(),getdate());
+insert into TB_BLOCK values('4201','11',5,128,13,'20230101','29991231','','',getdate(),getdate());
+insert into TB_BLOCK values('4201','15',6,256, 4,'20230101','29991231','','',getdate(),getdate());
 
 -- PCî•ñ
 insert into TB_PC values(0,'00',NULL,NULL,getdate(),getdate());

@@ -9,6 +9,7 @@ create table TB_DIST_GROUP_PROGRESS (
 	ID_DIST_GROUP_PROGRESS	bigint identity(1,1) 	not null,	/* id 拠点、仕分けグループ、適用開始日でユニーク	*/
 	DT_DELIVERY				char(8)					not null,	/* 納品日						*/
 	CD_KYOTEN				char(4)					not null,	/* 拠点コード					*/
+	NM_KYOTEN				nvarchar(40)			not null,	/* 拠点名称						*/
 	CD_DIST_GROUP			char(5)					not null,	/* 仕分グループ					*/
 	NM_DIST_GROUP			nvarchar(40)			not null,	/* 仕分グループ名称				*/
 

@@ -2,7 +2,7 @@
  *
  *	出荷データ
  *
- *	$Id: dist.sql,v 1.1.1.1 2005/07/25 02:23:05 ohki Exp $
+ *	$Id: TB_DIST.sql,v 1.1.1.1 2005/07/25 02:23:05 ohki Exp $
  */
 
 create table TB_DIST (
@@ -21,8 +21,6 @@ create table TB_DIST (
 	ST_BOXTYPE			smallint				not null,	/* 運搬容器種別
 															0:その他 1:薄箱 2:圧箱 3:青箱	*/
 	NU_BOXUNIT			integer					not null,	/* 運搬容器入り数				*/
-
-	CD_SUM_TOKUISAKI	char(6)					not null,	/* 集約得意先コード				*/
 
 	NU_OPS				integer					not null,	/* 出荷予定数					*/
 	NU_LOPS				integer					not null,	/* 大仕分け予定数				*/
@@ -45,15 +43,11 @@ create table TB_DIST (
 																1:欠品
 																2:完了						*/
 
-	CD_BLOCK			char(2),							/* ブロックコード				*/
-	CD_DIST_GROUP		char(5),							/* 仕分グループ					*/
-	CD_LARGE_GROUP		char(3),							/* 大仕分グループ				*/
-
-	tdunitaddrcode		nvarchar(10),						/* アドレスCD(論理アドレス)		*/
-
 	CD_SHAIN_LARGE		char(7),							/* 大仕分け作業者				*/
+	NM_SHAIN_LARGE		nvarchar(40),						/* 大仕分け作業者名称			*/
 	DT_WORKDT_LARGE		datetime,							/* 大仕分け作業日				*/
 	CD_SHAIN_DIST		char(7),							/* 配分作業者					*/
+	NM_SHAIN_DIST		nvarchar(40),						/* 配分作業者名称				*/
 	DT_WORKDT_DIST		datetime,							/* 配分作業日					*/
 
 	DT_SENDDT_DIST		datetime,							/* 実績送信日時					*/

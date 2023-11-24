@@ -279,6 +279,12 @@ namespace DbLib.DbEntities
         public virtual string CDHENKOSHA { get; set; }
 
         /// <summary>
+        /// Represents the column 'NM_HENKOSHA'.
+        /// </summary>
+        [Column("NM_HENKOSHA")]
+        public virtual string NMHENKOSHA { get; set; }
+
+        /// <summary>
         /// Represents the column 'createdAt'.
         /// </summary>
         [Column("createdAt")]
@@ -378,12 +384,6 @@ namespace DbLib.DbEntities
         public virtual int NUBOXUNIT { get; set; }
 
         /// <summary>
-        /// Represents the column 'CD_SUM_TOKUISAKI'.
-        /// </summary>
-        [Column("CD_SUM_TOKUISAKI")]
-        public virtual string CDSUMTOKUISAKI { get; set; }
-
-        /// <summary>
         /// Represents the column 'NU_OPS'.
         /// </summary>
         [Column("NU_OPS")]
@@ -432,34 +432,16 @@ namespace DbLib.DbEntities
         public virtual short FGDSTATUS { get; set; }
 
         /// <summary>
-        /// Represents the column 'CD_BLOCK'.
-        /// </summary>
-        [Column("CD_BLOCK")]
-        public virtual string? CDBLOCK { get; set; }
-
-        /// <summary>
-        /// Represents the column 'CD_DIST_GROUP'.
-        /// </summary>
-        [Column("CD_DIST_GROUP")]
-        public virtual string? CDDISTGROUP { get; set; }
-
-        /// <summary>
-        /// Represents the column 'CD_LARGE_GROUP'.
-        /// </summary>
-        [Column("CD_LARGE_GROUP")]
-        public virtual string? CDLARGEGROUP { get; set; }
-
-        /// <summary>
-        /// Represents the column 'tdunitaddrcode'.
-        /// </summary>
-        [Column("tdunitaddrcode")]
-        public virtual string? Tdunitaddrcode { get; set; }
-
-        /// <summary>
         /// Represents the column 'CD_SHAIN_LARGE'.
         /// </summary>
         [Column("CD_SHAIN_LARGE")]
         public virtual string? CDSHAINLARGE { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_SHAIN_LARGE'.
+        /// </summary>
+        [Column("NM_SHAIN_LARGE")]
+        public virtual string? NMSHAINLARGE { get; set; }
 
         /// <summary>
         /// Represents the column 'DT_WORKDT_LARGE'.
@@ -472,6 +454,12 @@ namespace DbLib.DbEntities
         /// </summary>
         [Column("CD_SHAIN_DIST")]
         public virtual string? CDSHAINDIST { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_SHAIN_DIST'.
+        /// </summary>
+        [Column("NM_SHAIN_DIST")]
+        public virtual string? NMSHAINDIST { get; set; }
 
         /// <summary>
         /// Represents the column 'DT_WORKDT_DIST'.
@@ -496,6 +484,12 @@ namespace DbLib.DbEntities
         /// </summary>
         [Column("updatedAt")]
         public virtual DateTime UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Represents the navigation property for the parent-children relationship involving <seealso cref="TBDISTMAPPINGEntity"/>
+        /// </summary>
+        [InverseProperty(nameof(TBDISTMAPPINGEntity.TBDIST))]
+        public virtual IEnumerable<TBDISTMAPPINGEntity>? TBDISTMAPPING { get; set; }
     }
 
     /// <summary>
@@ -541,6 +535,12 @@ namespace DbLib.DbEntities
         /// </summary>
         [Column("CD_HENKOSHA")]
         public virtual string CDHENKOSHA { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_HENKOSHA'.
+        /// </summary>
+        [Column("NM_HENKOSHA")]
+        public virtual string NMHENKOSHA { get; set; }
 
         /// <summary>
         /// Represents the column 'createdAt'.
@@ -673,6 +673,12 @@ namespace DbLib.DbEntities
         /// </summary>
         [Column("CD_HENKOSHA")]
         public virtual string CDHENKOSHA { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_HENKOSHA'.
+        /// </summary>
+        [Column("NM_HENKOSHA")]
+        public virtual string NMHENKOSHA { get; set; }
 
         /// <summary>
         /// Represents the column 'createdAt'.
@@ -964,6 +970,110 @@ namespace DbLib.DbEntities
     }
 
     /// <summary>
+    /// Represents the 'TB_DIST_MAPPING' table.
+    /// </summary>
+    [Table("TB_DIST_MAPPING")]
+    public partial class TBDISTMAPPINGEntity
+    {
+        /// <summary>
+        /// Represents the column 'ID_DIST'.
+        /// </summary>
+        [Key]
+        [Column("ID_DIST")]
+        [ForeignKey(nameof(TBDIST))]
+        public virtual long IDDIST { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_SHUKKA_BATCH'.
+        /// </summary>
+        [Column("NM_SHUKKA_BATCH")]
+        public virtual string? NMSHUKKABATCH { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_KYOTEN'.
+        /// </summary>
+        [Column("NM_KYOTEN")]
+        public virtual string? NMKYOTEN { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_TOKUISAKI'.
+        /// </summary>
+        [Column("NM_TOKUISAKI")]
+        public virtual string? NMTOKUISAKI { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_HIN_SEISHIKIMEI'.
+        /// </summary>
+        [Column("NM_HIN_SEISHIKIMEI")]
+        public virtual string? NMHINSEISHIKIMEI { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_SUM_TOKUISAKI'.
+        /// </summary>
+        [Column("CD_SUM_TOKUISAKI")]
+        public virtual string? CDSUMTOKUISAKI { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_SUM_TOKUISAKI'.
+        /// </summary>
+        [Column("NM_SUM_TOKUISAKI")]
+        public virtual string? NMSUMTOKUISAKI { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_BLOCK'.
+        /// </summary>
+        [Column("CD_BLOCK")]
+        public virtual string? CDBLOCK { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_DIST_GROUP'.
+        /// </summary>
+        [Column("CD_DIST_GROUP")]
+        public virtual string? CDDISTGROUP { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_DIST_GROUP'.
+        /// </summary>
+        [Column("NM_DIST_GROUP")]
+        public virtual string? NMDISTGROUP { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_LARGE_GROUP'.
+        /// </summary>
+        [Column("CD_LARGE_GROUP")]
+        public virtual string? CDLARGEGROUP { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_LARGE_GROUP'.
+        /// </summary>
+        [Column("NM_LARGE_GROUP")]
+        public virtual string? NMLARGEGROUP { get; set; }
+
+        /// <summary>
+        /// Represents the column 'tdunitaddrcode'.
+        /// </summary>
+        [Column("tdunitaddrcode")]
+        public virtual string? Tdunitaddrcode { get; set; }
+
+        /// <summary>
+        /// Represents the column 'createdAt'.
+        /// </summary>
+        [Column("createdAt")]
+        public virtual DateTime CreatedAt { get; set; }
+
+        /// <summary>
+        /// Represents the column 'updatedAt'.
+        /// </summary>
+        [Column("updatedAt")]
+        public virtual DateTime UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Represents the navigation property for the child-parent relationship involving <seealso cref="TBDISTEntity"/>
+        /// </summary>
+        public virtual TBDISTEntity TBDIST { get; set; }
+    }
+
+    /// <summary>
     /// Represents the 'TB_LARGE_GROUP' table.
     /// </summary>
     [Table("TB_LARGE_GROUP")]
@@ -1012,6 +1122,12 @@ namespace DbLib.DbEntities
         /// </summary>
         [Column("CD_HENKOSHA")]
         public virtual string CDHENKOSHA { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_HENKOSHA'.
+        /// </summary>
+        [Column("NM_HENKOSHA")]
+        public virtual string NMHENKOSHA { get; set; }
 
         /// <summary>
         /// Represents the column 'createdAt'.
@@ -3874,10 +3990,10 @@ namespace DbLib.DbEntities
         public virtual string? CDHENKOSHA { get; set; }
 
         /// <summary>
-        /// Represents the column 'NM_SHAIN'.
+        /// Represents the column 'NM_HENKOSHA'.
         /// </summary>
-        [Column("NM_SHAIN")]
-        public virtual string? NMSHAIN { get; set; }
+        [Column("NM_HENKOSHA")]
+        public virtual string? NMHENKOSHA { get; set; }
 
         /// <summary>
         /// Represents the column 'createdAt'.
@@ -3913,6 +4029,12 @@ namespace DbLib.DbEntities
         public virtual string CDDISTGROUP { get; set; }
 
         /// <summary>
+        /// Represents the column 'NM_DIST_GROUP'.
+        /// </summary>
+        [Column("NM_DIST_GROUP")]
+        public virtual string NMDISTGROUP { get; set; }
+
+        /// <summary>
         /// Represents the column 'CD_BLOCK'.
         /// </summary>
         [Column("CD_BLOCK")]
@@ -3937,10 +4059,16 @@ namespace DbLib.DbEntities
         public virtual int NMIDLE { get; set; }
 
         /// <summary>
-        /// Represents the column 'CD_SHAIN'.
+        /// Represents the column 'CD_SYAIN'.
         /// </summary>
-        [Column("CD_SHAIN")]
-        public virtual string CDSHAIN { get; set; }
+        [Column("CD_SYAIN")]
+        public virtual string CDSYAIN { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_SYAIN'.
+        /// </summary>
+        [Column("NM_SYAIN")]
+        public virtual string NMSYAIN { get; set; }
 
         /// <summary>
         /// Represents the column 'DT_WORKSTART'.
@@ -4024,10 +4152,22 @@ namespace DbLib.DbEntities
         public virtual string CDSHUKKABATCH { get; set; }
 
         /// <summary>
+        /// Represents the column 'NM_SHUKKA_BATCH'.
+        /// </summary>
+        [Column("NM_SHUKKA_BATCH")]
+        public virtual string? NMSHUKKABATCH { get; set; }
+
+        /// <summary>
         /// Represents the column 'CD_KYOTEN'.
         /// </summary>
         [Column("CD_KYOTEN")]
         public virtual string CDKYOTEN { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_KYOTEN'.
+        /// </summary>
+        [Column("NM_KYOTEN")]
+        public virtual string? NMKYOTEN { get; set; }
 
         /// <summary>
         /// Represents the column 'CD_BIN'.
@@ -4054,28 +4194,46 @@ namespace DbLib.DbEntities
         public virtual string CDTOKUISAKI { get; set; }
 
         /// <summary>
+        /// Represents the column 'NM_TOKUISAKI'.
+        /// </summary>
+        [Column("NM_TOKUISAKI")]
+        public virtual string? NMTOKUISAKI { get; set; }
+
+        /// <summary>
         /// Represents the column 'CD_BLOCK'.
         /// </summary>
         [Column("CD_BLOCK")]
-        public virtual string CDBLOCK { get; set; }
+        public virtual string? CDBLOCK { get; set; }
 
         /// <summary>
         /// Represents the column 'CD_DIST_GROUP'.
         /// </summary>
         [Column("CD_DIST_GROUP")]
-        public virtual string CDDISTGROUP { get; set; }
+        public virtual string? CDDISTGROUP { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_DIST_GROUP'.
+        /// </summary>
+        [Column("NM_DIST_GROUP")]
+        public virtual string? NMDISTGROUP { get; set; }
 
         /// <summary>
         /// Represents the column 'CD_SUM_TOKUISAKI'.
         /// </summary>
         [Column("CD_SUM_TOKUISAKI")]
-        public virtual string CDSUMTOKUISAKI { get; set; }
+        public virtual string? CDSUMTOKUISAKI { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_SUM_TOKUISAKI'.
+        /// </summary>
+        [Column("NM_SUM_TOKUISAKI")]
+        public virtual string? NMSUMTOKUISAKI { get; set; }
 
         /// <summary>
         /// Represents the column 'tdunitaddrcode'.
         /// </summary>
         [Column("tdunitaddrcode")]
-        public virtual string Tdunitaddrcode { get; set; }
+        public virtual string? Tdunitaddrcode { get; set; }
 
         /// <summary>
         /// Represents the column 'FG_SSTATUS'.
@@ -4100,6 +4258,12 @@ namespace DbLib.DbEntities
         /// </summary>
         [InverseProperty(nameof(TBSTOWAGEBOXEntity.TBSTOWAGE))]
         public virtual IEnumerable<TBSTOWAGEBOXEntity>? TBSTOWAGEBOX { get; set; }
+
+        /// <summary>
+        /// Represents the navigation property for the parent-children relationship involving <seealso cref="TBSTOWAGEMAPPINGEntity"/>
+        /// </summary>
+        [InverseProperty(nameof(TBSTOWAGEMAPPINGEntity.TBSTOWAGE))]
+        public virtual IEnumerable<TBSTOWAGEMAPPINGEntity>? TBSTOWAGEMAPPING { get; set; }
     }
 
     /// <summary>
@@ -4136,10 +4300,102 @@ namespace DbLib.DbEntities
         public virtual int NURBOXCNT { get; set; }
 
         /// <summary>
-        /// Represents the column 'CD_SHAIN'.
+        /// Represents the column 'CD_HENKOSHA'.
         /// </summary>
-        [Column("CD_SHAIN")]
-        public virtual string CDSHAIN { get; set; }
+        [Column("CD_HENKOSHA")]
+        public virtual string CDHENKOSHA { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_HENKOSHA'.
+        /// </summary>
+        [Column("NM_HENKOSHA")]
+        public virtual string NMHENKOSHA { get; set; }
+
+        /// <summary>
+        /// Represents the column 'createdAt'.
+        /// </summary>
+        [Column("createdAt")]
+        public virtual DateTime CreatedAt { get; set; }
+
+        /// <summary>
+        /// Represents the column 'updatedAt'.
+        /// </summary>
+        [Column("updatedAt")]
+        public virtual DateTime UpdatedAt { get; set; }
+
+        /// <summary>
+        /// Represents the navigation property for the child-parent relationship involving <seealso cref="TBSTOWAGEEntity"/>
+        /// </summary>
+        public virtual TBSTOWAGEEntity TBSTOWAGE { get; set; }
+    }
+
+    /// <summary>
+    /// Represents the 'TB_STOWAGE_MAPPING' table.
+    /// </summary>
+    [Table("TB_STOWAGE_MAPPING")]
+    public partial class TBSTOWAGEMAPPINGEntity
+    {
+        /// <summary>
+        /// Represents the column 'ID_STOWAGE'.
+        /// </summary>
+        [Key]
+        [Column("ID_STOWAGE")]
+        [ForeignKey(nameof(TBSTOWAGE))]
+        public virtual long IDSTOWAGE { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_SHUKKA_BATCH'.
+        /// </summary>
+        [Column("NM_SHUKKA_BATCH")]
+        public virtual string? NMSHUKKABATCH { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_KYOTEN'.
+        /// </summary>
+        [Column("NM_KYOTEN")]
+        public virtual string? NMKYOTEN { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_TOKUISAKI'.
+        /// </summary>
+        [Column("NM_TOKUISAKI")]
+        public virtual string? NMTOKUISAKI { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_BLOCK'.
+        /// </summary>
+        [Column("CD_BLOCK")]
+        public virtual string? CDBLOCK { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_DIST_GROUP'.
+        /// </summary>
+        [Column("CD_DIST_GROUP")]
+        public virtual string? CDDISTGROUP { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_DIST_GROUP'.
+        /// </summary>
+        [Column("NM_DIST_GROUP")]
+        public virtual string? NMDISTGROUP { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_SUM_TOKUISAKI'.
+        /// </summary>
+        [Column("CD_SUM_TOKUISAKI")]
+        public virtual string? CDSUMTOKUISAKI { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_SUM_TOKUISAKI'.
+        /// </summary>
+        [Column("NM_SUM_TOKUISAKI")]
+        public virtual string? NMSUMTOKUISAKI { get; set; }
+
+        /// <summary>
+        /// Represents the column 'tdunitaddrcode'.
+        /// </summary>
+        [Column("tdunitaddrcode")]
+        public virtual string? Tdunitaddrcode { get; set; }
 
         /// <summary>
         /// Represents the column 'createdAt'.
@@ -4202,6 +4458,12 @@ namespace DbLib.DbEntities
         /// </summary>
         [Column("CD_HENKOSHA")]
         public virtual string CDHENKOSHA { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NM_HENKOSHA'.
+        /// </summary>
+        [Column("NM_HENKOSHA")]
+        public virtual string NMHENKOSHA { get; set; }
 
         /// <summary>
         /// Represents the column 'createdAt'.

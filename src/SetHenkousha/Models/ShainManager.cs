@@ -27,7 +27,7 @@ namespace SetHenkosha.Models
                         throw new Exception("対象のPCデータがありません");
 
                     pc.CDHENKOSHA = shain?.CD_SHAIN;
-                    pc.NMSHAIN = shain?.NM_SHAIN;
+                    pc.NMHENKOSHA = shain?.NM_SHAIN;
                     pc.UpdatedAt = DateTime.Now;
 
                     con.Update(pc, s => s.AttachToTransaction(tr));
