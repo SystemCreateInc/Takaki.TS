@@ -13,8 +13,10 @@
 	"backend": {
 		"address": "localhost"
 	},
-	// PC環境 pcid=0:サーバー 1～:仕分ブロックＰＣ
+	// PC環境 	idpc=0:サーバー 1～:仕分ブロックＰＣ
+	//			iplabel ラベルプリンタＩＰアドレス
 	"pc": {
 		"idpc": "1",
+		"iplabel": "192.168.10.177",
 	}
 }
