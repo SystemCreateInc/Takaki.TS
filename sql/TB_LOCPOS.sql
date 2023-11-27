@@ -6,7 +6,7 @@
  */
 
 create table TB_LOCPOS (
-	CD_BLOCK			char(2)					not null,	/* ブロックコード				*/
+	CD_BLOCK			nchar(2)				not null,	/* ブロックコード				*/
 	
 	tdunitaddrcode		nvarchar(10)			not null,	/* アドレスCD(論理アドレス)		*/
 	

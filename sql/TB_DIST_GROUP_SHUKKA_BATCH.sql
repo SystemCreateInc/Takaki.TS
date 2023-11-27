@@ -9,7 +9,7 @@ create table TB_DIST_GROUP_SHUKKA_BATCH (
 	ID_DIST_GROUP			bigint 			 		not null,	/* id							*/
 	
 	NU_SHUKKA_BATCH_SEQ		integer					not null,	/* 出荷バッチ表示順				*/
-	CD_SHUKKA_BATCH			char(5)					not null,	/* 出荷バッチ					*/
+	CD_SHUKKA_BATCH			nchar(5)				not null,	/* 出荷バッチ					*/
 
 	createdAt 				datetime 				not null,	/*	データ挿入日				*/
 	updatedAt 				datetime 				not null,	/*	データ更新日				*/

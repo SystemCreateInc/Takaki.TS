@@ -9,7 +9,7 @@ create table TB_DIST_GROUP_COURSE (
 	ID_DIST_GROUP			bigint 			 		not null,	/* id							*/
 	
 	NU_COURSE_SEQ			integer					not null,	/* コース表示順					*/
-	CD_COURSE				char(3)					not null,	/* コース						*/
+	CD_COURSE				nchar(3)				not null,	/* コース						*/
 
 	createdAt 				datetime 				not null,	/*	データ挿入日				*/
 	updatedAt 				datetime 				not null,	/*	データ更新日				*/

@@ -4,7 +4,7 @@ namespace SetHenkosha.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        private string _title = "社員選択";
+        private string _title = "変更社員選択";
         public string Title
         {
             get { return _title; }
@@ -17,3 +17,4 @@ namespace SetHenkosha.ViewModels
         }
     }
 }
+

@@ -7,13 +7,13 @@
 
 create table TB_SUM_TOKUISAKI (
 	ID_SUM_TOKUISAKI		bigint identity(1,1) 	not null,	/* id 拠点、集約得意先コード、適用開始日でユニーク	*/
-	CD_KYOTEN				char(4)					not null,	/* 拠点コード					*/
-	CD_SUM_TOKUISAKI		char(6)					not null,	/* 集約得意先コード(親)			*/
+	CD_KYOTEN				nchar(4)				not null,	/* 拠点コード					*/
+	CD_SUM_TOKUISAKI		nchar(6)				not null,	/* 集約得意先コード(親)			*/
 
-	DT_TEKIYOKAISHI			char(8)					not null,	/* 適用開始日					*/
-	DT_TEKIYOMUKO			char(8)					not null,	/* 適用無効日					*/
+	DT_TEKIYOKAISHI			nchar(8)				not null,	/* 適用開始日					*/
+	DT_TEKIYOMUKO			nchar(8)				not null,	/* 適用無効日					*/
 
-	CD_HENKOSHA				char(7)					not null,	/* 変更者コード					*/
+	CD_HENKOSHA				nchar(7)				not null,	/* 変更者コード					*/
 	NM_HENKOSHA				nvarchar(40)			not null,	/* 変更者名称					*/
 
 	createdAt 				datetime 				not null,	/*	データ挿入日				*/

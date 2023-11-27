@@ -7,16 +7,16 @@
 
 create table TB_DIST_GROUP_PROGRESS (
 	ID_DIST_GROUP_PROGRESS	bigint identity(1,1) 	not null,	/* id 拠点、仕分けグループ、適用開始日でユニーク	*/
-	DT_DELIVERY				char(8)					not null,	/* 納品日						*/
-	CD_KYOTEN				char(4)					not null,	/* 拠点コード					*/
+	DT_DELIVERY				nchar(8)				not null,	/* 納品日						*/
+	CD_KYOTEN				nchar(4)				not null,	/* 拠点コード					*/
 	NM_KYOTEN				nvarchar(40)			not null,	/* 拠点名称						*/
-	CD_DIST_GROUP			char(5)					not null,	/* 仕分グループ					*/
+	CD_DIST_GROUP			nchar(5)				not null,	/* 仕分グループ					*/
 	NM_DIST_GROUP			nvarchar(40)			not null,	/* 仕分グループ名称				*/
 
 	ID_PC					integer,							/* PCID							*/
-	CD_BLOCK				char(2),							/* ブロックコード				*/
+	CD_BLOCK				nchar(2),							/* ブロックコード				*/
 
-	CD_SHAIN				char(7),							/* 	社員コード					*/
+	CD_SHAIN				nchar(7),							/* 	社員コード					*/
 	NM_SHAIN				nvarchar(40),						/* 	社員名称					*/
 
 	DT_START				datetime,							/* 	開始日時					*/

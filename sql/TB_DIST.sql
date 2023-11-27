@@ -7,15 +7,15 @@
 
 create table TB_DIST (
 	ID_DIST				bigint identity(1,1) 	not null,	/* id							*/
-	DT_DELIVERY			char(8)					not null,	/* 納品日						*/
+	DT_DELIVERY			nchar(8)					not null,	/* 納品日						*/
 	
-	CD_SHUKKA_BATCH		char(5)					not null,	/* 出荷バッチ					*/
-	CD_KYOTEN			char(4)					not null,	/* 仕分け拠点					*/
-	CD_BIN				char(3)					not null,	/* 配送便						*/
-	CD_COURSE			char(3)					not null,	/* コース						*/
+	CD_SHUKKA_BATCH		nchar(5)				not null,	/* 出荷バッチ					*/
+	CD_KYOTEN			nchar(4)				not null,	/* 仕分け拠点					*/
+	CD_BIN				nchar(3)				not null,	/* 配送便						*/
+	CD_COURSE			nchar(3)				not null,	/* コース						*/
 	CD_ROUTE			integer					not null,	/* 配送順						*/
-	CD_TOKUISAKI		char(6)					not null,	/* 得意先コード					*/
-	CD_HIMBAN			char(9)					not null,	/* 	品番						*/
+	CD_TOKUISAKI		nchar(6)				not null,	/* 得意先コード					*/
+	CD_HIMBAN			nchar(9)				not null,	/* 	品番						*/
 	CD_GTIN13			nvarchar(13)			not null,	/* 	JANｺｰﾄﾞ(GTIN-13)			*/
 	CD_GTIN14			nvarchar(14)			not null,	/* 	GTIN-14						*/
 	ST_BOXTYPE			smallint				not null,	/* 運搬容器種別
@@ -43,10 +43,10 @@ create table TB_DIST (
 																1:欠品
 																2:完了						*/
 
-	CD_SHAIN_LARGE		char(7),							/* 大仕分け作業者				*/
+	CD_SHAIN_LARGE		nchar(7),							/* 大仕分け作業者				*/
 	NM_SHAIN_LARGE		nvarchar(40),						/* 大仕分け作業者名称			*/
 	DT_WORKDT_LARGE		datetime,							/* 大仕分け作業日				*/
-	CD_SHAIN_DIST		char(7),							/* 配分作業者					*/
+	CD_SHAIN_DIST		nchar(7),							/* 配分作業者					*/
 	NM_SHAIN_DIST		nvarchar(40),						/* 配分作業者名称				*/
 	DT_WORKDT_DIST		datetime,							/* 配分作業日					*/
 

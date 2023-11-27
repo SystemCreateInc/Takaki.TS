@@ -9,9 +9,9 @@ create table TB_DIST_BLOCK_COURSE_SEQ (
 	ID_DIST_BLOCK			bigint 			 		not null,	/* id							*/
 	
 	NU_COURSE_SEQ			integer					not null,	/* コース順						*/
-	CD_COURSE				char(3),							/* コース						*/
-	CD_ADDR_FROM			char(4),							/* 開始アドレス					*/
-	CD_ADDR_TO				char(3),							/* 終了アドレス					*/
+	CD_COURSE				nchar(3),							/* コース						*/
+	CD_ADDR_FROM			nchar(4),							/* 開始アドレス					*/
+	CD_ADDR_TO				nchar(3),							/* 終了アドレス					*/
 
 	createdAt 				datetime 				not null,	/*	データ挿入日				*/
 	updatedAt 				datetime 				not null,	/*	データ更新日				*/

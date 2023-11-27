@@ -828,6 +828,12 @@ namespace DbLib.DbEntities
         public virtual string CDKYOTEN { get; set; }
 
         /// <summary>
+        /// Represents the column 'NM_KYOTEN'.
+        /// </summary>
+        [Column("NM_KYOTEN")]
+        public virtual string NMKYOTEN { get; set; }
+
+        /// <summary>
         /// Represents the column 'CD_DIST_GROUP'.
         /// </summary>
         [Column("CD_DIST_GROUP")]

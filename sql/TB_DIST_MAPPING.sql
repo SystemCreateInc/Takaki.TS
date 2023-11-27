@@ -13,13 +13,13 @@ create table TB_DIST_MAPPING (
 	NM_TOKUISAKI		nvarchar(40),						/* 得意先名						*/
 	NM_HIN_SEISHIKIMEI	nvarchar(60),						/* 品名（正式名）				*/
 
-	CD_SUM_TOKUISAKI	char(6),							/* 集約得意先コード(親)			*/
+	CD_SUM_TOKUISAKI	nchar(6),							/* 集約得意先コード(親)			*/
 	NM_SUM_TOKUISAKI	nvarchar(40),						/* 集約得意先名					*/
 
-	CD_BLOCK			char(2),							/* ブロックコード				*/
-	CD_DIST_GROUP		char(5),							/* 仕分グループ					*/
+	CD_BLOCK			nchar(2),							/* ブロックコード				*/
+	CD_DIST_GROUP		nchar(5),							/* 仕分グループ					*/
 	NM_DIST_GROUP		nvarchar(40),						/* 仕分グループ名称				*/
-	CD_LARGE_GROUP		char(3),							/* 大仕分グループ				*/
+	CD_LARGE_GROUP		nchar(3),							/* 大仕分グループ				*/
 	NM_LARGE_GROUP		nvarchar(40),						/* 大仕分グループ名称			*/
 
 	tdunitaddrcode		nvarchar(10),						/* アドレスCD(論理アドレス)		*/

@@ -7,16 +7,16 @@
 
 create table TB_DIST_GROUP (
 	ID_DIST_GROUP			bigint identity(1,1) 	not null,	/* id 拠点、仕分けグループ、適用開始日でユニーク	*/
-	CD_KYOTEN				char(4)					not null,	/* 拠点コード					*/
-	CD_DIST_GROUP			char(5)					not null,	/* 仕分グループ					*/
+	CD_KYOTEN				nchar(4)				not null,	/* 拠点コード					*/
+	CD_DIST_GROUP			nchar(5)				not null,	/* 仕分グループ					*/
 	NM_DIST_GROUP			nvarchar(40)			not null,	/* 仕分グループ名称				*/
 	CD_BIN_SUM				smallint				not null,	/* 配送便集計
 																	1:便集計する 2:便集計しない	*/
 
-	DT_TEKIYOKAISHI			char(8)					not null,	/* 適用開始日					*/
-	DT_TEKIYOMUKO			char(8)					not null,	/* 適用無効日					*/
+	DT_TEKIYOKAISHI			nchar(8)				not null,	/* 適用開始日					*/
+	DT_TEKIYOMUKO			nchar(8)				not null,	/* 適用無効日					*/
 
-	CD_HENKOSHA				char(7)					not null,	/* 変更者コード					*/
+	CD_HENKOSHA				nchar(7)				not null,	/* 変更者コード					*/
 	NM_HENKOSHA				nvarchar(40)			not null,	/* 変更者名称					*/
 
 	createdAt 				datetime 				not null,	/*	データ挿入日				*/

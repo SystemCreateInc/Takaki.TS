@@ -12,7 +12,7 @@ create table TB_STOWAGE_BOX (
 	NU_OBOXCNT			integer					not null,	/* 予定箱数						*/
 	NU_RBOXCNT			integer					not null,	/* 実績箱数						*/
 
-	CD_HENKOSHA			char(7)					not null,	/* 変更者コード					*/
+	CD_HENKOSHA			nchar(7)					not null,	/* 変更者コード					*/
 	NM_HENKOSHA			nvarchar(40)			not null,	/* 変更者名称					*/
 
 	createdAt 			datetime 				not null,	/*	データ挿入日				*/

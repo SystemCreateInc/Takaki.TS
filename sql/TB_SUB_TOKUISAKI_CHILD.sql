@@ -7,7 +7,7 @@
 
 create table TB_SUM_TOKUISAKI_CHILD (
 	ID_SUM_TOKUISAKI		bigint 					not null,	/* id 拠点、集約得意先コード、適用開始日でユニーク	*/
-	CD_TOKUISAKI_CHILD		char(6)					not null,	/* 集約得意先コード（子）		*/
+	CD_TOKUISAKI_CHILD		nchar(6)				not null,	/* 集約得意先コード（子）		*/
 
 	createdAt 				datetime 				not null,	/*	データ挿入日				*/
 	updatedAt 				datetime 				not null,	/*	データ更新日				*/

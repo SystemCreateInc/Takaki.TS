@@ -7,9 +7,9 @@
 
 create table TB_PC (
 	ID_PC					integer					not null,	/* PCID							*/
-	CD_BLOCK				char(2)					not null,	/* ブロックコード				*/
+	CD_BLOCK				nchar(2)				not null,	/* ブロックコード				*/
 
-	CD_HENKOSHA				char(7),							/* 変更者コード					*/
+	CD_HENKOSHA				nchar(7),							/* 変更者コード					*/
 	NM_HENKOSHA				nvarchar(40),						/* 変更者名称					*/
 	
 	createdAt 				datetime 				not null,	/*	データ挿入日				*/

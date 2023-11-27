@@ -6,42 +6,42 @@
  */
 
 create table TB_MHIMMOKU (
-	CD_HIMBAN						char		    (9)			not null,	/* 	品番							*/
-	DT_TEKIYOKAISHI					char            (8)			not null,	/* 	適用開始日						*/
-	DT_TEKIYOMUKO					char            (8)			not null,	/* 	適用無効日						*/
-	DT_TOROKU_NICHIJI				char            (14)		not null,	/* 	登録日時						*/
-	DT_KOSHIN_NICHIJI				char            (14)		not null,	/* 	更新日時						*/
-	CD_HENKOSHA						char            (10)		not null,	/* 	変更者コード					*/
+	CD_HIMBAN						nchar		    (9)			not null,	/* 	品番							*/
+	DT_TEKIYOKAISHI					nchar           (8)			not null,	/* 	適用開始日						*/
+	DT_TEKIYOMUKO					nchar           (8)			not null,	/* 	適用無効日						*/
+	DT_TOROKU_NICHIJI				nchar           (14)		not null,	/* 	登録日時						*/
+	DT_KOSHIN_NICHIJI				nchar           (14)		not null,	/* 	更新日時						*/
+	CD_HENKOSHA						nchar           (10)		not null,	/* 	変更者コード					*/
 	NM_HIN_SEISHIKIMEI				nvarchar        (60)		not null,	/* 	品名（正式名）					*/
 	NM_HIN_HYOKIMEI					nvarchar        (60)		not null,	/* 	品名（表記名）					*/
 	NM_HIN_KANA						nvarchar        (80)		not null,	/* 	品名カナ						*/
 	NM_HIN_KANA_HANKAKU				nvarchar        (40)		not null,	/* 	品名カナ半角					*/
 	NM_HIN_RYAKUSHO					nvarchar        (16)		not null,	/* 	品名（略称）					*/
-	CD_KAIHATSU_HIMBAN				char            (9)			not null,	/* 	解発品番						*/
+	CD_KAIHATSU_HIMBAN				nchar           (9)			not null,	/* 	解発品番						*/
 	NM_POS_TOROKU_HIMMOKU			nvarchar        (24)		not null,	/* 	ＰＯＳ登録品名					*/
-	ST_HIMMOKU_TYPE					char            (2)			not null,	/* 	品目タイプ						*/
-	ST_BUNRUI_DAI					char            (2)			not null,	/* 	大分類							*/
-	ST_BUNRUI_CHU					char            (2)			not null,	/* 	中分類							*/
-	ST_BUNRUI_SHO					char            (2)			not null,	/* 	小分類							*/
-	ST_HINKAN_KANRI					char            (2)			not null,	/* 	品管管理区分					*/
-	ST_HIMMOKU_KANRI				char            (3)			not null,	/* 	品目管理区分					*/
-	CD_SHUYAKU_HIMBAN				char            (9)			not null,	/* 	集約品番						*/
+	ST_HIMMOKU_TYPE					nchar           (2)			not null,	/* 	品目タイプ						*/
+	ST_BUNRUI_DAI					nchar           (2)			not null,	/* 	大分類							*/
+	ST_BUNRUI_CHU					nchar           (2)			not null,	/* 	中分類							*/
+	ST_BUNRUI_SHO					nchar           (2)			not null,	/* 	小分類							*/
+	ST_HINKAN_KANRI					nchar           (2)			not null,	/* 	品管管理区分					*/
+	ST_HIMMOKU_KANRI				nchar           (3)			not null,	/* 	品目管理区分					*/
+	CD_SHUYAKU_HIMBAN				nchar           (9)			not null,	/* 	集約品番						*/
 	NM_SHUYAKU_HIN					nvarchar       	(60)		not null,	/* 	集約品名						*/
-	ST_NB_PB						char            (1)			not null,	/* 	ＮＢ／ＰＢ区分					*/
-	NM_PB_TOKUISAKI					char            (6)			not null,	/* 	PB得意先コード					*/
-	ST_REGI							char            (2)			not null,	/* 	レジ区分						*/
+	ST_NB_PB						nchar           (1)			not null,	/* 	ＮＢ／ＰＢ区分					*/
+	NM_PB_TOKUISAKI					nchar           (6)			not null,	/* 	PB得意先コード					*/
+	ST_REGI							nchar           (2)			not null,	/* 	レジ区分						*/
 	PR_HYOJUN_KOURI_HONTAI			numeric         (11,2)		not null,	/* 	標準小売価格（本体）			*/
 	PR_HYOJUN_KOURI_ZEIKOMI			numeric         (11,2)		not null,	/* 	標準小売価格（税込）			*/
-	DT_JUCHU_KAISHI					char            (8)			not null,	/* 	受注開始日						*/
-	DT_HAMBAI_KAISHI				char            (8)			not null,	/* 	販売開始日						*/
-	DT_HAMBAI_SHURYO				char            (8)			not null,	/* 	販売終了日						*/
-	DT_JUCHU_SHURYO					char            (8)			not null,	/* 	受注終了日						*/
-	DT_HEMPIN_SHURYO				char            (8)			not null,	/* 	返品終了日						*/
-	ST_HIMMOKU						char            (1)			not null,	/* 	品目ステータス					*/
-	ST_SENTAKU						char            (1)			not null,	/* 	選択区分						*/
-	ST_NISSU_JIKAN_SHOHI			char            (1)			not null,	/* 	日数時間区分（消費）			*/
-	ST_NISSU_JIKAN_SHIYOU			char            (1)			not null,	/* 	日数時間区分（使用）			*/
-	ST_NISSU_JIKAN_HANBAI			char            (1)			not null,	/* 	日数時間区分（販売）			*/
+	DT_JUCHU_KAISHI					nchar           (8)			not null,	/* 	受注開始日						*/
+	DT_HAMBAI_KAISHI				nchar           (8)			not null,	/* 	販売開始日						*/
+	DT_HAMBAI_SHURYO				nchar           (8)			not null,	/* 	販売終了日						*/
+	DT_JUCHU_SHURYO					nchar           (8)			not null,	/* 	受注終了日						*/
+	DT_HEMPIN_SHURYO				nchar           (8)			not null,	/* 	返品終了日						*/
+	ST_HIMMOKU						nchar           (1)			not null,	/* 	品目ステータス					*/
+	ST_SENTAKU						nchar           (1)			not null,	/* 	選択区分						*/
+	ST_NISSU_JIKAN_SHOHI			nchar           (1)			not null,	/* 	日数時間区分（消費）			*/
+	ST_NISSU_JIKAN_SHIYOU			nchar           (1)			not null,	/* 	日数時間区分（使用）			*/
+	ST_NISSU_JIKAN_HANBAI			nchar           (1)			not null,	/* 	日数時間区分（販売）			*/
 	DT_SHOMI_KIGEN_REITO			numeric         (4)			not null,	/* 	冷凍賞味期限					*/
 	DT_SHOHI_KIGEN_KAKI				numeric         (4)			not null,	/* 	賞味期限（夏季）				*/
 	DT_SHOHI_KIGEN_TOKI				numeric         (4)			not null,	/* 	賞味期限（冬季）				*/
@@ -49,21 +49,21 @@ create table TB_MHIMMOKU (
 	DT_SHIYO_KIGEN_TOKI				numeric         (4)			not null,	/* 	使用期限（冬季）				*/
 	DT_HAMBAI_KIGEN_KAKI			numeric         (4)			not null,	/* 	販売期限（夏季）				*/
 	DT_HAMBAI_KIGEN_TOKI			numeric         (4)			not null,	/* 	販売期限（冬季）				*/
-	DT_KAKI_KAISHI					char            (4)			not null,	/* 	夏季開始日						*/
-	DT_KAKI_SHURYO					char            (4)			not null,	/* 	夏季終了日						*/
-	DT_TOKI_KAISHI					char            (4)			not null,	/* 	冬季開始日						*/
-	DT_TOKI_SHURYO					char            (4)			not null,	/* 	冬季終了日						*/
+	DT_KAKI_KAISHI					nchar           (4)			not null,	/* 	夏季開始日						*/
+	DT_KAKI_SHURYO					nchar           (4)			not null,	/* 	夏季終了日						*/
+	DT_TOKI_KAISHI					nchar           (4)			not null,	/* 	冬季開始日						*/
+	DT_TOKI_SHURYO					nchar           (4)			not null,	/* 	冬季終了日						*/
 	DT_UKEIRE_NATSU_FROM			numeric         (4)			not null,	/* 	受入可能日（夏）FROM			*/
 	DT_UKEIRE_NATSU_TO				numeric         (4)			not null,	/* 	受入可能日（夏）TO				*/
 	DT_UKEIRE_FUYU_FROM				numeric         (4)			not null,	/* 	受入可能日（冬）FROM			*/
 	DT_UKEIRE_FUYU_TO				numeric         (4)			not null,	/* 	受入可能日（冬）TO				*/
-	ST_RYUTSU_ONDOTAI				char            (1)			not null,	/* 	流通温度帯						*/
-	ST_HAMBAI_ONDOTAI				char            (1)			not null,	/* 	販売温度帯						*/
+	ST_RYUTSU_ONDOTAI				nchar           (1)			not null,	/* 	流通温度帯						*/
+	ST_HAMBAI_ONDOTAI				nchar           (1)			not null,	/* 	販売温度帯						*/
 	IF_KAKAKU_HYOJI					nvarchar       	(10)		not null,	/* 	価格表示情報					*/
 	QT_SET							numeric         (9)			not null,	/* 	セット数（入数）				*/
 	CD_TORIATSUKAI_TANI				nvarchar       	(3)			not null,	/* 	取扱単位						*/
-	CD_HYOJUN_TANI					char            (3)			not null,	/* 	標準単位						*/
-	CD_SET_TANI						char            (3)			not null,	/* 	セット数（入数）単位			*/
+	CD_HYOJUN_TANI					nchar           (3)			not null,	/* 	標準単位						*/
+	CD_SET_TANI						nchar           (3)			not null,	/* 	セット数（入数）単位			*/
 	NU_HYOJUN_TORIATSUKAI_KEISU		numeric         (13,6)		not null,	/* 	標準取扱単位変換係数			*/
 	CD_KOURI_TANI					nvarchar       	(3)			not null,	/* 	小売単位						*/
 	NU_KOURI_HENKAN_KEISU			numeric         (6,1)		not null,	/* 	小売変換係数					*/
@@ -73,11 +73,11 @@ create table TB_MHIMMOKU (
 	NU_HATCHU_HENKAN_KEISU			numeric         (6,1)		not null,	/* 	発注変換係数					*/
 	NU_HYOJUN_HATCHU_KEISU			numeric         (13,6)		not null,	/* 	標準発注変換係数				*/
 	QT_HATCHU_IRISU					numeric         (9,2)		not null,	/* 	発注入数						*/
-	CD_HATCHU_IRISU_TANI			char            (3)			not null,	/* 	発注入数単位					*/
-	ST_FUTEIKAN						char            (1)			not null,	/* 	不定貫区分						*/
+	CD_HATCHU_IRISU_TANI			nchar           (3)			not null,	/* 	発注入数単位					*/
+	ST_FUTEIKAN						nchar           (1)			not null,	/* 	不定貫区分						*/
 	PR_OROSHI						numeric         (11,2)		not null,	/* 	卸価格							*/
-	CD_SEIZO_KAISHA					char            (6)			not null,	/* 	製造会社コード					*/
-	CD_SEIZO_KAISHA_2				char            (6)			not null,	/* 	製造会社コード２				*/
+	CD_SEIZO_KAISHA					nchar           (6)			not null,	/* 	製造会社コード					*/
+	CD_SEIZO_KAISHA_2				nchar           (6)			not null,	/* 	製造会社コード２				*/
 	NU_SEIZO_KAISU					numeric         (2)			not null,	/* 	製造回数						*/
 	PR_TEMPONAI_FURIKAE				numeric         (11,2)		not null,	/* 	店舗内振替単価					*/
 	PR_TEMPOKAN_FURIKAE				numeric         (11,2)		not null,	/* 	店舗間振替単価					*/
@@ -91,29 +91,29 @@ create table TB_MHIMMOKU (
 	PR_SURIFUTO_B					numeric         (11,2)		not null,	/* 	スリフトB価格					*/
 	PR_SEISAN_SHIIRE				numeric         (11,2)		not null,	/* 	生産単価・仕入価格				*/
 	PR_AQS_HYOJUN_TANKA				numeric         (11,2)		not null,	/* 	AQS標準単価						*/
-	ST_UMPAN_YOKI_SHUBETSU			char            (1)			not null,	/* 	運搬容器種別					*/
+	ST_UMPAN_YOKI_SHUBETSU			nchar           (1)			not null,	/* 	運搬容器種別					*/
 	QT_UMPAN_YOKI_HAKO_IRISU		numeric         (9)			not null,	/* 	運搬容器箱入数					*/
-	CD_JAN							char            (15)		not null,	/* 	JANコード						*/
-	CD_BUTSURYU_KANRI				char            (15)		not null,	/* 	物流管理コード					*/
+	CD_JAN							nchar           (15)		not null,	/* 	JANコード						*/
+	CD_BUTSURYU_KANRI				nchar           (15)		not null,	/* 	物流管理コード					*/
 	CD_KOSEIJO_SURYO_TANI			nvarchar        (8)			not null,	/* 	構成上数量単位					*/
 	CD_KOSEIJO_JURYO_TANI			nvarchar        (8)			not null,	/* 	構成上重量単位					*/
 	CD_KOSEIJO_YORYO_TANI			nvarchar        (8)			not null,	/* 	構成上容量単位					*/
-	CD_KOSEIJO_NAGASA_TANI			char            (8)			not null,	/* 	構成上長さ単位					*/
+	CD_KOSEIJO_NAGASA_TANI			nchar           (8)			not null,	/* 	構成上長さ単位					*/
 	NU_KOSEIJO_SURYO_HENKAN_KEISU	numeric         (13,6)		not null,	/* 	構成上数量重量変換係数			*/
 	NU_KOSEIJO_JURYO_HENKAN_KEISU	numeric         (13,6)		not null,	/* 	構成上重量容量変換係数			*/
 	NU_KOSEIJO_SURYO_NAGASA_KEISU	numeric         (13,6)		not null,	/* 	構成上数量長さ変換係数			*/
 	NU_KOSEIJO_JURYO_NAGASA_KEISU	numeric         (13,6)		not null,	/* 	構成上重量長さ変換係数			*/
-	CD_GENKA_KEISAN_TANI			char            (3)			not null,	/* 	原価計算単位					*/
+	CD_GENKA_KEISAN_TANI			nchar           (3)			not null,	/* 	原価計算単位					*/
 	NU_HYOJUN_GENKA_KEISU			numeric         (13,6)		not null,	/* 	標準原価変換係数				*/
 	NU_HYOJUN_KOSEIJO_SURYO_KEISU	numeric         (13,6)		not null,	/* 	標準構成上数量変換係数			*/
 	NU_HYOJUN_KOSEIJO_JURYO_KEISU	numeric         (13,6)		not null,	/* 	標準構成上重量変換係数			*/
 	NU_HYOJUN_KOSEIJO_YORYO_KEISU	numeric         (13,6)		not null,	/* 	標準構成上容量変換係数			*/
 	NU_HYOJUN_KOSEIJO_NAGASA_KEISU	numeric         (13,6)		not null,	/* 	標準構成上長さ変換係数			*/
-	ST_TOMEGATA						char            (1)			not null,	/* 	留形区分						*/
+	ST_TOMEGATA						nchar           (1)			not null,	/* 	留形区分						*/
 	IF_NISUGATA						nvarchar        (20)		not null,	/* 	荷姿（納品用）					*/
-	CD_GENSANKOKU					char            (3)			not null,	/* 	原産国コード					*/
-	ST_SOBAHIN						char            (1)			not null,	/* 	相場品区分						*/
-	ST_LOCALHIN						char            (1)			not null,	/* 	ローカル品区分					*/
+	CD_GENSANKOKU					nchar           (3)			not null,	/* 	原産国コード					*/
+	ST_SOBAHIN						nchar           (1)			not null,	/* 	相場品区分						*/
+	ST_LOCALHIN						nchar           (1)			not null,	/* 	ローカル品区分					*/
 	PR_KG							numeric         (11,2)		not null,	/* 	kg単価							*/
 	IF_ZAISHITSU					nvarchar        (10)		not null,	/* 	材質（包材）					*/
 	NU_NAGASA						numeric         (9,2)		not null,	/* 	長さ							*/
@@ -127,7 +127,7 @@ create table TB_MHIMMOKU (
 	NU_TAKASA						numeric         (9,2)		not null,	/* 	高さ							*/
 	NU_TAKASA_JOGEN					numeric         (9,2)		not null,	/* 	高さ（上限値）					*/
 	NU_TAKASA_KAGEN					numeric         (9,2)		not null,	/* 	高さ（下限値）					*/
-	CD_TAKASA_TANI					char            (3)			not null,	/* 	高さ単位						*/
+	CD_TAKASA_TANI					nchar           (3)			not null,	/* 	高さ単位						*/
 	NU_JURYO						numeric         (9,2)		not null,	/* 	重量							*/
 	NU_JURYO_JOGEN					numeric         (9,2)		not null,	/* 	重量（上限値）					*/
 	NU_JURYO_KAGEN					numeric         (9,2)		not null,	/* 	重量（下限値）					*/
@@ -136,14 +136,14 @@ create table TB_MHIMMOKU (
 	NU_SOSO							numeric         (3)			not null,	/* 	総層数							*/
 	NU_TSUTSU_CHOKKEI				numeric         (9,2)		not null,	/* 	筒直径							*/
 	NU_SAIDAI_CHOKKEI				numeric         (9,2)		not null,	/* 	最大直径						*/
-	ST_MAKI_HOKO					char            (3)			not null,	/* 	巻方向							*/
-	CD_FUKURO_IRISU_TANI			char            (3)			not null,	/* 	袋入数単位						*/
+	ST_MAKI_HOKO					nchar           (3)			not null,	/* 	巻方向							*/
+	CD_FUKURO_IRISU_TANI			nchar           (3)			not null,	/* 	袋入数単位						*/
 	QT_FUKURO_IRISU					numeric         (9)			not null,	/* 	袋入数							*/
 	IF_HAMBAIYO_HOZAI				nvarchar        (100)		not null,	/* 	販売用包材情報					*/
-	FG_SHOMI_SHOHIKIGEN_YO_FUYO		char            (1)			not null,	/* 	消費・賞味期限要不要フラグ		*/
-	FG_GENZAIRYO_YO_FUYO			char            (1)			not null,	/* 	原材料要不要フラグ				*/
-	ST_SENTAKU_100G					char            (3)			not null,	/* 	選択区分（100g）				*/
-	FG_EIYOSEIBUN_HYOJI				char            (1)			not null,	/* 	栄養成分表示フラグ				*/
+	FG_SHOMI_SHOHIKIGEN_YO_FUYO		nchar           (1)			not null,	/* 	消費・賞味期限要不要フラグ		*/
+	FG_GENZAIRYO_YO_FUYO			nchar           (1)			not null,	/* 	原材料要不要フラグ				*/
+	ST_SENTAKU_100G					nchar           (3)			not null,	/* 	選択区分（100g）				*/
+	FG_EIYOSEIBUN_HYOJI				nchar           (1)			not null,	/* 	栄養成分表示フラグ				*/
 	IF_SHIKIBETSU_HYOJI				nvarchar        (100)		not null,	/* 	識別表示フラグ					*/
 	IF_PRICECARD_HYOJI_NAIYO		nvarchar        (100)		not null,	/* 	プライスカード表示内容			*/
 	IF_PRICECARD_GAZO_1				nvarchar        (100)		not null,	/* 	プライスカード画像１			*/
@@ -153,95 +153,95 @@ create table TB_MHIMMOKU (
 	CD_NAIYO_JURYO					nvarchar        (8)			not null,	/* 	内容重量単位					*/
 	NU_KOKEI_JURYO					numeric         (9,2)		not null,	/* 	構成重量						*/
 	CD_KEKEI_JURYO					nvarchar        (8)			not null,	/* 	構成重量単位					*/
-	NU_HOKAN_JOKEN_KAIFU_MAE		char            (1)			not null,	/* 	保管条件開封前					*/
-	NU_HOKAN_JOKEN_KAIFU_GO			char            (1)			not null,	/* 	保管条件開封後					*/
-	DT_KAIFUGO_SHIYOKIGEN_KAKI		char            (8)			not null,	/* 	開封後使用期限（夏季）			*/
-	ST_KAIFUGO_SHIYOKIGEN_KAKI		char            (1)			not null,	/* 	開封後使用期限日数時間区分（夏季）	*/
-	DT_KAIFUGO_SHIYOKIGEN_TOKI		char            (8)			not null,	/* 	開封後使用期限（冬季）			*/
-	ST_KAIFUGO_SHIYOKIGEN_TOKI		char            (1)			not null,	/* 	開封後使用期限日数時間区分（冬季)	*/
-	CD_YAKIIRO_NERAISHOKU			char            (8)			not null,	/* 	焼き色（ねらい色）				*/
-	CD_YAKIIRO_KAGEN				char            (8)			not null,	/* 	焼き色下限						*/
-	CD_YAKIIRO_JOGEN				char            (8)			not null,	/* 	焼き色上限						*/
-	CD_SAISHO_SEZO_TANI				char            (3)			not null,	/* 	最小製造単位					*/
+	NU_HOKAN_JOKEN_KAIFU_MAE		nchar           (1)			not null,	/* 	保管条件開封前					*/
+	NU_HOKAN_JOKEN_KAIFU_GO			nchar           (1)			not null,	/* 	保管条件開封後					*/
+	DT_KAIFUGO_SHIYOKIGEN_KAKI		nchar           (8)			not null,	/* 	開封後使用期限（夏季）			*/
+	ST_KAIFUGO_SHIYOKIGEN_KAKI		nchar           (1)			not null,	/* 	開封後使用期限日数時間区分（夏季）	*/
+	DT_KAIFUGO_SHIYOKIGEN_TOKI		nchar           (8)			not null,	/* 	開封後使用期限（冬季）			*/
+	ST_KAIFUGO_SHIYOKIGEN_TOKI		nchar           (1)			not null,	/* 	開封後使用期限日数時間区分（冬季)	*/
+	CD_YAKIIRO_NERAISHOKU			nchar           (8)			not null,	/* 	焼き色（ねらい色）				*/
+	CD_YAKIIRO_KAGEN				nchar           (8)			not null,	/* 	焼き色下限						*/
+	CD_YAKIIRO_JOGEN				nchar           (8)			not null,	/* 	焼き色上限						*/
+	CD_SAISHO_SEZO_TANI				nchar           (3)			not null,	/* 	最小製造単位					*/
 	QT_SAISHO_SEIZO_TANI			numeric         (2)			not null,	/* 	最小製造単位数					*/
-	FG_RITADO						char            (1)			not null,	/* 	リタード可否					*/
-	CD_SAIJI						char            (5)			not null,	/* 	催事コード						*/
-	ST_SHOHIN_SEIHIN				char            (1)			not null,	/* 	商品製品区分					*/
-	ST_KEIHI_HINSHU					char            (1)			not null,	/* 	経費品種区分					*/
-	ST_SHIIRE						char            (1)			not null,	/* 	仕入区分						*/
-	ST_SHOHIN_BUNRUI				char            (3)			not null,	/* 	商品分類						*/
-	FG_GENTEI_UMU					char            (1)			not null,	/* 	限定有無区分					*/
-	FG_WEB_JYUCHU_KANRI				char            (1)			not null,	/* 	Web受注管理区分					*/
+	FG_RITADO						nchar           (1)			not null,	/* 	リタード可否					*/
+	CD_SAIJI						nchar           (5)			not null,	/* 	催事コード						*/
+	ST_SHOHIN_SEIHIN				nchar           (1)			not null,	/* 	商品製品区分					*/
+	ST_KEIHI_HINSHU					nchar           (1)			not null,	/* 	経費品種区分					*/
+	ST_SHIIRE						nchar           (1)			not null,	/* 	仕入区分						*/
+	ST_SHOHIN_BUNRUI				nchar           (3)			not null,	/* 	商品分類						*/
+	FG_GENTEI_UMU					nchar           (1)			not null,	/* 	限定有無区分					*/
+	FG_WEB_JYUCHU_KANRI				nchar           (1)			not null,	/* 	Web受注管理区分					*/
 	NU_ZEIRITSU						numeric         (3,1)		not null,	/* 	税率							*/
-	ST_ZEIRITSU						char            (1)			not null,	/* 	税率区分						*/
-	FG_ZAIKO_KANRI					char            (1)			not null,	/* 	在庫管理フラグ					*/
-	ST_GR							char            (1)			not null,	/* 	GR区分							*/
-	ST_HASU_SHOHIZEI				char            (1)			not null,	/* 	消費税端数区分					*/
-	ST_KANRI_HIMMOKU				char            (1)			not null,	/* 	管理品目区分					*/
-	CD_OYAHIMBAN					char            (9)			not null,	/* 	親品番							*/
-	ST_KAZEI						char            (1)			not null,	/* 	課税区分						*/
-	ST_URIAGE_BUNRUI				char            (2)			not null,	/* 	売上分類						*/
-	ST_DAI							char            (3)			not null,	/* 	商品区分大						*/
-	ST_CHU							char            (1)			not null,	/* 	商品区分中						*/
-	ST_SHO							char            (2)			not null,	/* 	商品区分小						*/
-	ST_HIMMOKU_BUNRUI				char            (1)			not null,	/* 	品目分類						*/
-	ST_NOHIMBI_FUTEI				char            (1)			not null,	/* 	納品日不定区分					*/
-	ST_EIGYO_URIAGE					char            (2)			not null,	/* 	営業売上分類					*/
-	ST_EIGYO_KANRI					char            (1)			not null,	/* 	営業管理区分					*/
-	ST_SEIHIN_SHOHIN				char            (1)			not null,	/* 	製品商品区分					*/
-	ST_SHOHIN_CATEGORY				char            (1)			not null,	/* 	商品カテゴリ					*/
-	ST_KIJI_SHURUI					char            (1)			not null,	/* 	生地種類						*/
+	ST_ZEIRITSU						nchar           (1)			not null,	/* 	税率区分						*/
+	FG_ZAIKO_KANRI					nchar           (1)			not null,	/* 	在庫管理フラグ					*/
+	ST_GR							nchar           (1)			not null,	/* 	GR区分							*/
+	ST_HASU_SHOHIZEI				nchar           (1)			not null,	/* 	消費税端数区分					*/
+	ST_KANRI_HIMMOKU				nchar           (1)			not null,	/* 	管理品目区分					*/
+	CD_OYAHIMBAN					nchar           (9)			not null,	/* 	親品番							*/
+	ST_KAZEI						nchar           (1)			not null,	/* 	課税区分						*/
+	ST_URIAGE_BUNRUI				nchar           (2)			not null,	/* 	売上分類						*/
+	ST_DAI							nchar           (3)			not null,	/* 	商品区分大						*/
+	ST_CHU							nchar           (1)			not null,	/* 	商品区分中						*/
+	ST_SHO							nchar           (2)			not null,	/* 	商品区分小						*/
+	ST_HIMMOKU_BUNRUI				nchar           (1)			not null,	/* 	品目分類						*/
+	ST_NOHIMBI_FUTEI				nchar           (1)			not null,	/* 	納品日不定区分					*/
+	ST_EIGYO_URIAGE					nchar           (2)			not null,	/* 	営業売上分類					*/
+	ST_EIGYO_KANRI					nchar           (1)			not null,	/* 	営業管理区分					*/
+	ST_SEIHIN_SHOHIN				nchar           (1)			not null,	/* 	製品商品区分					*/
+	ST_SHOHIN_CATEGORY				nchar           (1)			not null,	/* 	商品カテゴリ					*/
+	ST_KIJI_SHURUI					nchar           (1)			not null,	/* 	生地種類						*/
 	QT_BARA_TANI					nvarchar        (3)			not null,	/* 	バラ単位						*/
 	NU_HYOJUN_BARA_KEISU			numeric         (13,6)		not null,	/* 	標準バラ変換係数				*/
-	CD_RETAIL_HINGUN				char            (4)			not null,	/* 	リテイル品群					*/
-	CD_TANTO_BUMON					char            (4)			not null,	/* 	担当部門コード					*/
+	CD_RETAIL_HINGUN				nchar           (4)			not null,	/* 	リテイル品群					*/
+	CD_TANTO_BUMON					nchar           (4)			not null,	/* 	担当部門コード					*/
 	NU_HAMBAI_NISSU					numeric         (3)			not null,	/* 	販売日数						*/
 	CD_HYOJUN_SHIIRESAKI			nvarchar        (5)			not null,	/* 	標準仕入先コード				*/
 	PR_HYOJUN_TANKA					numeric         (11,2)		not null,	/* 	標準仕入単価					*/
 	PR_RIRON_GENKA					numeric         (11,2)		not null,	/* 	理論原価						*/
 	PR_HYOJUN_GENKA					numeric         (11,2)		not null,	/* 	標準原価						*/
 	PR_SEIZO_GENKA					numeric         (11,2)		not null,	/* 	製造原価						*/
-	ST_KOJO							char            (1)			not null,	/* 	工場区分						*/
-	ST_RETAIL						char            (1)			not null,	/* 	リテイル区分					*/
-	ST_OROSHI						char            (1)			not null,	/* 	卸区分							*/
-	ST_HIMMOKU_KAZEI				char            (1)			not null,	/* 	品目課税区分					*/
-	ST_CASE							char            (2)			not null,	/* 	ケース区分						*/
+	ST_KOJO							nchar           (1)			not null,	/* 	工場区分						*/
+	ST_RETAIL						nchar           (1)			not null,	/* 	リテイル区分					*/
+	ST_OROSHI						nchar           (1)			not null,	/* 	卸区分							*/
+	ST_HIMMOKU_KAZEI				nchar           (1)			not null,	/* 	品目課税区分					*/
+	ST_CASE							nchar           (2)			not null,	/* 	ケース区分						*/
 	IF_HIMMOKU_GAZO_1				nvarchar        (100)		not null,	/* 	品目画像１						*/
 	IF_HIMMOKU_GAZO_2				nvarchar        (100)		not null,	/* 	品目画像２						*/
 	IF_HIMMOKU_GAZO_3				nvarchar        (100)		not null,	/* 	品目画像３						*/
 	IF_HIMMOKU_GAZO_4				nvarchar        (100)		not null,	/* 	品目画像４						*/
-	CD_SHOHIN_BUNRUI_9				char            (10)		not null,	/* 	商品分類９						*/
-	DT_ZENKAI_HENKO					char            (8)			not null,	/* 	前回変更日						*/
-	DT_OYA_KAISHI					char            (8)			not null,	/* 	親開始日						*/
-	DT_HATSUBAI_SHOUNIN				char            (8)			not null,	/* 	発売承認日						*/
-	FG_SHOUHINSEKKEIIRAISHO_KAHI	char            (1)			not null,	/* 	商品設計依頼書出力可否			*/
-	FG_SHOUHINSEKKEISHO_KAHI		char            (1)			not null,	/* 	商品設計書出力可否				*/
-	FG_KAIHATSUSHOUNINSHO_KAHI		char            (1)			not null,	/* 	開発承認書出力可否				*/
-	FG_HATSUBAISHOUNINSHO_KAHI		char            (1)			not null,	/* 	発売承認書出力可否				*/
-	FG_HOUZAIIRAISHO_KAHI			char            (1)			not null,	/* 	包材依頼書出力可否				*/
-	FG_HINMOKUTOUROKUIRAISHO_KAHI	char            (1)			not null,	/* 	品目登録依頼書出力可否			*/
+	CD_SHOHIN_BUNRUI_9				nchar           (10)		not null,	/* 	商品分類９						*/
+	DT_ZENKAI_HENKO					nchar           (8)			not null,	/* 	前回変更日						*/
+	DT_OYA_KAISHI					nchar           (8)			not null,	/* 	親開始日						*/
+	DT_HATSUBAI_SHOUNIN				nchar           (8)			not null,	/* 	発売承認日						*/
+	FG_SHOUHINSEKKEIIRAISHO_KAHI	nchar           (1)			not null,	/* 	商品設計依頼書出力可否			*/
+	FG_SHOUHINSEKKEISHO_KAHI		nchar           (1)			not null,	/* 	商品設計書出力可否				*/
+	FG_KAIHATSUSHOUNINSHO_KAHI		nchar           (1)			not null,	/* 	開発承認書出力可否				*/
+	FG_HATSUBAISHOUNINSHO_KAHI		nchar           (1)			not null,	/* 	発売承認書出力可否				*/
+	FG_HOUZAIIRAISHO_KAHI			nchar           (1)			not null,	/* 	包材依頼書出力可否				*/
+	FG_HINMOKUTOUROKUIRAISHO_KAHI	nchar           (1)			not null,	/* 	品目登録依頼書出力可否			*/
 	CD_PROCESS						nvarchar        (20)		not null,	/* 	プロセスコード					*/
-	ST_BUTSURYU_SEIGYO				char            (3)			not null,	/* 	物流制御区分					*/
-	CD_KANRI_COMPANY				char            (5)			not null,	/* 	管理カンパニーコード			*/
+	ST_BUTSURYU_SEIGYO				nchar           (3)			not null,	/* 	物流制御区分					*/
+	CD_KANRI_COMPANY				nchar           (5)			not null,	/* 	管理カンパニーコード			*/
 	IF_SHIKIBETSU_HYOJI_PLA			nvarchar        (100)		not null,	/* 	識別表示（プラ）				*/
-	DT_RENKEI						char            (14)		not null,	/* 	連携日時						*/
+	DT_RENKEI						nchar           (14)		not null,	/* 	連携日時						*/
 	NU_HAITA						numeric         (5)			not null,	/* 	排他カウンタ					*/
 	CD_SEIZO_HIMBAN					nvarchar        (9)			not null,	/* 	製造品番						*/
-	CD_FA_HIMBAN					char            (3)			not null,	/* 	ＦＡ品番						*/
-	CD_NISHI_HIMBAN					char            (5)			not null,	/* 	西日本卸系品番					*/
-	CD_HIGASHI_HIMBAN				char            (5)			not null,	/* 	東日本卸系品番					*/
-	CD_RETAIL_HIMBAN				char            (5)			not null,	/* 	リテイル品番					*/
-	CD_HIROSHIMA_AN_HIMBAN			char            (5)			not null,	/* 	広島アンデルセン品番			*/
-	CD_KODANI_SA_HIMBAN				char            (5)			not null,	/* 	小谷サービスエリア品番			*/
-	CD_KOBAI_HIMBAN					char            (5)			not null,	/* 	購買品番						*/
-	CD_SSS_HIMBAN					char            (5)			not null,	/* 	SSS品番							*/
-	ST_SHONIN						char            (2)			not null,	/* 	進捗状況						*/
+	CD_FA_HIMBAN					nchar           (3)			not null,	/* 	ＦＡ品番						*/
+	CD_NISHI_HIMBAN					nchar           (5)			not null,	/* 	西日本卸系品番					*/
+	CD_HIGASHI_HIMBAN				nchar           (5)			not null,	/* 	東日本卸系品番					*/
+	CD_RETAIL_HIMBAN				nchar           (5)			not null,	/* 	リテイル品番					*/
+	CD_HIROSHIMA_AN_HIMBAN			nchar           (5)			not null,	/* 	広島アンデルセン品番			*/
+	CD_KODANI_SA_HIMBAN				nchar           (5)			not null,	/* 	小谷サービスエリア品番			*/
+	CD_KOBAI_HIMBAN					nchar           (5)			not null,	/* 	購買品番						*/
+	CD_SSS_HIMBAN					nchar           (5)			not null,	/* 	SSS品番							*/
+	ST_SHONIN						nchar           (2)			not null,	/* 	進捗状況						*/
 	IF_SEKKEISHO_BIKO1				nvarchar        (130)		not null,	/* 	商品設計書 備考１行目			*/
 	IF_SEKKEISHO_BIKO2				nvarchar        (130)		not null,	/* 	商品設計書 備考２行目			*/
 	IF_SEKKEISHO_BIKO3				nvarchar        (130)		not null,	/* 	商品設計書 備考３行目			*/
-	FG_HOGO_JOGAI					char            (1)			not null,	/* 	保護フラグ						*/
+	FG_HOGO_JOGAI					nchar           (1)			not null,	/* 	保護フラグ						*/
 	CD_QA_numeric					nvarchar        (26)		not null,	/* 	QA書ナンバー					*/
-	CD_ITEM_GTIN					char            (15)		not null,	/* 	商品コード（ＧＴＩＮ）			*/
+	CD_ITEM_GTIN					nchar           (15)		not null,	/* 	商品コード（ＧＴＩＮ）			*/
 	
 	createdAt datetime not null,		/*	データ挿入日				*/
 	updatedAt datetime not null,		/*	データ更新日				*/
