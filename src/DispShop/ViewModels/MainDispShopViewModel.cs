@@ -61,21 +61,21 @@ namespace DispShop.ViewModels
 
 
         private string _dt_delivery = string.Empty;
-        public string DT_DELIVERY
+        public string DtDelivery
         {
             get => _dt_delivery;
             set => SetProperty(ref _dt_delivery, value);
         }
 
         private string _cd_dist_group = string.Empty;
-        public string CD_DIST_GROUP
+        public string CdDistGroup
         {
             get => _cd_dist_group;
             set => SetProperty(ref _cd_dist_group, value);
         }
 
         private string _nm_dist_group = string.Empty;
-        public string NM_DIST_GROUP
+        public string NmDistGroup
         {
             get => _nm_dist_group;
             set => SetProperty(ref _nm_dist_group, value);
@@ -403,11 +403,11 @@ namespace DispShop.ViewModels
                 switch (LightType)
                 {
                     case 0:
-                        tddsplay = string.Format("{0,3}{1,3}", p.CD_COURSE, p.CD_ROUTE);
+                        tddsplay = string.Format("{0,3}{1,3}", p.CdCource, p.CdRoute);
                         ledColor = (int)TdLedColor.Red;
                         break;
                     case 1:
-                        tddsplay = string.Format("{0,6}", p.CD_TOKUISAKI);
+                        tddsplay = string.Format("{0,6}", p.CdTokuisaki);
                         ledColor = (int)TdLedColor.Yellow;
                         break;
                     case 2:
@@ -475,7 +475,7 @@ namespace DispShop.ViewModels
         {
             try
             {
-                CollectionViewHelper.SetCollection(DistItems, DistLoaders.Get(DistGroup.DT_DELIVERY.ToString("yyyyMMdd"), DistGroup.CD_DIST_GROUP));
+                CollectionViewHelper.SetCollection(DistItems, DistLoaders.Get(DistGroup.DtDelivery.ToString("yyyyMMdd"), DistGroup.CdDistGroup));
             }
             catch (Exception e)
             {

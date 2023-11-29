@@ -14,12 +14,12 @@ namespace DispShop.Models
             using (var con = DbFactory.CreateConnection())
             {
                 var sql = @"select "
-                    + " TB_DIST.tdunitaddrcode,"
+                    + " TB_DIST_MAPPING.tdunitaddrcode,"
                     + " TB_DIST.DT_DELIVERY,"
                     + " TB_DIST.CD_KYOTEN,"
-                    + " TB_DIST.CD_DIST_GROUP,"
-                    + " TB_DIST.CD_SUM_TOKUISAKI,"
-                    + " NM_TOKUISAKI,"
+                    + " TB_DIST_MAPPING.CD_DIST_GROUP,"
+                    + " TB_DIST_MAPPING.CD_SUM_TOKUISAKI,"
+                    + " TB_DIST_MAPPING.NM_TOKUISAKI,"
                     + " TB_DIST.CD_COURSE,"
                     + " TB_DIST.CD_ROUTE,"
                     + " sum(NU_OPS) ops,"
@@ -29,14 +29,14 @@ namespace DispShop.Models
                     + " sum(box2) box2,"
                     + " sum(box3) box3"
                     + " from TB_DIST"
-                    + " left join TB_MTOKUISAKI on "
-                    + " TB_DIST.CD_SUM_TOKUISAKI=TB_MTOKUISAKI.CD_TOKUISAKI "
-                    + " and @dt_delivdt between TB_MTOKUISAKI.DT_TOROKU_NICHIJI and TB_MTOKUISAKI.DT_KOSHIN_NICHIJI"
+                    + " inner join TB_DIST_MAPPING on "
+                    + " TB_DIST.ID_DIST=TB_DIST_MAPPING.ID_DIST "
                     + " left join TB_STOWAGE on "
                     + " TB_DIST.DT_DELIVERY=TB_STOWAGE.DT_DELIVERY"
                     + " and TB_DIST.CD_KYOTEN=TB_STOWAGE.CD_KYOTEN"
-                    + " and TB_DIST.CD_DIST_GROUP=TB_STOWAGE.CD_DIST_GROUP"
-                    + " and TB_DIST.CD_SUM_TOKUISAKI=TB_STOWAGE.CD_TOKUISAKI"
+                    + " inner join TB_STOWAGE_MAPPING on TB_STOWAGE.ID_STOWAGE=TB_STOWAGE_MAPPING.ID_STOWAGE"
+                    + " and TB_DIST_MAPPING.CD_DIST_GROUP=TB_STOWAGE_MAPPING.CD_DIST_GROUP"
+                    + " and TB_DIST_MAPPING.CD_SUM_TOKUISAKI=TB_STOWAGE_MAPPING.CD_SUM_TOKUISAKI"
                     + " left join (select "
                     + "	ID_STOWAGE,"
                     + "	(case ST_BOXTYPE when 0 then sum(NU_OBOXCNT) else 0 end) box0,"
@@ -45,14 +45,14 @@ namespace DispShop.Models
                     + "	(case ST_BOXTYPE when 3 then sum(NU_OBOXCNT) else 0 end) box3"
                     + "	from TB_STOWAGE_BOX group by ID_STOWAGE,ST_BOXTYPE) TB_STOWAGE_BOX on "
                     + " TB_STOWAGE.ID_STOWAGE=TB_STOWAGE_BOX.ID_STOWAGE"
-                    + " where TB_DIST.DT_DELIVERY = @dt_delivdt and TB_DIST.CD_DIST_GROUP = @cd_dist_group"
+                    + " where TB_DIST.DT_DELIVERY = @dt_delivdt and TB_DIST_MAPPING.CD_DIST_GROUP = @cd_dist_group"
                     + " group by "
-                    + " TB_DIST.tdunitaddrcode,"
+                    + " TB_DIST_MAPPING.tdunitaddrcode,"
                     + " TB_DIST.DT_DELIVERY,"
                     + " TB_DIST.CD_KYOTEN,"
-                    + " TB_DIST.CD_DIST_GROUP,"
-                    + " TB_DIST.CD_SUM_TOKUISAKI,"
-                    + " NM_TOKUISAKI,"
+                    + " TB_DIST_MAPPING.CD_DIST_GROUP,"
+                    + " TB_DIST_MAPPING.CD_SUM_TOKUISAKI,"
+                    + " TB_DIST_MAPPING.NM_TOKUISAKI,"
                     + " TB_DIST.CD_COURSE,"
                     + " TB_DIST.CD_ROUTE";
 
@@ -64,13 +64,13 @@ namespace DispShop.Models
                      .Select(q => new Dist
                      {
                          TdUnitAddrCode = q.tdunitaddrcode,
-                         DT_DELIVERY = q.DT_DELIVERY,
-                         CD_KYOTEN = q.CD_KYOTEN,
-                         CD_DIST_GROUP = q.CD_DIST_GROUP,
-                         CD_TOKUISAKI = q.CD_SUM_TOKUISAKI,
-                         NM_TOKUISAKI = q.NM_TOKUISAKI,
-                         CD_COURSE = q.CD_COURSE,
-                         CD_ROUTE = q.CD_ROUTE,
+                         DtDelivery = q.DT_DELIVERY,
+                         CdKyoten = q.CD_KYOTEN,
+                         CdDistGroup = q.CD_DIST_GROUP,
+                         CdTokuisaki = q.CD_SUM_TOKUISAKI,
+                         NmTokuisaki = q.NM_TOKUISAKI,
+                         CdCource = q.CD_COURSE,
+                         CdRoute = q.CD_ROUTE,
                          Ops = q.ops,
                          Rps = q.rps,
                          Box0 = q.box0 ?? 0,

@@ -41,7 +41,7 @@ namespace SelDistGroupLib.ViewModels
         }
 
         private DateTime _dt_delivery = DateTime.Now.AddDays(1);
-        public DateTime DT_DELIVERY
+        public DateTime DtDelivery
         {
             get => _dt_delivery;
             set
@@ -74,7 +74,7 @@ namespace SelDistGroupLib.ViewModels
                 RequestClose?.Invoke(new DialogResult(ButtonResult.OK, new DialogParameters
                 {
                     { "DistGroup", DistGroup },
-                    { "DT_DELIVERY", DT_DELIVERY },
+                    { "DtDelivery", DtDelivery },
                 }));
             });
 
@@ -117,7 +117,7 @@ namespace SelDistGroupLib.ViewModels
         {
             try
             {
-                DistGroupCombo = DistGroupComboLoader.GetDistGroupCombos(DT_DELIVERY.ToString("yyyyMMdd"));
+                DistGroupCombo = DistGroupComboLoader.GetDistGroupCombos(DtDelivery.ToString("yyyyMMdd"));
                 DistGroup = DistGroupCombo.FirstOrDefault();
             }
             catch (Exception e)

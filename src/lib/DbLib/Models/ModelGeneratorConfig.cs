@@ -4158,22 +4158,10 @@ namespace DbLib.DbEntities
         public virtual string CDSHUKKABATCH { get; set; }
 
         /// <summary>
-        /// Represents the column 'NM_SHUKKA_BATCH'.
-        /// </summary>
-        [Column("NM_SHUKKA_BATCH")]
-        public virtual string? NMSHUKKABATCH { get; set; }
-
-        /// <summary>
         /// Represents the column 'CD_KYOTEN'.
         /// </summary>
         [Column("CD_KYOTEN")]
         public virtual string CDKYOTEN { get; set; }
-
-        /// <summary>
-        /// Represents the column 'NM_KYOTEN'.
-        /// </summary>
-        [Column("NM_KYOTEN")]
-        public virtual string? NMKYOTEN { get; set; }
 
         /// <summary>
         /// Represents the column 'CD_BIN'.
@@ -4198,48 +4186,6 @@ namespace DbLib.DbEntities
         /// </summary>
         [Column("CD_TOKUISAKI")]
         public virtual string CDTOKUISAKI { get; set; }
-
-        /// <summary>
-        /// Represents the column 'NM_TOKUISAKI'.
-        /// </summary>
-        [Column("NM_TOKUISAKI")]
-        public virtual string? NMTOKUISAKI { get; set; }
-
-        /// <summary>
-        /// Represents the column 'CD_BLOCK'.
-        /// </summary>
-        [Column("CD_BLOCK")]
-        public virtual string? CDBLOCK { get; set; }
-
-        /// <summary>
-        /// Represents the column 'CD_DIST_GROUP'.
-        /// </summary>
-        [Column("CD_DIST_GROUP")]
-        public virtual string? CDDISTGROUP { get; set; }
-
-        /// <summary>
-        /// Represents the column 'NM_DIST_GROUP'.
-        /// </summary>
-        [Column("NM_DIST_GROUP")]
-        public virtual string? NMDISTGROUP { get; set; }
-
-        /// <summary>
-        /// Represents the column 'CD_SUM_TOKUISAKI'.
-        /// </summary>
-        [Column("CD_SUM_TOKUISAKI")]
-        public virtual string? CDSUMTOKUISAKI { get; set; }
-
-        /// <summary>
-        /// Represents the column 'NM_SUM_TOKUISAKI'.
-        /// </summary>
-        [Column("NM_SUM_TOKUISAKI")]
-        public virtual string? NMSUMTOKUISAKI { get; set; }
-
-        /// <summary>
-        /// Represents the column 'tdunitaddrcode'.
-        /// </summary>
-        [Column("tdunitaddrcode")]
-        public virtual string? Tdunitaddrcode { get; set; }
 
         /// <summary>
         /// Represents the column 'FG_SSTATUS'.
