@@ -24,7 +24,7 @@ namespace SelDistGroupLib.Services.Auth
                     }
 
                     result = rc.Parameters.GetValue<Models.DistGroup>("DistGroup");
-                    result.DT_DELIVERY = rc.Parameters.GetValue<DateTime>("DT_DELIVERY");
+                    result.DtDelivery = rc.Parameters.GetValue<DateTime>("DtDelivery");
                 });
 
             return result;

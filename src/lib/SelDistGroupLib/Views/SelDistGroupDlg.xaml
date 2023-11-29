@@ -27,24 +27,24 @@
                 <TextBlock Grid.Column="0" Text="仕分グループ:" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" 
                            Width="140" Margin="3"/>
                 <ComboBox x:Name="DistGroup" Grid.Column="1" SelectedItem="{Binding DistGroup}" ItemsSource="{Binding DistGroupCombo}" Margin="3" 
-                          IsEditable="True" TextSearch.TextPath="CD_DIST_GROUP" b:ComboBoxBehavior.MaxLength="5">
+                          IsEditable="True" TextSearch.TextPath="CdDistGroup" b:ComboBoxBehavior.MaxLength="5">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding CD_DIST_GROUP}" />
+                                <TextBlock Text="{Binding CdDistGroup}" />
                                 <TextBlock Text="  "/>
-                                <TextBlock Text="{Binding NM_DIST_GROUP}"/>
+                                <TextBlock Text="{Binding NmDistGroup}"/>
                             </StackPanel>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <TextBlock Grid.Column="2" Text="{Binding DistGroup.NM_DIST_GROUP}" VerticalAlignment="Center" Margin="20 0 0 0" />
+                <TextBlock Grid.Column="2" Text="{Binding DistGroup.NmDistGroup}" VerticalAlignment="Center" Margin="20 0 0 0" />
             </Grid>
 
             <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="20,5,5,5" Visibility="{Binding ShipDtVisiblity}">
                 <TextBlock Grid.Column="0" Text="納品日:" VerticalAlignment="Center" TextAlignment="Center" 
                            Width="110" Margin="3"/>
-                <DatePicker Grid.Column="1" SelectedDate="{Binding DT_DELIVERY}" PreviewKeyDown="DatePicker_PreviewKeyDown" Language="ja"/>
+                <DatePicker Grid.Column="1" SelectedDate="{Binding DtDelivery}" PreviewKeyDown="DatePicker_PreviewKeyDown" Language="ja"/>
             </StackPanel>
 
             <TextBlock Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>

@@ -88,12 +88,12 @@
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="仕分グループ：" Style="{StaticResource header}"/>
-                    <TextBlock Text="{Binding DistGroup.CD_DIST_GROUP}"/>
-                    <TextBlock Text="{Binding DistGroup.NM_DIST_GROUP}" Margin="20,0,0,0"/>
+                    <TextBlock Text="{Binding DistGroup.CdDistGroup}"/>
+                    <TextBlock Text="{Binding DistGroup.NmDistGroup}" Margin="20,0,0,0"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="納品日：" Style="{StaticResource header}"/>
-                    <TextBlock Text="{Binding DistGroup.DT_DELIVERY, StringFormat=yyyy/MM/dd}"/>
+                    <TextBlock Text="{Binding DistGroup.DtDelivery, StringFormat=yyyy/MM/dd}"/>
                 </StackPanel>
             </StackPanel>
         </Grid>
@@ -105,10 +105,10 @@
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="表示器No" Binding="{Binding TdUnitAddrCode}"/>
-                <DataGridTextColumn Header="コース" Binding="{Binding CD_COURSE}"/>
-                <DataGridTextColumn Header="配送順" Binding="{Binding CD_ROUTE}"/>
-                <DataGridTextColumn Header="得意先ｺｰﾄﾞ" Binding="{Binding CD_TOKUISAKI}"/>
-                <DataGridTextColumn Header="得意先名称" Binding="{Binding NM_TOKUISAKI}"/>
+                <DataGridTextColumn Header="コース" Binding="{Binding CdCource}"/>
+                <DataGridTextColumn Header="配送順" Binding="{Binding CdRoute}"/>
+                <DataGridTextColumn Header="得意先ｺｰﾄﾞ" Binding="{Binding CdTokuisaki}"/>
+                <DataGridTextColumn Header="得意先名称" Binding="{Binding NmTokuisaki}"/>
                 <DataGridTextColumn Header="番重数" Binding="{Binding BoxCnt}"  ElementStyle="{StaticResource RightTextElement}"/>
                 <DataGridTextColumn Header="総数" Binding="{Binding Ops}"  ElementStyle="{StaticResource RightTextElement}"/>
             </DataGrid.Columns>

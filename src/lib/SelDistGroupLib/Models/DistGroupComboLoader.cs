@@ -22,8 +22,8 @@ namespace SelDistGroupLib.Models
                     .OrderBy($"{nameof(TBDISTGROUPEntity.CDDISTGROUP)}"))
                     .Select((x, index) => new DistGroup
                     {
-                        CD_DIST_GROUP = x.CDDISTGROUP,
-                        NM_DIST_GROUP = x.NMDISTGROUP,
+                        CdDistGroup = x.CDDISTGROUP,
+                        NmDistGroup = x.NMDISTGROUP,
                     }).ToList();
             }
         }
