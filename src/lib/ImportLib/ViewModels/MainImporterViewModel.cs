@@ -104,6 +104,7 @@ namespace ImportLib.ViewModels
                         {
                             engine!.SetFolder(path);
                             repo.Save(engine.GetInterfaceFile());
+                            repo.Commit();
                         }
                     }
                 }
@@ -140,13 +141,27 @@ namespace ImportLib.ViewModels
                     if (engine is not null)
                     {
                         engine.UpdateImportFileInfo();
-                        ImportFiles.Add(new ImportFileViewModel
+
+                        if (!engine.targetImportFiles.Any())
                         {
-                            Selected = engine.IsExistFile,
-                            Name = engine.DataName,
-                            FilePath = engine.ImportFilePath,
-                            FileSize = engine.ImportFileSize,
-                            LastWriteTime = engine.ImportFileLastWriteDateTime,
+                            ImportFiles.Add(new ImportFileViewModel
+                            {
+                                Selected = false,
+                                Name = engine.DataName,
+                            });
+                            continue;
+                        }
+
+                        engine.targetImportFiles.ForEach(x =>
+                        {
+                            ImportFiles.Add(new ImportFileViewModel
+                            {
+                                Selected = true,
+                                Name = engine.DataName,
+                                FilePath = x.ImportFilePath,
+                                FileSize = x.ImportFileSize,
+                                LastWriteTime = x.ImportFileLastWriteDateTime,
+                            });
                         });
                     }
                 }

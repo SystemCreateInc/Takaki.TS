@@ -23,10 +23,17 @@ namespace ImportLib
         {
             try
             {
-                var result = await engine.ImportAsync(token);
-                InsertSuccessLog(engine, result);
+                var results = await engine.ImportAsync(token);
+                foreach(var result in results)
+                {
+                    InsertSuccessLog(engine, result);
+                }
+
                 // 取込後のデータを削除
-                new FileInfo(engine.ImportFilePath).Delete();
+                engine.targetImportFiles.ForEach(x =>
+                {
+                    new FileInfo(x.ImportFilePath).Delete();
+                });
             }
             catch (OperationCanceledException)
             {
