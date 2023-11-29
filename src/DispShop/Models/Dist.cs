@@ -18,48 +18,48 @@ namespace DispShop.Models
         }
 
         private string _dt_delivery = string.Empty;
-        public string DT_DELIVERY
+        public string DtDelivery
         {
             get => _dt_delivery;
             set => SetProperty(ref _dt_delivery, value);
         }
 
         private string _cd_kyoten = string.Empty;
-        public string CD_KYOTEN
+        public string CdKyoten
         {
             get => _cd_kyoten;
             set => SetProperty(ref _cd_kyoten, value);
         }
 
         private string _cd_dist_group = string.Empty;
-        public string CD_DIST_GROUP
+        public string CdDistGroup
         {
             get => _cd_dist_group;
             set => SetProperty(ref _cd_dist_group, value);
         }
 
         private string _cd_course = string.Empty;
-        public string CD_COURSE
+        public string CdCource
         {
             get => _cd_course;
             set => SetProperty(ref _cd_course, value);
         }
         private int _cd_route = 0;
-        public int CD_ROUTE
+        public int CdRoute
         {
             get => _cd_route;
             set => SetProperty(ref _cd_route, value);
         }
 
         private string _cd_tokuisaki = string.Empty;
-        public string CD_TOKUISAKI
+        public string CdTokuisaki
         {
             get => _cd_tokuisaki;
             set => SetProperty(ref _cd_tokuisaki, value);
         }
 
         private string _nm_tokuisaki = string.Empty;
-        public string NM_TOKUISAKI
+        public string NmTokuisaki
         {
             get => _nm_tokuisaki;
             set => SetProperty(ref _nm_tokuisaki, value);
