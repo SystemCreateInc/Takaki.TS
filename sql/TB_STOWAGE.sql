@@ -24,6 +24,12 @@ create table TB_STOWAGE (
 																	0:未処理
 																	2:完了					*/
 
+	ST_BOXTYPE			smallint				not null,	/* 運搬容器種別
+															0:その他 1:薄箱 2:圧箱 3:青箱	*/
+	NU_OBOXCNT			integer					not null,	/* 予定箱数						*/
+	NU_RBOXCNT			integer					not null,	/* 実績箱数						*/
+
+	NM_HENKOSHA			nvarchar(40)			not null,	/* 変更者名称					*/
 
 	createdAt 			datetime 				not null,	/*	データ挿入日				*/
 	updatedAt 			datetime 				not null,	/*	データ更新日				*/
