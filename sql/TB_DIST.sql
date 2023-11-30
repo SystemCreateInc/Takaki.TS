@@ -11,7 +11,8 @@ create table TB_DIST (
 	
 	CD_SHUKKA_BATCH		nchar(5)				not null,	/* 出荷バッチ					*/
 	CD_KYOTEN			nchar(4)				not null,	/* 仕分け拠点					*/
-	CD_BIN				nchar(3)				not null,	/* 配送便						*/
+	CD_HAISHO_BIN		nchar(3)				not null,	/* 配送便						*/
+	CD_JUCHU_BIN		nchar(3)				not null,	/* 受注便						*/
 	CD_COURSE			nchar(3)				not null,	/* コース						*/
 	CD_ROUTE			integer					not null,	/* 配送順						*/
 	CD_TOKUISAKI		nchar(6)				not null,	/* 得意先コード					*/
@@ -21,6 +22,10 @@ create table TB_DIST (
 	ST_BOXTYPE			smallint				not null,	/* 運搬容器種別
 															0:その他 1:薄箱 2:圧箱 3:青箱	*/
 	NU_BOXUNIT			integer					not null,	/* 運搬容器入り数				*/
+
+	CD_HENKOSHA			nchar(10)				not null,	/* 変更者コード					*/
+	DT_TOROKU_NICHIJI	nchar(14)				not null,	/* 登録日時						*/
+	DT_KOSHIN_NICHIJI	nchar(14)				not null,	/* 更新日時						*/
 
 	NU_OPS				integer					not null,	/* 出荷予定数					*/
 	NU_LOPS				integer					not null,	/* 大仕分け予定数				*/

@@ -1,4 +1,5 @@
-﻿using DbLib.Defs.DbLib.Defs;
+﻿using DbLib;
+using DbLib.Defs.DbLib.Defs;
 using DbLib.Extensions;
 using ImportLib.Engines;
 using ImportLib.Models;
@@ -37,7 +38,7 @@ namespace ImportLib.ViewModels
         private readonly IDialogService _dialogService;
         private List<IImportEngine> _engines = new List<IImportEngine>();
         private List<DataType> _dataTypes = new List<DataType>();
-        //private readonly ScopeLogger _logger = new ScopeLogger<MainImporterViewModel>();
+        private readonly ScopeLogger _logger = new ScopeLogger<MainImporterViewModel>();
 
         public MainImporterViewModel(IDialogService dialogService)
         {
@@ -98,13 +99,14 @@ namespace ImportLib.ViewModels
             {
                 try
                 {
-                    foreach (var engine in _engines)
+                    using (var repo = new ImportRepository())
                     {
-                        using (var repo = new ImportRepository())
+                        foreach (var engine in _engines)
                         {
                             engine!.SetFolder(path);
                             repo.Save(engine.GetInterfaceFile());
                         }
+                        repo.Commit();
                     }
                 }
                 catch (Exception ex)
@@ -140,13 +142,27 @@ namespace ImportLib.ViewModels
                     if (engine is not null)
                     {
                         engine.UpdateImportFileInfo();
-                        ImportFiles.Add(new ImportFileViewModel
+
+                        if (!engine.targetImportFiles.Any())
                         {
-                            Selected = engine.IsExistFile,
-                            Name = engine.DataName,
-                            FilePath = engine.ImportFilePath,
-                            FileSize = engine.ImportFileSize,
-                            LastWriteTime = engine.ImportFileLastWriteDateTime,
+                            ImportFiles.Add(new ImportFileViewModel
+                            {
+                                Selected = false,
+                                Name = engine.DataName,
+                            });
+                            continue;
+                        }
+
+                        engine.targetImportFiles.ForEach(x =>
+                        {
+                            ImportFiles.Add(new ImportFileViewModel
+                            {
+                                Selected = true,
+                                Name = engine.DataName,
+                                FilePath = x.ImportFilePath,
+                                FileSize = x.ImportFileSize,
+                                LastWriteTime = x.ImportFileLastWriteDateTime,
+                            });
                         });
                     }
                 }
@@ -169,78 +185,9 @@ namespace ImportLib.ViewModels
             }
 
             SetDataTypes(importType);
+            SetDataTypeEngines();
 
-            try
-            {
-                using (var repo = new ImportRepository())
-                {
-                    foreach (var dataType in _dataTypes)
-                    {
-                        var interfaceFile = repo.GetInterfaceFileByDataType(dataType);
-                        if (interfaceFile is null)
-                        {
-                            MessageDialog.Show(_dialogService, "取り込みデータの情報を取得できませんでした" +
-                                $"{dataType.GetDescription()}の設定をinterfaceFilesテーブルに追加してください。", "エラー");
-                            return;
-                        }
-
-                        switch (dataType)
-                        {
-                            // マスタ受信
-                            case DataType.Kyoten:
-                                _engines.Add(new MKyotenImportEngine(interfaceFile));
-                                break;
-
-                            case DataType.Shain:
-                                _engines.Add(new MShainImportEngine(interfaceFile));
-                                break;
-
-                            case DataType.Tokuisaki:
-                                _engines.Add(new MTokuisakiImportEngine(interfaceFile));
-                                break;
-
-                            case DataType.Himmoku:
-                                _engines.Add(new MHimmokuImportEngine(interfaceFile));
-                                break;
-
-                            case DataType.ShukkaBatch:
-                                _engines.Add(new MShukkaBatchImportEngine(interfaceFile));
-                                break;
-
-                            case DataType.Kotei:
-                                _engines.Add(new MKoteiMeishoImportEngine(interfaceFile));
-                                break;
-
-                            //// 出荷ﾃﾞｰﾀ受信
-                            //case DataType.Pick:
-                            //    _engines.Add(new MKyotenImportEngine(interfaceFile));
-                            //    break;
-
-                            //case DataType.Hako:
-                            //    _engines.Add(new MKyotenImportEngine(interfaceFile));
-                            //    break;
-
-                            //case DataType.PickResult:
-                            //    _engines.Add(new MKyotenImportEngine(interfaceFile));
-                            //    break;
-
-                            //case DataType.HakoResult:
-                            //    _engines.Add(new MKyotenImportEngine(interfaceFile));
-                            //    break;
-
-                            default:
-                                Debug.Assert(false);
-                                break;
-                        }
-                    }
-                }
-
-                LoadDatas();
-            }
-            catch (Exception ex)
-            {
-                MessageDialog.Show(_dialogService, ex.Message, "エラー");
-            }
+            LoadDatas();
         }
 
         private void SetDataTypes(ImportType importType)
@@ -260,6 +207,85 @@ namespace ImportLib.ViewModels
                 _dataTypes.Add(DataType.Hako);
                 _dataTypes.Add(DataType.PickResult);
                 _dataTypes.Add(DataType.HakoResult);
+            }
+        }
+
+        // データタイプ毎にファイル情報取得&エンジンへセット
+        private void SetDataTypeEngines()
+        {
+            try
+            {
+                using (var repo = new ImportRepository())
+                {
+                    foreach (var dataType in _dataTypes)
+                    {
+                        var interfaceFile = repo.GetInterfaceFileByDataType(dataType);
+                        if (interfaceFile is null)
+                        {
+                            MessageDialog.Show(_dialogService, "取り込みデータの情報を取得できませんでした" +
+                                $"{dataType.GetDescription()}の設定をinterfaceFilesテーブルに追加してください。", "エラー");
+                            return;
+                        }
+
+                        SetEngines(dataType, interfaceFile);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageDialog.Show(_dialogService, ex.Message, "エラー");
+            }
+        }
+
+        private void SetEngines(DataType dataType, InterfaceFile interfaceFile)
+        {
+            switch (dataType)
+            {
+                // マスタ受信
+                case DataType.Kyoten:
+                    _engines.Add(new MKyotenImportEngine(interfaceFile));
+                    break;
+
+                case DataType.Shain:
+                    _engines.Add(new MShainImportEngine(interfaceFile));
+                    break;
+
+                case DataType.Tokuisaki:
+                    _engines.Add(new MTokuisakiImportEngine(interfaceFile));
+                    break;
+
+                case DataType.Himmoku:
+                    _engines.Add(new MHimmokuImportEngine(interfaceFile));
+                    break;
+
+                case DataType.ShukkaBatch:
+                    _engines.Add(new MShukkaBatchImportEngine(interfaceFile));
+                    break;
+
+                case DataType.Kotei:
+                    _engines.Add(new MKoteiMeishoImportEngine(interfaceFile));
+                    break;
+
+                //// 出荷ﾃﾞｰﾀ受信
+                //case DataType.Pick:
+                //    _engines.Add(new MKyotenImportEngine(interfaceFile));
+                //    break;
+
+                //case DataType.Hako:
+                //    _engines.Add(new MKyotenImportEngine(interfaceFile));
+                //    break;
+
+                //case DataType.PickResult:
+                //    _engines.Add(new MKyotenImportEngine(interfaceFile));
+                //    break;
+
+                //case DataType.HakoResult:
+                //    _engines.Add(new MKyotenImportEngine(interfaceFile));
+                //    break;
+
+                default:
+                    Debug.Assert(false);
+                    break;
             }
         }
 

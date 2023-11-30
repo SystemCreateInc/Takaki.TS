@@ -11,15 +11,25 @@ create table TB_STOWAGE (
 	
 	CD_SHUKKA_BATCH		nchar(5)				not null,	/* 出荷バッチ					*/
 	CD_KYOTEN			nchar(4)				not null,	/* 仕分け拠点					*/
-	CD_BIN				nchar(3)				not null,	/* 配送便						*/
+	CD_HAISHO_BIN		nchar(3)				not null,	/* 配送便						*/
 	CD_COURSE			nchar(3)				not null,	/* コース						*/
 	CD_ROUTE			integer					not null,	/* 配送順						*/
 	CD_TOKUISAKI		nchar(6)				not null,	/* 得意先コード					*/
 
+	CD_HENKOSHA			nchar(10)				not null,	/* 変更者コード					*/
+	DT_TOROKU_NICHIJI	nchar(14)				not null,	/* 登録日時						*/
+	DT_KOSHIN_NICHIJI	nchar(14)				not null,	/* 更新日時						*/
+	
 	FG_SSTATUS			smallint				not null,	/*	積み付け作業状態
 																	0:未処理
 																	2:完了					*/
 
+	ST_BOXTYPE			smallint				not null,	/* 運搬容器種別
+															0:その他 1:薄箱 2:圧箱 3:青箱	*/
+	NU_OBOXCNT			integer					not null,	/* 予定箱数						*/
+	NU_RBOXCNT			integer					not null,	/* 実績箱数						*/
+
+	NM_HENKOSHA			nvarchar(40)			not null,	/* 変更者名称					*/
 
 	createdAt 			datetime 				not null,	/*	データ挿入日				*/
 	updatedAt 			datetime 				not null,	/*	データ更新日				*/

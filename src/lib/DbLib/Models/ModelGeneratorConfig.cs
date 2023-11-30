@@ -330,10 +330,16 @@ namespace DbLib.DbEntities
         public virtual string CDKYOTEN { get; set; }
 
         /// <summary>
-        /// Represents the column 'CD_BIN'.
+        /// Represents the column 'CD_HAISHO_BIN'.
         /// </summary>
-        [Column("CD_BIN")]
-        public virtual string CDBIN { get; set; }
+        [Column("CD_HAISHO_BIN")]
+        public virtual string CDHAISHOBIN { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_JUCHU_BIN'.
+        /// </summary>
+        [Column("CD_JUCHU_BIN")]
+        public virtual string CDJUCHUBIN { get; set; }
 
         /// <summary>
         /// Represents the column 'CD_COURSE'.
@@ -382,6 +388,24 @@ namespace DbLib.DbEntities
         /// </summary>
         [Column("NU_BOXUNIT")]
         public virtual int NUBOXUNIT { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_HENKOSHA'.
+        /// </summary>
+        [Column("CD_HENKOSHA")]
+        public virtual string CDHENKOSHA { get; set; }
+
+        /// <summary>
+        /// Represents the column 'DT_TOROKU_NICHIJI'.
+        /// </summary>
+        [Column("DT_TOROKU_NICHIJI")]
+        public virtual string DTTOROKUNICHIJI { get; set; }
+
+        /// <summary>
+        /// Represents the column 'DT_KOSHIN_NICHIJI'.
+        /// </summary>
+        [Column("DT_KOSHIN_NICHIJI")]
+        public virtual string DTKOSHINNICHIJI { get; set; }
 
         /// <summary>
         /// Represents the column 'NU_OPS'.
@@ -4164,10 +4188,10 @@ namespace DbLib.DbEntities
         public virtual string CDKYOTEN { get; set; }
 
         /// <summary>
-        /// Represents the column 'CD_BIN'.
+        /// Represents the column 'CD_HAISHO_BIN'.
         /// </summary>
-        [Column("CD_BIN")]
-        public virtual string CDBIN { get; set; }
+        [Column("CD_HAISHO_BIN")]
+        public virtual string CDHAISHOBIN { get; set; }
 
         /// <summary>
         /// Represents the column 'CD_COURSE'.
@@ -4188,55 +4212,33 @@ namespace DbLib.DbEntities
         public virtual string CDTOKUISAKI { get; set; }
 
         /// <summary>
+        /// Represents the column 'CD_HENKOSHA'.
+        /// </summary>
+        [Column("CD_HENKOSHA")]
+        public virtual string CDHENKOSHA { get; set; }
+
+        /// <summary>
+        /// Represents the column 'DT_TOROKU_NICHIJI'.
+        /// </summary>
+        [Column("DT_TOROKU_NICHIJI")]
+        public virtual string DTTOROKUNICHIJI { get; set; }
+
+        /// <summary>
+        /// Represents the column 'DT_KOSHIN_NICHIJI'.
+        /// </summary>
+        [Column("DT_KOSHIN_NICHIJI")]
+        public virtual string DTKOSHINNICHIJI { get; set; }
+
+        /// <summary>
         /// Represents the column 'FG_SSTATUS'.
         /// </summary>
         [Column("FG_SSTATUS")]
         public virtual short FGSSTATUS { get; set; }
 
         /// <summary>
-        /// Represents the column 'createdAt'.
-        /// </summary>
-        [Column("createdAt")]
-        public virtual DateTime CreatedAt { get; set; }
-
-        /// <summary>
-        /// Represents the column 'updatedAt'.
-        /// </summary>
-        [Column("updatedAt")]
-        public virtual DateTime UpdatedAt { get; set; }
-
-        /// <summary>
-        /// Represents the navigation property for the parent-children relationship involving <seealso cref="TBSTOWAGEBOXEntity"/>
-        /// </summary>
-        [InverseProperty(nameof(TBSTOWAGEBOXEntity.TBSTOWAGE))]
-        public virtual IEnumerable<TBSTOWAGEBOXEntity>? TBSTOWAGEBOX { get; set; }
-
-        /// <summary>
-        /// Represents the navigation property for the parent-children relationship involving <seealso cref="TBSTOWAGEMAPPINGEntity"/>
-        /// </summary>
-        [InverseProperty(nameof(TBSTOWAGEMAPPINGEntity.TBSTOWAGE))]
-        public virtual IEnumerable<TBSTOWAGEMAPPINGEntity>? TBSTOWAGEMAPPING { get; set; }
-    }
-
-    /// <summary>
-    /// Represents the 'TB_STOWAGE_BOX' table.
-    /// </summary>
-    [Table("TB_STOWAGE_BOX")]
-    public partial class TBSTOWAGEBOXEntity
-    {
-        /// <summary>
-        /// Represents the column 'ID_STOWAGE'.
-        /// </summary>
-        [Key]
-        [Column("ID_STOWAGE", Order = 1)]
-        [ForeignKey(nameof(TBSTOWAGE))]
-        public virtual long IDSTOWAGE { get; set; }
-
-        /// <summary>
         /// Represents the column 'ST_BOXTYPE'.
         /// </summary>
-        [Key]
-        [Column("ST_BOXTYPE", Order = 2)]
+        [Column("ST_BOXTYPE")]
         public virtual short STBOXTYPE { get; set; }
 
         /// <summary>
@@ -4250,12 +4252,6 @@ namespace DbLib.DbEntities
         /// </summary>
         [Column("NU_RBOXCNT")]
         public virtual int NURBOXCNT { get; set; }
-
-        /// <summary>
-        /// Represents the column 'CD_HENKOSHA'.
-        /// </summary>
-        [Column("CD_HENKOSHA")]
-        public virtual string CDHENKOSHA { get; set; }
 
         /// <summary>
         /// Represents the column 'NM_HENKOSHA'.
@@ -4276,9 +4272,10 @@ namespace DbLib.DbEntities
         public virtual DateTime UpdatedAt { get; set; }
 
         /// <summary>
-        /// Represents the navigation property for the child-parent relationship involving <seealso cref="TBSTOWAGEEntity"/>
+        /// Represents the navigation property for the parent-children relationship involving <seealso cref="TBSTOWAGEMAPPINGEntity"/>
         /// </summary>
-        public virtual TBSTOWAGEEntity TBSTOWAGE { get; set; }
+        [InverseProperty(nameof(TBSTOWAGEMAPPINGEntity.TBSTOWAGE))]
+        public virtual IEnumerable<TBSTOWAGEMAPPINGEntity>? TBSTOWAGEMAPPING { get; set; }
     }
 
     /// <summary>

@@ -1,10 +1,12 @@
 ﻿
 using CsvHelper;
 using CsvHelper.Configuration;
+using DbLib;
 using DbLib.Defs.DbLib.Defs;
 using ImportLib.Models;
 using ImportLib.Repositories;
 using LogLib;
+using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -17,11 +19,9 @@ namespace ImportLib.Engines
 
         public string DataName => _interfaceFile.Name;
 
-        public string ImportFilePath { get; set; }
+        public string ImportFilePath { get; set; } = string.Empty;
 
-        public long? ImportFileSize { get; private set; }
-
-        public DateTime? ImportFileLastWriteDateTime { get; private set; }
+        public List<TargetImportFile> targetImportFiles { get; private set; } = new List<TargetImportFile>();
 
         private InterfaceFile _interfaceFile;
         private ScopeLogger _logger = new ScopeLogger<MTokuisakiImportEngine>();
@@ -36,28 +36,54 @@ namespace ImportLib.Engines
         {
             try
             {
-                var fileInfo = new FileInfo(ImportFilePath);
-                ImportFileSize = fileInfo.Length;
-                ImportFileLastWriteDateTime = fileInfo.LastWriteTime;
+                var dir = Path.GetDirectoryName(ImportFilePath);
+                var fileName = Path.GetFileName(ImportFilePath);
+                if (dir.IsNullOrEmpty() || fileName.IsNullOrEmpty())
+                {
+                    return;
+                }
+
+                targetImportFiles = Directory.EnumerateFiles(dir!, fileName).Select(x =>
+                {
+                    Syslog.Debug($"found file: {x}");
+                    var fi = new FileInfo(x);
+                    return new TargetImportFile
+                    {
+                        Selected = true,
+                        ImportFileSize = fi.Length,
+                        ImportFileLastWriteDateTime = fi.LastWriteTime,
+                        ImportFilePath = x,
+                    };
+                }).ToList();
             }
             catch (Exception ex)
             {
                 _logger.Warn($"UpdateImportFileInfo: {ex}");
-                ImportFileSize = null;
-                ImportFileLastWriteDateTime = null;
+                targetImportFiles.Clear();
             }
         }
 
-        public async Task<ImportResult> ImportAsync(CancellationToken token)
+        public async Task<List<ImportResult>> ImportAsync(CancellationToken token)
         {
             using (var repo = new ImportRepository())
             {
-                repo.DeleteExpiredKyotenData();
-                var datas = await ReadFileAsync(token);
-                var importCount = await InsertData(datas, repo, token);
+                var importResults = new List<ImportResult>();
+                var importDatas = new List<TokuisakiFileLine>();
+
+                foreach (var targetFile in targetImportFiles)
+                {
+                    repo.DeleteExpiredKyotenData();
+                    importDatas.AddRange(await ReadFileAsync(token, targetFile.ImportFilePath));
+
+                    var beforeCount = importDatas.Count;
+                    importResults.Add(new ImportResult(true, (long)targetFile.ImportFileSize!, importDatas.Count - beforeCount));
+                }
+
+                await InsertData(importDatas, repo, token);
+
                 repo.Commit();
 
-                return new ImportResult(true, (long)ImportFileSize!, importCount);
+                return importResults;
             }
         }
 
@@ -185,7 +211,7 @@ namespace ImportLib.Engines
             return importedCount;
         }
 
-        private async Task<IEnumerable<TokuisakiFileLine>> ReadFileAsync(CancellationToken token)
+        private async Task<IEnumerable<TokuisakiFileLine>> ReadFileAsync(CancellationToken token, string targetImportFilePath)
         {
             Syslog.Debug($"Read {DataName} file");
             var datas = new List<TokuisakiFileLine>();
@@ -198,7 +224,7 @@ namespace ImportLib.Engines
                     MissingFieldFound = null,
                 };
 
-                using (var reader = new StreamReader(ImportFilePath, Encoding.GetEncoding("shift_jis")))
+                using (var reader = new StreamReader(targetImportFilePath, Encoding.GetEncoding("shift_jis")))
                 using (var csv = new CsvReader(reader, config))
                 {
                     while (csv.Read())

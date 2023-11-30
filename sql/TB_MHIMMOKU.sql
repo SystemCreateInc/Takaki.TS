@@ -226,7 +226,7 @@ create table TB_MHIMMOKU (
 	IF_SHIKIBETSU_HYOJI_PLA			nvarchar        (100)		not null,	/* 	識別表示（プラ）				*/
 	DT_RENKEI						nchar           (14)		not null,	/* 	連携日時						*/
 	NU_HAITA						numeric         (5)			not null,	/* 	排他カウンタ					*/
-	CD_SEIZO_HIMBAN					nvarchar        (9)			not null,	/* 	製造品番						*/
+	CD_SEIZO_HIMBAN					nvarchar        (15)		not null,	/* 	製造品番						*/
 	CD_FA_HIMBAN					nchar           (3)			not null,	/* 	ＦＡ品番						*/
 	CD_NISHI_HIMBAN					nchar           (5)			not null,	/* 	西日本卸系品番					*/
 	CD_HIGASHI_HIMBAN				nchar           (5)			not null,	/* 	東日本卸系品番					*/
