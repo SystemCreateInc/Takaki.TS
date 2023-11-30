@@ -24,8 +24,8 @@ namespace SetHenkosha.Models
                     .OrderBy($"{nameof(TBMSHAINEntity.CDSHAIN)}"))
                     .Select((x, index) => new Shain
                     {
-                        CD_SHAIN = x.CDSHAIN,
-                        NM_SHAIN = x.NMSHAIN,
+                        CdShain = x.CDSHAIN,
+                        NmShain = x.NMSHAIN,
                     }).ToList();
             }
         }
