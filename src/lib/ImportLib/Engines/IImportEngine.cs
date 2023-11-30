@@ -13,13 +13,13 @@ namespace ImportLib.Engines
         string DataName { get; }
         string ImportFilePath { get; set; }
 
-        public List<TargetImportFile> targetImportFiles { get; }
+        public List<TargetImportFile> _targetImportFiles { get; }
 
         void UpdateImportFileInfo();
 
         Task<List<ImportResult>> ImportAsync(CancellationToken token);
 
-        bool IsExistFile => targetImportFiles.Any();
+        bool IsExistFile => _targetImportFiles.Any();
 
         void SetFolder(string path)
         {

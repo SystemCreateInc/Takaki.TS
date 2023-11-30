@@ -24,13 +24,13 @@ namespace ImportLib
             try
             {
                 var results = await engine.ImportAsync(token);
-                foreach(var result in results)
+                foreach (var result in results)
                 {
                     InsertSuccessLog(engine, result);
                 }
 
                 // 取込後のデータを削除
-                engine.targetImportFiles.ForEach(x =>
+                engine._targetImportFiles.ForEach(x =>
                 {
                     new FileInfo(x.ImportFilePath).Delete();
                 });
