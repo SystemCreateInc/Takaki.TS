@@ -1,5 +1,5 @@
-﻿<UserControl x:Class="DistGroup.Views.InputDistGroup"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<UserControl x:Class="Customer.Views.InputCustomer"
+                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
@@ -38,7 +38,7 @@
 
                 <Button Command="{Binding Clear}">
                     <StackPanel Orientation="Vertical">
-                        <materialDesign:PackIcon Kind="Add"/>
+                        <materialDesign:PackIcon Kind="Clear"/>
                         <TextBlock Text="クリア"/>
                     </StackPanel>
                 </Button>
@@ -136,26 +136,13 @@
                             <ColumnDefinition Width="2*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Label Grid.Column="0" Content="仕分グループコード"/>
-                        <TextBox Grid.Column="1" Text="{Binding CdDistGroup}"/>
-                        <TextBox Grid.Column="2" Text="{Binding NmDistGroup}"/>
+                        <Label Grid.Column="0" Content="集約得意先コード"/>
+                        <TextBox Grid.Column="1" Text="{Binding CdSumTokuisaki}"/>
+                        <Label Grid.Column="2" Background="Blue"/>
+                        <TextBlock Grid.Column="2" Text="{Binding NmSumTokuisaki}" Foreground="White"/>
                     </Grid>
 
                     <Grid Grid.Row="3">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1.5*"/>
-                            <ColumnDefinition Width="1.5*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Label Grid.Column="0" Content="配送便集計"/>
-                        <RadioButton Grid.Column="1" Content="しない" Margin="3" FontSize="18"
-                                     IsChecked="{Binding BinSumType, Mode=TwoWay, Converter={StaticResource Enum}, ConverterParameter=No}"/>
-                        <RadioButton Grid.Column="2" Content="する" Margin="3" FontSize="18"
-                                     IsChecked="{Binding BinSumType, Mode=TwoWay, Converter={StaticResource Enum}, ConverterParameter=Yes}"/>
-                    </Grid>
-
-                    <Grid Grid.Row="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="1.1*"/>
@@ -174,7 +161,7 @@
                                 Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=Height}"/>
                     </Grid>
 
-                    <Grid Grid.Row="6">
+                    <Grid Grid.Row="4">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="1.5*"/>
@@ -190,7 +177,7 @@
                         <TextBlock Grid.Column="2" Text="{Binding DtKoshinNichiji, StringFormat=yyyy/MM/dd HH:mm:ss}" Foreground="White"/>
                     </Grid>
 
-                    <Grid Grid.Row="7">
+                    <Grid Grid.Row="5">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="1*"/>
@@ -213,55 +200,41 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <Label Grid.Row="0" Content="【対象出荷バッチ】"/>
-                    <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid}" SettingsKey="InputBatchColumns"/>
-                    <DataGrid Grid.Row="1" x:Name="dataGrid" ItemsSource="{Binding Batches}" AutoGenerateColumns="False"
-                              IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                              SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="All"
-                              Style="{StaticResource MaterialDesignDataGrid}" Margin="3" FontSize="18">
-                        <DataGrid.ColumnHeaderStyle>
-                            <Style TargetType="DataGridColumnHeader">
-                                <Setter Property="Background" Value="LightGray"/>
-                                <Setter Property="BorderBrush" Value="Black"/>
-                                <Setter Property="BorderThickness" Value="0.5"/>
-                                <Setter Property="Foreground" Value="Black"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                            </Style>
-                        </DataGrid.ColumnHeaderStyle>
+                    <Grid Grid.Row="1">
+                        <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid}" SettingsKey="InputChildCustomerColumns"/>
+                        <DataGrid x:Name="dataGrid" ItemsSource="{Binding ChildCustomers}" AutoGenerateColumns="False"
+                                  IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
+                                  SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="All"
+                                  Style="{StaticResource MaterialDesignDataGrid}" Margin="3" FontSize="18">
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background" Value="LightGray"/>
+                                    <Setter Property="BorderBrush" Value="Black"/>
+                                    <Setter Property="BorderThickness" Value="0.5"/>
+                                    <Setter Property="Foreground" Value="Black"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
 
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="出荷バッチ" Binding="{Binding CdShukkaBatch}" Width="1.5*"
-                                                ElementStyle="{StaticResource CenterTextElement}"/>
-                            <DataGridTextColumn Header="名称" Binding="{Binding NmShukkaBatch}" Width="3.5*">
-                                <DataGridTextColumn.CellStyle>
-                                    <Style TargetType="DataGridCell">
-                                        <Setter Property="Background" Value="Blue"/>
-                                    </Style>
-                                </DataGridTextColumn.CellStyle>
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Foreground" Value="White"/>
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                            <DataGridTextColumn Header="大仕分" Binding="{Binding CdLargeGroup}" Width="1.5*"
-                                                ElementStyle="{StaticResource CenterTextElement}"/>
-                            <DataGridTextColumn Header="名称" Binding="{Binding CdLargeGroupName}" Width="3.5*">
-                                <DataGridTextColumn.CellStyle>
-                                    <Style TargetType="DataGridCell">
-                                        <Setter Property="Background" Value="Blue"/>
-                                    </Style>
-                                </DataGridTextColumn.CellStyle>
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Foreground" Value="White"/>
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="子得意先コード" Binding="{Binding CdTokuisakiChild}" Width="1*"
+                                                    ElementStyle="{StaticResource CenterTextElement}"/>
+                                <DataGridTextColumn Header="得意先名称" Binding="{Binding NmTokuisaki}" Width="1*">
+                                    <DataGridTextColumn.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Background" Value="Blue"/>
+                                        </Style>
+                                    </DataGridTextColumn.CellStyle>
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
                 </Grid>
             </Grid>
 
@@ -328,7 +301,7 @@
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
 
-                            <DataGridTextColumn Header="変更者" Binding="{Binding CdShain}" Width="1*">
+                            <DataGridTextColumn Header="変更者" Binding="{Binding CdShain}" Width="*">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="Blue"/>
@@ -344,68 +317,6 @@
                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                </Grid>
-
-                <Grid Grid.Row="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="0.15*"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <Grid Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5.2*"/>
-                            <ColumnDefinition Width="4*"/>
-                            <ColumnDefinition Width="0.8*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Label Grid.Column="1" Content="【コース順】"/>
-                    </Grid>
-
-                    <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5.2*"/>
-                            <ColumnDefinition Width="4*"/>
-                            <ColumnDefinition Width="0.8*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid3}" SettingsKey="InputCourseColumns"/>
-                        <DataGrid Grid.Column="1" x:Name="dataGrid3" ItemsSource="{Binding Courses}" AutoGenerateColumns="False"
-                                  IsReadOnly="True" VerticalScrollBarVisibility="Visible" IsSynchronizedWithCurrentItem="True"
-                                  SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="All"
-                                  Style="{StaticResource MaterialDesignDataGrid}" Margin="3" FontSize="18">
-                            <DataGrid.ColumnHeaderStyle>
-                                <Style TargetType="DataGridColumnHeader">
-                                    <Setter Property="Background" Value="LightGray"/>
-                                    <Setter Property="BorderBrush" Value="Black"/>
-                                    <Setter Property="BorderThickness" Value="0.5"/>
-                                    <Setter Property="Foreground" Value="Black"/>
-                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                </Style>
-                            </DataGrid.ColumnHeaderStyle>
-
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="順番" Binding="{Binding NuCourseSeq}" Width="1*"
-                                                    ElementStyle="{StaticResource RightTextElement}"/>
-                                <DataGridTextColumn Header="コース" Binding="{Binding CdCourse}" Width="1*"
-                                                    ElementStyle="{StaticResource CenterTextElement}"/>
-                            </DataGrid.Columns>
-                        </DataGrid>
-
-                        <Grid Grid.Column="2">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="1*"/>
-                                <RowDefinition Height="1*"/>
-                                <RowDefinition Height="1*"/>
-                                <RowDefinition Height="1*"/>
-                            </Grid.RowDefinitions>
-
-                            <Button Grid.Row="0" Content="▲" Command="{Binding UpReplace}" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="3"/>
-                            <Button Grid.Row="1" Content="▼" Command="{Binding DownReplace}" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="3"/>
-                            <Button Grid.Row="2" Content="追加" Command="{Binding Add}" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="0" Margin="3"/>
-                            <Button Grid.Row="3" Content="削除" Command="{Binding Delete}" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="0" Margin="3"/>
-                        </Grid>
-                    </Grid>
                 </Grid>
             </Grid>
         </Grid>

@@ -99,6 +99,16 @@ namespace ImportLib.Repositories
             Connection.Insert(entity, s => s.AttachToTransaction(Transaction));
         }
 
+
+        public void Insert(TBDISTEntity entity)
+        {
+            Connection.Insert(entity, s => s.AttachToTransaction(Transaction));
+        }
+        public void Insert(TBSTOWAGEEntity entity)
+        {
+            Connection.Insert(entity, s => s.AttachToTransaction(Transaction));
+        }
+
         public void Insert(InterfaceLogsEntity entity)
         {
             Connection.Insert(entity, s => s.AttachToTransaction(Transaction));

@@ -21,7 +21,7 @@ namespace ImportLib.Engines
 
         public string ImportFilePath { get; set; } = string.Empty;
 
-        public List<TargetImportFile> targetImportFiles { get; private set; } = new List<TargetImportFile>();
+        public List<TargetImportFile> _targetImportFiles { get; private set; } = new List<TargetImportFile>();
 
         private InterfaceFile _interfaceFile;
         private ScopeLogger _logger = new ScopeLogger<MKoteiMeishoImportEngine>();
@@ -43,7 +43,7 @@ namespace ImportLib.Engines
                     return;
                 }
 
-                targetImportFiles = Directory.EnumerateFiles(dir!, fileName).Select(x =>
+                _targetImportFiles = Directory.EnumerateFiles(dir!, fileName).Select(x =>
                 {
                     Syslog.Debug($"found file: {x}");
                     var fi = new FileInfo(x);
@@ -59,7 +59,7 @@ namespace ImportLib.Engines
             catch (Exception ex)
             {
                 _logger.Warn($"UpdateImportFileInfo: {ex}");
-                targetImportFiles.Clear();
+                _targetImportFiles.Clear();
             }
         }
 
@@ -70,7 +70,7 @@ namespace ImportLib.Engines
                 var importResults = new List<ImportResult>();
                 var importDatas = new List<KoteiMeishoFileLine>();
 
-                foreach (var targetFile in targetImportFiles)
+                foreach (var targetFile in _targetImportFiles)
                 {
                     repo.DeleteExpiredKyotenData();
                     importDatas.AddRange(await ReadFileAsync(token, targetFile.ImportFilePath));
