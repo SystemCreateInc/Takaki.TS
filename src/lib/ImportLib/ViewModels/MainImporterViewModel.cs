@@ -143,7 +143,7 @@ namespace ImportLib.ViewModels
                     {
                         engine.UpdateImportFileInfo();
 
-                        if (!engine.targetImportFiles.Any())
+                        if (!engine._targetImportFiles.Any())
                         {
                             ImportFiles.Add(new ImportFileViewModel
                             {
@@ -153,7 +153,7 @@ namespace ImportLib.ViewModels
                             continue;
                         }
 
-                        engine.targetImportFiles.ForEach(x =>
+                        engine._targetImportFiles.ForEach(x =>
                         {
                             ImportFiles.Add(new ImportFileViewModel
                             {
@@ -205,8 +205,6 @@ namespace ImportLib.ViewModels
             {
                 _dataTypes.Add(DataType.Pick);
                 _dataTypes.Add(DataType.Hako);
-                _dataTypes.Add(DataType.PickResult);
-                _dataTypes.Add(DataType.HakoResult);
             }
         }
 
@@ -266,22 +264,14 @@ namespace ImportLib.ViewModels
                     _engines.Add(new MKoteiMeishoImportEngine(interfaceFile));
                     break;
 
-                //// 出荷ﾃﾞｰﾀ受信
-                //case DataType.Pick:
-                //    _engines.Add(new MKyotenImportEngine(interfaceFile));
-                //    break;
+                // 出荷ﾃﾞｰﾀ受信
+                case DataType.Pick:
+                    _engines.Add(new DistImportEngine(interfaceFile));
+                    break;
 
-                //case DataType.Hako:
-                //    _engines.Add(new MKyotenImportEngine(interfaceFile));
-                //    break;
-
-                //case DataType.PickResult:
-                //    _engines.Add(new MKyotenImportEngine(interfaceFile));
-                //    break;
-
-                //case DataType.HakoResult:
-                //    _engines.Add(new MKyotenImportEngine(interfaceFile));
-                //    break;
+                case DataType.Hako:
+                    _engines.Add(new StowageImportEngine(interfaceFile));
+                    break;
 
                 default:
                     Debug.Assert(false);

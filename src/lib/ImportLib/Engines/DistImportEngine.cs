@@ -13,7 +13,7 @@ using System.Text;
 
 namespace ImportLib.Engines
 {
-    public class MShukkaBatchImportEngine : IImportEngine
+    public class DistImportEngine : IImportEngine
     {
         public DataType DataType => _interfaceFile.DataType;
 
@@ -24,9 +24,9 @@ namespace ImportLib.Engines
         public List<TargetImportFile> _targetImportFiles { get; private set; } = new List<TargetImportFile>();
 
         private InterfaceFile _interfaceFile;
-        private ScopeLogger _logger = new ScopeLogger<MShukkaBatchImportEngine>();
+        private ScopeLogger _logger = new ScopeLogger<DistImportEngine>();
 
-        public MShukkaBatchImportEngine(InterfaceFile interfaceFile)
+        public DistImportEngine(InterfaceFile interfaceFile)
         {
             _interfaceFile = interfaceFile;
             ImportFilePath = _interfaceFile.FileName;
@@ -68,7 +68,7 @@ namespace ImportLib.Engines
             using (var repo = new ImportRepository())
             {
                 var importResults = new List<ImportResult>();
-                var importDatas = new List<ShukkaBatchFileLine>();
+                var importDatas = new List<DistFileLine>();
 
                 foreach (var targetFile in _targetImportFiles)
                 {
@@ -79,6 +79,15 @@ namespace ImportLib.Engines
                     importResults.Add(new ImportResult(true, (long)targetFile.ImportFileSize!, importDatas.Count - beforeCount));
                 }
 
+                // TODO:同一Dist存在時の確認メッセージ
+                //var sameDistData = GetSameDistData(importDatas);
+
+                //if (sameDistData.Any())
+                //{
+                //    var sameDistStr = string.Join(",\n", sameDistData.Select(x => $"{x.DtDelivery}, {x.CdShukkaBatch}"));
+
+                //}
+
                 await InsertData(importDatas, repo, token);
 
                 repo.Commit();
@@ -87,54 +96,46 @@ namespace ImportLib.Engines
             }
         }
 
-        private async Task<int> InsertData(IEnumerable<ShukkaBatchFileLine> datas, ImportRepository repo, CancellationToken token)
+        private List<DistFileLine> GetSameDistData(List<DistFileLine> importDatas)
+        {
+            throw new NotImplementedException();
+        }
+
+        private async Task<int> InsertData(IEnumerable<DistFileLine> datas, ImportRepository repo, CancellationToken token)
         {
             var importedCount = 0;
             foreach (var line in datas)
             {
                 await Task.Yield();
 
-                repo.Insert(new DbLib.DbEntities.TBMSHUKKABATCHEntity
+                repo.Insert(new DbLib.DbEntities.TBDISTEntity
                 {
+                    DTDELIVERY = line.DtDelivery,
                     CDSHUKKABATCH = line.CdShukkaBatch,
-                    DTTEKIYOKAISHI = line.DtTekiyokaishi,
-                    DTTEKIYOMUKO = line.DtTekiyomuko,
+                    CDKYOTEN = line.CdKyoten,
+                    CDHAISHOBIN = line.CdHaishoBin,
+                    CDJUCHUBIN = line.CdJuchuBin,
+                    CDCOURSE = line.CdCourse,
+                    CDROUTE = line.CdRoute,
+                    CDTOKUISAKI = line.CdTokuisaki,
+                    CDHIMBAN = line.CdHimban,
+                    CDGTIN13 = line.CdGtin13,
+                    CDGTIN14 = line.CdGtin14,
+                    STBOXTYPE = line.StBoxtype,
+                    NUBOXUNIT = line.NuBoxunit,
+                    NUOPS = line.NuOps,
                     DTTOROKUNICHIJI = line.DtTorokuNichiji,
                     DTKOSHINNICHIJI = line.DtKoshinNichiji,
                     CDHENKOSHA = line.CdHenkosha,
-                    NMSHUKKABATCH = line.NmShukkaBatch,
-                    CDSHIWAKEKYOTEN = line.CdShiwakeKyoten,
-                    TMSHIWAKEKAISHI = line.TmShiwakeKaishi,
-                    TMSHIWAKESHURYO = line.TmShiwakeShuryo,
-                    CDSHUKKABATCHGROUP = line.CdShukkaBatchGroup,
-                    STOSHIWAKEHYOSHUBETSU = line.StOshiwakehyoShubetsu,
-                    STCHUSHIWAKEHYOSHUBETSU = line.StChushiwakehyoShubetsu,
-                    STKOSHIWAKEHYOSHUBETSU = line.StKoshiwakehyoShubetsu,
-                    FGTOKUISAKISHUKEI1 = line.FgTokuisakiShukei1,
-                    FGTOKUISAKISHUKEI2 = line.FgTokuisakiShukei2,
-                    FGTOKUISAKISHUKEI3 = line.FgTokuisakiShukei3,
-                    FGTOKUISAKISHUKEI4 = line.FgTokuisakiShukei4,
-                    FGTOKUISAKISHUKEI5 = line.FgTokuisakiShukei5,
-                    FGTOKUISAKISHUKEI6 = line.FgTokuisakiShukei6,
-                    FGHAISOUBINBETSUSHUKEIUMU = line.FgHaisoubinBetsuShukeiUmu,
-                    FGCOURSEBETSUSHUKEIUMU = line.FgCourseBetsuShukeiUmu,
-                    FGJUCHUJOKYOHYO = line.FgJuchujokyohyo,
-                    FGSANDHIKITORIHYO = line.FgSandHikitoriHyo,
-                    STDPSSHUBETSU = line.StDpsShubetsu,
-                    NUSHIWAKELEADTIME = line.NuShiwakeLeadTime ?? 0,
-                    STLEADTIMESEIGYO = line.StLeadTimeSeigyo,
-                    FGYOBI1 = line.FgYobi1,
-                    FGYOBI2 = line.FgYobi2,
-                    FGYOBI3 = line.FgYobi3,
-                    FGYOBI4 = line.FgYobi4,
-                    FGYOBI5 = line.FgYobi5,
-                    STYOBI1 = line.StYobi1,
-                    STYOBI2 = line.StYobi2,
-                    STYOBI3 = line.StYobi3,
-                    STYOBI4 = line.StYobi4,
-                    STYOBI5 = line.StYobi5,
-                    NUHAITA = line.NuHaita ?? 0,
-                    DTRENKEI = line.DtRenkei,
+
+                    NULOPS = 0,
+                    NUDOPS = 0,
+                    NUDRPS = 0,
+                    NULRPS = 0,
+                    FGMAPSTATUS = 0,
+                    FGLSTATUS = 0,
+                    FGDSTATUS = 0,
+
                     CreatedAt = DateTime.Now,
                     UpdatedAt = DateTime.Now,
                 });
@@ -145,10 +146,10 @@ namespace ImportLib.Engines
             return importedCount;
         }
 
-        private async Task<IEnumerable<ShukkaBatchFileLine>> ReadFileAsync(CancellationToken token, string targetImportFilePath)
+        private async Task<IEnumerable<DistFileLine>> ReadFileAsync(CancellationToken token, string targetImportFilePath)
         {
             Syslog.Debug($"Read {DataName} file");
-            var datas = new List<ShukkaBatchFileLine>();
+            var datas = new List<DistFileLine>();
 
             try
             {
@@ -158,14 +159,14 @@ namespace ImportLib.Engines
                     MissingFieldFound = null,
                 };
 
-                using (var reader = new StreamReader(ImportFilePath, Encoding.GetEncoding("shift_jis")))
+                using (var reader = new StreamReader(targetImportFilePath, Encoding.GetEncoding("shift_jis")))
                 using (var csv = new CsvReader(reader, config))
                 {
                     while (csv.Read())
                     {
                         await Task.Yield();
 
-                        var line = csv.GetRecord<ShukkaBatchFileLine>();
+                        var line = csv.GetRecord<DistFileLine>();
                         if (line is not null)
                         {
                             datas.Add(line);
