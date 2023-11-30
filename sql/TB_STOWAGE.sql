@@ -11,7 +11,7 @@ create table TB_STOWAGE (
 	
 	CD_SHUKKA_BATCH		nchar(5)				not null,	/* 出荷バッチ					*/
 	CD_KYOTEN			nchar(4)				not null,	/* 仕分け拠点					*/
-	CD_BIN				nchar(3)				not null,	/* 配送便						*/
+	CD_HAISHO_BIN		nchar(3)				not null,	/* 配送便						*/
 	CD_COURSE			nchar(3)				not null,	/* コース						*/
 	CD_ROUTE			integer					not null,	/* 配送順						*/
 	CD_TOKUISAKI		nchar(6)				not null,	/* 得意先コード					*/

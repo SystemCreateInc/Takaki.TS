@@ -330,10 +330,16 @@ namespace DbLib.DbEntities
         public virtual string CDKYOTEN { get; set; }
 
         /// <summary>
-        /// Represents the column 'CD_BIN'.
+        /// Represents the column 'CD_HAISHO_BIN'.
         /// </summary>
-        [Column("CD_BIN")]
-        public virtual string CDBIN { get; set; }
+        [Column("CD_HAISHO_BIN")]
+        public virtual string CDHAISHOBIN { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_JUCHU_BIN'.
+        /// </summary>
+        [Column("CD_JUCHU_BIN")]
+        public virtual string CDJUCHUBIN { get; set; }
 
         /// <summary>
         /// Represents the column 'CD_COURSE'.
@@ -4182,10 +4188,10 @@ namespace DbLib.DbEntities
         public virtual string CDKYOTEN { get; set; }
 
         /// <summary>
-        /// Represents the column 'CD_BIN'.
+        /// Represents the column 'CD_HAISHO_BIN'.
         /// </summary>
-        [Column("CD_BIN")]
-        public virtual string CDBIN { get; set; }
+        [Column("CD_HAISHO_BIN")]
+        public virtual string CDHAISHOBIN { get; set; }
 
         /// <summary>
         /// Represents the column 'CD_COURSE'.
