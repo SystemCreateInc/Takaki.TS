@@ -22,6 +22,10 @@ create table TB_DIST (
 															0:その他 1:薄箱 2:圧箱 3:青箱	*/
 	NU_BOXUNIT			integer					not null,	/* 運搬容器入り数				*/
 
+	CD_HENKOSHA			nchar(7)				not null,	/* 変更者コード					*/
+	DT_TOROKU_NICHIJI	nchar(14)				not null,	/* 登録日時						*/
+	DT_KOSHIN_NICHIJI	nchar(14)				not null,	/* 更新日時						*/
+
 	NU_OPS				integer					not null,	/* 出荷予定数					*/
 	NU_LOPS				integer					not null,	/* 大仕分け予定数				*/
 	NU_LRPS				integer					not null,	/* 大仕分け実績数				*/

@@ -384,6 +384,24 @@ namespace DbLib.DbEntities
         public virtual int NUBOXUNIT { get; set; }
 
         /// <summary>
+        /// Represents the column 'CD_HENKOSHA'.
+        /// </summary>
+        [Column("CD_HENKOSHA")]
+        public virtual string CDHENKOSHA { get; set; }
+
+        /// <summary>
+        /// Represents the column 'DT_TOROKU_NICHIJI'.
+        /// </summary>
+        [Column("DT_TOROKU_NICHIJI")]
+        public virtual string DTTOROKUNICHIJI { get; set; }
+
+        /// <summary>
+        /// Represents the column 'DT_KOSHIN_NICHIJI'.
+        /// </summary>
+        [Column("DT_KOSHIN_NICHIJI")]
+        public virtual string DTKOSHINNICHIJI { get; set; }
+
+        /// <summary>
         /// Represents the column 'NU_OPS'.
         /// </summary>
         [Column("NU_OPS")]
@@ -4186,6 +4204,24 @@ namespace DbLib.DbEntities
         /// </summary>
         [Column("CD_TOKUISAKI")]
         public virtual string CDTOKUISAKI { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_HENKOSHA'.
+        /// </summary>
+        [Column("CD_HENKOSHA")]
+        public virtual string CDHENKOSHA { get; set; }
+
+        /// <summary>
+        /// Represents the column 'DT_TOROKU_NICHIJI'.
+        /// </summary>
+        [Column("DT_TOROKU_NICHIJI")]
+        public virtual string DTTOROKUNICHIJI { get; set; }
+
+        /// <summary>
+        /// Represents the column 'DT_KOSHIN_NICHIJI'.
+        /// </summary>
+        [Column("DT_KOSHIN_NICHIJI")]
+        public virtual string DTKOSHINNICHIJI { get; set; }
 
         /// <summary>
         /// Represents the column 'FG_SSTATUS'.
