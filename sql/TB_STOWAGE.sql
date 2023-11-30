@@ -16,7 +16,7 @@ create table TB_STOWAGE (
 	CD_ROUTE			integer					not null,	/* 配送順						*/
 	CD_TOKUISAKI		nchar(6)				not null,	/* 得意先コード					*/
 
-	CD_HENKOSHA			nchar(7)				not null,	/* 変更者コード					*/
+	CD_HENKOSHA			nchar(10)				not null,	/* 変更者コード					*/
 	DT_TOROKU_NICHIJI	nchar(14)				not null,	/* 登録日時						*/
 	DT_KOSHIN_NICHIJI	nchar(14)				not null,	/* 更新日時						*/
 	
