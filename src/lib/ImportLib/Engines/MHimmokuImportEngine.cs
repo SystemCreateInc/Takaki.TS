@@ -1,17 +1,15 @@
 ﻿
 using CsvHelper;
 using CsvHelper.Configuration;
+using DbLib;
 using DbLib.Defs.DbLib.Defs;
 using ImportLib.Models;
 using ImportLib.Repositories;
 using LogLib;
 using Microsoft.IdentityModel.Tokens;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using static System.Windows.Forms.AxHost;
 
 namespace ImportLib.Engines
 {
@@ -38,8 +36,8 @@ namespace ImportLib.Engines
         {
             try
             {
-                var dir = Path.GetDirectoryName(_interfaceFile.FileName);
-                var fileName = Path.GetFileName(_interfaceFile.FileName);
+                var dir = Path.GetDirectoryName(ImportFilePath);
+                var fileName = Path.GetFileName(ImportFilePath);
                 if (dir.IsNullOrEmpty() || fileName.IsNullOrEmpty())
                 {
                     return;

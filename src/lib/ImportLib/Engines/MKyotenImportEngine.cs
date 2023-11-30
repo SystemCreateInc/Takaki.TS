@@ -1,6 +1,7 @@
 ﻿
 using CsvHelper;
 using CsvHelper.Configuration;
+using DbLib;
 using DbLib.Defs.DbLib.Defs;
 using ImportLib.Models;
 using ImportLib.Repositories;
@@ -28,14 +29,15 @@ namespace ImportLib.Engines
         public MKyotenImportEngine(InterfaceFile interfaceFile)
         {
             _interfaceFile = interfaceFile;
+            ImportFilePath = interfaceFile.FileName;
         }
 
         public void UpdateImportFileInfo()
         {
             try
             {
-                var dir = Path.GetDirectoryName(_interfaceFile.FileName);
-                var fileName = Path.GetFileName(_interfaceFile.FileName);
+                var dir = Path.GetDirectoryName(ImportFilePath);
+                var fileName = Path.GetFileName(ImportFilePath);
                 if (dir.IsNullOrEmpty() || fileName.IsNullOrEmpty())
                 {
                     return;
