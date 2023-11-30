@@ -26,8 +26,8 @@ namespace SetHenkosha.Models
                     var pc = GetPcEntity(tr, idpc) ??
                         throw new Exception("対象のPCデータがありません");
 
-                    pc.CDHENKOSHA = shain?.CD_SHAIN;
-                    pc.NMHENKOSHA = shain?.NM_SHAIN;
+                    pc.CDHENKOSHA = shain?.CdShain;
+                    pc.NMHENKOSHA = shain?.NmShain;
                     pc.UpdatedAt = DateTime.Now;
 
                     con.Update(pc, s => s.AttachToTransaction(tr));

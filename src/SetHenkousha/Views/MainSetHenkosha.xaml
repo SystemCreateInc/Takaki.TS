@@ -21,18 +21,18 @@
                 <TextBlock Grid.Column="0" Text="社員コード:" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" 
                            Width="140" Margin="3"/>
                 <ComboBox x:Name="Shain" Grid.Column="1" SelectedItem="{Binding Shain}" ItemsSource="{Binding ShainCombo}" Margin="3" 
-                          IsEditable="True" TextSearch.TextPath="CD_SHAIN" b:ComboBoxBehavior.MaxLength="7">
+                          IsEditable="True" TextSearch.TextPath="CdShain" b:ComboBoxBehavior.MaxLength="7">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding CD_SHAIN}" />
+                                <TextBlock Text="{Binding CdShain}" />
                                 <TextBlock Text="  "/>
-                                <TextBlock Text="{Binding NM_SHAIN}"/>
+                                <TextBlock Text="{Binding NmShain}"/>
                             </StackPanel>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <TextBlock Grid.Column="2" Text="{Binding Shain.NM_SHAIN}" VerticalAlignment="Center" Margin="20 0 0 0" />
+                <TextBlock Grid.Column="2" Text="{Binding Shain.NmShain}" VerticalAlignment="Center" Margin="20 0 0 0" />
             </Grid>
 
             <TextBlock Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
