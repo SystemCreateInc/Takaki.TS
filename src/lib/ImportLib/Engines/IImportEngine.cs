@@ -1,7 +1,4 @@
-﻿
-using DbLib.Defs;
-using DbLib.Defs.DbLib.Defs;
-using DbLib.Extensions;
+﻿using DbLib.Defs.DbLib.Defs;
 using ImportLib.Models;
 using System.IO;
 
@@ -12,6 +9,8 @@ namespace ImportLib.Engines
         DataType DataType { get; }
         string DataName { get; }
         string ImportFilePath { get; set; }
+
+        public IEnumerable<SameDistInfo> SameDistInfos { get; set; }
 
         public List<TargetImportFile> _targetImportFiles { get; }
 
@@ -28,5 +27,6 @@ namespace ImportLib.Engines
         }
 
         InterfaceFile GetInterfaceFile();
+        Task<bool> SetSameDist(CancellationToken token);
     }
 }

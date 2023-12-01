@@ -67,7 +67,9 @@ namespace ImportLib.ViewModels
 
         private void Import()
         {
-            var selectEngines = GetSelectEngines();
+            // fixme:エンジン単位ではなく選択ファイル単位に
+            var selectNames = ImportFiles.Where(x => x.Selected).Select(x => x.Name);
+            var selectEngines = _engines.Where(x => selectNames.Contains(x.DataName)).ToList();
 
             if (!selectEngines.Any())
             {
@@ -85,12 +87,6 @@ namespace ImportLib.ViewModels
                 {
                     LoadDatas();
                 });
-        }
-
-        private List<IImportEngine> GetSelectEngines()
-        {
-            var selectNames = ImportFiles.Where(x => x.Selected).Select(x => x.Name);
-            return _engines.Where(x => selectNames.Contains(x.DataName)).ToList();
         }
 
         private void SelectFolder()

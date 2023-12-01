@@ -26,6 +26,8 @@ namespace ImportLib.Engines
         private InterfaceFile _interfaceFile;
         private ScopeLogger _logger = new ScopeLogger<MTokuisakiImportEngine>();
 
+        public IEnumerable<SameDistInfo> SameDistInfos { get; set; } = Enumerable.Empty<SameDistInfo>();
+
         public MTokuisakiImportEngine(InterfaceFile interfaceFile)
         {
             _interfaceFile = interfaceFile;
@@ -65,21 +67,25 @@ namespace ImportLib.Engines
 
         public async Task<List<ImportResult>> ImportAsync(CancellationToken token)
         {
+            return await Task.Run(() => Import(token));
+        }
+
+        public List<ImportResult> Import(CancellationToken token)
+        {
             using (var repo = new ImportRepository())
             {
                 var importResults = new List<ImportResult>();
                 var importDatas = new List<TokuisakiFileLine>();
+                repo.DeleteTokuisakiData();
 
                 foreach (var targetFile in _targetImportFiles)
                 {
-                    repo.DeleteExpiredKyotenData();
-                    importDatas.AddRange(await ReadFileAsync(token, targetFile.ImportFilePath));
-
                     var beforeCount = importDatas.Count;
+                    importDatas.AddRange(ReadFile(token, targetFile.ImportFilePath));
                     importResults.Add(new ImportResult(true, (long)targetFile.ImportFileSize!, importDatas.Count - beforeCount));
                 }
 
-                await InsertData(importDatas, repo, token);
+                InsertData(importDatas, repo, token);
 
                 repo.Commit();
 
@@ -87,12 +93,23 @@ namespace ImportLib.Engines
             }
         }
 
-        private async Task<int> InsertData(IEnumerable<TokuisakiFileLine> datas, ImportRepository repo, CancellationToken token)
+        public InterfaceFile GetInterfaceFile()
+        {
+            return _interfaceFile with { FileName = _interfaceFile.FileName };
+        }
+
+        public Task<bool> SetSameDist(CancellationToken token)
+        {
+            // 処理無し
+            return Task.Run(() => true);
+        }
+
+        private int InsertData(IEnumerable<TokuisakiFileLine> datas, ImportRepository repo, CancellationToken token)
         {
             var importedCount = 0;
             foreach (var line in datas)
             {
-                await Task.Yield();
+                token.ThrowIfCancellationRequested();
 
                 repo.Insert(new DbLib.DbEntities.TBMTOKUISAKIEntity
                 {
@@ -211,7 +228,7 @@ namespace ImportLib.Engines
             return importedCount;
         }
 
-        private async Task<IEnumerable<TokuisakiFileLine>> ReadFileAsync(CancellationToken token, string targetImportFilePath)
+        private IEnumerable<TokuisakiFileLine> ReadFile(CancellationToken token, string targetImportFilePath)
         {
             Syslog.Debug($"Read {DataName} file");
             var datas = new List<TokuisakiFileLine>();
@@ -229,7 +246,7 @@ namespace ImportLib.Engines
                 {
                     while (csv.Read())
                     {
-                        await Task.Yield();
+                        token.ThrowIfCancellationRequested();
 
                         var line = csv.GetRecord<TokuisakiFileLine>();
                         if (line is not null)
@@ -243,6 +260,10 @@ namespace ImportLib.Engines
                     }
                 }
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 var message = $"CSVファイルの読み込み中にエラーが発生しました\n{ex.Message}";
@@ -250,11 +271,6 @@ namespace ImportLib.Engines
             }
 
             return datas;
-        }
-
-        public InterfaceFile GetInterfaceFile()
-        {
-            return _interfaceFile with { FileName = ImportFilePath };
         }
     }
 }

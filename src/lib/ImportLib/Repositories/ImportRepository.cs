@@ -1,21 +1,12 @@
-﻿using Dapper;
-using Dapper.FastCrud;
+﻿using Dapper.FastCrud;
 using DbLib;
 using DbLib.DbEntities;
 using DbLib.Defs;
 using DbLib.Defs.DbLib.Defs;
-using ImportLib.Engines;
 using ImportLib.Models;
 using ImTools;
 using LogLib;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace ImportLib.Repositories
 {
@@ -109,6 +100,7 @@ namespace ImportLib.Repositories
             Connection.Insert(entity, s => s.AttachToTransaction(Transaction));
         }
 
+
         public void Insert(InterfaceLogsEntity entity)
         {
             Connection.Insert(entity, s => s.AttachToTransaction(Transaction));
@@ -134,94 +126,135 @@ namespace ImportLib.Repositories
                 .WithParameters(new { expDate }));
         }
 
-        internal void DeleteExpiredKyotenData()
+        internal void DeleteKyotenData()
         {
-            var expDate = GetExpiredDate();
-            if (expDate is null)
-            {
-                Syslog.Debug("Skip delete Kyoten data");
-                return;
-            }
-
             Connection.BulkDelete<TBMKYOTENEntity>(s => s
-                .AttachToTransaction(Transaction)
-                .Where($"{nameof(TBMKYOTENEntity.CreatedAt):C} < @expDate")
-                .WithParameters(new { expDate }));
+                .AttachToTransaction(Transaction));
         }
 
-        internal void DeleteExpiredIssueData()
+        internal void DeleteIssueData()
         {
-            var expDate = GetExpiredDate();
-            if (expDate is null)
-            {
-                Syslog.Debug("Skip delete shain data");
-                return;
-            }
-
             Connection.BulkDelete<TBMSHAINEntity>(s => s
-                .AttachToTransaction(Transaction)
-                .Where($"{nameof(TBMSHAINEntity.CreatedAt):C} < @expDate")
-                .WithParameters(new { expDate }));
+                .AttachToTransaction(Transaction));
         }
 
-        internal void DeleteExpiredTokuisakiData()
+        internal void DeleteTokuisakiData()
         {
-            var expDate = GetExpiredDate();
-            if (expDate is null)
-            {
-                Syslog.Debug("Skip delete tokuisaki data");
-                return;
-            }
-
             Connection.BulkDelete<TBMTOKUISAKIEntity>(s => s
-                .AttachToTransaction(Transaction)
-                .Where($"{nameof(TBMTOKUISAKIEntity.CreatedAt):C} < @expDate")
-                .WithParameters(new { expDate }));
+                .AttachToTransaction(Transaction));
         }
 
         internal void DeleteExpiredHimmokuData()
         {
-            var expDate = GetExpiredDate();
-            if (expDate is null)
-            {
-                Syslog.Debug("Skip delete himmoku data");
-                return;
-            }
-
             Connection.BulkDelete<TBMHIMMOKUEntity>(s => s
-                .AttachToTransaction(Transaction)
-                .Where($"{nameof(TBMHIMMOKUEntity.CreatedAt):C} < @expDate")
-                .WithParameters(new { expDate }));
+                .AttachToTransaction(Transaction));
         }
 
-        internal void DeleteExpiredshukkabatchData()
+        internal void DeleteExpiredShukkabatchData()
         {
-            var expDate = GetExpiredDate();
-            if (expDate is null)
-            {
-                Syslog.Debug("Skip delete shukkabatch data");
-                return;
-            }
-
             Connection.BulkDelete<TBMSHUKKABATCHEntity>(s => s
-                .AttachToTransaction(Transaction)
-                .Where($"{nameof(TBMSHUKKABATCHEntity.CreatedAt):C} < @expDate")
-                .WithParameters(new { expDate }));
+                .AttachToTransaction(Transaction));
         }
 
         internal void DeleteExpiredKoteimeishoData()
         {
+            Connection.BulkDelete<TBMKOTEIMEISHOEntity>(s => s
+                .AttachToTransaction(Transaction));
+        }
+
+        internal void DeleteExpiredShainData()
+        {
+            Connection.BulkDelete<TBMSHAINEntity>(s => s
+                .AttachToTransaction(Transaction));
+        }
+
+        internal void DeleteExpiredDistData()
+        {
             var expDate = GetExpiredDate();
             if (expDate is null)
             {
-                Syslog.Debug("Skip delete koteimeisho data");
+                Syslog.Debug("Skip delete dist data");
                 return;
             }
 
-            Connection.BulkDelete<TBMKOTEIMEISHOEntity>(s => s
+            Connection.BulkDelete<TBDISTEntity>(s => s
                 .AttachToTransaction(Transaction)
-                .Where($"{nameof(TBMKOTEIMEISHOEntity.CreatedAt):C} < @expDate")
+                .Where($"{nameof(TBDISTEntity.CreatedAt):C} < @expDate")
                 .WithParameters(new { expDate }));
+        }
+
+        internal void DeleteExpiredStowageData()
+        {
+            var expDate = GetExpiredDate();
+            if (expDate is null)
+            {
+                Syslog.Debug("Skip delete stowage data");
+                return;
+            }
+
+            Connection.BulkDelete<TBSTOWAGEEntity>(s => s
+                .AttachToTransaction(Transaction)
+                .Where($"{nameof(TBSTOWAGEEntity.CreatedAt):C} < @expDate")
+                .WithParameters(new { expDate }));
+        }
+
+        internal void DeleteSameDistData(IEnumerable<SameDistInfo> deleteDistInfos)
+        {
+            if (!deleteDistInfos.Any())
+            {
+                return;
+            }
+
+            Connection.BulkDelete<TBDISTEntity>(s => s
+                .AttachToTransaction(Transaction)
+                .Where($"{GetSameDistWhereSql(deleteDistInfos)}"));
+        }
+
+        internal void DeleteStowageData(IEnumerable<SameDistInfo> deleteDistInfos)
+        {
+            if (!deleteDistInfos.Any())
+            {
+                return;
+            }
+
+            Connection.BulkDelete<TBSTOWAGEEntity>(s => s
+                .AttachToTransaction(Transaction)
+                .Where($"{GetSameDistWhereSql(deleteDistInfos)}"));
+        }
+
+        // 納品日&バッチ一致リスト取得
+        internal IEnumerable<SameDistInfo> GetDeleteSameDistDatas(IEnumerable<SameDistInfo> sameDistInfos)
+        {
+            return Connection.Find<TBDISTEntity>(s => s
+                .AttachToTransaction(Transaction)
+                .Where($"{GetSameDistWhereSql(sameDistInfos)}"))
+                    .GroupBy(x => new { x.DTDELIVERY, x.CDSHUKKABATCH })
+                    .Select(q => new SameDistInfo
+                    {
+                        DtDelivery = q.Key.DTDELIVERY,
+                        ShukkaBatch = q.Key.CDSHUKKABATCH,
+                        IsWork = q.Any(x => x.FGDSTATUS != (short)Status.Ready || x.FGDSTATUS != (short)Status.Ready),
+                    });
+        }
+
+        internal IEnumerable<SameDistInfo> GetDeleteSameStowageDatas(IEnumerable<SameDistInfo> sameDistInfos)
+        {
+            return Connection.Find<TBSTOWAGEEntity>(s => s
+                .AttachToTransaction(Transaction)
+                .Where($"{GetSameDistWhereSql(sameDistInfos)}"))
+                    .GroupBy(x => new { x.DTDELIVERY, x.CDSHUKKABATCH })
+                    .Select(q => new SameDistInfo
+                    {
+                        DtDelivery = q.Key.DTDELIVERY,
+                        ShukkaBatch = q.Key.CDSHUKKABATCH,
+                        IsWork = q.Any(x => x.FGSSTATUS != (short)Status.Ready),
+                    }); ;
+        }
+
+        private string GetSameDistWhereSql(IEnumerable<SameDistInfo> sameDistInfos)
+        {
+            // HACK:列名を属性から取得
+            return string.Join(" or ", sameDistInfos.Select(x => $"(DT_DELIVERY = {x.DtDelivery} and CD_SHUKKA_BATCH = {x.ShukkaBatch})"));
         }
 
         //internal void DeleteItemData()
@@ -277,6 +310,6 @@ namespace ImportLib.Repositories
                 entity.FileName = interfaceFile.FileName;
                 con.Update(entity);
             }
-        }        
+        }
     }
 }

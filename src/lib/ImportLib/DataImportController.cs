@@ -6,6 +6,13 @@ using System.IO;
 
 namespace ImportLib
 {
+    public enum GetSameDistResult
+    {
+        NONE,
+        EXIST,
+        WORK,
+    }
+
     public class DataImportController
     {
         public DataImportController()
@@ -16,6 +23,37 @@ namespace ImportLib
                 repo.DeleteExpiredLogs();
 
                 repo.Commit();
+            }
+        }
+
+        public async Task<GetSameDistResult> CheckSameDist(IImportEngine engine, CancellationToken token)
+        {
+            try
+            {
+                await engine.SetSameDist(token);
+
+                if (!engine.SameDistInfos.Any())
+                {
+                    return GetSameDistResult.NONE;
+                }
+
+                if(engine.SameDistInfos.Any(x => x.IsWork))
+                {
+                    return GetSameDistResult.WORK;
+                }
+
+                return GetSameDistResult.EXIST;
+            }
+            catch (OperationCanceledException)
+            {
+                InsertFailLog(engine, "中断されました");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Syslog.Error($"DataImportController.PreImport: {ex}");
+                InsertFailLog(engine, ex.Message);
+                throw;
             }
         }
 

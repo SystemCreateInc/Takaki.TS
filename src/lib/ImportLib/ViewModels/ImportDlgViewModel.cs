@@ -35,6 +35,7 @@ namespace ImportLib.ViewModels
         private void Cancel()
         {
             _cancellationTokenSource.Cancel();
+            Close(ButtonResult.Cancel);
         }
 
         public bool CanCloseDialog()
@@ -61,13 +62,43 @@ namespace ImportLib.ViewModels
         {
             try
             {
-                foreach(var engine in engines)
+                var importController = new DataImportController();
+
+                foreach (var engine in engines)
                 {
                     Message = $"{engine.DataName} 取り込み中";
-                    await new DataImportController().Import(engine, _cancellationTokenSource.Token);
+
+                    var sameDistResult = await importController.CheckSameDist(engine, _cancellationTokenSource.Token);
+
+                    if (sameDistResult == GetSameDistResult.WORK)
+                    {
+                        WindowLib.Utils.MessageDialog.Show(_dialogService,
+                            "同じ納品日・出荷バッチコードのデータで作業済みがある為中断します。", $"{engine.DataName} エラー");
+
+                        Close(ButtonResult.Cancel);
+                        return;
+                    }
+
+                    if (sameDistResult == GetSameDistResult.EXIST)
+                    {
+                        if (WindowLib.Utils.MessageDialog.Show(_dialogService,
+                            "同じ納品日・出荷バッチコードのデータが登録されています。\n入れ替えますか？", $"{engine.DataName} 入替確認",
+                            WindowLib.Utils.ButtonMask.OK | WindowLib.Utils.ButtonMask.Cancel) != ButtonResult.OK)
+                        {
+                            Close(ButtonResult.Cancel);
+                            return;
+                        }
+                    }
+
+                    await importController.Import(engine, _cancellationTokenSource.Token);
                 }
 
                 Close(ButtonResult.OK);
+            }
+            catch (OperationCanceledException)
+            {
+                WindowLib.Utils.MessageDialog.Show(_dialogService, "中断されました", "取込中断");
+                Close(ButtonResult.Cancel);
             }
             catch (Exception ex)
             {

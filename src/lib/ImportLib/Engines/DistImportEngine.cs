@@ -23,6 +23,8 @@ namespace ImportLib.Engines
 
         public List<TargetImportFile> _targetImportFiles { get; private set; } = new List<TargetImportFile>();
 
+        public IEnumerable<SameDistInfo> SameDistInfos { get; set; } = Enumerable.Empty<SameDistInfo>();
+
         private InterfaceFile _interfaceFile;
         private ScopeLogger _logger = new ScopeLogger<DistImportEngine>();
 
@@ -65,30 +67,26 @@ namespace ImportLib.Engines
 
         public async Task<List<ImportResult>> ImportAsync(CancellationToken token)
         {
+            return await Task.Run(() => Import(token));
+        }
+
+        public List<ImportResult> Import(CancellationToken token)
+        {
             using (var repo = new ImportRepository())
             {
                 var importResults = new List<ImportResult>();
                 var importDatas = new List<DistFileLine>();
+                repo.DeleteExpiredDistData();
+                repo.DeleteSameDistData(SameDistInfos);
 
                 foreach (var targetFile in _targetImportFiles)
                 {
-                    repo.DeleteExpiredKyotenData();
-                    importDatas.AddRange(await ReadFileAsync(token, targetFile.ImportFilePath));
-
                     var beforeCount = importDatas.Count;
+                    importDatas.AddRange(ReadFile(token, targetFile.ImportFilePath));
                     importResults.Add(new ImportResult(true, (long)targetFile.ImportFileSize!, importDatas.Count - beforeCount));
                 }
 
-                // TODO:同一Dist存在時の確認メッセージ
-                //var sameDistData = GetSameDistData(importDatas);
-
-                //if (sameDistData.Any())
-                //{
-                //    var sameDistStr = string.Join(",\n", sameDistData.Select(x => $"{x.DtDelivery}, {x.CdShukkaBatch}"));
-
-                //}
-
-                await InsertData(importDatas, repo, token);
+                InsertData(importDatas, repo, token);
 
                 repo.Commit();
 
@@ -96,17 +94,46 @@ namespace ImportLib.Engines
             }
         }
 
-        private List<DistFileLine> GetSameDistData(List<DistFileLine> importDatas)
+        public InterfaceFile GetInterfaceFile()
         {
-            throw new NotImplementedException();
+            return _interfaceFile with { FileName = ImportFilePath };
         }
 
-        private async Task<int> InsertData(IEnumerable<DistFileLine> datas, ImportRepository repo, CancellationToken token)
+        public async Task<bool> SetSameDist(CancellationToken token)
+        {
+            SameDistInfos = await Task.Run(() => GetSameDistDataAsync(token));
+            return SameDistInfos.Any();
+        }
+
+        // 同一Dist情報取得
+        private IEnumerable<SameDistInfo> GetSameDistDataAsync(CancellationToken token)
+        {
+            var importDatas = new List<DistFileLine>();
+
+            foreach (var targetFile in _targetImportFiles)
+            {
+                importDatas.AddRange(ReadFile(token, targetFile.ImportFilePath));
+            }
+
+            var distKeyGroup = importDatas.GroupBy(x => new { x.DtDelivery, x.CdShukkaBatch })
+                .Select(x => new SameDistInfo
+                {
+                    DtDelivery = x.Key.DtDelivery,
+                    ShukkaBatch = x.Key.CdShukkaBatch,
+                });
+
+            using (var repo = new ImportRepository())
+            {
+                return repo.GetDeleteSameDistDatas(distKeyGroup);
+            }
+        }
+
+        private int InsertData(IEnumerable<DistFileLine> datas, ImportRepository repo, CancellationToken token)
         {
             var importedCount = 0;
             foreach (var line in datas)
             {
-                await Task.Yield();
+                token.ThrowIfCancellationRequested();
 
                 repo.Insert(new DbLib.DbEntities.TBDISTEntity
                 {
@@ -146,7 +173,7 @@ namespace ImportLib.Engines
             return importedCount;
         }
 
-        private async Task<IEnumerable<DistFileLine>> ReadFileAsync(CancellationToken token, string targetImportFilePath)
+        private IEnumerable<DistFileLine> ReadFile(CancellationToken token, string targetImportFilePath)
         {
             Syslog.Debug($"Read {DataName} file");
             var datas = new List<DistFileLine>();
@@ -155,7 +182,7 @@ namespace ImportLib.Engines
             {
                 var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                 {
-                    HasHeaderRecord = true,
+                    HasHeaderRecord = false,
                     MissingFieldFound = null,
                 };
 
@@ -164,7 +191,7 @@ namespace ImportLib.Engines
                 {
                     while (csv.Read())
                     {
-                        await Task.Yield();
+                        token.ThrowIfCancellationRequested();
 
                         var line = csv.GetRecord<DistFileLine>();
                         if (line is not null)
@@ -178,6 +205,10 @@ namespace ImportLib.Engines
                     }
                 }
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 var message = $"CSVファイルの読み込み中にエラーが発生しました\n{ex.Message}";
@@ -185,11 +216,6 @@ namespace ImportLib.Engines
             }
 
             return datas;
-        }
-
-        public InterfaceFile GetInterfaceFile()
-        {
-            return _interfaceFile with { FileName = ImportFilePath };
         }
     }
 }
