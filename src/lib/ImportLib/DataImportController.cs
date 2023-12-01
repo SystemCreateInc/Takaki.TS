@@ -68,9 +68,9 @@ namespace ImportLib
                 }
 
                 // 取込後のデータを削除
-                engine._targetImportFiles.ForEach(x =>
+                engine._targetImportFiles.Where(x => x.Selected).ToList().ForEach(x =>
                 {
-                    new FileInfo(x.ImportFilePath).Delete();
+                    new FileInfo(x.FilePath!).Delete();
                 });
             }
             catch (OperationCanceledException)

@@ -12,7 +12,7 @@ namespace ImportLib.Engines
 
         public IEnumerable<SameDistInfo> SameDistInfos { get; set; }
 
-        public List<TargetImportFile> _targetImportFiles { get; }
+        public List<ImportFileInfo> _targetImportFiles { get; }
 
         void UpdateImportFileInfo();
 

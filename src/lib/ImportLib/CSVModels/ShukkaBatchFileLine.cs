@@ -1,10 +1,10 @@
 ﻿using CsvHelper.Configuration.Attributes;
 
-namespace ImportLib.Models
+namespace ImportLib.CSVModels
 {
     public class ShukkaBatchFileLine
     {
-		[Index(0)]
+        [Index(0)]
         public string CdShukkaBatch { get; set; } = string.Empty;
         [Index(1)]
         public string DtTekiyokaishi { get; set; } = string.Empty;
@@ -83,4 +83,4 @@ namespace ImportLib.Models
         [Index(38)]
         public string DtRenkei { get; set; } = string.Empty;
     }
-}       
+}

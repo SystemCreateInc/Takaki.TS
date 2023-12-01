@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ImportLib.Models
+namespace ImportLib.CSVModels
 {
     public class KoteiMeishoFileLine
     {
-		[Index(0)]
+        [Index(0)]
         public string CdMeishoShikibetsu { get; set; } = string.Empty;
         [Index(1)]
         public string CdMeisho { get; set; } = string.Empty;
@@ -54,6 +54,6 @@ namespace ImportLib.Models
         [Index(21)]
         public decimal? NuHaita { get; set; } = 0;
         [Index(22)]
-        public string DtRenkei { get; set; } = string.Empty;        
+        public string DtRenkei { get; set; } = string.Empty;
     }
 }

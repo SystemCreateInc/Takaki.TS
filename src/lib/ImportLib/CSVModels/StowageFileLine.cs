@@ -1,11 +1,11 @@
 ﻿using CsvHelper.Configuration.Attributes;
 
-namespace ImportLib.Models
+namespace ImportLib.CSVModels
 {
     public class StowageFileLine
     {
-		[Index(0)]
-        public string DtDelivery {get; set;} = string.Empty;
+        [Index(0)]
+        public string DtDelivery { get; set; } = string.Empty;
         [Index(1)]
         public string CdShukkaBatch { get; set; } = string.Empty;
         [Index(2)]

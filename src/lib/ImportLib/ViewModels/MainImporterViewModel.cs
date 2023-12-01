@@ -24,7 +24,7 @@ namespace ImportLib.ViewModels
         public DelegateCommand SelectFolderCommand { get; set; }
         public DelegateCommand RefreshCommand { get; set; }
         public DelegateCommand ExitCommand { get; set; }
-        public ObservableCollection<ImportFileViewModel> ImportFiles { get; set; } = new();
+        public ObservableCollection<ImportFileInfo> ImportFiles { get; set; } = new();
 
         public ObservableCollection<Log> Logs { get; set; } = new();
 
@@ -67,9 +67,7 @@ namespace ImportLib.ViewModels
 
         private void Import()
         {
-            // fixme:エンジン単位ではなく選択ファイル単位に
-            var selectNames = ImportFiles.Where(x => x.Selected).Select(x => x.Name);
-            var selectEngines = _engines.Where(x => selectNames.Contains(x.DataName)).ToList();
+            var selectEngines = _engines.Where(x => x._targetImportFiles.Any(x => x.Selected)).ToList();
 
             if (!selectEngines.Any())
             {
@@ -141,7 +139,7 @@ namespace ImportLib.ViewModels
 
                         if (!engine._targetImportFiles.Any())
                         {
-                            ImportFiles.Add(new ImportFileViewModel
+                            ImportFiles.Add(new ImportFileInfo
                             {
                                 Selected = false,
                                 Name = engine.DataName,
@@ -149,17 +147,7 @@ namespace ImportLib.ViewModels
                             continue;
                         }
 
-                        engine._targetImportFiles.ForEach(x =>
-                        {
-                            ImportFiles.Add(new ImportFileViewModel
-                            {
-                                Selected = true,
-                                Name = engine.DataName,
-                                FilePath = x.ImportFilePath,
-                                FileSize = x.ImportFileSize,
-                                LastWriteTime = x.ImportFileLastWriteDateTime,
-                            });
-                        });
+                        ImportFiles.AddRange(engine._targetImportFiles);
                     }
                 }
 

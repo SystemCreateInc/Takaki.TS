@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ImportLib.Models
+namespace ImportLib.CSVModels
 {
     public class HimmokuFileLine
     {

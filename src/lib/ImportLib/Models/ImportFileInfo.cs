@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ImportLib.Models
 {
-    public class ImportFileViewModel : BindableBase
+    public class ImportFileInfo : BindableBase
     {
         private bool _selected = false;
         public bool Selected

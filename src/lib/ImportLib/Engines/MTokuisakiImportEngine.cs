@@ -3,6 +3,7 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using DbLib;
 using DbLib.Defs.DbLib.Defs;
+using ImportLib.CSVModels;
 using ImportLib.Models;
 using ImportLib.Repositories;
 using LogLib;
@@ -21,7 +22,7 @@ namespace ImportLib.Engines
 
         public string ImportFilePath { get; set; } = string.Empty;
 
-        public List<TargetImportFile> _targetImportFiles { get; private set; } = new List<TargetImportFile>();
+        public List<ImportFileInfo> _targetImportFiles { get; private set; } = new List<ImportFileInfo>();
 
         private InterfaceFile _interfaceFile;
         private ScopeLogger _logger = new ScopeLogger<MTokuisakiImportEngine>();
@@ -49,12 +50,13 @@ namespace ImportLib.Engines
                 {
                     Syslog.Debug($"found file: {x}");
                     var fi = new FileInfo(x);
-                    return new TargetImportFile
+                    return new ImportFileInfo
                     {
                         Selected = true,
-                        ImportFileSize = fi.Length,
-                        ImportFileLastWriteDateTime = fi.LastWriteTime,
-                        ImportFilePath = x,
+                        Name = DataName,
+                        FileSize = fi.Length,
+                        LastWriteTime = fi.LastWriteTime,
+                        FilePath = x,
                     };
                 }).ToList();
             }
@@ -81,8 +83,8 @@ namespace ImportLib.Engines
                 foreach (var targetFile in _targetImportFiles)
                 {
                     var beforeCount = importDatas.Count;
-                    importDatas.AddRange(ReadFile(token, targetFile.ImportFilePath));
-                    importResults.Add(new ImportResult(true, (long)targetFile.ImportFileSize!, importDatas.Count - beforeCount));
+                    importDatas.AddRange(ReadFile(token, targetFile.FilePath!));
+                    importResults.Add(new ImportResult(true, (long)targetFile.FileSize!, importDatas.Count - beforeCount));
                 }
 
                 InsertData(importDatas, repo, token);
