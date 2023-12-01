@@ -115,7 +115,7 @@ namespace ImportLib.Engines
 
                 repo.Insert(new DbLib.DbEntities.TBMHIMMOKUEntity
                 {
-                    CDHIMBAN = line.CdHimban,
+                    CDHIMBAN = line.CdHimban,                    
                     DTTEKIYOKAISHI = line.DtTekiyokaishi,
                     DTTEKIYOMUKO = line.DtTekiyomuko,
                     DTTOROKUNICHIJI = line.DtTorokuNichiji,
@@ -371,6 +371,7 @@ namespace ImportLib.Engines
                 var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                 {
                     HasHeaderRecord = true,
+                    // fixme:実データ項目不足の為、暫定的に許容とする
                     MissingFieldFound = null,
                 };
 
@@ -381,14 +382,22 @@ namespace ImportLib.Engines
                     {
                         token.ThrowIfCancellationRequested();
 
-                        var line = csv.GetRecord<HimmokuFileLine>();
-                        if (line is not null)
+                        try
                         {
-                            datas.Add(line);
+                            var line = csv.GetRecord<HimmokuFileLine>();
+                            if (line is not null)
+                            {
+                                datas.Add(line);
+                            }
+                            else
+                            {
+                                _logger.Warn($"Line is null");
+                            }
                         }
-                        else
+                        catch (CsvHelper.MissingFieldException)
                         {
-                            _logger.Warn($"Line is null");
+                            _logger.Warn($"MissingField Skip Row={csv.Parser.Row} Length={csv.Parser.Record?.Length ?? 0}");
+                            continue;
                         }
                     }
                 }

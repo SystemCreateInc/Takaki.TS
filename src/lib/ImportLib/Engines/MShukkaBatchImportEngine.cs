@@ -175,7 +175,6 @@ namespace ImportLib.Engines
                 var config = new CsvConfiguration(CultureInfo.InvariantCulture)
                 {
                     HasHeaderRecord = true,
-                    MissingFieldFound = null,
                 };
 
                 using (var reader = new StreamReader(targetImportFilePath, Encoding.GetEncoding("shift_jis")))
@@ -185,14 +184,22 @@ namespace ImportLib.Engines
                     {
                         token.ThrowIfCancellationRequested();
 
-                        var line = csv.GetRecord<ShukkaBatchFileLine>();
-                        if (line is not null)
+                        try
                         {
-                            datas.Add(line);
+                            var line = csv.GetRecord<ShukkaBatchFileLine>();
+                            if (line is not null)
+                            {
+                                datas.Add(line);
+                            }
+                            else
+                            {
+                                _logger.Warn($"Line is null");
+                            }
                         }
-                        else
+                        catch (CsvHelper.MissingFieldException)
                         {
-                            _logger.Warn($"Line is null");
+                            _logger.Warn($"MissingField Skip Row={csv.Parser.Row} Length={csv.Parser.Record?.Length ?? 0}");
+                            continue;
                         }
                     }
                 }
