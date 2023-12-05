@@ -51,7 +51,7 @@ namespace ImportLib.Engines
                     var fi = new FileInfo(x);
                     return new ImportFileInfo
                     {
-                        Selected = true,
+                        Selected = fi.Length > 0,
                         Name = DataName,
                         FileSize = fi.Length,
                         LastWriteTime = fi.LastWriteTime,
@@ -95,7 +95,7 @@ namespace ImportLib.Engines
         }
         public InterfaceFile GetInterfaceFile()
         {
-            return _interfaceFile with { FileName = _interfaceFile.FileName };
+            return _interfaceFile with { FileName = ImportFilePath };
         }
 
         public Task<bool> SetSameDist(CancellationToken token)
