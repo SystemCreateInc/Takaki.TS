@@ -66,12 +66,7 @@ namespace ImportLib.Engines
             }
         }
 
-        public async Task<List<ImportResult>> ImportAsync(CancellationToken token)
-        {
-            return await Task.Run(() => Import(token));
-        }
-
-        public List<ImportResult> Import(CancellationToken token)
+        public IEnumerable<ImportResult> Import(CancellationToken token)
         {
             using (var repo = new ImportRepository())
             {

@@ -61,7 +61,17 @@ namespace ImportLib
         {
             try
             {
-                var results = await engine.ImportAsync(token);
+                var results = await Task.Run(() =>
+                {
+                    Syslog.Debug($"Import start {engine.DataName}");
+
+                    var results = engine.Import(token);
+
+                    Syslog.Debug($"Import end {engine.DataName}");
+
+                    return results;
+                });
+
                 foreach (var result in results)
                 {
                     InsertSuccessLog(engine, result);
@@ -70,7 +80,11 @@ namespace ImportLib
                 // 取込後のデータを削除
                 engine._targetImportFiles.Where(x => x.Selected).ToList().ForEach(x =>
                 {
+#if DEBUG
+                    Syslog.Debug($"fake Delete file {x.FilePath!}");
+#else
                     new FileInfo(x.FilePath!).Delete();
+#endif
                 });
             }
             catch (OperationCanceledException)

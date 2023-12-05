@@ -16,7 +16,7 @@ namespace ImportLib.Engines
 
         void UpdateImportFileInfo();
 
-        Task<List<ImportResult>> ImportAsync(CancellationToken token);
+        IEnumerable<ImportResult> Import(CancellationToken token);
 
         bool IsExistFile => _targetImportFiles.Any();
 

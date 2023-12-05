@@ -67,17 +67,11 @@ namespace ImportLib.Engines
             }
         }
 
-        public async Task<List<ImportResult>> ImportAsync(CancellationToken token)
-        {
-            return await Task.Run(() => Import(token));
-        }
-
-        public List<ImportResult> Import(CancellationToken token)
+        public IEnumerable<ImportResult> Import(CancellationToken token)
         {
             using (var repo = new ImportRepository())
             {
                 var importResults = new List<ImportResult>();
-                var importDatas = new List<DistFileLine>();
                 repo.DeleteExpiredDistData();
                 repo.DeleteSameDistData(SameDistInfos);
 
@@ -85,18 +79,17 @@ namespace ImportLib.Engines
                 {
                     if (!targetFile.Selected)
                     {
+                        Syslog.Debug($"Import file skip {targetFile.Name}");
                         continue;
                     }
 
-                    var beforeCount = importDatas.Count;
-                    importDatas.AddRange(ReadFile(token, targetFile.FilePath!));
-                    importResults.Add(new ImportResult(true, (long)targetFile.FileSize!, importDatas.Count - beforeCount));
+                    Syslog.Debug($"Import file {targetFile.Name}");
+                    var importDatas = ReadFile(token, targetFile.FilePath!);
+                    var insertedCount = InsertData(importDatas, repo, token);
+                    importResults.Add(new ImportResult(true, (long)targetFile.FileSize!, insertedCount));
                 }
 
-                InsertData(importDatas, repo, token);
-
                 repo.Commit();
-
                 return importResults;
             }
         }

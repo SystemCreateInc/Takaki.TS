@@ -60,6 +60,8 @@ namespace ImportLib.ViewModels
 
         private async void StartImport(IEnumerable<IImportEngine> engines)
         {
+            Syslog.Debug("Start import");
+
             try
             {
                 var importController = new DataImportController();
@@ -109,6 +111,8 @@ namespace ImportLib.ViewModels
                 var rc = (ex is ImportException ? ButtonResult.No : ButtonResult.Abort);
                 Close(rc);
             }
+
+            Syslog.Debug("End import");
         }
 
         private async void Close(ButtonResult result)
