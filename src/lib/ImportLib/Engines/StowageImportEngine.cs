@@ -52,7 +52,7 @@ namespace ImportLib.Engines
                     var fi = new FileInfo(x);
                     return new ImportFileInfo
                     {
-                        Selected = true,
+                        Selected = fi.Length > 0,
                         Name = DataName,
                         FileSize = fi.Length,
                         LastWriteTime = fi.LastWriteTime,

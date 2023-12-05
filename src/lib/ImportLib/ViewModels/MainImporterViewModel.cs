@@ -143,6 +143,7 @@ namespace ImportLib.ViewModels
                             {
                                 Selected = false,
                                 Name = engine.DataName,
+                                FilePath = engine.ImportFilePath,
                             });
                             continue;
                         }

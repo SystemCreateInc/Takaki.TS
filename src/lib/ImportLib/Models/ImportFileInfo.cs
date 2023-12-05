@@ -44,5 +44,7 @@ namespace ImportLib.Models
             set => SetProperty(ref _lastWriteTime, value);
         }
 
+        public bool IsEnabled => (FileSize ?? 0) > 0;
+
     }
 }
