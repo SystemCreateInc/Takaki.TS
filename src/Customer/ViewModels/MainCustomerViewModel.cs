@@ -1,4 +1,5 @@
-﻿using Customer.Models;
+﻿using Customer.Loader;
+using Customer.Models;
 using Customer.Views;
 using LogLib;
 using Prism.Commands;
@@ -27,18 +28,22 @@ namespace Customer.ViewModels
             set => SetProperty(ref _shain, value);
         }
 
-        private ObservableCollection<Models.Customer> _customers = new ObservableCollection<Models.Customer>();
-        public ObservableCollection<Models.Customer> Customers
+        private ObservableCollection<SumCustomer> _customers = new ObservableCollection<SumCustomer>();
+        public ObservableCollection<SumCustomer> Customers
         {
             get => _customers;
             set => SetProperty(ref _customers, value);
         }
 
-        private Models.Customer? _currentCustomer;
-        public Models.Customer? CurrentCustomer
+        private SumCustomer? _currentCustomer;
+        public SumCustomer? CurrentCustomer
         {
             get => _currentCustomer;
-            set => SetProperty(ref _currentCustomer, value);
+            set
+            {
+                SetProperty(ref _currentCustomer, value);
+                CanEdit = CurrentCustomer is not null && SelectedShain;
+            }
         }
 
         private bool _canEdit = false;
@@ -48,31 +53,35 @@ namespace Customer.ViewModels
             set => SetProperty(ref _canEdit, value);
         }
 
+        private bool _selectedShain = false;
+        public bool SelectedShain
+        {
+            get => _selectedShain;
+            set => SetProperty(ref _selectedShain, value);
+        }
+
+        private ShainInfo? _shainInfo = new ShainInfo();
+
+        IRegionManager _regionManager;
+
         public MainCustomerViewModel(IDialogService dialogService, IRegionManager regionManager)
         {
             _dialogService = dialogService;
+            _regionManager = regionManager;
+
+            SetShain();
+            LoadDatas();
 
             Add = new DelegateCommand(() =>
             {
                 Syslog.Debug("MainCustomerViewModel:Add");
-                regionManager.RequestNavigate("ContentRegion", nameof(InputCustomer), new NavigationParameters
-                {
-                    { "CurrentCustomer", null },
-                });
-            });
+                ShowDialog(false);
+            }).ObservesCanExecute(() => SelectedShain);
 
             Edit = new DelegateCommand(() =>
             {
-                if (CurrentCustomer == null)
-                {
-                    return;
-                }
-
                 Syslog.Debug("MainCustomerViewModel:Edit");
-                regionManager.RequestNavigate("ContentRegion", nameof(InputCustomer), new NavigationParameters
-                {
-                    { "CurrentCustomer", CurrentCustomer },
-                });
+                ShowDialog(true);
             }).ObservesCanExecute(() => CanEdit);
 
             Exit = new DelegateCommand(() =>
@@ -86,10 +95,13 @@ namespace Customer.ViewModels
                 Syslog.Debug("MainCustomerViewModel:LeftDoubleClick");
                 Edit.Execute();
             }).ObservesCanExecute(() => CanEdit);
+        }
 
-            // fixme:社員コード + 社員名称
-            Shain = "0000033550" + "　" + "小田　賢行";
-            LoadDatas();
+        private void SetShain()
+        {
+            _shainInfo = ShainLoader.Get();
+            SelectedShain = _shainInfo is not null;
+            Shain = $"{_shainInfo?.HenkoshaCode}  {_shainInfo?.HenkoshaName}";
         }
 
         private void LoadDatas()
@@ -103,6 +115,15 @@ namespace Customer.ViewModels
                 Syslog.Error($"LoadDatas:{e.Message}");
                 MessageDialog.Show(_dialogService, e.Message, "エラー");
             }
+        }
+
+        private void ShowDialog(bool IsEdit)
+        {
+            _regionManager.RequestNavigate("ContentRegion", nameof(InputCustomer), new NavigationParameters
+                {
+                    { "CurrentCustomer", IsEdit ? CurrentCustomer : null },
+                    { "ShainInfo", _shainInfo },
+                });
         }
     }
 }

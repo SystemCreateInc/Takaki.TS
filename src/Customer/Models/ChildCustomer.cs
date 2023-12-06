@@ -1,4 +1,5 @@
-﻿using Prism.Mvvm;
+﻿using Customer.Loader;
+using Prism.Mvvm;
 
 namespace Customer.Models
 {
@@ -8,7 +9,11 @@ namespace Customer.Models
         public string CdTokuisakiChild
         {
             get => _cdTokuisakiChild;
-            set => SetProperty(ref _cdTokuisakiChild, value);
+            set
+            {
+                SetProperty(ref _cdTokuisakiChild, value);
+                NmTokuisaki = CustomerLoader.GetName(CdTokuisakiChild);
+            }
         }
 
         private string _nmTokuisaki = string.Empty;

@@ -4,7 +4,8 @@
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
              xmlns:controls="clr-namespace:WindowLib.Views;assembly=WindowLib"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity" >
 
     <DockPanel>
         <Grid DockPanel.Dock="Top">
@@ -57,7 +58,7 @@
                 </ToolBar>
             </ToolBarTray>
 
-            <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" Visibility="{Binding LineInfoVisible}">
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" Visibility="{Binding SelectedShain, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <TextBlock Text="社員コード：" TextAlignment="Right" Width="150"/>
                 <TextBlock Text="{Binding Shain}"/>
             </StackPanel>

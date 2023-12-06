@@ -5,7 +5,8 @@
              prism:ViewModelLocator.AutoWireViewModel="True"
              xmlns:utils="clr-namespace:WindowLib.Utils;assembly=WindowLib"
              xmlns:controls="clr-namespace:WindowLib.Views;assembly=WindowLib"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             >
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -111,7 +112,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Content="参照日"/>
-                        <TextBox Grid.Column="1" Text="{Binding Date, StringFormat=yyyy/MM/dd}"/>
+                        <TextBox Grid.Column="1" Text="{Binding ReferenceDate, UpdateSourceTrigger=PropertyChanged, StringFormat=yyyy/MM/dd}"/>
                         <Button Grid.Column="2" Content="参照" Command="{Binding Refer}" Margin="3"
                                 Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=Height}" Width="80"/>
                     </Grid>
@@ -124,7 +125,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Content="拠点コード" VerticalContentAlignment="Center"/>
-                        <TextBox Grid.Column="1" Text="{Binding CdKyoten}"/>
+                        <TextBox Grid.Column="1" Text="{Binding CdKyoten, UpdateSourceTrigger=PropertyChanged, Delay=300}" IsEnabled="{Binding IsAdd}"/>
                         <Label Grid.Column="2" Background="Blue"/>
                         <TextBlock Grid.Column="2" Text="{Binding NmKyoten}" Foreground="White"/>
                     </Grid>
@@ -137,7 +138,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Content="集約得意先コード"/>
-                        <TextBox Grid.Column="1" Text="{Binding CdSumTokuisaki}"/>
+                        <TextBox Grid.Column="1" Text="{Binding CdSumTokuisaki, UpdateSourceTrigger=PropertyChanged, Delay=300}" IsEnabled="{Binding IsAdd}"/>
                         <Label Grid.Column="2" Background="Blue"/>
                         <TextBlock Grid.Column="2" Text="{Binding NmSumTokuisaki}" Foreground="White"/>
                     </Grid>
@@ -153,10 +154,10 @@
 
                         <Label Grid.Column="0" Content="適用開始日・無効日"/>
                         <TextBox Grid.Column="1" Text="{Binding DtTekiyoKaishi, StringFormat=yyyy/MM/dd}"
-                                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
+                                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{Binding IsDateRelease}"/>
                         <Label Grid.Column="2" Content="～" HorizontalAlignment="Center"/>
                         <TextBox Grid.Column="3" Text="{Binding DtTekiyoMuko, StringFormat=yyyy/MM/dd}"
-                                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
+                                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{Binding IsDateRelease}"/>
                         <Button Grid.Column="4" Content="解除" Command="{Binding Release}" Margin="3"
                                 Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=Height}"/>
                     </Grid>
@@ -203,8 +204,8 @@
                     <Grid Grid.Row="1">
                         <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid}" SettingsKey="InputChildCustomerColumns"/>
                         <DataGrid x:Name="dataGrid" ItemsSource="{Binding ChildCustomers}" AutoGenerateColumns="False"
-                                  IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                                  SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="All"
+                                  VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
+                                  SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="All" CanUserAddRows="True"
                                   Style="{StaticResource MaterialDesignDataGrid}" Margin="3" FontSize="18">
                             <DataGrid.ColumnHeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
@@ -217,9 +218,9 @@
                             </DataGrid.ColumnHeaderStyle>
 
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="子得意先コード" Binding="{Binding CdTokuisakiChild}" Width="1*"
+                                <DataGridTextColumn Header="子得意先コード" Binding="{Binding CdTokuisakiChild, UpdateSourceTrigger=PropertyChanged, Delay=300}" Width="1*"
                                                     ElementStyle="{StaticResource CenterTextElement}"/>
-                                <DataGridTextColumn Header="得意先名称" Binding="{Binding NmTokuisaki}" Width="1*">
+                                <DataGridTextColumn Header="得意先名称" Binding="{Binding NmTokuisaki}" Width="1*" IsReadOnly="True">
                                     <DataGridTextColumn.CellStyle>
                                         <Style TargetType="DataGridCell">
                                             <Setter Property="Background" Value="Blue"/>
@@ -239,24 +240,13 @@
             </Grid>
 
             <Grid Grid.Column="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="5*"/>
-                    <RowDefinition Height="5*"/>
-                </Grid.RowDefinitions>
-
-                <Grid Grid.Row="0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="1*"/>
-                        <RowDefinition Height="3*"/>
-                        <RowDefinition Height="4*"/>
-                    </Grid.RowDefinitions>
-
-                    <Label Grid.Row="0" Content="【履歴表示】" FontSize="18" Margin="3" VerticalContentAlignment="Center"/>
+                <DockPanel Margin="10">
+                    <Label DockPanel.Dock="Top" Content="【履歴表示】" FontSize="18" Margin="3" VerticalContentAlignment="Center"/>
                     <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid2}" SettingsKey="InputLogColumns"/>
-                    <DataGrid Grid.Row="1" x:Name="dataGrid2" ItemsSource="{Binding Logs}" AutoGenerateColumns="False"
-                              IsReadOnly="True" VerticalScrollBarVisibility="Visible" IsSynchronizedWithCurrentItem="True"
+                    <DataGrid DockPanel.Dock="Top" x:Name="dataGrid2" MaxHeight="500" VerticalAlignment="Top"
+                              ItemsSource="{Binding Logs}" AutoGenerateColumns="False" IsReadOnly="True" IsSynchronizedWithCurrentItem="True"
                               SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="All"
-                              Style="{StaticResource MaterialDesignDataGrid}" Margin="3" FontSize="18">
+                              Style="{StaticResource MaterialDesignDataGrid}" FontSize="18">
                         <DataGrid.ColumnHeaderStyle>
                             <Style TargetType="DataGridColumnHeader">
                                 <Setter Property="Background" Value="LightGray"/>
@@ -269,7 +259,7 @@
 
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="選択" Binding="{Binding DispSelected}" Width="0.3*"
-                                                ElementStyle="{StaticResource CenterTextElement}"/>
+                            ElementStyle="{StaticResource CenterTextElement}"/>
 
                             <DataGridTextColumn Header="適用開始日" Binding="{Binding DtTekiyoKaishi}" Width="1*">
                                 <DataGridTextColumn.CellStyle>
@@ -317,7 +307,7 @@
                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                </Grid>
+                </DockPanel>
             </Grid>
         </Grid>
     </DockPanel>

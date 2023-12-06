@@ -2,7 +2,7 @@
 
 namespace Customer.Models
 {
-    public class Customer : BindableBase
+    public class SumCustomer : BindableBase
     {
         private string _cdKyoten = string.Empty;
         public string CdKyoten
@@ -24,5 +24,14 @@ namespace Customer.Models
             get => _nmSumTokuisaki;
             set => SetProperty(ref _nmSumTokuisaki, value);
         }
+
+        public long SumTokuisakiId { get; set; }
+        public string Tekiyokaishi { get; set; } = string.Empty;
+        public string TekiyoMuko { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+
+        public List<ChildCustomer> ChildCustomers = new List<ChildCustomer> ();
+
     }
 }
