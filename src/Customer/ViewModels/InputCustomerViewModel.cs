@@ -7,8 +7,8 @@ using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Services.Dialogs;
+using ReferenceLogLib;
 using System.Collections.ObjectModel;
-using System.Security.Cryptography.Xml;
 using WindowLib.Utils;
 
 namespace Customer.ViewModels
@@ -23,7 +23,7 @@ namespace Customer.ViewModels
 
         private readonly IDialogService _dialogService;
 
-        // 参照日
+        // 参照日 TODO:文字削除時にBindingエラー発生
         private DateTime _referenceDate;
         public DateTime ReferenceDate
         {
@@ -81,10 +81,7 @@ namespace Customer.ViewModels
             set
             {
                 SetProperty(ref _dtTekiyoKaishi, value);
-                if (!IsAdd && !_isInitializeing && IsDateRelease)
-                {
-                    RegistCustomer();
-                }
+                _isChange = true;
             }
         }
 
@@ -96,10 +93,7 @@ namespace Customer.ViewModels
             set
             {
                 SetProperty(ref _dtTekiyoMuko, value);
-                if (!IsAdd && !_isInitializeing && IsDateRelease)
-                {
-                    RegistCustomer();
-                }
+                _isChange = true;
             }
         }
 
@@ -143,14 +137,6 @@ namespace Customer.ViewModels
             set => SetProperty(ref _childCustomer, value);
         }
 
-        // 履歴表示リスト
-        private List<Log> _logs = new List<Log>();
-        public List<Log> Logs
-        {
-            get => _logs;
-            set => SetProperty(ref _logs, value);
-        }
-
         private SumCustomer _currentCustomer = new SumCustomer();
 
         private bool _isDateRelease = false;
@@ -167,11 +153,11 @@ namespace Customer.ViewModels
             set => SetProperty(ref _isAdd, value);
         }
 
-        private bool _isInitializeing = false;
-
         private ShainInfo _shainInfo = new ShainInfo();
 
         private bool _isChange = false;
+
+        public ReferenceLog ReferenceLog { get; set; } = new ReferenceLog();
 
         public InputCustomerViewModel(IDialogService dialogService, IRegionManager regionManager)
         {
@@ -203,7 +189,7 @@ namespace Customer.ViewModels
 
             Refer = new DelegateCommand(() =>
             {
-                if (!Logs.Any())
+                if (!ReferenceLog.LogInfos.Any())
                 {
                     return;
                 }
@@ -236,7 +222,8 @@ namespace Customer.ViewModels
         // 参照
         private void SetReferenceCustomer()
         {
-            var customer = CustomerLoader.GetFromReferenceDate(_currentCustomer.CdKyoten, _currentCustomer.CdSumTokuisaki, ReferenceDate);
+            var tekiyoDate = ReferenceLog.GetStartDateInRange(ReferenceDate.ToString("yyyyMMdd"));
+            var customer = CustomerLoader.GetFromTekiyoDate(_currentCustomer.CdKyoten, _currentCustomer.CdSumTokuisaki, tekiyoDate);
 
             if (customer is not null)
             {
@@ -249,21 +236,7 @@ namespace Customer.ViewModels
                 DtTekiyoMuko = DateTime.Parse(customer.TekiyoMuko.GetDate());
             }
 
-            SelectChangeLogs(customer?.Tekiyokaishi ?? string.Empty);
-
             _isChange = false;
-        }
-
-        // 選択状態更新
-        private void SelectChangeLogs(string tekiyokaishi)
-        {
-            Logs = Logs.Select(x => new Log
-            {
-                Selected = x.DtTekiyoKaishi == tekiyokaishi,
-                CdShain = x.CdShain,
-                DtTekiyoKaishi = x.DtTekiyoKaishi,
-                DtTekiyoMuko = x.DtTekiyoMuko,
-            }).ToList();
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
@@ -295,24 +268,21 @@ namespace Customer.ViewModels
 
         private void InitDisplay()
         {
-            _isInitializeing = true;
-
             ClearInfo(true);
 
             if (!IsAdd)
             {
                 CdKyoten = _currentCustomer.CdKyoten;
                 CdSumTokuisaki = _currentCustomer.CdSumTokuisaki;
-                Logs = LogLoader.Get(_currentCustomer.CdKyoten, _currentCustomer.CdSumTokuisaki).ToList();
+                ReferenceLog.LogInfos = LogLoader.Get(_currentCustomer.CdKyoten, _currentCustomer.CdSumTokuisaki).ToList();
+
                 // 参照日初期値で履歴から検索
                 SetReferenceCustomer();
             }
             else
             {                
-                Logs = new List<Log>();
+                ReferenceLog.LogInfos.Clear();
             }
-
-            _isInitializeing = false;
         }
 
         private void ClearInfo(bool isAll)
@@ -358,19 +328,25 @@ namespace Customer.ViewModels
                 };
 
                 var existCustomer = CustomerLoader.GetFromKey(CdKyoten, CdSumTokuisaki, DtTekiyoKaishi.ToString("yyyyMMdd"));
+                var isExist = existCustomer is not null;
+
+                if (!ValidSummaryDate(isExist))
+                {
+                    return false;
+                }
 
                 if (IsAdd)
                 {
-                    if (existCustomer is not null)
+                    if (isExist)
                     {
                         MessageDialog.Show(_dialogService, $"拠点[{CdKyoten}],集約得意先[{CdSumTokuisaki}],適用開始日[{DtTekiyoKaishi}]\n同一組み合わせのデータが登録済みです", "入力エラー");
                     }
 
                     CustomerManager.Regist(targetCustomer, _shainInfo);
                 }
-                else if(existCustomer is not null)
+                else if(isExist)
                 {
-                    targetCustomer.SumTokuisakiId = existCustomer.SumTokuisakiId;
+                    targetCustomer.SumTokuisakiId = existCustomer!.SumTokuisakiId;
                     CustomerManager.Update(targetCustomer, _shainInfo);
                 }
                 else
@@ -408,7 +384,7 @@ namespace Customer.ViewModels
         }
 
         // 摘要期間チェック
-        private bool ValidSummaryDate()
+        private bool ValidSummaryDate(bool isUpdate)
         {
             if(DtTekiyoKaishi < DateTime.Today)
             {
@@ -422,7 +398,15 @@ namespace Customer.ViewModels
                 return false;
             }
 
-            // TODO:摘要期間重複チェック追加
+            // 更新時 更新対象の適用開始日を比較から除外
+            var excludeDate = isUpdate ? DtTekiyoKaishi.ToString("yyyyMMdd") : null;
+            var duplicationRangeDate = ReferenceLog.CheckWithinRange(DtTekiyoKaishi.ToString("yyyyMMdd"), DtTekiyoMuko.ToString("yyyyMMdd"), excludeDate);
+
+            if (!duplicationRangeDate.IsNullOrEmpty())
+            {
+                MessageDialog.Show(_dialogService, $"下記の摘要期間と重複しています\n\n摘要開始日-摘要無効日\n「{duplicationRangeDate}」", "入力エラー");
+                return false;
+            }
 
             return true;
         }

@@ -33,8 +33,8 @@ namespace Customer.Loader
             }
         }
 
-        // 参照日選択取得(入力DLG)
-        public static SumCustomer? GetFromReferenceDate(string cdKyoten, string cdSumTokuisaki, DateTime referenceDate)
+        // 適用日から取得(入力DLG)
+        public static SumCustomer? GetFromTekiyoDate(string cdKyoten, string cdSumTokuisaki, string tekiyoDate)
         {
             using (var con = DbFactory.CreateConnection())
             {
@@ -42,28 +42,10 @@ namespace Customer.Loader
                 .Include<TBSUMTOKUISAKICHILDEntity>()
                 .Where(@$"{nameof(TBSUMTOKUISAKIEntity.CDKYOTEN):C} = {nameof(cdKyoten):P} and
                             {nameof(TBSUMTOKUISAKIEntity.CDSUMTOKUISAKI):C} = {nameof(cdSumTokuisaki):P} and 
-                            {nameof(referenceDate):P} between {nameof(TBSUMTOKUISAKIEntity.DTTEKIYOKAISHI):C} and {nameof(TBSUMTOKUISAKIEntity.DTTEKIYOMUKO):C}")
-                .WithParameters(new { cdKyoten, cdSumTokuisaki, referenceDate }))
-                    .Select(q => new SumCustomer
-                    {
-                        SumTokuisakiId = q.IDSUMTOKUISAKI,
-                        CdKyoten = q.CDKYOTEN,
-                        CdSumTokuisaki = q.CDSUMTOKUISAKI,
-                        // 入力欄側の検索処理で表示
-                        //NmSumTokuisaki = 
-                        CreatedAt = q.CreatedAt,
-                        UpdatedAt = q.UpdatedAt,
-
-                        Tekiyokaishi = q.DTTEKIYOKAISHI,
-                        TekiyoMuko = q.DTTEKIYOMUKO,
-
-                        ChildCustomers = q.TBSUMTOKUISAKICHILD!.Select(x => new ChildCustomer
-                        {
-                            CdTokuisakiChild = x.CDTOKUISAKICHILD,
-                            // 入力欄側の検索処理で表示
-                            //NmTokuisaki = 
-                        }).ToList(),
-                    }).FirstOrDefault();
+                            {nameof(tekiyoDate):P} = {nameof(TBSUMTOKUISAKIEntity.DTTEKIYOKAISHI):C}")
+                .WithParameters(new { cdKyoten, cdSumTokuisaki, tekiyoDate }))
+                    .Select(q => CreateSumcustomer(q))
+                    .FirstOrDefault();
             }
         }
 
@@ -78,25 +60,8 @@ namespace Customer.Loader
                                             {nameof(TBSUMTOKUISAKIEntity.CDSUMTOKUISAKI):C} = {nameof(cdSumTokuisaki):P} and
                                             {nameof(TBSUMTOKUISAKIEntity.DTTEKIYOKAISHI):C} = {nameof(dtTekiyoKaishi):P}")
                 .WithParameters(new { cdKyoten, cdSumTokuisaki, dtTekiyoKaishi }))
-                    .Select(q => new SumCustomer
-                    {
-                        SumTokuisakiId = q.IDSUMTOKUISAKI,
-                        CdKyoten = q.CDKYOTEN,
-                        CdSumTokuisaki = q.CDSUMTOKUISAKI,
-                        // 入力欄側の検索処理で表示
-                        //NmSumTokuisaki = 
-                        CreatedAt = q.CreatedAt,
-                        UpdatedAt = q.UpdatedAt,
-
-                        Tekiyokaishi = q.DTTEKIYOKAISHI,
-
-                        ChildCustomers = q.TBSUMTOKUISAKICHILD!.Select(x => new ChildCustomer
-                        {
-                            CdTokuisakiChild = x.CDTOKUISAKICHILD,
-                            // 入力欄側の検索処理で表示
-                            //NmTokuisaki = 
-                        }).ToList(),
-                    }).FirstOrDefault();
+                    .Select(q => CreateSumcustomer(q))
+                    .FirstOrDefault();
             }
         }
 
@@ -111,6 +76,30 @@ namespace Customer.Loader
                     .Select(q => q.NMTOKUISAKI)
                     .FirstOrDefault() ?? string.Empty;
             }
+        }
+
+        private static SumCustomer CreateSumcustomer(TBSUMTOKUISAKIEntity entity)
+        {
+            return new SumCustomer
+            {
+                SumTokuisakiId = entity.IDSUMTOKUISAKI,
+                CdKyoten = entity.CDKYOTEN,
+                CdSumTokuisaki = entity.CDSUMTOKUISAKI,
+                // 入力欄側の検索処理で表示
+                //NmSumTokuisaki = 
+                CreatedAt = entity.CreatedAt,
+                UpdatedAt = entity.UpdatedAt,
+
+                Tekiyokaishi = entity.DTTEKIYOKAISHI,
+                TekiyoMuko = entity.DTTEKIYOMUKO,
+
+                ChildCustomers = entity.TBSUMTOKUISAKICHILD!.Select(x => new ChildCustomer
+                {
+                    CdTokuisakiChild = x.CDTOKUISAKICHILD,
+                    // 入力欄側の検索処理で表示
+                    //NmTokuisaki = 
+                }).ToList(),
+            };
         }
     }
 }

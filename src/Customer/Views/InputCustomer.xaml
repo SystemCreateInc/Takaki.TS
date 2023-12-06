@@ -244,7 +244,7 @@
                     <Label DockPanel.Dock="Top" Content="【履歴表示】" FontSize="18" Margin="3" VerticalContentAlignment="Center"/>
                     <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid2}" SettingsKey="InputLogColumns"/>
                     <DataGrid DockPanel.Dock="Top" x:Name="dataGrid2" MaxHeight="500" VerticalAlignment="Top"
-                              ItemsSource="{Binding Logs}" AutoGenerateColumns="False" IsReadOnly="True" IsSynchronizedWithCurrentItem="True"
+                              ItemsSource="{Binding ReferenceLog.LogInfos}" AutoGenerateColumns="False" IsReadOnly="True" IsSynchronizedWithCurrentItem="True"
                               SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="All"
                               Style="{StaticResource MaterialDesignDataGrid}" FontSize="18">
                         <DataGrid.ColumnHeaderStyle>
@@ -261,7 +261,7 @@
                             <DataGridTextColumn Header="選択" Binding="{Binding DispSelected}" Width="0.3*"
                             ElementStyle="{StaticResource CenterTextElement}"/>
 
-                            <DataGridTextColumn Header="適用開始日" Binding="{Binding DtTekiyoKaishi}" Width="1*">
+                            <DataGridTextColumn Header="適用開始日" Binding="{Binding StartDate}" Width="1*">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="Blue"/>
@@ -276,7 +276,7 @@
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
 
-                            <DataGridTextColumn Header="適用無効日" Binding="{Binding DtTekiyoMuko}" Width="1*">
+                            <DataGridTextColumn Header="適用無効日" Binding="{Binding EndDate}" Width="1*">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="Blue"/>
@@ -291,7 +291,7 @@
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
 
-                            <DataGridTextColumn Header="変更者" Binding="{Binding CdShain}" Width="*">
+                            <DataGridTextColumn Header="変更者" Binding="{Binding ShainCode}" Width="*">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="Blue"/>
