@@ -1,9 +1,15 @@
-﻿using Customer.Models;
+﻿using Customer.Loader;
+using Customer.Models;
+using DbLib.Extensions;
 using LogLib;
+using Microsoft.IdentityModel.Tokens;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Services.Dialogs;
+using ReferenceLogLib;
+using System.Collections.ObjectModel;
+using WindowLib.Utils;
 
 namespace Customer.ViewModels
 {
@@ -17,12 +23,12 @@ namespace Customer.ViewModels
 
         private readonly IDialogService _dialogService;
 
-        // 参照日
-        private DateTime _date;
-        public DateTime Date
+        // 参照日 TODO:文字削除時にBindingエラー発生
+        private DateTime _referenceDate;
+        public DateTime ReferenceDate
         {
-            get => _date;
-            set => SetProperty(ref _date, value);
+            get => _referenceDate;
+            set => SetProperty(ref _referenceDate, value);
         }
 
         // 拠点コード
@@ -30,7 +36,12 @@ namespace Customer.ViewModels
         public string CdKyoten
         {
             get => _cdKyoten;
-            set => SetProperty(ref _cdKyoten, value);
+            set
+            {
+                SetProperty(ref _cdKyoten, value);
+                NmKyoten = KyotenLoader.GetName(CdKyoten);
+                _isChange = true;
+            }
         }
 
         // 拠点名称
@@ -46,7 +57,12 @@ namespace Customer.ViewModels
         public string CdSumTokuisaki
         {
             get => _cdSumTokuisaki;
-            set => SetProperty(ref _cdSumTokuisaki, value);
+            set
+            {
+                SetProperty(ref _cdSumTokuisaki, value);
+                NmSumTokuisaki = CustomerLoader.GetName(CdSumTokuisaki);
+                _isChange = true;
+            }
         }
 
         // 集約得意先名称
@@ -62,7 +78,11 @@ namespace Customer.ViewModels
         public DateTime DtTekiyoKaishi
         {
             get => _dtTekiyoKaishi;
-            set => SetProperty(ref _dtTekiyoKaishi, value);
+            set
+            {
+                SetProperty(ref _dtTekiyoKaishi, value);
+                _isChange = true;
+            }
         }
 
         // 適用無効日
@@ -70,20 +90,24 @@ namespace Customer.ViewModels
         public DateTime DtTekiyoMuko
         {
             get => _dtTekiyoMuko;
-            set => SetProperty(ref _dtTekiyoMuko, value);
+            set
+            {
+                SetProperty(ref _dtTekiyoMuko, value);
+                _isChange = true;
+            }
         }
 
         // 登録日時
-        private DateTime _dtTorokuNichiji;
-        public DateTime DtTorokuNichiji
+        private DateTime? _dtTorokuNichiji;
+        public DateTime? DtTorokuNichiji
         {
             get => _dtTorokuNichiji;
             set => SetProperty(ref _dtTorokuNichiji, value);
         }
 
         // 更新日時
-        private DateTime _dtKoshinNichiji;
-        public DateTime DtKoshinNichiji
+        private DateTime? _dtKoshinNichiji;
+        public DateTime? DtKoshinNichiji
         {
             get => _dtTorokuNichiji;
             set => SetProperty(ref _dtKoshinNichiji, value);
@@ -106,54 +130,113 @@ namespace Customer.ViewModels
         }
 
         // 子得意先リスト
-        private List<ChildCustomer> _childCustomer = new List<ChildCustomer>();
-        public List<ChildCustomer> ChildCustomers
+        private ObservableCollection<ChildCustomer> _childCustomer = new ObservableCollection<ChildCustomer>();
+        public ObservableCollection<ChildCustomer> ChildCustomers
         {
             get => _childCustomer;
             set => SetProperty(ref _childCustomer, value);
         }
 
-        // 履歴表示リスト
-        private List<Log> _logs = new List<Log>();
-        public List<Log> Logs
+        private SumCustomer _currentCustomer = new SumCustomer();
+
+        private bool _isDateRelease = false;
+        public bool IsDateRelease
         {
-            get => _logs;
-            set => SetProperty(ref _logs, value);
+            get => _isDateRelease;
+            set => SetProperty(ref _isDateRelease, value);
         }
+
+        private bool _isAdd = false;
+        public bool IsAdd
+        {
+            get => _isAdd;
+            set => SetProperty(ref _isAdd, value);
+        }
+
+        private ShainInfo _shainInfo = new ShainInfo();
+
+        private bool _isChange = false;
+
+        public ReferenceLog ReferenceLog { get; set; } = new ReferenceLog();
 
         public InputCustomerViewModel(IDialogService dialogService, IRegionManager regionManager)
         {
             _dialogService = dialogService;
 
-            Clear = new DelegateCommand(() =>
+			Clear = new DelegateCommand(() =>
             {
                 Syslog.Debug("InputCustomerViewModel:Clear");
-                // fixme:クリアボタン押下
+                ClearInfo(IsAdd);
             });
 
             Register = new DelegateCommand(() =>
             {
                 Syslog.Debug("InputCustomerViewModel:Register");
-                // fixme:登録ボタン押下
+                if (RegistCustomer())
+                {
+                    regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
+                }
             });
 
             Back = new DelegateCommand(() =>
             {
                 Syslog.Debug("InputCustomerViewModel:Back");
-                regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
+                if (ConfirmationExit())
+                {
+                    regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
+                }
             });
 
             Refer = new DelegateCommand(() =>
             {
+                if (!ReferenceLog.LogInfos.Any())
+                {
+                    return;
+                }
+
                 Syslog.Debug("InputCustomerViewModel:Refer");
-                // fixme:参照ボタン押下
+                ClearInfo(IsAdd);
+                SetReferenceCustomer();
             });
 
             Release = new DelegateCommand(() =>
             {
                 Syslog.Debug("InputCustomerViewModel:Release");
-                // fixme:解除ボタン押下
+                IsDateRelease = true;
             });
+        }
+
+        private bool ConfirmationExit()
+        {
+            if (_isChange)
+            {
+                if(MessageDialog.Show(_dialogService, "変更された情報が登録されていません。\n入力画面に戻りますか？", "変更確認", ButtonMask.Yes | ButtonMask.No) != ButtonResult.No)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // 参照
+        private void SetReferenceCustomer()
+        {
+            var tekiyoDate = ReferenceLog.GetStartDateInRange(ReferenceDate.ToString("yyyyMMdd"));
+            var customer = CustomerLoader.GetFromTekiyoDate(_currentCustomer.CdKyoten, _currentCustomer.CdSumTokuisaki, tekiyoDate);
+
+            if (customer is not null)
+            {
+                DtTorokuNichiji = customer.CreatedAt;
+                DtKoshinNichiji = customer.UpdatedAt;
+                CdShain = _shainInfo.HenkoshaCode;
+                NmShain = _shainInfo.HenkoshaName;
+                ChildCustomers = new ObservableCollection<ChildCustomer>(customer.ChildCustomers);
+                DtTekiyoKaishi = DateTime.Parse(customer.Tekiyokaishi.GetDate());
+                DtTekiyoMuko = DateTime.Parse(customer.TekiyoMuko.GetDate());
+            }
+
+            _isChange = false;
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
@@ -163,37 +246,169 @@ namespace Customer.ViewModels
 
         public void OnNavigatedFrom(NavigationContext navigationContext)
         {
+            ChildCustomers.CollectionChanged -= ChildCustomers_CollectionChanged;
+            _isChange = false;
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
+            _currentCustomer = (SumCustomer)navigationContext.Parameters["CurrentCustomer"];
+            _shainInfo = (ShainInfo)navigationContext.Parameters["ShainInfo"];
+
+            IsAdd = _currentCustomer is null;
             InitDisplay();
+
+            ChildCustomers.CollectionChanged += ChildCustomers_CollectionChanged;
+        }
+
+        private void ChildCustomers_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            _isChange = true;
         }
 
         private void InitDisplay()
         {
-            // 項目欄確認
-            Date = DateTime.Today;
-            CdKyoten = "4201";
-            NmKyoten = "広島工場製品出荷";
-            CdSumTokuisaki = "200061";
-            NmSumTokuisaki = "得意先名称";
-            DtTekiyoKaishi = new DateTime(2023, 10, 1);
-            DtTekiyoMuko = new DateTime(2023, 12, 31);
-            DtTorokuNichiji = new DateTime(2023, 10, 11, 12, 34, 56);
-            DtKoshinNichiji = new DateTime(2023, 10, 11, 12, 34, 56);
-            CdShain = "0033550";
-            NmShain = "小田　賢行";
-            ChildCustomers = new List<ChildCustomer>
-            {
-                new ChildCustomer { CdTokuisakiChild = "2000062", NmTokuisaki = "得意先名称" },
-            };
+            ClearInfo(true);
 
-            Logs = new List<Log>
+            if (!IsAdd)
             {
-                new Log { Selected = false, DtTekiyoKaishi = "20230901", DtTekiyoMuko = "20231001", CdShain = "0033550" },
-                new Log { Selected = true, DtTekiyoKaishi = "20231001", DtTekiyoMuko = "20231231", CdShain = "0033550" },
-            };
+                CdKyoten = _currentCustomer.CdKyoten;
+                CdSumTokuisaki = _currentCustomer.CdSumTokuisaki;
+                ReferenceLog.LogInfos = LogLoader.Get(_currentCustomer.CdKyoten, _currentCustomer.CdSumTokuisaki).ToList();
+
+                // 参照日初期値で履歴から検索
+                SetReferenceCustomer();
+            }
+            else
+            {                
+                ReferenceLog.LogInfos.Clear();
+            }
+        }
+
+        private void ClearInfo(bool isAll)
+        {
+            IsDateRelease = false;
+
+            if (isAll)
+            {
+                ReferenceDate = DateTime.Today;
+                CdKyoten = string.Empty;
+                NmKyoten = string.Empty;
+                CdSumTokuisaki = string.Empty;
+                NmSumTokuisaki = string.Empty;
+            }
+
+            DtTekiyoKaishi = DateTime.Today;
+            DtTekiyoMuko = new DateTime(2999, 12, 31);
+            DtTorokuNichiji = null;
+            DtKoshinNichiji = null;
+            CdShain = string.Empty;
+            NmShain = string.Empty;
+            ChildCustomers = new ObservableCollection<ChildCustomer>();
+
+            _isChange = false;
+        }
+
+        private bool RegistCustomer()
+        {
+            if (!ValidInput())
+            {
+                return false;
+            }
+
+            try
+            {
+                var targetCustomer = new SumCustomer
+                {
+                    CdKyoten = CdKyoten,
+                    CdSumTokuisaki = CdSumTokuisaki,
+                    Tekiyokaishi = DtTekiyoKaishi.ToString("yyyyMMdd"),
+                    TekiyoMuko = DtTekiyoMuko.ToString("yyyyMMdd"),
+                    ChildCustomers = new List<ChildCustomer>(ChildCustomers),
+                };
+
+                var existCustomer = CustomerLoader.GetFromKey(CdKyoten, CdSumTokuisaki, DtTekiyoKaishi.ToString("yyyyMMdd"));
+                var isExist = existCustomer is not null;
+
+                if (!ValidSummaryDate(isExist))
+                {
+                    return false;
+                }
+
+                if (IsAdd)
+                {
+                    if (isExist)
+                    {
+                        MessageDialog.Show(_dialogService, $"拠点[{CdKyoten}],集約得意先[{CdSumTokuisaki}],適用開始日[{DtTekiyoKaishi}]\n同一組み合わせのデータが登録済みです", "入力エラー");
+                    }
+
+                    CustomerManager.Regist(targetCustomer, _shainInfo);
+                }
+                else if(isExist)
+                {
+                    targetCustomer.SumTokuisakiId = existCustomer!.SumTokuisakiId;
+                    CustomerManager.Update(targetCustomer, _shainInfo);
+                }
+                else
+                {
+                    CustomerManager.Regist(targetCustomer, _shainInfo);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageDialog.Show(_dialogService, ex.Message, "エラー");
+                return false;
+            }
+        }
+
+        private bool ValidInput()
+        {
+            bool isValid = true;
+
+            if (CdKyoten.IsNullOrEmpty() ||
+                CdSumTokuisaki.IsNullOrEmpty())
+            {
+                MessageDialog.Show(_dialogService, "拠点コード、集約得意先コードを入力してください。", "入力エラー");
+                return false;
+            }
+
+            if (!ChildCustomers.Any())
+            {
+                MessageDialog.Show(_dialogService, "子得意先を追加して下さい", "入力エラー");
+                return false;
+            }
+
+            return isValid;
+        }
+
+        // 摘要期間チェック
+        private bool ValidSummaryDate(bool isUpdate)
+        {
+            if(DtTekiyoKaishi < DateTime.Today)
+            {
+                MessageDialog.Show(_dialogService, "摘要開始日が過去日です", "入力エラー");
+                return false;
+            }
+
+            if(DtTekiyoKaishi > DtTekiyoMuko)
+            {
+                MessageDialog.Show(_dialogService, "摘要開始日より摘要無効日が過去日です", "入力エラー");
+                return false;
+            }
+
+            // 更新時 更新対象の適用開始日を比較から除外
+            var excludeDate = isUpdate ? DtTekiyoKaishi.ToString("yyyyMMdd") : null;
+            var duplicationRangeDate = ReferenceLog.CheckWithinRange(DtTekiyoKaishi.ToString("yyyyMMdd"), DtTekiyoMuko.ToString("yyyyMMdd"), excludeDate);
+
+            if (!duplicationRangeDate.IsNullOrEmpty())
+            {
+                MessageDialog.Show(_dialogService, $"下記の摘要期間と重複しています\n\n摘要開始日-摘要無効日\n「{duplicationRangeDate}」", "入力エラー");
+                return false;
+            }
+
+            return true;
         }
     }
 }
