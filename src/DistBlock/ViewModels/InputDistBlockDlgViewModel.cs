@@ -8,7 +8,7 @@ using Prism.Services.Dialogs;
 
 namespace DistBlock.ViewModels
 {
-    public class InputDistBlockViewModel : BindableBase, INavigationAware
+    public class InputDistBlockDlgViewModel : BindableBase, IDialogAware
     {
         public DelegateCommand Clear { get; }
         public DelegateCommand Register { get; }
@@ -18,7 +18,9 @@ namespace DistBlock.ViewModels
         public DelegateCommand Add { get; }
         public DelegateCommand Delete { get; }
 
-        private readonly IDialogService _dialogService;
+        public string Title => "仕分ブロック順情報入力";
+        public event Action<IDialogResult>? RequestClose;
+        private Models.DistBlock _distBlock = new Models.DistBlock();
 
         // 参照日
         private DateTime _date;
@@ -124,68 +126,64 @@ namespace DistBlock.ViewModels
             set => SetProperty(ref _logs, value);
         }
 
-        public InputDistBlockViewModel(IDialogService dialogService, IRegionManager regionManager)
+        public InputDistBlockDlgViewModel()
         {
-            _dialogService = dialogService;
-
             Clear = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistBlockViewModel:Clear");
+                Syslog.Debug("InputDistBlockDlgViewModel:Clear");
                 // fixme:クリアボタン押下
             });
 
             Register = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistBlockViewModel:Register");
+                Syslog.Debug("InputDistBlockDlgViewModel:Register");
                 // fixme:登録ボタン押下
             });
 
             Back = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistBlockViewModel:Back");
-                regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
+                Syslog.Debug("InputDistBlockDlgViewModel:Back");
+                RequestClose?.Invoke(new DialogResult(ButtonResult.Cancel));
             });
 
             Refer = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistBlockViewModel:Refer");
+                Syslog.Debug("InputDistBlockDlgViewModel:Refer");
                 // fixme:参照ボタン押下
             });
 
             Release = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistBlockViewModel:Release");
+                Syslog.Debug("InputDistBlockDlgViewModel:Release");
                 // fixme:解除ボタン押下
             });
 
             Add = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistBlockViewModel:Add");
+                Syslog.Debug("InputDistBlockDlgViewModel:Add");
                 // fixme:追加ボタン押下
             });
 
             Delete = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistBlockViewModel:Delete");
+                Syslog.Debug("InputDistBlockDlgViewModel:Delete");
                 // fixme:削除ボタン押下
             });
         }
 
-        public bool IsNavigationTarget(NavigationContext navigationContext)
-        {
-            return true;
-        }
+        public bool CanCloseDialog() => true;
 
-        public void OnNavigatedFrom(NavigationContext navigationContext)
+        public void OnDialogClosed()
         {
         }
 
-        public void OnNavigatedTo(NavigationContext navigationContext)
+        public void OnDialogOpened(IDialogParameters parameters)
         {
-            InitDisplay();
+            _distBlock = parameters.GetValue<Models.DistBlock>("DistBlock");
+            InitDialog();
         }
 
-        private void InitDisplay()
+        private void InitDialog()
         {
             // 項目欄確認
             Date = DateTime.Today;

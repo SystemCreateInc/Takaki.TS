@@ -4,7 +4,7 @@ namespace DistBlock.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        private string _title = "仕分ブロック登録";
+        private string _title = "仕分ブロック順登録";
         public string Title
         {
             get => _title;
