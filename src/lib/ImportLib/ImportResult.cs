@@ -6,17 +6,5 @@ using System.Threading.Tasks;
 
 namespace ImportLib
 {
-    public class ImportResult
-    {
-        public bool Success { get; init; }
-        public long FileSize { get; init; }
-        public int DataCount { get; init; }
-
-        public ImportResult(bool success, long fileSize, int dataCount)
-        {
-            Success = success;
-            FileSize = fileSize;
-            DataCount = dataCount;
-        }
-    }
+    public record ImportResult(bool Success, string FileName, long FileSize, long DataCount);
 }

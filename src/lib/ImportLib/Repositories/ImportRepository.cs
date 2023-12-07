@@ -234,7 +234,7 @@ namespace ImportLib.Repositories
                     {
                         DtDelivery = q.Key.DTDELIVERY,
                         ShukkaBatch = q.Key.CDSHUKKABATCH,
-                        IsWork = q.Any(x => x.FGDSTATUS != (short)Status.Ready || x.FGDSTATUS != (short)Status.Ready),
+                        IsWork = q.Any(x => x.FGDSTATUS != (short)Status.Ready),
                     });
         }
 
@@ -293,7 +293,7 @@ namespace ImportLib.Repositories
                     .Where($"{nameof(InterfaceLogsEntity.DataType):C} in @dataTypes")
                     .OrderBy($"{nameof(InterfaceLogsEntity.Id):C} desc")
                     .WithParameters(new { dataTypes }))
-                    .Select(x => new Log(x.CreatedAt!.Value, x.Status, x.Name, x.RowCount, x.Terminal, x.Comment ?? ""));
+                    .Select(x => new Log(x.CreatedAt!.Value, x.Status, x.Name, x.SrcFile, x.RowCount, x.Terminal, x.Comment ?? ""));
             }
         }
 

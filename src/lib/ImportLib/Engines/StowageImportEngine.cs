@@ -8,6 +8,7 @@ using ImportLib.Models;
 using ImportLib.Repositories;
 using LogLib;
 using Microsoft.IdentityModel.Tokens;
+using Prism.Services.Dialogs;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -22,12 +23,10 @@ namespace ImportLib.Engines
 
         public string ImportFilePath { get; set; } = string.Empty;
 
-        public List<ImportFileInfo> _targetImportFiles { get; private set; } = new List<ImportFileInfo>();
+        public List<ImportFileInfo> TargetImportFiles { get; private set; } = new List<ImportFileInfo>();
 
         private InterfaceFile _interfaceFile;
         private ScopeLogger _logger = new ScopeLogger<StowageImportEngine>();
-
-        public IEnumerable<SameDistInfo> SameDistInfos { get; set; } = Enumerable.Empty<SameDistInfo>();
 
         public StowageImportEngine(InterfaceFile interfaceFile)
         {
@@ -46,7 +45,7 @@ namespace ImportLib.Engines
                     return;
                 }
 
-                _targetImportFiles = Directory.EnumerateFiles(dir!, fileName).Select(x =>
+                TargetImportFiles = Directory.EnumerateFiles(dir!, fileName).Select(x =>
                 {
                     Syslog.Debug($"found file: {x}");
                     var fi = new FileInfo(x);
@@ -63,29 +62,28 @@ namespace ImportLib.Engines
             catch (Exception ex)
             {
                 _logger.Warn($"UpdateImportFileInfo: {ex}");
-                _targetImportFiles.Clear();
+                TargetImportFiles.Clear();
             }
         }
 
-        public IEnumerable<ImportResult> Import(CancellationToken token)
+        public IEnumerable<ImportResult> Import(DataImportController controller, CancellationToken token)
         {
             using (var repo = new ImportRepository())
             {
+                var sameDistInfos = GetSameDistData(repo, token);
+                TestImportData(sameDistInfos, controller);
+
                 var importResults = new List<ImportResult>();
-                var importDatas = new List<StowageFileLine>();
                 repo.DeleteExpiredStowageData();
 
-                foreach (var targetFile in _targetImportFiles)
+                foreach (var targetFile in TargetImportFiles)
                 {
-                    var beforeCount = importDatas.Count;
-                    importDatas.AddRange(ReadFile(token, targetFile.FilePath!));
-                    importResults.Add(new ImportResult(true, (long)targetFile.FileSize!, importDatas.Count - beforeCount));
+                    var importDatas = ReadFile(token, targetFile.FilePath!);
+                    var importedCount = InsertData(importDatas, repo, token);
+                    importResults.Add(new ImportResult(true, targetFile.FilePath!, (long)targetFile.FileSize!, importedCount));
                 }
 
-                InsertData(importDatas, repo, token);
-
                 repo.Commit();
-
                 return importResults;
             }
         }
@@ -95,33 +93,42 @@ namespace ImportLib.Engines
             return _interfaceFile with { FileName = ImportFilePath };
         }
 
-        public async Task<bool> SetSameDist(CancellationToken token)
+        private void TestImportData(IEnumerable<SameDistInfo> sameDistInfos, DataImportController controller)
         {
-            SameDistInfos = await Task.Run(() => GetSameDistDataAsync(token));
-            return SameDistInfos.Any();
+            if (sameDistInfos.Any(x => x.IsWork))
+            {
+                throw new Exception("同じ納品日・出荷バッチコードのデータで作業済みがある為中断します。");
+            }
+
+            if (sameDistInfos.Any())
+            {
+                var message = "同じ納品日・出荷バッチコードのデータが登録されています。\n入れ替えますか？";
+                if (controller.Confirm(message, DataName) != ButtonResult.OK)
+                {
+                    throw new OperationCanceledException(message);
+                }
+            }
         }
 
         // 同一Dist情報取得
-        private IEnumerable<SameDistInfo> GetSameDistDataAsync(CancellationToken token)
+        private IEnumerable<SameDistInfo> GetSameDistData(ImportRepository repo, CancellationToken token)
         {
             var importDatas = new List<StowageFileLine>();
 
-            foreach (var targetFile in _targetImportFiles)
+            foreach (var targetFile in TargetImportFiles)
             {
                 importDatas.AddRange(ReadFile(token, targetFile.FilePath!));
             }
 
-            var distKeyGroup = importDatas.GroupBy(x => new { x.DtDelivery, x.CdShukkaBatch })
+            var distKeyGroup = importDatas
+                .GroupBy(x => new { x.DtDelivery, x.CdShukkaBatch })
                 .Select(x => new SameDistInfo
                 {
                     DtDelivery = x.Key.DtDelivery,
                     ShukkaBatch = x.Key.CdShukkaBatch,
                 });
 
-            using (var repo = new ImportRepository())
-            {
-                return repo.GetDeleteSameStowageDatas(distKeyGroup);
-            }
+            return repo.GetDeleteSameStowageDatas(distKeyGroup);
         }
 
         private int InsertData(IEnumerable<StowageFileLine> datas, ImportRepository repo, CancellationToken token)

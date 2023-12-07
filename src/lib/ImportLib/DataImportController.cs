@@ -2,17 +2,11 @@
 using ImportLib.Engines;
 using ImportLib.Repositories;
 using LogLib;
+using Prism.Services.Dialogs;
 using System.IO;
 
 namespace ImportLib
 {
-    public enum GetSameDistResult
-    {
-        NONE,
-        EXIST,
-        WORK,
-    }
-
     public class DataImportController
     {
         public DataImportController()
@@ -26,36 +20,7 @@ namespace ImportLib
             }
         }
 
-        public async Task<GetSameDistResult> CheckSameDist(IImportEngine engine, CancellationToken token)
-        {
-            try
-            {
-                await engine.SetSameDist(token);
-
-                if (!engine.SameDistInfos.Any())
-                {
-                    return GetSameDistResult.NONE;
-                }
-
-                if(engine.SameDistInfos.Any(x => x.IsWork))
-                {
-                    return GetSameDistResult.WORK;
-                }
-
-                return GetSameDistResult.EXIST;
-            }
-            catch (OperationCanceledException)
-            {
-                InsertFailLog(engine, "中断されました");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                Syslog.Error($"DataImportController.PreImport: {ex}");
-                InsertFailLog(engine, ex.Message);
-                throw;
-            }
-        }
+        public event Func<string, string, ButtonResult>? RequestComfirm;
 
         public async Task Import(IImportEngine engine, CancellationToken token)
         {
@@ -65,7 +30,7 @@ namespace ImportLib
                 {
                     Syslog.Debug($"Import start {engine.DataName}");
 
-                    var results = engine.Import(token);
+                    var results = engine.Import(this, token);
 
                     Syslog.Debug($"Import end {engine.DataName}");
 
@@ -78,7 +43,7 @@ namespace ImportLib
                 }
 
                 // 取込後のデータを削除
-                engine._targetImportFiles.Where(x => x.Selected).ToList().ForEach(x =>
+                engine.TargetImportFiles.Where(x => x.Selected).ToList().ForEach(x =>
                 {
 #if DEBUG
                     Syslog.Debug($"fake Delete file {x.FilePath!}");
@@ -106,6 +71,11 @@ namespace ImportLib
             }
         }
 
+        public ButtonResult Confirm(string message, string caption)
+        {
+            return RequestComfirm?.Invoke(message, caption) ?? throw new InvalidOperationException(message);
+        }
+
         private void InsertSuccessLog(IImportEngine engine, ImportResult result)
         {
             using (var repo = new ImportRepository())
@@ -113,11 +83,11 @@ namespace ImportLib
                 var log = new InterfaceLogsEntity
                 {
                     DataType = (short)engine.DataType,
-                    RowCount = result.DataCount,
+                    RowCount = (int)result.DataCount,
                     FileSize = (int)result.FileSize,
                     Name = engine.DataName,
                     Status = "正常",
-                    //FilePath = engine.ImportFilePath,
+                    SrcFile = result.FileName,
                     Comment = "",
                     Terminal = Environment.MachineName,
                     CreatedAt = DateTime.Now,

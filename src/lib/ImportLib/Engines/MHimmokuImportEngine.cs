@@ -26,7 +26,7 @@ namespace ImportLib.Engines
 
         public string ImportFilePath { get; set; } = string.Empty;
 
-        public List<ImportFileInfo> _targetImportFiles { get; private set; } = new List<ImportFileInfo>();
+        public List<ImportFileInfo> TargetImportFiles { get; private set; } = new List<ImportFileInfo>();
 
         private InterfaceFile _interfaceFile;
         private ScopeLogger _logger = new ScopeLogger<MHimmokuImportEngine>();
@@ -50,7 +50,7 @@ namespace ImportLib.Engines
                     return;
                 }
 
-                _targetImportFiles = Directory.EnumerateFiles(dir!, fileName).Select(x =>
+                TargetImportFiles = Directory.EnumerateFiles(dir!, fileName).Select(x =>
                 {
                     Syslog.Debug($"found file: {x}");
                     var fi = new FileInfo(x);
@@ -67,11 +67,11 @@ namespace ImportLib.Engines
             catch (Exception ex)
             {
                 _logger.Warn($"UpdateImportFileInfo: {ex}");
-                _targetImportFiles.Clear();
+                TargetImportFiles.Clear();
             }
         }
 
-        public IEnumerable<ImportResult> Import(CancellationToken token)
+        public IEnumerable<ImportResult> Import(DataImportController controller, CancellationToken token)
         {
             var importResults = new List<ImportResult>();
 
@@ -79,7 +79,7 @@ namespace ImportLib.Engines
             {
                 repo.DeleteExpiredHimmokuData();
 
-                foreach (var targetFile in _targetImportFiles)
+                foreach (var targetFile in TargetImportFiles)
                 {
                     var importDatas = ReadFile(token, targetFile.FilePath!);
                     Syslog.Debug($"Read {importDatas.Count()} lines");
@@ -88,11 +88,10 @@ namespace ImportLib.Engines
 
                     InsertData(fname, repo, token);
                     var importedCount = importDatas.Count();
-                    importResults.Add(new ImportResult(true, (long)targetFile.FileSize!, importedCount));
+                    importResults.Add(new ImportResult(true, targetFile.FilePath, (long)targetFile.FileSize!, importedCount));
                 }
 
                 repo.Commit();
-
                 return importResults;
             }
         }
