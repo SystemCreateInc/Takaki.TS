@@ -7,7 +7,7 @@ using Prism.Services.Dialogs;
 
 namespace DistLargeGroup.ViewModels
 {
-    public class InputDistLargeGroupViewModel : BindableBase, INavigationAware
+    public class InputDistLargeGroupDlgViewModel : BindableBase, IDialogAware
     {
         public DelegateCommand Clear { get; }
         public DelegateCommand Register { get; }
@@ -15,7 +15,10 @@ namespace DistLargeGroup.ViewModels
         public DelegateCommand Refer { get; }
         public DelegateCommand Release { get; }
 
-        private readonly IDialogService _dialogService;
+        public string Title => "大仕分グループ情報入力";
+
+        public event Action<IDialogResult>? RequestClose;
+        private Models.DistLargeGroup _distLargeGroup = new Models.DistLargeGroup();
 
         // 参照日
         private DateTime _date;
@@ -113,56 +116,52 @@ namespace DistLargeGroup.ViewModels
             set => SetProperty(ref _logs, value);
         }
 
-        public InputDistLargeGroupViewModel(IDialogService dialogService, IRegionManager regionManager)
+        public InputDistLargeGroupDlgViewModel()
         {
-            _dialogService = dialogService;
-
             Clear = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistLargeGroupViewModel:Clear");
+                Syslog.Debug("InputDistLargeGroupDlgViewModel:Clear");
                 // fixme:クリアボタン押下
             });
 
             Register = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistLargeGroupViewModel:Register");
+                Syslog.Debug("InputDistLargeGroupDlgViewModel:Register");
                 // fixme:登録ボタン押下
             });
 
             Back = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistLargeGroupViewModel:Back");
-                regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
+                Syslog.Debug("InputDistLargeGroupDlgViewModel:Back");
+                RequestClose?.Invoke(new DialogResult(ButtonResult.Cancel));
             });
 
             Refer = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistLargeGroupViewModel:Refer");
+                Syslog.Debug("InputDistLargeGroupDlgViewModel:Refer");
                 // fixme:参照ボタン押下
             });
 
             Release = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistLargeGroupViewModel:Release");
+                Syslog.Debug("InputDistLargeGroupDlgViewModel:Release");
                 // fixme:解除ボタン押下
             });
         }
 
-        public bool IsNavigationTarget(NavigationContext navigationContext)
-        {
-            return true;
-        }
+        public bool CanCloseDialog() => true;
 
-        public void OnNavigatedFrom(NavigationContext navigationContext)
+        public void OnDialogClosed()
         {
         }
 
-        public void OnNavigatedTo(NavigationContext navigationContext)
+        public void OnDialogOpened(IDialogParameters parameters)
         {
-            InitDisplay();
+            _distLargeGroup = parameters.GetValue<Models.DistLargeGroup>("DistLargeGroup");
+            InitDialog();
         }
 
-        private void InitDisplay()
+        private void InitDialog()
         {
             // 項目欄確認
             Date = DateTime.Today;
