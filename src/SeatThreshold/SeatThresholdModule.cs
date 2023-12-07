@@ -18,7 +18,7 @@ namespace SeatThreshold
             containerRegistry.RegisterForNavigation<MainSeatThreshold>();
 
             // ダイアログ登録
-            containerRegistry.RegisterForNavigation<InputSeatThresholdDlg>();
+            containerRegistry.RegisterDialog<InputSeatThresholdDlg>();
         }
     }
 }
