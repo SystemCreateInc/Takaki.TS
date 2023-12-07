@@ -19,16 +19,19 @@ namespace ReferenceLogLib
         // 参照日指定　開始日取得
         public string GetStartDateInRange(string selectDate)
         {
+            var startDate = string.Empty;
+
             foreach(var logInfo in LogInfos)
             {
                 if(IsInRange(selectDate, logInfo.StartDate, logInfo.EndDate))
                 {
-                    UpdateSelected(logInfo.StartDate);
-                    return logInfo.StartDate;
+                    startDate = logInfo.StartDate;
+                    break;
                 }
             }
 
-            return string.Empty;
+            UpdateSelected(startDate);
+            return startDate;
         }
 
         // 指定期間の重複チェック
