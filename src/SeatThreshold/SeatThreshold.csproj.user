@@ -7,7 +7,7 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Views\InputSeatThreshold.xaml.cs">
+    <Compile Update="Views\InputSeatThresholdDlg.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\MainSeatThreshold.xaml.cs">
@@ -15,7 +15,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\InputSeatThreshold.xaml">
+    <Page Update="Views\InputSeatThresholdDlg.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\MainSeatThreshold.xaml">

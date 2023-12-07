@@ -1,10 +1,10 @@
 ﻿using Prism.Mvvm;
 
-namespace DistBlock.ViewModels
+namespace StowageListPrint.ViewModels
 {
     public class MainWindowViewModel : BindableBase
     {
-        private string _title = "仕分ブロック順登録";
+        private string _title = "積付表発行";
         public string Title
         {
             get => _title;

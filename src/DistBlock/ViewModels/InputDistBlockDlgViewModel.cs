@@ -1,27 +1,26 @@
 ﻿using DbLib.Defs;
-using DistGroup.Models;
+using DistBlock.Models;
 using LogLib;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Services.Dialogs;
 
-namespace DistGroup.ViewModels
+namespace DistBlock.ViewModels
 {
-    public class InputDistGroupViewModel : BindableBase, INavigationAware
+    public class InputDistBlockDlgViewModel : BindableBase, IDialogAware
     {
         public DelegateCommand Clear { get; }
         public DelegateCommand Register { get; }
         public DelegateCommand Back { get; }
         public DelegateCommand Refer { get; }
         public DelegateCommand Release { get; }
-        public DelegateCommand UpReplace { get; }
-        public DelegateCommand DownReplace { get; }
         public DelegateCommand Add { get; }
         public DelegateCommand Delete { get; }
 
-        private readonly IDialogService _dialogService;
-        private Models.DistGroup _currentDistGroup = new Models.DistGroup();
+        public string Title => "仕分ブロック順情報入力";
+        public event Action<IDialogResult>? RequestClose;
+        private Models.DistBlock _distBlock = new Models.DistBlock();
 
         // 参照日
         private DateTime _date;
@@ -61,14 +60,6 @@ namespace DistGroup.ViewModels
         {
             get => _nmDistGroup;
             set => SetProperty(ref _nmDistGroup, value);
-        }
-
-        // 配送便集計
-        private BinSumType _binSumType = BinSumType.No;
-        public BinSumType BinSumType
-        {
-            get => _binSumType;
-            set => SetProperty(ref _binSumType, value);
         }
 
         // 適用開始日
@@ -119,12 +110,12 @@ namespace DistGroup.ViewModels
             set => SetProperty(ref _nmShain, value);
         }
 
-        // 対象出荷バッチリスト
-        private List<Batch> _batches = new List<Batch>();
-        public List<Batch> Batches
+        // ブロック割当順リスト
+        private List<Models.Block> _blocks = new List<Models.Block>();
+        public List<Models.Block> Blocks
         {
-            get => _batches;
-            set => SetProperty(ref _batches, value);
+            get => _blocks;
+            set => SetProperty(ref _blocks, value);
         }
 
         // 履歴表示リスト
@@ -135,89 +126,64 @@ namespace DistGroup.ViewModels
             set => SetProperty(ref _logs, value);
         }
 
-        // コース順リスト
-        private List<Course> _courses = new List<Course>();
-        public List<Course> Courses
+        public InputDistBlockDlgViewModel()
         {
-            get => _courses;
-            set => SetProperty(ref _courses, value);
-        }
-
-        public InputDistGroupViewModel(IDialogService dialogService, IRegionManager regionManager)
-        {
-            _dialogService = dialogService;
-
             Clear = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistGroupViewModel:Clear");
+                Syslog.Debug("InputDistBlockDlgViewModel:Clear");
                 // fixme:クリアボタン押下
             });
 
             Register = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistGroupViewModel:Register");
+                Syslog.Debug("InputDistBlockDlgViewModel:Register");
                 // fixme:登録ボタン押下
             });
 
             Back = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistGroupViewModel:Back");
-                regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
+                Syslog.Debug("InputDistBlockDlgViewModel:Back");
+                RequestClose?.Invoke(new DialogResult(ButtonResult.Cancel));
             });
 
             Refer = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistGroupViewModel:Refer");
+                Syslog.Debug("InputDistBlockDlgViewModel:Refer");
                 // fixme:参照ボタン押下
             });
 
             Release = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistGroupViewModel:Release");
+                Syslog.Debug("InputDistBlockDlgViewModel:Release");
                 // fixme:解除ボタン押下
-            });
-
-            UpReplace = new DelegateCommand(() =>
-            {
-                Syslog.Debug("InputDistGroupViewModel:UpReplace");
-                // fixme:▲ボタン押下
-            });
-
-            DownReplace = new DelegateCommand(() =>
-            {
-                Syslog.Debug("InputDistGroupViewModel:DownReplace");
-                // fixme:▼ボタン押下
             });
 
             Add = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistGroupViewModel:Add");
+                Syslog.Debug("InputDistBlockDlgViewModel:Add");
                 // fixme:追加ボタン押下
             });
 
             Delete = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistGroupViewModel:Delete");
+                Syslog.Debug("InputDistBlockDlgViewModel:Delete");
                 // fixme:削除ボタン押下
             });
         }
 
-        public bool IsNavigationTarget(NavigationContext navigationContext)
-        {
-            return true;
-        }
+        public bool CanCloseDialog() => true;
 
-        public void OnNavigatedFrom(NavigationContext navigationContext)
+        public void OnDialogClosed()
         {
         }
 
-        public void OnNavigatedTo(NavigationContext navigationContext)
+        public void OnDialogOpened(IDialogParameters parameters)
         {
-            _currentDistGroup = (Models.DistGroup)navigationContext.Parameters["CurrentDistGroup"];
-            InitDisplay();
+            _distBlock = parameters.GetValue<Models.DistBlock>("DistBlock");
+            InitDialog();
         }
 
-        private void InitDisplay()
+        private void InitDialog()
         {
             // 項目欄確認
             Date = DateTime.Today;
@@ -230,44 +196,19 @@ namespace DistGroup.ViewModels
             DtTorokuNichiji = new DateTime(2023, 10, 11, 12, 34, 56);
             DtKoshinNichiji = new DateTime(2023, 10, 11, 12, 34, 56);
             CdShain = "0033550";
-            NmShain = "小田 賢行";
-            Batches = new List<Batch>
+            NmShain = "小田　賢行";
+            Blocks = new List<Block>
             {
-                new Batch
-                {
-                    CdShukkaBatch = "02001",
-                    NmShukkaBatch = "広島常温1便",
-                    CdLargeGroup = "001",
-                    CdLargeGroupName = "大仕分名称--"
-                }
+                new Block { Seq = 1, BlockCode = "01", Start = "1", End = "9999" },
+                new Block { Seq = 2, BlockCode = "02", Start = "1", End = "9999" },
+                new Block { Seq = 3, BlockCode = "03", Start = "1", End = "9999" },
+                new Block { Seq = 4, BlockCode = "B1", Start = "1", End = "9999" },
             };
 
             Logs = new List<Log>
             {
-                new Log { Selected = false, DtTekiyoKaishi = "20230901", DtTekiyoMuko = "20231001", CdShain = "0033550", },
-                new Log { Selected = true, DtTekiyoKaishi = "20231001", DtTekiyoMuko = "20231231", CdShain = "0033550", },
-            };
-
-            Courses = new List<Course>
-            {
-                new Course { NuCourseSeq = 1, CdCourse = "005" },
-                new Course { NuCourseSeq = 2, CdCourse = "006" },
-                new Course { NuCourseSeq = 3, CdCourse = "007" },
-                new Course { NuCourseSeq = 4, CdCourse = "008" },
-                new Course { NuCourseSeq = 5, CdCourse = "009" },
-                new Course { NuCourseSeq = 6, CdCourse = "010" },
-                new Course { NuCourseSeq = 7, CdCourse = "001" },
-                new Course { NuCourseSeq = 8, CdCourse = "011" },
-                new Course { NuCourseSeq = 9, CdCourse = "" },
-                new Course { NuCourseSeq = 10, CdCourse = "012" },
-                new Course { NuCourseSeq = 11, CdCourse = "002" },
-                new Course { NuCourseSeq = 12, CdCourse = "003" },
-                new Course { NuCourseSeq = 13, CdCourse = "004" },
-                new Course { NuCourseSeq = 14, CdCourse = "013" },
-                new Course { NuCourseSeq = 15, CdCourse = "014" },
-                new Course { NuCourseSeq = 16, CdCourse = "015" },
-                new Course { NuCourseSeq = 17, CdCourse = "016" },
-                new Course { NuCourseSeq = 18, CdCourse = "" },
+                new Log { Selected = false, DtTekiyoKaishi = "20230901", DtTekiyoMuko = "20231001", CdShain = "0033550" },
+                new Log { Selected = true, DtTekiyoKaishi = "20231001", DtTekiyoMuko = "20231231", CdShain = "0033550" },
             };
         }
     }

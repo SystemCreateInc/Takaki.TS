@@ -52,17 +52,17 @@ namespace DistBlock.ViewModels
             set => SetProperty(ref _canEdit, value);
         }
 
-        public MainDistBlockViewModel(IDialogService dialogService, IRegionManager regionManager)
+        public MainDistBlockViewModel(IDialogService dialogService)
         {
             _dialogService = dialogService;
 
             Add = new DelegateCommand(() =>
             {
                 Syslog.Debug("MainDistBlockViewModel:Add");
-                regionManager.RequestNavigate("ContentRegion", nameof(InputDistBlock), new NavigationParameters
+                if (ShowInputDialog(new Models.DistBlock()))
                 {
-                    { "CurrentDistBlock", null },
-                });
+                    LoadDatas();
+                }
             });
 
             Edit = new DelegateCommand(() =>
@@ -73,10 +73,10 @@ namespace DistBlock.ViewModels
                 }
 
                 Syslog.Debug("MainDistBlockViewModel:Edit");
-                regionManager.RequestNavigate("ContentRegion", nameof(InputDistBlock), new NavigationParameters
+                if (ShowInputDialog(CurrentDistBlock))
                 {
-                    { "CurrentDistBlock", CurrentDistBlock },
-                });
+                    LoadDatas();
+                }
             }).ObservesCanExecute(() => CanEdit);
 
             Exit = new DelegateCommand(() =>
@@ -107,6 +107,21 @@ namespace DistBlock.ViewModels
                 Syslog.Error($"LoadDatas:{e.Message}");
                 MessageDialog.Show(_dialogService, e.Message, "エラー");
             }
+        }
+
+        private bool ShowInputDialog(Models.DistBlock distBlock)
+        {
+            IDialogResult? result = null;
+
+            _dialogService.ShowDialog(
+                nameof(InputDistBlockDlg),
+                new DialogParameters
+                {
+                    { "DistBlock", distBlock },
+                },
+                r => result = r);
+
+            return result?.Result == ButtonResult.OK;
         }
     }
 }
