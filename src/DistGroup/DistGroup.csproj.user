@@ -7,7 +7,7 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Views\InputDistGroup.xaml.cs">
+    <Compile Update="Views\InputDistGroupDlg.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\MainDistGroup.xaml.cs">
@@ -15,7 +15,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\InputDistGroup.xaml">
+    <Page Update="Views\InputDistGroupDlg.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\MainDistGroup.xaml">

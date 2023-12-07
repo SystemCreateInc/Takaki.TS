@@ -16,7 +16,9 @@ namespace DistGroup
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<MainDistGroup>();
-            containerRegistry.RegisterForNavigation<InputDistGroup>();
+
+            // ダイアログ登録
+            containerRegistry.RegisterDialog<InputDistGroupDlg>();
         }
     }
 }

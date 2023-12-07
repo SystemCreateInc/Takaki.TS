@@ -8,7 +8,7 @@ using Prism.Services.Dialogs;
 
 namespace DistGroup.ViewModels
 {
-    public class InputDistGroupViewModel : BindableBase, INavigationAware
+    public class InputDistGroupDlgViewModel : BindableBase, IDialogAware
     {
         public DelegateCommand Clear { get; }
         public DelegateCommand Register { get; }
@@ -20,8 +20,10 @@ namespace DistGroup.ViewModels
         public DelegateCommand Add { get; }
         public DelegateCommand Delete { get; }
 
-        private readonly IDialogService _dialogService;
-        private Models.DistGroup _currentDistGroup = new Models.DistGroup();
+        public string Title => "仕分グループ情報入力";
+
+        public event Action<IDialogResult>? RequestClose;
+        private Models.DistGroup _distGroup = new Models.DistGroup();
 
         // 参照日
         private DateTime _date;
@@ -143,81 +145,76 @@ namespace DistGroup.ViewModels
             set => SetProperty(ref _courses, value);
         }
 
-        public InputDistGroupViewModel(IDialogService dialogService, IRegionManager regionManager)
+        public InputDistGroupDlgViewModel()
         {
-            _dialogService = dialogService;
-
             Clear = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistGroupViewModel:Clear");
+                Syslog.Debug("InputDistGroupViewModelDlg:Clear");
                 // fixme:クリアボタン押下
             });
 
             Register = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistGroupViewModel:Register");
+                Syslog.Debug("InputDistGroupViewModelDlg:Register");
                 // fixme:登録ボタン押下
             });
 
             Back = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistGroupViewModel:Back");
-                regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
+                Syslog.Debug("InputDistGroupViewModelDlg:Back");
+                RequestClose?.Invoke(new DialogResult(ButtonResult.Cancel));
             });
 
             Refer = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistGroupViewModel:Refer");
+                Syslog.Debug("InputDistGroupViewModelDlg:Refer");
                 // fixme:参照ボタン押下
             });
 
             Release = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistGroupViewModel:Release");
+                Syslog.Debug("InputDistGroupViewModelDlg:Release");
                 // fixme:解除ボタン押下
             });
 
             UpReplace = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistGroupViewModel:UpReplace");
+                Syslog.Debug("InputDistGroupViewModelDlg:UpReplace");
                 // fixme:▲ボタン押下
             });
 
             DownReplace = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistGroupViewModel:DownReplace");
+                Syslog.Debug("InputDistGroupViewModelDlg:DownReplace");
                 // fixme:▼ボタン押下
             });
 
             Add = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistGroupViewModel:Add");
+                Syslog.Debug("InputDistGroupViewModelDlg:Add");
                 // fixme:追加ボタン押下
             });
 
             Delete = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputDistGroupViewModel:Delete");
+                Syslog.Debug("InputDistGroupViewModelDlg:Delete");
                 // fixme:削除ボタン押下
             });
         }
 
-        public bool IsNavigationTarget(NavigationContext navigationContext)
-        {
-            return true;
-        }
+        public bool CanCloseDialog() => true;
 
-        public void OnNavigatedFrom(NavigationContext navigationContext)
+        public void OnDialogClosed()
         {
         }
 
-        public void OnNavigatedTo(NavigationContext navigationContext)
+        public void OnDialogOpened(IDialogParameters parameters)
         {
-            _currentDistGroup = (Models.DistGroup)navigationContext.Parameters["CurrentDistGroup"];
-            InitDisplay();
+            _distGroup = parameters.GetValue<Models.DistGroup>("DistGroup");
+            InitDialog();
         }
 
-        private void InitDisplay()
+        private void InitDialog()
         {
             // 項目欄確認
             Date = DateTime.Today;
