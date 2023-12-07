@@ -16,7 +16,9 @@ namespace DistBlock
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<MainDistBlock>();
-            containerRegistry.RegisterForNavigation<InputDistBlock>();
+
+            // ダイアログ登録
+            containerRegistry.RegisterDialog<InputDistBlockDlg>();
         }
     }
 }

@@ -93,9 +93,14 @@
         </Grid>
 
         <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid}" SettingsKey="StowageListPrintColumns"/>
-        <DataGrid x:Name="dataGrid" ItemsSource="{Binding StowageListPrints}" AutoGenerateColumns="False"
+        <DataGrid x:Name="dataGrid" ItemsSource="{Binding StowageListPrints}" CurrentItem="{Binding CurrentStowageListPrint, Mode=TwoWay}"
+                  AutoGenerateColumns="False" SelectedItem="{Binding CurrentStowageListPrint, Mode=TwoWay}"
                   IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
                   SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="None">
+
+            <DataGrid.InputBindings>
+                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding LeftDoubleClick}"/>
+            </DataGrid.InputBindings>
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="表示器" Binding="{Binding Tdunitcode}"/>

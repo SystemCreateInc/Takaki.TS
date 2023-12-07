@@ -5,9 +5,9 @@ namespace DistGroup.Views
     /// <summary>
     /// InputDistGroupDlg.xaml の相互作用ロジック
     /// </summary>
-    public partial class InputDistGroup : UserControl
+    public partial class InputDistGroupDlg : UserControl
     {
-        public InputDistGroup()
+        public InputDistGroupDlg()
         {
             InitializeComponent();
         }

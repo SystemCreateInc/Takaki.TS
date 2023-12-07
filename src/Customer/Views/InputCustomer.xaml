@@ -6,7 +6,15 @@
              xmlns:utils="clr-namespace:WindowLib.Utils;assembly=WindowLib"
              xmlns:controls="clr-namespace:WindowLib.Views;assembly=WindowLib"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             >
+             Loaded="UserControl_Loaded">
+    
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window" BasedOn="{StaticResource InputDialog}">
+            <Setter Property="WindowState" Value="Maximized"/>
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterScreen" />
+            <Setter Property="FontSize" Value="24" />
+        </Style>
+    </prism:Dialog.WindowStyle>
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -112,8 +120,8 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Content="参照日"/>
-                        <TextBox Grid.Column="1" Text="{Binding ReferenceDate, UpdateSourceTrigger=PropertyChanged, StringFormat=yyyy/MM/dd}"/>
-                        <Button Grid.Column="2" Content="参照" Command="{Binding Refer}" Margin="3"
+                        <DatePicker Grid.Column="1" x:Name="ReferenceDate" SelectedDate="{Binding ReferenceDate}" Language="ja"/>
+                        <Button Grid.Column="2" Content="参照" Command="{Binding Refer}" Margin="3" Focusable="False"
                                 Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=Height}" Width="80"/>
                     </Grid>
 
@@ -125,7 +133,8 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Content="拠点コード" VerticalContentAlignment="Center"/>
-                        <TextBox Grid.Column="1" Text="{Binding CdKyoten, UpdateSourceTrigger=PropertyChanged, Delay=300}" IsEnabled="{Binding IsAdd}"/>
+                        <TextBox Grid.Column="1" x:Name="CdKyoten" Text="{Binding CdKyoten, UpdateSourceTrigger=PropertyChanged, Delay=300}" IsEnabled="{Binding IsAdd}"
+                                 MaxLength="4"/>
                         <Label Grid.Column="2" Background="Blue"/>
                         <TextBlock Grid.Column="2" Text="{Binding NmKyoten}" Foreground="White"/>
                     </Grid>
@@ -138,7 +147,8 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Content="集約得意先コード"/>
-                        <TextBox Grid.Column="1" Text="{Binding CdSumTokuisaki, UpdateSourceTrigger=PropertyChanged, Delay=300}" IsEnabled="{Binding IsAdd}"/>
+                        <TextBox Grid.Column="1" Text="{Binding CdSumTokuisaki, UpdateSourceTrigger=PropertyChanged, Delay=300}" IsEnabled="{Binding IsAdd}"
+                                 MaxLength="6"/>
                         <Label Grid.Column="2" Background="Blue"/>
                         <TextBlock Grid.Column="2" Text="{Binding NmSumTokuisaki}" Foreground="White"/>
                     </Grid>
@@ -153,12 +163,12 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Content="適用開始日・無効日"/>
-                        <TextBox Grid.Column="1" Text="{Binding DtTekiyoKaishi, StringFormat=yyyy/MM/dd}"
+                        <DatePicker Grid.Column="1" SelectedDate="{Binding DtTekiyoKaishi}" Language="ja"
                                  HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{Binding IsDateRelease}"/>
                         <Label Grid.Column="2" Content="～" HorizontalAlignment="Center"/>
-                        <TextBox Grid.Column="3" Text="{Binding DtTekiyoMuko, StringFormat=yyyy/MM/dd}"
+                        <DatePicker Grid.Column="3" SelectedDate="{Binding DtTekiyoMuko}"
                                  HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{Binding IsDateRelease}"/>
-                        <Button Grid.Column="4" Content="解除" Command="{Binding Release}" Margin="3"
+                        <Button Grid.Column="4" Content="解除" Command="{Binding Release}" Margin="3" Focusable="False"
                                 Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=Height}"/>
                     </Grid>
 
@@ -219,7 +229,14 @@
 
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="子得意先コード" Binding="{Binding CdTokuisakiChild, UpdateSourceTrigger=PropertyChanged, Delay=300}" Width="1*"
-                                                    ElementStyle="{StaticResource CenterTextElement}"/>
+                                                    ElementStyle="{StaticResource CenterTextElement}">
+                                    <DataGridTextColumn.EditingElementStyle>
+                                        <Style TargetType="TextBox">
+                                            <Setter Property="MaxLength" Value="6"/>
+                                        </Style>
+                                    </DataGridTextColumn.EditingElementStyle>
+                                </DataGridTextColumn>
+
                                 <DataGridTextColumn Header="得意先名称" Binding="{Binding NmTokuisaki}" Width="1*" IsReadOnly="True">
                                     <DataGridTextColumn.CellStyle>
                                         <Style TargetType="DataGridCell">

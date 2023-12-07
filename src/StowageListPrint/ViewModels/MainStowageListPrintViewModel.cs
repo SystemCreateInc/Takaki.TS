@@ -20,6 +20,7 @@ namespace StowageListPrint.ViewModels
         public DelegateCommand Edit { get; }
         public DelegateCommand<object> CSV { get; }
         public DelegateCommand Exit { get; }
+        public DelegateCommand LeftDoubleClick { get; }
 
         private readonly IDialogService _dialogService;
 
@@ -55,6 +56,24 @@ namespace StowageListPrint.ViewModels
             set => SetProperty(ref _stowageListPrints, value);
         }
 
+        private Models.StowageListPrint? _currentStowageListPrint;
+        public Models.StowageListPrint? CurrentStowageListPrint
+        {
+            get => _currentStowageListPrint;
+            set
+            {
+                SetProperty(ref _currentStowageListPrint, value);
+                CanEdit = CurrentStowageListPrint != null;
+            }
+        }
+
+        private bool _canEdit;
+        public bool CanEdit
+        {
+            get => _canEdit;
+            set => SetProperty(ref _canEdit, value);
+        }
+
         private bool _canCSV;
         public bool CanCSV
         {
@@ -87,8 +106,12 @@ namespace StowageListPrint.ViewModels
             Edit = new DelegateCommand(() =>
             {
                 Syslog.Debug("MainStowageListPrintViewModel:Edit");
-                // fixme:積付数変更ボタン押下
-            });
+
+                if (ShowInputDialog())
+                {
+                    LoadDatas();
+                }
+            }).ObservesCanExecute(() => CanEdit);
 
             CSV = new DelegateCommand<object>(obj =>
             {
@@ -110,6 +133,12 @@ namespace StowageListPrint.ViewModels
                 Syslog.Debug("MainStowageListPrintViewModel:Exit");
                 Application.Current.MainWindow.Close();
             });
+
+            LeftDoubleClick = new DelegateCommand(() =>
+            {
+                Syslog.Debug("MainStowageListPrintViewModel:LeftDoubleClick");
+                Edit.Execute();
+            }).ObservesCanExecute(() => CanEdit);
 
             // fixme:仕分グループ + 仕分名称
             CdDistGroup = "02001";
@@ -133,6 +162,21 @@ namespace StowageListPrint.ViewModels
                 Syslog.Error($"LoadDatas:{e.Message}");
                 MessageDialog.Show(_dialogService, e.Message, "エラー");
             }
+        }
+
+        private bool ShowInputDialog()
+        {
+            IDialogResult? result = null;
+
+            _dialogService.ShowDialog(
+                nameof(InputStowageDlg),
+                new DialogParameters
+                {
+                    { "CurrentStowageListPrint", CurrentStowageListPrint },
+                },
+                r => result = r);
+
+            return result?.Result == ButtonResult.OK;
         }
     }
 }
