@@ -16,7 +16,9 @@ namespace DistLargeGroup
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<MainDistLargeGroup>();
-            containerRegistry.RegisterForNavigation<InputDistLargeGroup>();
+
+            // ダイアログ登録
+            containerRegistry.RegisterDialog<InputDistLargeGroupDlg>();
         }
     }
 }

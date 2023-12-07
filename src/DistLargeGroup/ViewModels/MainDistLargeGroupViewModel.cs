@@ -64,10 +64,10 @@ namespace DistLargeGroup.ViewModels
             Add = new DelegateCommand(() =>
             {
                 Syslog.Debug("MainDistLargeGroupViewModel:Add");
-                regionManager.RequestNavigate("ContentRegion", nameof(InputDistLargeGroup), new NavigationParameters
+                if (ShowInputDialog(new Models.DistLargeGroup()))
                 {
-                    { "CurrentDistLargeGroup", null },
-                });
+                    LoadDatas();
+                }
             });
 
             Edit = new DelegateCommand(() =>
@@ -78,10 +78,10 @@ namespace DistLargeGroup.ViewModels
                 }
 
                 Syslog.Debug("MainDistLargeGroupViewModel:Edit");
-                regionManager.RequestNavigate("ContentRegion", nameof(InputDistLargeGroup), new NavigationParameters
+                if (ShowInputDialog(CurrentDistLargeGroup))
                 {
-                    { "CurrentDistLargeGroup", CurrentDistLargeGroup },
-                });
+                    LoadDatas();
+                }
             }).ObservesCanExecute(() => CanEdit);
 
             Exit = new DelegateCommand(() =>
@@ -113,6 +113,21 @@ namespace DistLargeGroup.ViewModels
                 Syslog.Error($"LoadDatas:{e.Message}");
                 MessageDialog.Show(_dialogService, e.Message, "エラー");
             }
+        }
+
+        private bool ShowInputDialog(Models.DistLargeGroup distLargeGroup)
+        {
+            IDialogResult? result = null;
+
+            _dialogService.ShowDialog(
+                nameof(InputDistLargeGroupDlg),
+                new DialogParameters
+                {
+                    { "DistLargeGroup", distLargeGroup },
+                },
+                r => result = r);
+
+            return result?.Result == ButtonResult.OK;
         }
     }
 }
