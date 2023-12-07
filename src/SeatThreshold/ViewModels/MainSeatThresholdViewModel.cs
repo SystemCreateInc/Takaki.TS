@@ -53,17 +53,17 @@ namespace SeatThreshold.ViewModels
         }
 
 
-        public MainSeatThresholdViewModel(IDialogService dialogService, IRegionManager regionManager)
+        public MainSeatThresholdViewModel(IDialogService dialogService)
         {
             _dialogService = dialogService;
 
             Add = new DelegateCommand(() =>
             {
                 Syslog.Debug("MainSeatThresholdViewModel:Add");
-                regionManager.RequestNavigate("ContentRegion", nameof(InputSeatThreshold), new NavigationParameters
+                if (ShowInputDialog(new Models.SeatThreshold()))
                 {
-                    { "CurrentSeatThreshold", null },
-                });
+                    LoadDatas();
+                }
             });
 
             Edit = new DelegateCommand(() =>
@@ -74,10 +74,10 @@ namespace SeatThreshold.ViewModels
                 }
 
                 Syslog.Debug("MainSeatThresholdViewModel:Edit");
-                regionManager.RequestNavigate("ContentRegion", nameof(InputSeatThreshold), new NavigationParameters
+                if (ShowInputDialog(CurrentSeatThreshold))
                 {
-                    { "CurrentSeatThreshold", CurrentSeatThreshold },
-                });
+                    LoadDatas();
+                }
             }).ObservesCanExecute(() => CanEdit);
 
             Exit = new DelegateCommand(() =>
@@ -109,6 +109,21 @@ namespace SeatThreshold.ViewModels
                 Syslog.Error($"LoadDatas:{e.Message}");
                 MessageDialog.Show(_dialogService, e.Message, "エラー");
             }
+        }
+
+        private bool ShowInputDialog(Models.SeatThreshold seatThreshold)
+        {
+            IDialogResult? result = null;
+
+            _dialogService.ShowDialog(
+                nameof(InputSeatThresholdDlg),
+                new DialogParameters
+                {
+                    { "SeatThreshold", seatThreshold },
+                },
+                r => result = r);
+
+            return result?.Result == ButtonResult.OK;
         }
     }
 }

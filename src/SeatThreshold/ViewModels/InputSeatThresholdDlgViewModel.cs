@@ -8,7 +8,7 @@ using SeatThreshold.Models;
 
 namespace SeatThreshold.ViewModels
 {
-    public class InputSeatThresholdViewModel : BindableBase, INavigationAware
+    public class InputSeatThresholdDlgViewModel : BindableBase, IDialogAware
     {
         public DelegateCommand Clear { get; }
         public DelegateCommand Register { get; }
@@ -16,7 +16,9 @@ namespace SeatThreshold.ViewModels
         public DelegateCommand Refer { get; }
         public DelegateCommand Release { get; }
 
-        private readonly IDialogService _dialogService;
+        public string Title => "座席しきい値情報入力";
+        public event Action<IDialogResult>? RequestClose;
+        private Models.SeatThreshold _seatThreshold = new Models.SeatThreshold();
 
         // 参照日
         private DateTime _date;
@@ -130,56 +132,52 @@ namespace SeatThreshold.ViewModels
             set => SetProperty(ref _logs, value);
         }
 
-        public InputSeatThresholdViewModel(IDialogService dialogService, IRegionManager regionManager)
+        public InputSeatThresholdDlgViewModel()
         {
-            _dialogService = dialogService;
-
             Clear = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputSeatThresholdViewModel:Clear");
+                Syslog.Debug("InputSeatThresholdDlgViewModel:Clear");
                 // fixme:クリアボタン押下
             });
 
             Register = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputSeatThresholdViewModel:Register");
+                Syslog.Debug("InputSeatThresholdDlgViewModel:Register");
                 // fixme:登録ボタン押下
             });
 
             Back = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputSeatThresholdViewModel:Back");
-                regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
+                Syslog.Debug("InputSeatThresholdDlgViewModel:Back");
+                RequestClose?.Invoke(new DialogResult(ButtonResult.Cancel));
             });
 
             Refer = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputSeatThresholdViewModel:Refer");
+                Syslog.Debug("InputSeatThresholdDlgViewModel:Refer");
                 // fixme:参照ボタン押下
             });
 
             Release = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputSeatThresholdViewModel:Release");
+                Syslog.Debug("InputSeatThresholdDlgViewModel:Release");
                 // fixme:解除ボタン押下
             });
         }
 
-        public bool IsNavigationTarget(NavigationContext navigationContext)
-        {
-            return true;
-        }
+        public bool CanCloseDialog() => true;
 
-        public void OnNavigatedFrom(NavigationContext navigationContext)
+        public void OnDialogClosed()
         {
         }
 
-        public void OnNavigatedTo(NavigationContext navigationContext)
+        public void OnDialogOpened(IDialogParameters parameters)
         {
-            InitDisplay();
+            _seatThreshold = parameters.GetValue<Models.SeatThreshold>("SeatThreshold");
+            InitDialog();
         }
 
-        private void InitDisplay()
+        private void InitDialog()
         {
             // 項目欄確認
             Date = DateTime.Today;
