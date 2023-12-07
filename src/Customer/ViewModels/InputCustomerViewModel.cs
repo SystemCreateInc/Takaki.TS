@@ -169,7 +169,7 @@ namespace Customer.ViewModels
         {
             _dialogService = dialogService;
 
-			Clear = new DelegateCommand(() =>
+            Clear = new DelegateCommand(() =>
             {
                 Syslog.Debug("InputCustomerViewModel:Clear");
                 ClearInfo(IsAdd);
@@ -229,7 +229,7 @@ namespace Customer.ViewModels
         {
             if (_isChange)
             {
-                if(MessageDialog.Show(_dialogService, "変更された情報が登録されていません。\n入力画面に戻りますか？", "変更確認", ButtonMask.Yes | ButtonMask.No) != ButtonResult.No)
+                if (MessageDialog.Show(_dialogService, "変更された情報が登録されていません。\n入力画面に戻りますか？", "変更確認", ButtonMask.Yes | ButtonMask.No) != ButtonResult.No)
                 {
                     return false;
                 }
@@ -277,7 +277,7 @@ namespace Customer.ViewModels
                 SetReferenceCustomer();
             }
             else
-            {                
+            {
                 ReferenceLog.LogInfos.Clear();
             }
         }
@@ -308,26 +308,32 @@ namespace Customer.ViewModels
 
         private bool Regist()
         {
-            if (!ValidInput())
-            {
-                return false;
-            }
 
             try
             {
+                if (!ValidInput())
+                {
+                    return false;
+                }
+
                 var targetCustomer = new SumCustomer
                 {
                     CdKyoten = CdKyoten,
                     CdSumTokuisaki = CdSumTokuisaki,
                     Tekiyokaishi = DtTekiyoKaishi.ToString("yyyyMMdd"),
                     TekiyoMuko = DtTekiyoMuko.ToString("yyyyMMdd"),
-                    ChildCustomers = new List<ChildCustomer>(ChildCustomers),
+                    ChildCustomers = new List<ChildCustomer>(ChildCustomers.Where(x => !x.CdTokuisakiChild.IsNullOrEmpty())),
                 };
 
                 var existCustomer = CustomerLoader.GetFromKey(CdKyoten, CdSumTokuisaki, DtTekiyoKaishi.ToString("yyyyMMdd"));
                 var isExist = existCustomer is not null;
 
                 if (!ValidSummaryDate(isExist))
+                {
+                    return false;
+                }
+
+                if (!IsDuplicationCustomer(existCustomer?.SumTokuisakiId))
                 {
                     return false;
                 }
@@ -341,7 +347,7 @@ namespace Customer.ViewModels
 
                     CustomerManager.Regist(targetCustomer, _shainInfo);
                 }
-                else if(isExist)
+                else if (isExist)
                 {
                     targetCustomer.SumTokuisakiId = existCustomer!.SumTokuisakiId;
                     CustomerManager.Update(targetCustomer, _shainInfo);
@@ -378,19 +384,33 @@ namespace Customer.ViewModels
                 return false;
             }
 
+            if (ChildCustomers.Where(x => !x.CdTokuisakiChild.IsNullOrEmpty()).Count() > 10)
+            {
+                MessageDialog.Show(_dialogService, "子得意先は10件まで登録可能です", "入力エラー");
+                return false;
+            }
+
+            // 得意先名取得不可
+            if (NmSumTokuisaki.IsNullOrEmpty()
+                || ChildCustomers.Any(x => !x.CdTokuisakiChild.IsNullOrEmpty() && x.NmTokuisaki.IsNullOrEmpty()))
+            {
+                MessageDialog.Show(_dialogService, "得意先名が取得出来ていない得意先コードがあります", "入力エラー");
+                return false;
+            }
+
             return isValid;
         }
 
         // 摘要期間チェック
         private bool ValidSummaryDate(bool isUpdate)
         {
-            if(DtTekiyoKaishi < DateTime.Today)
+            if (DtTekiyoKaishi < DateTime.Today && !isUpdate)
             {
                 MessageDialog.Show(_dialogService, "摘要開始日が過去日です", "入力エラー");
                 return false;
             }
 
-            if(DtTekiyoKaishi > DtTekiyoMuko)
+            if (DtTekiyoKaishi > DtTekiyoMuko)
             {
                 MessageDialog.Show(_dialogService, "摘要開始日より摘要無効日が過去日です", "入力エラー");
                 return false;
@@ -407,6 +427,54 @@ namespace Customer.ViewModels
             }
 
             return true;
+        }
+
+        // 
+        private bool IsDuplicationCustomer(long? sumTokuisakiId)
+        {
+            if(ChildCustomers.Any(x => x.CdTokuisakiChild == CdSumTokuisaki))
+            {
+                MessageDialog.Show(_dialogService, $"親得意先と子得意先に同一の得意先が存在します", "入力エラー");
+                return false;
+            }
+
+            if(ChildCustomers.GroupBy(x => x.CdTokuisakiChild).Any(x => x.Count() > 1))
+            {
+                MessageDialog.Show(_dialogService, $"子得意先に同一の得意先が存在します", "入力エラー");
+                return false;
+            }
+
+            // 親と同一得意先　更新時：自ID以外
+            var sameCustomer = CustomerLoader.GetSameCustomer(new List<string> { CdSumTokuisaki }, 
+                DtTekiyoKaishi.ToString("yyyyMMdd"), DtTekiyoMuko.ToString("yyyyMMdd"),
+                sumTokuisakiId);
+
+            if (sameCustomer is not null)
+            {
+                MessageDialog.Show(_dialogService, 
+                    $"親得意先が、他の集約得意先に登録されています\n\n" + GetSameCustomerMessage(sameCustomer), "入力エラー");
+                return false;
+            }
+
+            // 子と同一得意先　更新時：自ID以外
+            sameCustomer = CustomerLoader.GetSameCustomer(ChildCustomers.Select(x => x.CdTokuisakiChild),
+                DtTekiyoKaishi.ToString("yyyyMMdd"), DtTekiyoMuko.ToString("yyyyMMdd"),
+                sumTokuisakiId);
+
+            if (sameCustomer is not null)
+            {
+                MessageDialog.Show(_dialogService,
+                    $"子得意先が、他の集約得意先に登録されています\n\n" + GetSameCustomerMessage(sameCustomer), "入力エラー");
+                return false;
+            }
+
+            return true;
+        }
+
+        private string GetSameCustomerMessage(SumCustomer sameCustomer)
+        {
+            return $"拠点[{sameCustomer.CdKyoten}] 集約得意先[{sameCustomer.CdSumTokuisaki}]\n" +
+                   $"適用開始-摘要無効[{sameCustomer.Tekiyokaishi}-{sameCustomer.TekiyoMuko}]";
         }
     }
 }

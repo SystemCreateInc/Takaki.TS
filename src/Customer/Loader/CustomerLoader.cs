@@ -34,7 +34,7 @@ namespace Customer.Loader
         }
 
         // 適用日から取得(入力DLG)
-        public static SumCustomer? GetFromTekiyoDate(string cdKyoten, string cdSumTokuisaki, string tekiyoDate)
+        public static SumCustomer? GetFromTekiyoDate(string cdKyoten, string cdSumTokuisaki, string dtTekiyoKaishi)
         {
             using (var con = DbFactory.CreateConnection())
             {
@@ -42,8 +42,8 @@ namespace Customer.Loader
                 .Include<TBSUMTOKUISAKICHILDEntity>()
                 .Where(@$"{nameof(TBSUMTOKUISAKIEntity.CDKYOTEN):C} = {nameof(cdKyoten):P} and
                             {nameof(TBSUMTOKUISAKIEntity.CDSUMTOKUISAKI):C} = {nameof(cdSumTokuisaki):P} and 
-                            {nameof(tekiyoDate):P} = {nameof(TBSUMTOKUISAKIEntity.DTTEKIYOKAISHI):C}")
-                .WithParameters(new { cdKyoten, cdSumTokuisaki, tekiyoDate }))
+                            {nameof(dtTekiyoKaishi):P} = {nameof(TBSUMTOKUISAKIEntity.DTTEKIYOKAISHI):C}")
+                .WithParameters(new { cdKyoten, cdSumTokuisaki, dtTekiyoKaishi }))
                     .Select(q => CreateSumcustomer(q))
                     .FirstOrDefault();
             }
@@ -57,9 +57,30 @@ namespace Customer.Loader
                 return con.Find<TBSUMTOKUISAKIEntity>(s => s
                 .Include<TBSUMTOKUISAKICHILDEntity>()
                 .Where(@$"{nameof(TBSUMTOKUISAKIEntity.CDKYOTEN):C} = {nameof(cdKyoten):P} and
-                                            {nameof(TBSUMTOKUISAKIEntity.CDSUMTOKUISAKI):C} = {nameof(cdSumTokuisaki):P} and
-                                            {nameof(TBSUMTOKUISAKIEntity.DTTEKIYOKAISHI):C} = {nameof(dtTekiyoKaishi):P}")
+                            {nameof(TBSUMTOKUISAKIEntity.CDSUMTOKUISAKI):C} = {nameof(cdSumTokuisaki):P} and
+                            {nameof(TBSUMTOKUISAKIEntity.DTTEKIYOKAISHI):C} = {nameof(dtTekiyoKaishi):P}")
                 .WithParameters(new { cdKyoten, cdSumTokuisaki, dtTekiyoKaishi }))
+                    .Select(q => CreateSumcustomer(q))
+                    .FirstOrDefault();
+            }
+        }
+
+        // 同一得意先
+        public static SumCustomer? GetSameCustomer(IEnumerable<string> targetCustomers, string startDate, string endDate, long? excludeId)
+        {
+            // 更新時、自ID対象外
+            var updateId = excludeId.ToString() ?? "-1";
+
+            using (var con = DbFactory.CreateConnection())
+            {
+                return con.Find<TBSUMTOKUISAKIEntity>(s => s
+                .Include<TBSUMTOKUISAKICHILDEntity>()
+                .Where(@$"({nameof(TBSUMTOKUISAKIEntity.CDSUMTOKUISAKI):C} in {nameof(targetCustomers):P} or 
+                            {nameof(TBSUMTOKUISAKICHILDEntity.CDTOKUISAKICHILD):of TB_SUM_TOKUISAKI_CHILD} in {nameof(targetCustomers):P}) and 
+                            {nameof(TBSUMTOKUISAKIEntity.IDSUMTOKUISAKI):of TB_SUM_TOKUISAKI} <> {nameof(updateId):P} and
+                        ({nameof(startDate):P} between {nameof(TBSUMTOKUISAKIEntity.DTTEKIYOKAISHI):C} and {nameof(TBSUMTOKUISAKIEntity.DTTEKIYOMUKO):C} or
+                        {nameof(endDate):P} between {nameof(TBSUMTOKUISAKIEntity.DTTEKIYOKAISHI):C} and {nameof(TBSUMTOKUISAKIEntity.DTTEKIYOMUKO):C})")
+                .WithParameters(new { targetCustomers, startDate, endDate, updateId}))
                     .Select(q => CreateSumcustomer(q))
                     .FirstOrDefault();
             }
