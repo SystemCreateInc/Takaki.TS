@@ -67,7 +67,7 @@ namespace ImportLib.ViewModels
 
         private void Import()
         {
-            var selectEngines = _engines.Where(x => x._targetImportFiles.Any(x => x.Selected)).ToList();
+            var selectEngines = _engines.Where(x => x.TargetImportFiles.Any(x => x.Selected)).ToList();
 
             if (!selectEngines.Any())
             {
@@ -133,23 +133,20 @@ namespace ImportLib.ViewModels
                 ImportFiles.Clear();
                 foreach (var engine in _engines)
                 {
-                    if (engine is not null)
+                    engine.UpdateImportFileInfo();
+
+                    if (!engine.TargetImportFiles.Any())
                     {
-                        engine.UpdateImportFileInfo();
-
-                        if (!engine._targetImportFiles.Any())
+                        ImportFiles.Add(new ImportFileInfo
                         {
-                            ImportFiles.Add(new ImportFileInfo
-                            {
-                                Selected = false,
-                                Name = engine.DataName,
-                                FilePath = engine.ImportFilePath,
-                            });
-                            continue;
-                        }
-
-                        ImportFiles.AddRange(engine._targetImportFiles);
+                            Selected = false,
+                            Name = engine.DataName,
+                            FilePath = engine.ImportFilePath,
+                        });
+                        continue;
                     }
+
+                    ImportFiles.AddRange(engine.TargetImportFiles);
                 }
 
                 CollectionViewHelper.SetCollection(Logs, ImportRepository.GetAllLogs(_dataTypes));

@@ -5,6 +5,8 @@ using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System.Diagnostics;
+using System.Windows.Threading;
+using WindowLib.Utils;
 
 namespace ImportLib.ViewModels
 {
@@ -25,11 +27,13 @@ namespace ImportLib.ViewModels
 
         private IDialogService _dialogService;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private Dispatcher _dispatcher;
 
         public ImportDlgViewModel(IDialogService dialogService)
         {
             _dialogService = dialogService;
             CancelCommand = new DelegateCommand(Cancel);
+            _dispatcher = Dispatcher.CurrentDispatcher;
         }
 
         private void Cancel()
@@ -60,36 +64,16 @@ namespace ImportLib.ViewModels
 
         private async void StartImport(IEnumerable<IImportEngine> engines)
         {
+            Syslog.Debug("Start import");
+
             try
             {
                 var importController = new DataImportController();
+                importController.RequestComfirm += ImportController_RequestComfirm;
 
                 foreach (var engine in engines)
                 {
                     Message = $"{engine.DataName} 取り込み中";
-
-                    var sameDistResult = await importController.CheckSameDist(engine, _cancellationTokenSource.Token);
-
-                    if (sameDistResult == GetSameDistResult.WORK)
-                    {
-                        WindowLib.Utils.MessageDialog.Show(_dialogService,
-                            "同じ納品日・出荷バッチコードのデータで作業済みがある為中断します。", $"{engine.DataName} エラー");
-
-                        Close(ButtonResult.Cancel);
-                        return;
-                    }
-
-                    if (sameDistResult == GetSameDistResult.EXIST)
-                    {
-                        if (WindowLib.Utils.MessageDialog.Show(_dialogService,
-                            "同じ納品日・出荷バッチコードのデータが登録されています。\n入れ替えますか？", $"{engine.DataName} 入替確認",
-                            WindowLib.Utils.ButtonMask.OK | WindowLib.Utils.ButtonMask.Cancel) != ButtonResult.OK)
-                        {
-                            Close(ButtonResult.Cancel);
-                            return;
-                        }
-                    }
-
                     await importController.Import(engine, _cancellationTokenSource.Token);
                 }
 
@@ -109,6 +93,14 @@ namespace ImportLib.ViewModels
                 var rc = (ex is ImportException ? ButtonResult.No : ButtonResult.Abort);
                 Close(rc);
             }
+
+            Syslog.Debug("End import");
+        }
+
+        private ButtonResult ImportController_RequestComfirm(string message, string caption)
+        {
+            return _dispatcher.Invoke(() => 
+                MessageDialog.Show(_dialogService, message, caption, ButtonMask.OK | ButtonMask.Cancel));
         }
 
         private async void Close(ButtonResult result)

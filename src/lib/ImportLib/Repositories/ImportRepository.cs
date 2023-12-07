@@ -1,4 +1,5 @@
-﻿using Dapper.FastCrud;
+﻿using Dapper;
+using Dapper.FastCrud;
 using DbLib;
 using DbLib.DbEntities;
 using DbLib.Defs;
@@ -146,8 +147,8 @@ namespace ImportLib.Repositories
 
         internal void DeleteExpiredHimmokuData()
         {
-            Connection.BulkDelete<TBMHIMMOKUEntity>(s => s
-                .AttachToTransaction(Transaction));
+            var sql = Sql.Format<TBMHIMMOKUEntity>($"TRUNCATE TABLE {nameof(TBMHIMMOKUEntity):T}");
+            Connection.Execute(sql, transaction: Transaction);
         }
 
         internal void DeleteExpiredShukkabatchData()
@@ -233,7 +234,7 @@ namespace ImportLib.Repositories
                     {
                         DtDelivery = q.Key.DTDELIVERY,
                         ShukkaBatch = q.Key.CDSHUKKABATCH,
-                        IsWork = q.Any(x => x.FGDSTATUS != (short)Status.Ready || x.FGDSTATUS != (short)Status.Ready),
+                        IsWork = q.Any(x => x.FGDSTATUS != (short)Status.Ready),
                     });
         }
 
@@ -251,17 +252,16 @@ namespace ImportLib.Repositories
                     }); ;
         }
 
+        internal string GetBulkInsertFileDirectoryPath()
+        {
+            return new Settings(Transaction).Get("BulkInsertFileDirectoryPath");
+        }
+
         private string GetSameDistWhereSql(IEnumerable<SameDistInfo> sameDistInfos)
         {
             // HACK:列名を属性から取得
             return string.Join(" or ", sameDistInfos.Select(x => $"(DT_DELIVERY = {x.DtDelivery} and CD_SHUKKA_BATCH = {x.ShukkaBatch})"));
         }
-
-        //internal void DeleteItemData()
-        //{
-        //    Connection.BulkDelete<ItemEntity>(s => s
-        //        .AttachToTransaction(Transaction));
-        //}
 
         private DateTime? GetExpiredDate()
         {
@@ -293,7 +293,7 @@ namespace ImportLib.Repositories
                     .Where($"{nameof(InterfaceLogsEntity.DataType):C} in @dataTypes")
                     .OrderBy($"{nameof(InterfaceLogsEntity.Id):C} desc")
                     .WithParameters(new { dataTypes }))
-                    .Select(x => new Log(x.CreatedAt!.Value, x.Status, x.Name, x.RowCount, x.Terminal, x.Comment ?? ""));
+                    .Select(x => new Log(x.CreatedAt!.Value, x.Status, x.Name, x.SrcFile, x.RowCount, x.Terminal, x.Comment ?? ""));
             }
         }
 

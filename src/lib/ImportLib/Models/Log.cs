@@ -10,7 +10,8 @@ namespace ImportLib.Models
     (
         DateTime ImportDate,
         string Status,
-        string FileName,
+        string DataName,
+        string? FileName,
         int Count,
         string? Terminal,
         string Comment
