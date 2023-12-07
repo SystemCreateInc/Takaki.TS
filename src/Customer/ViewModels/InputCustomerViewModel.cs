@@ -62,7 +62,7 @@ namespace Customer.ViewModels
             set
             {
                 SetProperty(ref _cdSumTokuisaki, value);
-                NmSumTokuisaki = CustomerLoader.GetName(CdSumTokuisaki);
+                NmSumTokuisaki = CustomerLoader.GetName(CdSumTokuisaki, DtTekiyoKaishi.ToString("yyyyMMdd"), DtTekiyoMuko.ToString("yyyyMMdd"));
                 _isChange = true;
             }
         }
@@ -83,6 +83,7 @@ namespace Customer.ViewModels
             set
             {
                 SetProperty(ref _dtTekiyoKaishi, value);
+                ReloadCustomerName();
                 _isChange = true;
             }
         }
@@ -95,6 +96,7 @@ namespace Customer.ViewModels
             set
             {
                 SetProperty(ref _dtTekiyoMuko, value);
+                ReloadCustomerName();
                 _isChange = true;
             }
         }
@@ -242,7 +244,7 @@ namespace Customer.ViewModels
         private void SetReferenceCustomer()
         {
             var tekiyoDate = ReferenceLog.GetStartDateInRange(ReferenceDate.ToString("yyyyMMdd"));
-            var customer = CustomerLoader.GetFromTekiyoDate(_currentCustomer.CdKyoten, _currentCustomer.CdSumTokuisaki, tekiyoDate);
+            var customer = CustomerLoader.GetFromKey(_currentCustomer.CdKyoten, _currentCustomer.CdSumTokuisaki, tekiyoDate);
 
             if (customer is not null)
             {
@@ -250,11 +252,12 @@ namespace Customer.ViewModels
                 DtKoshinNichiji = customer.UpdatedAt;
                 CdShain = _shainInfo.HenkoshaCode;
                 NmShain = _shainInfo.HenkoshaName;
-                ChildCustomers = new ObservableCollection<ChildCustomer>(customer.ChildCustomers);
                 DtTekiyoKaishi = DateTime.Parse(customer.Tekiyokaishi.GetDate());
                 DtTekiyoMuko = DateTime.Parse(customer.TekiyoMuko.GetDate());
+                
+                ChildCustomers = new ObservableCollection<ChildCustomer>(customer.ChildCustomers);
+                ReloadCustomerName();
             }
-
             _isChange = false;
         }
 
@@ -475,6 +478,20 @@ namespace Customer.ViewModels
         {
             return $"拠点[{sameCustomer.CdKyoten}] 集約得意先[{sameCustomer.CdSumTokuisaki}]\n" +
                    $"適用開始-摘要無効[{sameCustomer.Tekiyokaishi}-{sameCustomer.TekiyoMuko}]";
+        }
+
+        // 得意先名再取得
+        private void ReloadCustomerName()
+        {
+            TekiyoDate.StartDate = DtTekiyoKaishi.ToString("yyyyMMdd");
+            TekiyoDate.EndDate = DtTekiyoKaishi.ToString("yyyyMMdd");
+
+            NmSumTokuisaki = CustomerLoader.GetName(CdSumTokuisaki, TekiyoDate.StartDate, TekiyoDate.EndDate);
+
+            ChildCustomers = new ObservableCollection<ChildCustomer>(ChildCustomers.Select(x => new ChildCustomer
+            {
+                CdTokuisakiChild = x.CdTokuisakiChild,
+            }));
         }
     }
 }

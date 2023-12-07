@@ -12,7 +12,7 @@ namespace Customer.Models
             set
             {
                 SetProperty(ref _cdTokuisakiChild, value);
-                NmTokuisaki = CustomerLoader.GetName(CdTokuisakiChild);
+                NmTokuisaki = CustomerLoader.GetName(CdTokuisakiChild, TekiyoDate.StartDate, TekiyoDate.EndDate);
             }
         }
 
