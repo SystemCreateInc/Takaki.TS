@@ -13,7 +13,7 @@ using WindowLib.Utils;
 
 namespace Customer.ViewModels
 {
-    public class InputCustomerViewModel : BindableBase, INavigationAware
+    public class InputCustomerViewModel : BindableBase, IDialogAware
     {
         public DelegateCommand Clear { get; }
         public DelegateCommand Register { get; }
@@ -22,6 +22,8 @@ namespace Customer.ViewModels
         public DelegateCommand Release { get; }
 
         private readonly IDialogService _dialogService;
+
+        public bool CanCloseDialog() => ConfirmationExit();
 
         // 参照日 TODO:文字削除時にBindingエラー発生
         private DateTime _referenceDate;
@@ -157,7 +159,11 @@ namespace Customer.ViewModels
 
         private bool _isChange = false;
 
+        public event Action<IDialogResult>? RequestClose;
+
         public ReferenceLog ReferenceLog { get; set; } = new ReferenceLog();
+
+        public string Title => "集約得意先情報入力";
 
         public InputCustomerViewModel(IDialogService dialogService, IRegionManager regionManager)
         {
@@ -172,19 +178,16 @@ namespace Customer.ViewModels
             Register = new DelegateCommand(() =>
             {
                 Syslog.Debug("InputCustomerViewModel:Register");
-                if (RegistCustomer())
+                if (Regist())
                 {
-                    regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
+                    RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
                 }
             });
 
             Back = new DelegateCommand(() =>
             {
                 Syslog.Debug("InputCustomerViewModel:Back");
-                if (ConfirmationExit())
-                {
-                    regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
-                }
+                RequestClose?.Invoke(new DialogResult(ButtonResult.Cancel));
             });
 
             Refer = new DelegateCommand(() =>
@@ -204,6 +207,22 @@ namespace Customer.ViewModels
                 Syslog.Debug("InputCustomerViewModel:Release");
                 IsDateRelease = true;
             });
+        }
+
+        public void OnDialogClosed()
+        {
+            ChildCustomers.CollectionChanged -= ChildCustomers_CollectionChanged;
+        }
+
+        public void OnDialogOpened(IDialogParameters parameters)
+        {
+            _currentCustomer = parameters.GetValue<SumCustomer>("CurrentCustomer");
+            _shainInfo = parameters.GetValue<ShainInfo>("ShainInfo");
+
+            IsAdd = _currentCustomer is null;
+            InitDisplay();
+
+            ChildCustomers.CollectionChanged += ChildCustomers_CollectionChanged;
         }
 
         private bool ConfirmationExit()
@@ -237,28 +256,6 @@ namespace Customer.ViewModels
             }
 
             _isChange = false;
-        }
-
-        public bool IsNavigationTarget(NavigationContext navigationContext)
-        {
-            return true;
-        }
-
-        public void OnNavigatedFrom(NavigationContext navigationContext)
-        {
-            ChildCustomers.CollectionChanged -= ChildCustomers_CollectionChanged;
-            _isChange = false;
-        }
-
-        public void OnNavigatedTo(NavigationContext navigationContext)
-        {
-            _currentCustomer = (SumCustomer)navigationContext.Parameters["CurrentCustomer"];
-            _shainInfo = (ShainInfo)navigationContext.Parameters["ShainInfo"];
-
-            IsAdd = _currentCustomer is null;
-            InitDisplay();
-
-            ChildCustomers.CollectionChanged += ChildCustomers_CollectionChanged;
         }
 
         private void ChildCustomers_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -309,7 +306,7 @@ namespace Customer.ViewModels
             _isChange = false;
         }
 
-        private bool RegistCustomer()
+        private bool Regist()
         {
             if (!ValidInput())
             {
@@ -354,6 +351,7 @@ namespace Customer.ViewModels
                     CustomerManager.Regist(targetCustomer, _shainInfo);
                 }
 
+                _isChange = false;
                 return true;
             }
             catch (Exception ex)

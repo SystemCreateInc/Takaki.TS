@@ -7,6 +7,13 @@
              xmlns:controls="clr-namespace:WindowLib.Views;assembly=WindowLib"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              >
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window" BasedOn="{StaticResource InputDialog}">
+            <Setter Property="WindowState" Value="Maximized"/>
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterScreen" />
+            <Setter Property="FontSize" Value="24" />
+        </Style>
+    </prism:Dialog.WindowStyle>
 
     <UserControl.Resources>
         <ResourceDictionary>

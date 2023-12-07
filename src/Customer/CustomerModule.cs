@@ -16,7 +16,8 @@ namespace Customer
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<MainCustomer>();
-            containerRegistry.RegisterForNavigation<InputCustomer>();
+
+            containerRegistry.RegisterDialog<InputCustomer>();
         }
     }
 }

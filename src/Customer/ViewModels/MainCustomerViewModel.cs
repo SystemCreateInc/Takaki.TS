@@ -1,4 +1,5 @@
-﻿using Customer.Loader;
+﻿using ControlzEx.Standard;
+using Customer.Loader;
 using Customer.Models;
 using Customer.Views;
 using LogLib;
@@ -75,13 +76,19 @@ namespace Customer.ViewModels
             Add = new DelegateCommand(() =>
             {
                 Syslog.Debug("MainCustomerViewModel:Add");
-                ShowDialog(false);
+                if (ShowDialog(false))
+                {
+                    LoadDatas();
+                }
             }).ObservesCanExecute(() => SelectedShain);
 
             Edit = new DelegateCommand(() =>
             {
                 Syslog.Debug("MainCustomerViewModel:Edit");
-                ShowDialog(true);
+                if (ShowDialog(true))
+                {
+                    LoadDatas();
+                }
             }).ObservesCanExecute(() => CanEdit);
 
             Exit = new DelegateCommand(() =>
@@ -117,13 +124,20 @@ namespace Customer.ViewModels
             }
         }
 
-        private void ShowDialog(bool IsEdit)
+        private bool ShowDialog(bool IsEdit)
         {
-            _regionManager.RequestNavigate("ContentRegion", nameof(InputCustomer), new NavigationParameters
+            IDialogResult? result = null;
+
+            _dialogService.ShowDialog(
+                nameof(InputCustomer),
+                new DialogParameters
                 {
                     { "CurrentCustomer", IsEdit ? CurrentCustomer : null },
                     { "ShainInfo", _shainInfo },
-                });
+                },
+                r => result = r);
+
+            return result?.Result == ButtonResult.OK;
         }
     }
 }
