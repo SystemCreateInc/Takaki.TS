@@ -1,14 +1,10 @@
-﻿using DbLib.DbEntities;
+﻿using Dapper.FastCrud;
 using DbLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dapper.FastCrud;
+using DbLib.DbEntities;
 using ReferenceLogLib.Models;
+using System.Linq;
 
-namespace Customer.Loader
+namespace TakakiLib.Models
 {
     public class KyotenLoader
     {

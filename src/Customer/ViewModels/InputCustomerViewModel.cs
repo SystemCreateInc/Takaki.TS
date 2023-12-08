@@ -312,7 +312,6 @@ namespace Customer.ViewModels
 
         private bool Regist()
         {
-
             try
             {
                 if (!ValidateInput())
@@ -408,35 +407,16 @@ namespace Customer.ViewModels
         // 適用期間チェック
         private bool ValidateSummaryDate(bool isUpdate)
         {
-            if (DtTekiyoKaishi < DateTime.Today && !isUpdate)
+            try
             {
-                MessageDialog.Show(_dialogService, "適用開始日が過去日です", "入力エラー");
-                return false;
+                ReferenceLog.ValidateSummaryDate(DtTekiyoKaishi, DtTekiyoMuko, isUpdate);
+                return true;
             }
-
-            if (DtTekiyoKaishi > DtTekiyoMuko)
+            catch (Exception ex)
             {
-                MessageDialog.Show(_dialogService, "適用開始日より適用無効日が過去日です", "入力エラー");
+                MessageDialog.Show(_dialogService, ex.Message, "入力エラー");
                 return false;
-            }
-
-            if (DtTekiyoKaishi == DtTekiyoMuko)
-            {
-                MessageDialog.Show(_dialogService, "適用開始日と無効日が同日です", "入力エラー");
-                return false;
-            }
-
-            // 更新時 更新対象の適用開始日を比較から除外
-            var excludeDate = isUpdate ? DtTekiyoKaishi.ToString("yyyyMMdd") : null;
-            var duplicationRangeDate = ReferenceLog.GetDuplicationRange(DtTekiyoKaishi.ToString("yyyyMMdd"), DtTekiyoMuko.ToString("yyyyMMdd"), excludeDate);
-
-            if (!duplicationRangeDate.IsNullOrEmpty())
-            {
-                MessageDialog.Show(_dialogService, $"下記の適用期間と重複しています\n\n適用開始日-適用無効日\n「{duplicationRangeDate}」", "入力エラー");
-                return false;
-            }
-
-            return true;
+            }            
         }
 
         // 

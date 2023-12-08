@@ -9,11 +9,7 @@
              Loaded="UserControl_Loaded">
     
     <prism:Dialog.WindowStyle>
-        <Style TargetType="Window" BasedOn="{StaticResource InputDialog}">
-            <Setter Property="WindowState" Value="Maximized"/>
-            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterScreen" />
-            <Setter Property="FontSize" Value="24" />
-        </Style>
+        <Style TargetType="Window" BasedOn="{StaticResource InputDialog}"/>
     </prism:Dialog.WindowStyle>
 
     <UserControl.Resources>
