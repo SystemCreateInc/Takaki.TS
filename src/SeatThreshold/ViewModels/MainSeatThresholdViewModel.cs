@@ -3,10 +3,12 @@ using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Services.Dialogs;
+using SeatThreshold.Loader;
 using SeatThreshold.Models;
 using SeatThreshold.Views;
 using System.Collections.ObjectModel;
 using System.Windows;
+using TakakiLib.Models;
 using WindowLib.Utils;
 
 namespace SeatThreshold.ViewModels
@@ -27,21 +29,21 @@ namespace SeatThreshold.ViewModels
             set => SetProperty(ref _shain, value);
         }
 
-        private ObservableCollection<Models.SeatThreshold> _seatThresholds = new ObservableCollection<Models.SeatThreshold>();
-        public ObservableCollection<Models.SeatThreshold> SeatThresholds
+        private ObservableCollection<ThresholdInfo> _seatThresholds = new ObservableCollection<ThresholdInfo>();
+        public ObservableCollection<ThresholdInfo> SeatThresholds
         {
             get => _seatThresholds;
             set => SetProperty(ref _seatThresholds, value);
         }
 
-        private Models.SeatThreshold? _currentSeatThreshold;
-        public Models.SeatThreshold? CurrentSeatThreshold
+        private ThresholdInfo? _currentSeatThreshold;
+        public ThresholdInfo? CurrentSeatThreshold
         {
             get => _currentSeatThreshold;
             set
             {
                 SetProperty(ref _currentSeatThreshold, value);
-                CanEdit = CurrentSeatThreshold != null;
+                CanEdit = CurrentSeatThreshold != null && _shainInfo is not null;
             }
         }
 
@@ -52,29 +54,34 @@ namespace SeatThreshold.ViewModels
             set => SetProperty(ref _canEdit, value);
         }
 
+        private bool _isSelectedShain = false;
+        public bool IsSelectedShain
+        {
+            get => _isSelectedShain;
+            set => SetProperty(ref _isSelectedShain, value);
+        }
+
+        private ShainInfo? _shainInfo = new ShainInfo();
 
         public MainSeatThresholdViewModel(IDialogService dialogService)
         {
             _dialogService = dialogService;
+            SetShain();
+            LoadDatas();
 
             Add = new DelegateCommand(() =>
             {
                 Syslog.Debug("MainSeatThresholdViewModel:Add");
-                if (ShowInputDialog(new Models.SeatThreshold()))
+                if (ShowInputDialog(new ThresholdInfo()))
                 {
                     LoadDatas();
                 }
-            });
+            }).ObservesCanExecute(() => IsSelectedShain);
 
             Edit = new DelegateCommand(() =>
             {
-                if (CurrentSeatThreshold == null)
-                {
-                    return;
-                }
-
                 Syslog.Debug("MainSeatThresholdViewModel:Edit");
-                if (ShowInputDialog(CurrentSeatThreshold))
+                if (ShowInputDialog(CurrentSeatThreshold!))
                 {
                     LoadDatas();
                 }
@@ -91,11 +98,6 @@ namespace SeatThreshold.ViewModels
                 Syslog.Debug("MainSeatThresholdViewModel:LeftDoubleClick");
                 Edit.Execute();
             }).ObservesCanExecute(() => CanEdit);
-
-            // fixme:社員コード + 社員名称
-            Shain = "0000033550" + "　" + "小田賢行";
-
-            LoadDatas();
         }
 
         private void LoadDatas()
@@ -111,7 +113,7 @@ namespace SeatThreshold.ViewModels
             }
         }
 
-        private bool ShowInputDialog(Models.SeatThreshold seatThreshold)
+        private bool ShowInputDialog(ThresholdInfo seatThreshold)
         {
             IDialogResult? result = null;
 
@@ -120,10 +122,19 @@ namespace SeatThreshold.ViewModels
                 new DialogParameters
                 {
                     { "SeatThreshold", seatThreshold },
+                    { "ShainInfo", _shainInfo },
                 },
                 r => result = r);
 
             return result?.Result == ButtonResult.OK;
+        }
+
+        private void SetShain()
+        {
+            _shainInfo = ShainLoader.Get();
+
+            IsSelectedShain = _shainInfo is not null;
+            Shain = $"{_shainInfo?.HenkoshaCode}  {_shainInfo?.HenkoshaName}";
         }
     }
 }
