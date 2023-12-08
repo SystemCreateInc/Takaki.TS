@@ -1,7 +1,7 @@
 ﻿using Prism.Mvvm;
 using System;
 
-namespace Customer.Models
+namespace ReferenceLogLib.Models
 {
     public class LogInfo : BindableBase
     {
