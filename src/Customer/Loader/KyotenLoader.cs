@@ -6,18 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper.FastCrud;
+using ReferenceLogLib.Models;
 
 namespace Customer.Loader
 {
     public class KyotenLoader
     {
-        public static string GetName(string code)
+        public static string GetName(string code, string selectDate)
         {
             using (var con = DbFactory.CreateConnection())
             {
                 return con.Find<TBMKYOTENEntity>(s => s
-                .Where($"{nameof(TBMKYOTENEntity.CDKYOTEN):C} = {nameof(code):P}")
-                .WithParameters(new { code }))
+                .Where($"{nameof(TBMKYOTENEntity.CDKYOTEN):C} = {nameof(code):P} and {CreateTekiyoSql.GetFromDate()}")
+                .WithParameters(new { code, selectDate }))
                     .Select(q => q.NMKYOTEN)
                     .FirstOrDefault() ?? string.Empty;
             }

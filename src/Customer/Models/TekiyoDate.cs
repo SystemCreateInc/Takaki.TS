@@ -10,5 +10,8 @@ namespace Customer.Models
     {
         public static string StartDate { get; set; } = string.Empty;
         public static string EndDate { get; set; } = string.Empty;
+        public static string ReferenceDate { get; set; } = string.Empty;
+
+
     }
 }

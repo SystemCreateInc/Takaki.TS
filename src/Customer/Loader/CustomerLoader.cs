@@ -3,6 +3,7 @@ using Dapper;
 using Dapper.FastCrud;
 using DbLib;
 using DbLib.DbEntities;
+using ReferenceLogLib.Models;
 
 namespace Customer.Loader
 {
@@ -19,14 +20,12 @@ namespace Customer.Loader
                       + ",max(t1.NM_HENKOSHA) NM_HENKOSHA"
                       + ",max(t2.NM_TOKUISAKI) NM_TOKUISAKI"
                       + " FROM TB_SUM_TOKUISAKI t1"
-                      +$" left join TB_MTOKUISAKI t2 on t2.CD_TOKUISAKI = t1.CD_SUM_TOKUISAKI and {GetTekiyoRangeSql("t2.")}"
+                      +$" left join TB_MTOKUISAKI t2 on t2.CD_TOKUISAKI = t1.CD_SUM_TOKUISAKI and {CreateTekiyoSql.GetFromDate("t2.")}"
                       + " group by t1.CD_KYOTEN, t1.CD_SUM_TOKUISAKI";
-
-            var nowTimeStr = DateTime.Now.ToString("yyyyMMdd");
 
             using (var con = DbFactory.CreateConnection())
             {
-                return con.Query(sql, new { startDate = nowTimeStr, endDate = nowTimeStr }).Select(q => new SumCustomer
+                return con.Query(sql, new { selectDate = DateTime.Now.ToString("yyyyMMdd") }).Select(q => new SumCustomer
                 {
                     CdKyoten = q.CD_KYOTEN,
                     CdSumTokuisaki = q.CD_SUM_TOKUISAKI,
@@ -64,21 +63,22 @@ namespace Customer.Loader
                 .Where(@$"({nameof(TBSUMTOKUISAKIEntity.CDSUMTOKUISAKI):C} in {nameof(targetCustomers):P} or 
                             {nameof(TBSUMTOKUISAKICHILDEntity.CDTOKUISAKICHILD):of TB_SUM_TOKUISAKI_CHILD} in {nameof(targetCustomers):P}) and 
                             {nameof(TBSUMTOKUISAKIEntity.IDSUMTOKUISAKI):of TB_SUM_TOKUISAKI} <> {nameof(updateId):P} and
-                            {GetTekiyoRangeSql()}")
-                .WithParameters(new { targetCustomers, startDate, endDate, updateId}))
+                            {CreateTekiyoSql.GetFromRange()}")
+
+                .WithParameters(new { targetCustomers, startDate, endDate, updateId }))
                     .Select(q => CreateSumcustomer(q))
                     .FirstOrDefault();
             }
         }
 
         // 得意先名称取得
-        public static string GetName(string code, string startDate, string endDate)
+        public static string GetName(string code, string selectDate)
         {
             using (var con = DbFactory.CreateConnection())
             {
                 return con.Find<TBMTOKUISAKIEntity>(s => s
-                .Where(@$"{nameof(TBMTOKUISAKIEntity.CDTOKUISAKI):C} = {nameof(code):P} and {GetTekiyoRangeSql()}")
-                .WithParameters(new { code, startDate, endDate }))
+                .Where(@$"{nameof(TBMTOKUISAKIEntity.CDTOKUISAKI):C} = {nameof(code):P} and {CreateTekiyoSql.GetFromDate()}")
+                .WithParameters(new { code, selectDate }))
                     .Select(q => q.NMTOKUISAKI)
                     .FirstOrDefault() ?? string.Empty;
             }
@@ -106,13 +106,6 @@ namespace Customer.Loader
                     //NmTokuisaki = 
                 }).ToList(),
             };
-        }
-
-        // 摘要範囲内抽出SQL
-        private static string GetTekiyoRangeSql(string tableName = "")
-        {
-            return $@"(@startDate between {tableName}DT_TEKIYOKAISHI and {tableName}DT_TEKIYOMUKO or
-                        @endDate between {tableName}DT_TEKIYOKAISHI and {tableName}DT_TEKIYOMUKO)";
         }
     }
 }
