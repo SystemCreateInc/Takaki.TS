@@ -1,5 +1,6 @@
 using Customer.Models;
 using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,8 +34,50 @@ namespace ReferenceLogLib
             return startDate;
         }
 
+        // 適用期間チェック
+        public bool ValidateSummaryDate(DateTime startDate, DateTime endDate, bool isUpdate)
+        {
+            if (startDate < DateTime.Today && !isUpdate)
+            {
+                throw new Exception("適用開始日が過去日です");
+            }
+
+            if (startDate > endDate)
+            {
+                throw new Exception("適用開始日より適用無効日が過去日です");
+            }
+
+            if (startDate == endDate)
+            {
+                throw new Exception("適用開始日と無効日が同日です");
+            }
+
+            // 更新時 更新対象の適用開始日を比較から除外
+            var excludeDate = isUpdate ? startDate.ToString("yyyyMMdd") : null;
+            var duplicationRangeDate = GetDuplicationRange(startDate.ToString("yyyyMMdd"), endDate.ToString("yyyyMMdd"), excludeDate);
+
+            if (!string.IsNullOrEmpty(duplicationRangeDate))
+            {
+                throw new Exception($"下記の適用期間と重複しています\n\n適用開始日-適用無効日\n「{duplicationRangeDate}」");
+            }
+
+            return true;
+        }
+
+        // 選択状態更新
+        private void UpdateSelected(string tekiyokaishiDate)
+        {
+            LogInfos = LogInfos.Select(x => new LogInfo
+            {
+                Selected = x.StartDate == tekiyokaishiDate,
+                ShainCode = x.ShainCode,
+                StartDate = x.StartDate,
+                EndDate = x.EndDate,
+            }).ToList();
+        }
+
         // 重複範囲取得
-        public string GetDuplicationRange(string startDate, string endDate, string? excludeDate)
+        private string GetDuplicationRange(string startDate, string endDate, string? excludeDate)
         {
             foreach (var logInfo in LogInfos)
             {
@@ -67,18 +110,6 @@ namespace ReferenceLogLib
         {
             // 開始より上(1) ＆ 終了以下(-1or0)
             return targetInvalidDate.CompareTo(startDate) == 1 && targetInvalidDate.CompareTo(invalidDate) != 1;
-        }
-
-        // 選択状態更新
-        private void UpdateSelected(string tekiyokaishiDate)
-        {
-            LogInfos = LogInfos.Select(x => new LogInfo
-            {
-                Selected = x.StartDate == tekiyokaishiDate,
-                ShainCode = x.ShainCode,
-                StartDate = x.StartDate,
-                EndDate = x.EndDate,
-            }).ToList();
         }
     }
 }

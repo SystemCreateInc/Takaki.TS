@@ -7,11 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\DbLib\DbLib.csproj" />
+    <ProjectReference Include="..\ReferenceLogLib\ReferenceLogLib.csproj" />
 	  <PackageReference Include="Dapper.FastCrud" Version="3.1.46" />
   </ItemGroup>
 
