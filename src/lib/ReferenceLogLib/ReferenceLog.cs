@@ -1,6 +1,5 @@
 using Customer.Models;
 using Prism.Mvvm;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,7 +15,7 @@ namespace ReferenceLogLib
             set => SetProperty(ref _logInfos, value);
         }
 
-        // 参照日指定　開始日取得
+        // 指定日を含む範囲の開始日取得
         public string GetStartDateInRange(string selectDate)
         {
             var startDate = string.Empty;
@@ -34,8 +33,8 @@ namespace ReferenceLogLib
             return startDate;
         }
 
-        // 指定期間の重複チェック
-        public string CheckWithinRange(string startDate, string endDate, string? excludeDate)
+        // 重複範囲取得
+        public string GetDuplicationRange(string startDate, string endDate, string? excludeDate)
         {
             foreach (var logInfo in LogInfos)
             {
@@ -46,9 +45,9 @@ namespace ReferenceLogLib
                 }
 
                 if(IsInRange(startDate, logInfo.StartDate, logInfo.EndDate)
-                    || IsInRange(endDate, logInfo.StartDate, logInfo.EndDate)
+                    || IsInRangeInvalidDate(endDate, logInfo.StartDate, logInfo.EndDate)
                     || IsInRange(logInfo.StartDate, startDate, endDate)
-                    || IsInRange(logInfo.EndDate, startDate, endDate))
+                    || IsInRangeInvalidDate(logInfo.EndDate, startDate, endDate))
                 {
                     return $"{logInfo.StartDate}-{logInfo.EndDate}";
                 }
@@ -56,11 +55,18 @@ namespace ReferenceLogLib
 
             return string.Empty;
         }
-
-        private bool IsInRange(string targetDate, string startDate, string endDate)
+        
+        private bool IsInRange(string targetDate, string startDate, string invalidDate)
         {
-            // 開始以上(1or0) ＆ 終了以下(-1or0)
-            return targetDate.CompareTo(startDate) != -1 && targetDate.CompareTo(endDate) != 1;
+            // 開始以上(1or0) ＆ 無効日未満(-1)
+            return targetDate.CompareTo(startDate) != -1 && targetDate.CompareTo(invalidDate) == -1;
+        }
+
+        // 無効日対象 範囲判定
+        private bool IsInRangeInvalidDate(string targetInvalidDate, string startDate, string invalidDate)
+        {
+            // 開始より上(1) ＆ 終了以下(-1or0)
+            return targetInvalidDate.CompareTo(startDate) == 1 && targetInvalidDate.CompareTo(invalidDate) != 1;
         }
 
         // 選択状態更新
