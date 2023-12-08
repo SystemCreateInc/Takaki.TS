@@ -102,6 +102,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="取込日時" Binding="{Binding ImportDate, StringFormat={}{0:yyyy/MM/dd HH:mm:ss}}"/>
                     <DataGridTextColumn Header="状況" Binding="{Binding Status}"/>
+                    <DataGridTextColumn Header="データ名" Binding="{Binding DataName}"/>
                     <DataGridTextColumn Header="ファイル名" Binding="{Binding FileName}"/>
                     <DataGridTextColumn Header="件数" Binding="{Binding Count, StringFormat={}{0:N0}}">
                         <DataGridTextColumn.ElementStyle>

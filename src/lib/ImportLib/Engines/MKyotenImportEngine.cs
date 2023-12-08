@@ -22,7 +22,7 @@ namespace ImportLib.Engines
 
         public string ImportFilePath { get; set; } = string.Empty;
 
-        public List<ImportFileInfo> _targetImportFiles { get; private set; } = new List<ImportFileInfo>();
+        public List<ImportFileInfo> TargetImportFiles { get; private set; } = new List<ImportFileInfo>();
 
         private InterfaceFile _interfaceFile;
         private ScopeLogger _logger = new ScopeLogger<MKyotenImportEngine>();
@@ -46,7 +46,7 @@ namespace ImportLib.Engines
                     return;
                 }
 
-                _targetImportFiles = Directory.EnumerateFiles(dir!, fileName).Select(x =>
+                TargetImportFiles = Directory.EnumerateFiles(dir!, fileName).Select(x =>
                 {
                     Syslog.Debug($"found file: {x}");
                     var fi = new FileInfo(x);
@@ -63,35 +63,26 @@ namespace ImportLib.Engines
             catch (Exception ex)
             {
                 _logger.Warn($"UpdateImportFileInfo: {ex}");
-                _targetImportFiles.Clear();
+                TargetImportFiles.Clear();
             }
         }
 
 
-        public async Task<List<ImportResult>> ImportAsync(CancellationToken token)
-        {
-            return await Task.Run(() => Import(token));
-        }
-
-        public List<ImportResult> Import(CancellationToken token)
+        public IEnumerable<ImportResult> Import(DataImportController controller, CancellationToken token)
         {
             using (var repo = new ImportRepository())
             {
                 var importResults = new List<ImportResult>();
-                var importDatas = new List<KyotenFileLine>();
                 repo.DeleteKyotenData();
 
-                foreach (var targetFile in _targetImportFiles)
+                foreach (var targetFile in TargetImportFiles)
                 {
-                    var beforeCount = importDatas.Count;
-                    importDatas.AddRange(ReadFile(token, targetFile.FilePath!));
-                    importResults.Add(new ImportResult(true, (long)targetFile.FileSize!, importDatas.Count - beforeCount));
+                    var importDatas = ReadFile(token, targetFile.FilePath!);
+                    var importedCount = InsertData(importDatas, repo, token);
+                    importResults.Add(new ImportResult(true, targetFile.FilePath!, (long)targetFile.FileSize!, importedCount));
                 }
 
-                InsertData(importDatas, repo, token);
-
                 repo.Commit();
-
                 return importResults;
             }
         }

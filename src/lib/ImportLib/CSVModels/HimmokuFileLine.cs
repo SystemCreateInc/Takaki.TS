@@ -452,36 +452,6 @@ namespace ImportLib.CSVModels
         [Index(219)]
         public decimal? NuHaita { get; set; }
         [Index(220)]
-        public string CdSeizohimban { get; set; } = string.Empty;
-        [Index(221)]
-        public string CdFahimban { get; set; } = string.Empty;
-        [Index(222)]
-        public string CdNishihimban { get; set; } = string.Empty;
-        [Index(223)]
-        public string CdHigashihimban { get; set; } = string.Empty;
-        [Index(224)]
-        public string CdRetailhimban { get; set; } = string.Empty;
-        [Index(225)]
-        public string CdHiroshimaanhimban { get; set; } = string.Empty;
-        [Index(226)]
-        public string CdKodanisahimban { get; set; } = string.Empty;
-        [Index(227)]
-        public string CdKobaihimban { get; set; } = string.Empty;
-        [Index(228)]
-        public string CdSsshimban { get; set; } = string.Empty;
-        [Index(229)]
-        public string StShonin { get; set; } = string.Empty;
-        [Index(230)]
-        public string IfSekkeishobiko1 { get; set; } = string.Empty;
-        [Index(231)]
-        public string IfSekkeishobiko2 { get; set; } = string.Empty;
-        [Index(232)]
-        public string IfSekkeishobiko3 { get; set; } = string.Empty;
-        [Index(233)]
-        public string FgHogojogai { get; set; } = string.Empty;
-        [Index(234)]
-        public string CdQanumeric { get; set; } = string.Empty;
-        [Index(235)]
         public string CdItemgtin { get; set; } = string.Empty;
     }
 }

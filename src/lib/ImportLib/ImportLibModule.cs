@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WindowLib;
 
 namespace ImportLib
 {
@@ -18,6 +19,7 @@ namespace ImportLib
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            containerRegistry.RegisterForNavigation<WindowLibModule>();
             containerRegistry.RegisterForNavigation<MainImporter>();
             containerRegistry.RegisterDialog<ImportDlg>();
         }

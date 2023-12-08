@@ -10,15 +10,13 @@ namespace ImportLib.Engines
         string DataName { get; }
         string ImportFilePath { get; set; }
 
-        public IEnumerable<SameDistInfo> SameDistInfos { get; set; }
-
-        public List<ImportFileInfo> _targetImportFiles { get; }
+        public List<ImportFileInfo> TargetImportFiles { get; }
 
         void UpdateImportFileInfo();
 
-        Task<List<ImportResult>> ImportAsync(CancellationToken token);
+        IEnumerable<ImportResult> Import(DataImportController controller, CancellationToken token);
 
-        bool IsExistFile => _targetImportFiles.Any();
+        bool IsExistFile => TargetImportFiles.Any();
 
         void SetFolder(string path)
         {
@@ -27,6 +25,5 @@ namespace ImportLib.Engines
         }
 
         InterfaceFile GetInterfaceFile();
-        Task<bool> SetSameDist(CancellationToken token);
     }
 }
