@@ -1,0 +1,87 @@
+﻿<UserControl x:Class="Picking.Views.SelectItemDlg"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:b="clr-namespace:WindowLib.Behaviors;assembly=WindowLib"
+             xmlns:controls="clr-namespace:WindowLib.Views;assembly=WindowLib"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             HorizontalAlignment="Center" VerticalAlignment="Center"
+             Width="1400"
+             Loaded="UserControl_Loaded">
+
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window" BasedOn="{StaticResource DialogWindow}"/>
+    </prism:Dialog.WindowStyle>
+
+
+    <DockPanel>
+        <Grid DockPanel.Dock="Top" Margin="5,5,20,5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="5*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding CdGtin13,StringFormat=商品ＪＡＮ：{0}}" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center" Margin="3"/>
+            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Height="300">
+                <controls:GridColumnSetting TargetGrid="{Binding ElementName=distselectitemgrid}" SettingsKey="GridSelectItemColumns"/>
+                <DataGrid x:Name="distselectitemgrid" ItemsSource="{Binding SelectItems}" CurrentItem="{Binding CurrentSelectItem, Mode=TwoWay}"
+                  SelectedItem="{Binding CurrentSelectItem, Mode=TwoWay}"
+                  SelectedIndex="{Binding SelectItemIdx, Mode=TwoWay}"
+                  CanUserAddRows="False" SelectionMode="Single"
+                  HorizontalScrollBarVisibility="Visible"
+                  VerticalScrollBarVisibility="Visible"                          
+                  AutoGenerateColumns="False" IsReadOnly="True">
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="状態" Width="Auto" Binding="{Binding DStatus_name}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="品番" Width="Auto" Binding="{Binding CdHimban}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="品名" Width="Auto" Binding="{Binding NmHinSeishikimei}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="受注便" Width="Auto" Binding="{Binding CdGtin13}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="出荷ﾊﾞｯﾁ" Width="Auto" Binding="{Binding CdGtin13}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="入数" Width="Auto" Binding="{Binding NuBoxUnit}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="予定総個数" Width="Auto" Binding="{Binding Ops}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="予定箱" Width="Auto" Binding="{Binding Display_Dops_Cs}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="予定ﾊﾞﾗ" Width="Auto" Binding="{Binding Display_Dops_Ps}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
+                <Button Command="{Binding OnUp}" Focusable="False"  Height="150" Margin="5">
+                    <Viewbox>
+                        <TextBlock Text="▲"/>
+                    </Viewbox>
+                </Button>
+                <Button Command="{Binding OnDown}" Focusable="False"  Height="150"  Margin="5">
+                    <Viewbox>
+                        <TextBlock Text="▼"/>
+                    </Viewbox>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Orientation="Horizontal" Margin="5" DockPanel.Dock="Bottom" HorizontalAlignment="Center">
+            <Button Width="150" Command="{Binding Save}" Margin="0 0 20 0"
+                    Focusable="false">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Check" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="決定"/>
+                </StackPanel>
+            </Button>
+
+            <Button Width="150" Command="{Binding Cancel}"
+                    Focusable="false" IsCancel="True">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Cancel" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="キャンセル"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </DockPanel>
+</UserControl>
