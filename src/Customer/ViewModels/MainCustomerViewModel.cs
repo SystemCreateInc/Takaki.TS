@@ -9,6 +9,7 @@ using Prism.Regions;
 using Prism.Services.Dialogs;
 using System.Collections.ObjectModel;
 using System.Windows;
+using TakakiLib.Models;
 using WindowLib.Utils;
 
 namespace Customer.ViewModels

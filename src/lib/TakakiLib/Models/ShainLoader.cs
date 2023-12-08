@@ -3,7 +3,7 @@ using DbLib;
 using DbLib.DbEntities;
 using Microsoft.Extensions.Configuration;
 
-namespace Customer.Loader
+namespace TakakiLib.Models
 {
     public class ShainInfo
     {
