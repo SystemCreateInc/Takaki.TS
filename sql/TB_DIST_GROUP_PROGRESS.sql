@@ -22,11 +22,11 @@ create table TB_DIST_GROUP_PROGRESS (
 	DT_START				datetime,							/* 	開始日時					*/
 	DT_END					datetime,							/* 	終了日時					*/
 
-	NU_OITEMCNT				datetime,							/* 	予定アイテム数				*/
-	NU_RITEMCNT				datetime,							/*  済みアイテム数				*/
+	NU_OITEMCNT				integer,							/* 	予定アイテム数				*/
+	NU_RITEMCNT				integer,							/*  済みアイテム数				*/
 
-	NU_OPS					datetime,							/* 	予定仕分け個数				*/
-	NU_RPS					datetime,							/*  済みアイテム数				*/
+	NU_OPS					integer,							/* 	予定仕分け個数				*/
+	NU_RPS					integer,							/*  済みアイテム数				*/
 
 	FG_DSTATUS				smallint				not null,	/*	仕分作業状態
 																	0:未処理
