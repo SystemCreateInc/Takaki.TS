@@ -4,7 +4,7 @@ using Prism.Mvvm;
 
 namespace SeatMapping.Models
 {
-    public class SeatMapping : BindableBase
+    public class SeatMappingInfo : BindableBase
     {
         private string _tdunitaddrcode = string.Empty;
         public string Tdunitaddrcode
