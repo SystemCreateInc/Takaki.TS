@@ -1,10 +1,13 @@
-﻿using DistLargeGroup.Models;
+﻿using DistLargeGroup.Infranstructures;
+using DistLargeGroup.Models;
 using DistLargeGroup.Views;
 using LogLib;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Services.Dialogs;
+using ReferenceLogLib;
+using ReferenceLogLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,15 +21,15 @@ namespace DistLargeGroup.ViewModels
 {
     public class MainDistLargeGroupViewModel : BindableBase
     {
-        public DelegateCommand Add { get; }
-        public DelegateCommand Edit { get; }
-        public DelegateCommand Exit { get; }
+        public DelegateCommand AddCommand { get; }
+        public DelegateCommand EditCommand { get; }
+        public DelegateCommand ExitCommand { get; }
         public DelegateCommand LeftDoubleClick { get; }
 
         private readonly IDialogService _dialogService;
 
-        private string _shain = string.Empty;
-        public string Shain
+        private Shain? _shain;
+        public Shain? Shain
         {
             get => _shain;
             set => SetProperty(ref _shain, value);
@@ -61,52 +64,57 @@ namespace DistLargeGroup.ViewModels
         {
             _dialogService = dialogService;
 
-            Add = new DelegateCommand(() =>
+            AddCommand = new DelegateCommand(Add);
+            EditCommand = new DelegateCommand(Edit).ObservesCanExecute(() => CanEdit);
+            ExitCommand = new DelegateCommand(Exit);
+            LeftDoubleClick = new DelegateCommand(Edit).ObservesCanExecute(() => CanEdit);
+
+            try
             {
-                Syslog.Debug("MainDistLargeGroupViewModel:Add");
-                if (ShowInputDialog(new Models.DistLargeGroup()))
-                {
-                    LoadDatas();
-                }
-            });
-
-            Edit = new DelegateCommand(() =>
+                Shain = ShainQueryService.Get();
+            }
+            catch (Exception ex)
             {
-                if (CurrentDistLargeGroup == null)
-                {
-                    return;
-                }
-
-                Syslog.Debug("MainDistLargeGroupViewModel:Edit");
-                if (ShowInputDialog(CurrentDistLargeGroup))
-                {
-                    LoadDatas();
-                }
-            }).ObservesCanExecute(() => CanEdit);
-
-            Exit = new DelegateCommand(() =>
-            {
-                Syslog.Debug("MainDistLargeGroupViewModel:Exit");
-                Application.Current.MainWindow.Close();
-            });
-
-            LeftDoubleClick = new DelegateCommand(() =>
-            {
-                Syslog.Debug("MainDistLargeGroupViewModel:LeftDoubleClick");
-                Edit.Execute();
-            }).ObservesCanExecute(() => CanEdit);
-
-            // fixme:社員コード + 社員名称
-            Shain = "0000033550" + "　" + "小田賢行";
+                MessageDialog.Show(_dialogService, ex.Message, "エラー");
+            }
 
             LoadDatas();
+        }
+
+        private void Exit()
+        {
+            Syslog.Debug("MainDistLargeGroupViewModel:Exit");
+            Application.Current.MainWindow.Close();
+        }
+
+        private void Edit()
+        {
+            if (CurrentDistLargeGroup == null)
+            {
+                return;
+            }
+
+            Syslog.Debug("MainDistLargeGroupViewModel:Edit");
+            if (ShowInputDialog(CurrentDistLargeGroup))
+            {
+                LoadDatas();
+            }
+        }
+
+        private void Add()
+        {
+            Syslog.Debug("MainDistLargeGroupViewModel:Add");
+            if (ShowInputDialog(null))
+            {
+                LoadDatas();
+            }
         }
 
         private void LoadDatas()
         {
             try
             {
-                CollectionViewHelper.SetCollection(DistLargeGroups, DistLargeGroupLoader.Get());
+                CollectionViewHelper.SetCollection(DistLargeGroups, LargeGroupQueryService.FindAll());
             }
             catch (Exception e)
             {
@@ -115,15 +123,25 @@ namespace DistLargeGroup.ViewModels
             }
         }
 
-        private bool ShowInputDialog(Models.DistLargeGroup distLargeGroup)
+        private bool ShowInputDialog(Models.DistLargeGroup? distLargeGroup)
         {
+            if (Shain is null)
+            {
+                return false;
+            }
+
             IDialogResult? result = null;
 
             _dialogService.ShowDialog(
                 nameof(InputDistLargeGroupDlg),
                 new DialogParameters
                 {
-                    { "DistLargeGroup", distLargeGroup },
+                    { 
+                        "DistLargeGroup", distLargeGroup 
+                    },
+                    {
+                        "Shain", Shain
+                    }
                 },
                 r => result = r);
 

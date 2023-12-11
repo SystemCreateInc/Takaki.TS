@@ -2,27 +2,17 @@
 
 namespace DistLargeGroup.Models
 {
-    public class DistLargeGroup : BindableBase
+    public class DistLargeGroup
     {
-        private string _cdKyoten = string.Empty;
-        public string CdKyoten
-        {
-            get => _cdKyoten;
-            set => SetProperty(ref _cdKyoten, value);
-        }
-
-        private string _cdLargeGroup = string.Empty;
-        public string CdLargeGroup
-        {
-            get => _cdLargeGroup;
-            set => SetProperty(ref _cdLargeGroup, value);
-        }
-
-        private string _cdLargeGroupName = string.Empty;
-        public string CdLargeGroupName
-        {
-            get => _cdLargeGroupName;
-            set => SetProperty(ref _cdLargeGroupName, value);
-        }
+        public long IdLargeGroup { get; set; }
+        public string CdKyoten { get; set; } = string.Empty;
+        public string CdLargeGroup { get; set; } = string.Empty;
+        public string CdLargeGroupName { get; set; } = string.Empty;
+        public DateTime DtTekiyoKaishi { get; set; }
+        public DateTime DtTekiyoMuko { get; set; }
+        public string CdHenkosha { get; set; } = string.Empty;
+        public string NmHenkosha { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

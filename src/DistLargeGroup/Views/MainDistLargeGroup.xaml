@@ -34,21 +34,21 @@
                         </Style>
                     </ToolBar.Resources>
 
-                    <Button Command="{Binding Add}">
+                    <Button Command="{Binding AddCommand}">
                         <StackPanel Orientation="Vertical">
                             <materialDesign:PackIcon Kind="Add"/>
                             <TextBlock Text="追加"/>
                         </StackPanel>
                     </Button>
 
-                    <Button Command="{Binding Edit}">
+                    <Button Command="{Binding EditCommand}">
                         <StackPanel Orientation="Vertical">
                             <materialDesign:PackIcon Kind="Edit"/>
                             <TextBlock Text="編集"/>
                         </StackPanel>
                     </Button>
 
-                    <Button Command="{Binding Exit}">
+                    <Button Command="{Binding ExitCommand}">
                         <StackPanel Orientation="Vertical">
                             <materialDesign:PackIcon Kind="ExitToApp"/>
                             <TextBlock Text="終了"/>
@@ -57,9 +57,9 @@
                 </ToolBar>
             </ToolBarTray>
 
-            <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" Visibility="{Binding LineInfoVisible}">
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" >
                 <TextBlock Text="社員コード：" TextAlignment="Right" Width="150"/>
-                <TextBlock Text="{Binding Shain}"/>
+                <TextBlock><Run Text="{Binding Shain.HenkoshaCode}"/><Run Text=" "/><Run Text="{Binding Shain.HenkoshaName}"/></TextBlock>
             </StackPanel>
         </Grid>
 
