@@ -18,11 +18,9 @@ namespace SeatThreshold.Loader
                       + ",max(ST_TDUNIT_TYPE) ST_TDUNIT_TYPE"
                       + ",max(NU_TDUNIT_CNT) NU_TDUNIT_CNT"
                       + ",max(NU_THRESHOLD) NU_THRESHOLD"
-                      //+ ",max(NM_KYOTEN) NM_KYOTEN"
                       + " FROM TB_BLOCK"
-                      // MEMO:拠点名称不要？
-                      //+$" left join TB_MKYOTEN on TB_MKYOTEN.CD_KYOTEN = TB_BLOCK.CD_KYOTEN and {CreateTekiyoSql.GetFromDate("TB_MKYOTEN.")}"
-                      + " group by TB_BLOCK.CD_KYOTEN, CD_BLOCK";
+                      + " group by TB_BLOCK.CD_KYOTEN, CD_BLOCK"
+                      + " order by TB_BLOCK.CD_KYOTEN, CD_BLOCK";
 
             using (var con = DbFactory.CreateConnection())
             {
