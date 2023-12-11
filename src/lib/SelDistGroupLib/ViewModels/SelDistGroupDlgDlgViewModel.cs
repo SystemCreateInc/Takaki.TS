@@ -1,5 +1,6 @@
 ﻿using Azure;
 using LogLib;
+using Microsoft.Extensions.Configuration;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
@@ -68,6 +69,19 @@ namespace SelDistGroupLib.ViewModels
                 if (!Check())
                 {
                     return;
+                }
+
+                // ブロック設定
+                if (DistGroup!=null)
+                {
+                    DistGroup.CdBlock = BlockLoader.GetBlock();
+                    DistGroup.CdKyoten = BlockLoader.GetKyoten();
+
+                    var config = new ConfigurationBuilder()
+                    .AddJsonFile("common.json", true, true)
+                    .Build();
+
+                    DistGroup.IdPc = int.Parse(config.GetSection("pc")?["idpc"] ?? "1");
                 }
 
                 // ダイアログを閉じる

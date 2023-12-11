@@ -4,6 +4,7 @@ using DbLib;
 using DbLib.DbEntities;
 using ImTools;
 using System.Transactions;
+using TakakiLib.Models;
 
 namespace Customer.Models
 {

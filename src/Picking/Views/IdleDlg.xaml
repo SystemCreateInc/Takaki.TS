@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="Picking.Views.IdleDlg"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:b="clr-namespace:WindowLib.Behaviors;assembly=WindowLib"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             HorizontalAlignment="Center" VerticalAlignment="Center"
+             MinWidth="30">
+
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window" BasedOn="{StaticResource DialogWindow}"/>
+    </prism:Dialog.WindowStyle>
+
+    <DockPanel>
+        <Grid DockPanel.Dock="Top" Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
+                <TextBlock Text="休憩中です"/>
+            </StackPanel>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5">
+                <TextBlock x:Name="Timer" Text="{Binding TimerText, UpdateSourceTrigger=PropertyChanged}" FontSize="80">
+                </TextBlock>
+            </StackPanel>
+        </Grid>
+
+        <Grid Margin="10">
+            <Button Width="125" Command="{Binding OK}" Focusable="False" Margin="5">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Check" VerticalAlignment="Center" />
+                    <TextBlock Text="OK" Margin="3,0,0,0"/>
+                </StackPanel>
+            </Button>
+        </Grid>
+    </DockPanel>
+</UserControl>

@@ -1,10 +1,18 @@
-﻿using DbLib.Defs;
+﻿using Customer.Models;
+using DbLib.Defs;
+using DbLib.Extensions;
 using LogLib;
+using Microsoft.IdentityModel.Tokens;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Services.Dialogs;
+using ReferenceLogLib;
+using SeatThreshold.Loader;
 using SeatThreshold.Models;
+using System.Collections.ObjectModel;
+using TakakiLib.Models;
+using WindowLib.Utils;
 
 namespace SeatThreshold.ViewModels
 {
@@ -18,14 +26,18 @@ namespace SeatThreshold.ViewModels
 
         public string Title => "座席しきい値情報入力";
         public event Action<IDialogResult>? RequestClose;
-        private Models.SeatThreshold _seatThreshold = new Models.SeatThreshold();
+        private ThresholdInfo _seatThreshold = new ThresholdInfo();
 
         // 参照日
-        private DateTime _date;
-        public DateTime Date
+        private DateTime _referenceDate;
+        public DateTime ReferenceDate
         {
-            get => _date;
-            set => SetProperty(ref _date, value);
+            get => _referenceDate;
+            set
+            {
+                SetProperty(ref _referenceDate, value);
+                ReloadTekiyoName();
+            }
         }
 
         // 拠点コード
@@ -33,7 +45,12 @@ namespace SeatThreshold.ViewModels
         public string CdKyoten
         {
             get => _cdKyoten;
-            set => SetProperty(ref _cdKyoten, value);
+            set
+            {
+                SetProperty(ref _cdKyoten, value);
+                NmKyoten = KyotenLoader.GetName(CdKyoten, ReferenceDate.ToString("yyyyMMdd"));
+                _isChange = true;
+            }
         }
 
         // 拠点名称
@@ -49,7 +66,11 @@ namespace SeatThreshold.ViewModels
         public string CdBlock
         {
             get => _cdBlock;
-            set => SetProperty(ref _cdBlock, value);
+            set
+            {
+                SetProperty(ref _cdBlock, value);
+                _isChange = true;
+            }
         }
 
         // 種別
@@ -57,7 +78,11 @@ namespace SeatThreshold.ViewModels
         public TdUnitType TdUnitType
         {
             get => _tdUnitType;
-            set => SetProperty(ref _tdUnitType, value);
+            set
+            {
+                SetProperty(ref _tdUnitType, value);
+                _isChange = true;
+            }
         }
 
         // 適用開始日
@@ -65,7 +90,11 @@ namespace SeatThreshold.ViewModels
         public DateTime DtTekiyoKaishi
         {
             get => _dtTekiyoKaishi;
-            set => SetProperty(ref _dtTekiyoKaishi, value);
+            set
+            {
+                SetProperty(ref _dtTekiyoKaishi, value);
+                _isChange = true;
+            }
         }
 
         // 適用無効日
@@ -73,20 +102,24 @@ namespace SeatThreshold.ViewModels
         public DateTime DtTekiyoMuko
         {
             get => _dtTekiyoMuko;
-            set => SetProperty(ref _dtTekiyoMuko, value);
+            set
+            {
+                SetProperty(ref _dtTekiyoMuko, value);
+                _isChange = true;
+            }
         }
 
         // 登録日時
-        private DateTime _dtTorokuNichiji;
-        public DateTime DtTorokuNichiji
+        private DateTime? _dtTorokuNichiji;
+        public DateTime? DtTorokuNichiji
         {
             get => _dtTorokuNichiji;
             set => SetProperty(ref _dtTorokuNichiji, value);
         }
 
         // 更新日時
-        private DateTime _dtKoshinNichiji;
-        public DateTime DtKoshinNichiji
+        private DateTime? _dtKoshinNichiji;
+        public DateTime? DtKoshinNichiji
         {
             get => _dtTorokuNichiji;
             set => SetProperty(ref _dtKoshinNichiji, value);
@@ -109,41 +142,68 @@ namespace SeatThreshold.ViewModels
         }
 
         // 表示器数
-        private int _nuTdunitCnt;
-        public int NuTdunitCnt
+        private string _nuTdunitCnt = string.Empty;
+        public string NuTdunitCnt
         {
             get => _nuTdunitCnt;
-            set => SetProperty(ref _nuTdunitCnt, value);
+            set
+            {
+                SetProperty(ref _nuTdunitCnt, value);
+                _isChange = true;
+            }
         }
 
         // しきい値
-        private int _nuThreshold;
-        public int NuThreshold
+        private string _nuThreshold = string.Empty;
+        public string NuThreshold
         {
             get => _nuThreshold;
-            set => SetProperty(ref _nuThreshold, value);
+            set
+            {
+                SetProperty(ref _nuThreshold, value);
+                _isChange = true;
+            }
         }
 
-        // 履歴表示リスト
-        private List<Log> _logs = new List<Log>();
-        public List<Log> Logs
+        private bool _isAdd = false;
+        public bool IsAdd
         {
-            get => _logs;
-            set => SetProperty(ref _logs, value);
+            get => _isAdd;
+            set => SetProperty(ref _isAdd, value);
         }
 
-        public InputSeatThresholdDlgViewModel()
+        private bool _isDateRelease = false;
+        public bool IsDateRelease
         {
+            get => _isDateRelease;
+            set => SetProperty(ref _isDateRelease, value);
+        }
+
+        private ShainInfo _shainInfo = new ShainInfo();
+
+        public ReferenceLog ReferenceLog { get; set; } = new ReferenceLog();
+
+        private bool _isChange = false;
+
+        private readonly IDialogService _dialogService;
+
+        public InputSeatThresholdDlgViewModel(IDialogService dialogService)
+        {
+            _dialogService = dialogService;
+
             Clear = new DelegateCommand(() =>
             {
                 Syslog.Debug("InputSeatThresholdDlgViewModel:Clear");
-                // fixme:クリアボタン押下
+                ClearInfo(IsAdd);
             });
 
             Register = new DelegateCommand(() =>
             {
                 Syslog.Debug("InputSeatThresholdDlgViewModel:Register");
-                // fixme:登録ボタン押下
+                if (Regist())
+                {
+                    RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
+                }
             });
 
             Back = new DelegateCommand(() =>
@@ -154,18 +214,24 @@ namespace SeatThreshold.ViewModels
 
             Refer = new DelegateCommand(() =>
             {
-                Syslog.Debug("InputSeatThresholdDlgViewModel:Refer");
-                // fixme:参照ボタン押下
+                if (!ReferenceLog.LogInfos.Any())
+                {
+                    return;
+                }
+
+                Syslog.Debug("InputCustomerViewModel:Refer");
+                ClearInfo(IsAdd);
+                SetReferenceInfo();
             });
 
             Release = new DelegateCommand(() =>
             {
                 Syslog.Debug("InputSeatThresholdDlgViewModel:Release");
-                // fixme:解除ボタン押下
+                IsDateRelease = true;
             });
         }
 
-        public bool CanCloseDialog() => true;
+        public bool CanCloseDialog() => ConfirmationExit();
 
         public void OnDialogClosed()
         {
@@ -173,32 +239,183 @@ namespace SeatThreshold.ViewModels
 
         public void OnDialogOpened(IDialogParameters parameters)
         {
-            _seatThreshold = parameters.GetValue<Models.SeatThreshold>("SeatThreshold");
+            _seatThreshold = parameters.GetValue<ThresholdInfo>("SeatThreshold");
+            _shainInfo = parameters.GetValue<ShainInfo>("ShainInfo");
+            IsAdd = _seatThreshold.CdKyoten.IsNullOrEmpty();
             InitDialog();
         }
 
         private void InitDialog()
         {
-            // 項目欄確認
-            Date = DateTime.Today;
-            CdKyoten = "4201";
-            NmKyoten = "広島工場製品出荷";
-            CdBlock = "1";
-            TdUnitType = TdUnitType.TdCeiling;
-            DtTekiyoKaishi = new DateTime(2023, 10, 1);
-            DtTekiyoMuko = new DateTime(2023, 12, 31);
-            DtTorokuNichiji = new DateTime(2023, 10, 11, 12, 34, 56);
-            DtKoshinNichiji = new DateTime(2023, 10, 11, 12, 34, 56);
-            CdShain = "0033550";
-            NmShain = "小田 賢行";
-            NuTdunitCnt = 128;
-            NuThreshold = 13;
+            ClearInfo(true);
 
-            Logs = new List<Log>
+            if (!IsAdd)
             {
-                new Log { Selected = false, DtTekiyoKaishi = "20230901", DtTekiyoMuko = "20231001", CdShain = "0033550", },
-                new Log { Selected = true, DtTekiyoKaishi = "20231001", DtTekiyoMuko = "20231231", CdShain = "0033550", },
-            };
+                CdKyoten = _seatThreshold.CdKyoten;
+                CdBlock = _seatThreshold.CdBlock;
+                ReferenceLog.LogInfos = LogLoader.Get(_seatThreshold.CdKyoten, _seatThreshold.CdBlock).ToList();
+
+                SetReferenceInfo();
+            }
+            else
+            {
+                ReferenceLog.LogInfos.Clear();
+            }
+        }
+
+        private void ClearInfo(bool isAll)
+        {
+            if (isAll)
+            {
+                ReferenceDate = DateTime.Today;
+                CdKyoten = string.Empty;
+                CdBlock = "0";
+            }
+
+            TdUnitType = TdUnitType.TdCeiling;
+
+            DtTekiyoKaishi = DateTime.Today;
+            DtTekiyoMuko = new DateTime(2999, 12, 31);
+            DtTorokuNichiji = null;
+            DtKoshinNichiji = null;
+            CdShain = string.Empty;
+            NmShain = string.Empty;
+
+            NuTdunitCnt = "1";
+            NuThreshold = "1";
+        }        
+
+        // 参照日から情報取得
+        private void SetReferenceInfo()
+        {
+            var tekiyoDate = ReferenceLog.GetStartDateInRange(ReferenceDate.ToString("yyyyMMdd"));
+            var data = SeatThresholdLoader.GetFromKey(_seatThreshold.CdKyoten, _seatThreshold.CdBlock, tekiyoDate);
+
+            if (data is not null)
+            {
+                TdUnitType = data.TdUnitType;
+                NuTdunitCnt = data.NuTdunitCnt.ToString();
+                NuThreshold= data.NuThreshold.ToString();
+
+                DtTorokuNichiji = data.CreatedAt;
+                DtKoshinNichiji = data.UpdatedAt;
+                CdShain = _shainInfo.HenkoshaCode;
+                NmShain = _shainInfo.HenkoshaName;
+                DtTekiyoKaishi = DateTime.Parse(data.Tekiyokaishi.GetDate());
+                DtTekiyoMuko = DateTime.Parse(data.TekiyoMuko.GetDate());
+            }
+            _isChange = false;
+        }
+
+        // 適用名称再取得
+        private void ReloadTekiyoName()
+        {
+            NmKyoten = KyotenLoader.GetName(CdKyoten, ReferenceDate.ToString("yyyyMMdd"));
+        }
+
+        private bool ConfirmationExit()
+        {
+            if (_isChange)
+            {
+                if (MessageDialog.Show(_dialogService, "変更された情報が登録されていません。\n一覧画面に戻りますか？", "変更確認", ButtonMask.Yes | ButtonMask.No) != ButtonResult.Yes)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        private bool Regist()
+        {
+            try
+            {
+                if (!ValidateInput())
+                {
+                    return false;
+                }
+
+                var targetData = new ThresholdInfo
+                {
+                    CdKyoten = CdKyoten,
+                    CdBlock = CdBlock,
+                    TdUnitType = TdUnitType,
+                    NuTdunitCnt = int.Parse(NuTdunitCnt),
+                    NuThreshold = int.Parse(NuThreshold),
+
+                    Tekiyokaishi = DtTekiyoKaishi.ToString("yyyyMMdd"),
+                    TekiyoMuko = DtTekiyoMuko.ToString("yyyyMMdd"),
+                };
+
+                var existData = SeatThresholdLoader.GetFromKey(CdKyoten, CdBlock, DtTekiyoKaishi.ToString("yyyyMMdd"));
+                var isExist = existData is not null;
+
+                if (!ValidateSummaryDate(isExist))
+                {
+                    return false;
+                }
+
+                if (IsAdd)
+                {
+                    if (isExist)
+                    {
+                        MessageDialog.Show(_dialogService, $"同一組み合わせのデータが登録済みです\n拠点[{CdKyoten}],ブロック[{CdBlock}],適用開始日[{DtTekiyoKaishi.ToString("yyyyMMdd")}]\n", "入力エラー");
+                        return false;
+                    }
+
+                    BlockEntityManager.Regist(targetData, _shainInfo);
+                }
+                else if (isExist)
+                {
+                    targetData.BlockId = existData!.BlockId;
+                    BlockEntityManager.Update(targetData, _shainInfo);
+                }
+                else
+                {
+                    BlockEntityManager.Regist(targetData, _shainInfo);
+                }
+
+                _isChange = false;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageDialog.Show(_dialogService, ex.Message, "エラー");
+                return false;
+            }
+        }
+
+        private bool ValidateInput()
+        {
+            if(CdKyoten.IsNullOrEmpty() ||
+                CdBlock.IsNullOrEmpty())
+            {
+                MessageDialog.Show(_dialogService, "拠点コード、ブロックを入力してください。", "入力エラー");
+                return false;
+            }
+
+            if(!int.TryParse(NuTdunitCnt, out int tdUnitCnt)
+                || !int.TryParse(NuThreshold, out int threshold))
+            {
+                MessageDialog.Show(_dialogService, "表示器数、しきい値を入力してください。", "入力エラー");
+                return false;
+            }
+
+            return true;
+        }
+
+        // 適用期間チェック
+        private bool ValidateSummaryDate(bool isUpdate)
+        {
+            try
+            {
+                ReferenceLog.ValidateSummaryDate(DtTekiyoKaishi, DtTekiyoMuko, isUpdate);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageDialog.Show(_dialogService, ex.Message, "入力エラー");
+                return false;
+            }
         }
     }
 }

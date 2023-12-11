@@ -4,7 +4,7 @@ using Prism.Mvvm;
 
 namespace SeatThreshold.Models
 {
-    public class SeatThreshold : BindableBase
+    public class ThresholdInfo : BindableBase
     {
         private string _cdKyoten = string.Empty;
         public string CdKyoten
@@ -42,5 +42,11 @@ namespace SeatThreshold.Models
             get => _nuThreshold;
             set => SetProperty(ref _nuThreshold, value);
         }
+
+        public long BlockId { get; internal set; }
+        public string Tekiyokaishi { get; set; } = string.Empty;
+        public string TekiyoMuko { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

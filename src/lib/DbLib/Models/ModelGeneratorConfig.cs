@@ -750,10 +750,17 @@ namespace DbLib.DbEntities
         public virtual long IDDISTGROUP { get; set; }
 
         /// <summary>
+        /// Represents the column 'CD_SHUKKA_BATCH'.
+        /// </summary>
+        [Key]
+        [Column("CD_SHUKKA_BATCH", Order = 2)]
+        public virtual string CDSHUKKABATCH { get; set; }
+
+        /// <summary>
         /// Represents the column 'NU_COURSE_SEQ'.
         /// </summary>
         [Key]
-        [Column("NU_COURSE_SEQ", Order = 2)]
+        [Column("NU_COURSE_SEQ", Order = 3)]
         public virtual int NUCOURSESEQ { get; set; }
 
         /// <summary>
@@ -909,25 +916,25 @@ namespace DbLib.DbEntities
         /// Represents the column 'NU_OITEMCNT'.
         /// </summary>
         [Column("NU_OITEMCNT")]
-        public virtual DateTime? NUOITEMCNT { get; set; }
+        public virtual int? NUOITEMCNT { get; set; }
 
         /// <summary>
         /// Represents the column 'NU_RITEMCNT'.
         /// </summary>
         [Column("NU_RITEMCNT")]
-        public virtual DateTime? NURITEMCNT { get; set; }
+        public virtual int? NURITEMCNT { get; set; }
 
         /// <summary>
         /// Represents the column 'NU_OPS'.
         /// </summary>
         [Column("NU_OPS")]
-        public virtual DateTime? NUOPS { get; set; }
+        public virtual int? NUOPS { get; set; }
 
         /// <summary>
         /// Represents the column 'NU_RPS'.
         /// </summary>
         [Column("NU_RPS")]
-        public virtual DateTime? NURPS { get; set; }
+        public virtual int? NURPS { get; set; }
 
         /// <summary>
         /// Represents the column 'FG_DSTATUS'.

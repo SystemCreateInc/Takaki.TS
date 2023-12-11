@@ -2,6 +2,8 @@
 using Dapper.FastCrud;
 using DbLib;
 using DbLib.DbEntities;
+using ImTools;
+using Microsoft.Identity.Client.Extensions.Msal;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -31,21 +33,19 @@ namespace DispShop.Models
                     + " from TB_DIST"
                     + " inner join TB_DIST_MAPPING on "
                     + " TB_DIST.ID_DIST=TB_DIST_MAPPING.ID_DIST "
-                    + " left join TB_STOWAGE on "
-                    + " TB_DIST.DT_DELIVERY=TB_STOWAGE.DT_DELIVERY"
-                    + " and TB_DIST.CD_KYOTEN=TB_STOWAGE.CD_KYOTEN"
-                    + " inner join TB_STOWAGE_MAPPING on TB_STOWAGE.ID_STOWAGE=TB_STOWAGE_MAPPING.ID_STOWAGE"
-                    + " and TB_DIST_MAPPING.CD_DIST_GROUP=TB_STOWAGE_MAPPING.CD_DIST_GROUP"
-                    + " and TB_DIST_MAPPING.CD_SUM_TOKUISAKI=TB_STOWAGE_MAPPING.CD_SUM_TOKUISAKI"
-                    + " left join (select "
-                    + "	ID_STOWAGE,"
-                    + "	(case ST_BOXTYPE when 0 then sum(NU_OBOXCNT) else 0 end) box0,"
-                    + "	(case ST_BOXTYPE when 1 then sum(NU_OBOXCNT) else 0 end) box1,"
-                    + "	(case ST_BOXTYPE when 2 then sum(NU_OBOXCNT) else 0 end) box2,"
-                    + "	(case ST_BOXTYPE when 3 then sum(NU_OBOXCNT) else 0 end) box3"
-                    + "	from TB_STOWAGE_BOX group by ID_STOWAGE,ST_BOXTYPE) TB_STOWAGE_BOX on "
-                    + " TB_STOWAGE.ID_STOWAGE=TB_STOWAGE_BOX.ID_STOWAGE"
-                    + " where TB_DIST.DT_DELIVERY = @dt_delivdt and TB_DIST_MAPPING.CD_DIST_GROUP = @cd_dist_group"
+                    + "left join"
+                    + " (select DT_DELIVERY, CD_KYOTEN, CD_DIST_GROUP, CD_SUM_TOKUISAKI"
+                    + ",(case ST_BOXTYPE when 0 then sum(NU_OBOXCNT) else 0 end) box0"
+                    + ",(case ST_BOXTYPE when 1 then sum(NU_OBOXCNT) else 0 end) box1"
+                    + ",(case ST_BOXTYPE when 2 then sum(NU_OBOXCNT) else 0 end) box2"
+                    + ",(case ST_BOXTYPE when 3 then sum(NU_OBOXCNT) else 0 end) box3"
+                    + " from"
+                    + " TB_STOWAGE"
+                    + " inner join TB_STOWAGE_MAPPING on TB_STOWAGE.ID_STOWAGE = TB_STOWAGE_MAPPING.ID_STOWAGE"
+                    + " group by DT_DELIVERY,CD_KYOTEN,CD_DIST_GROUP,CD_SUM_TOKUISAKI,ST_BOXTYPE"
+                    + ") STOWAGE on TB_DIST.DT_DELIVERY = STOWAGE.DT_DELIVERY and TB_DIST.CD_KYOTEN = STOWAGE.CD_KYOTEN"
+                    + " and TB_DIST_MAPPING.CD_DIST_GROUP = STOWAGE.CD_DIST_GROUP and TB_DIST_MAPPING.CD_SUM_TOKUISAKI = STOWAGE.CD_SUM_TOKUISAKI"
+                    + " where TB_DIST.DT_DELIVERY = @dt_delivdt and TB_DIST_MAPPING.CD_DIST_GROUP = @cd_dist_group" 
                     + " group by "
                     + " TB_DIST_MAPPING.tdunitaddrcode,"
                     + " TB_DIST.DT_DELIVERY,"

@@ -1,31 +1,41 @@
-﻿using DistLargeGroup.Models;
+﻿using DistLargeGroup.Infranstructures;
+using DistLargeGroup.Models;
 using LogLib;
+using MahApps.Metro.Controls.Dialogs;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Services.Dialogs;
+using ReferenceLogLib;
+using ReferenceLogLib.Models;
+using System.Windows;
+using WindowLib.Utils;
+using static ImTools.ImMap;
 
 namespace DistLargeGroup.ViewModels
 {
     public class InputDistLargeGroupDlgViewModel : BindableBase, IDialogAware
     {
-        public DelegateCommand Clear { get; }
-        public DelegateCommand Register { get; }
-        public DelegateCommand Back { get; }
-        public DelegateCommand Refer { get; }
-        public DelegateCommand Release { get; }
+        public DelegateCommand ClearCommand { get; }
+        public DelegateCommand RegistCommand { get; }
+        public DelegateCommand BackCommand { get; }
+        public DelegateCommand ReferCommand { get; }
+        public DelegateCommand ReleaseCommand { get; }
 
         public string Title => "大仕分グループ情報入力";
 
         public event Action<IDialogResult>? RequestClose;
-        private Models.DistLargeGroup _distLargeGroup = new Models.DistLargeGroup();
+        private Models.DistLargeGroup? _distLargeGroup;
+        private IDialogService _dialogService;
+        private bool _isModified;
+        private Shain? _shain;
 
         // 参照日
-        private DateTime _date;
-        public DateTime Date
+        private DateTime _referenceDate;
+        public DateTime ReferenceDate
         {
-            get => _date;
-            set => SetProperty(ref _date, value);
+            get => _referenceDate;
+            set => SetProperty(ref _referenceDate, value);
         }
 
         // 拠点コード
@@ -33,7 +43,12 @@ namespace DistLargeGroup.ViewModels
         public string CdKyoten
         {
             get => _cdKyoten;
-            set => SetProperty(ref _cdKyoten, value);
+            set
+            {
+                SetProperty(ref _cdKyoten, value);
+                UpdateKyotenName();
+                _isModified = true;
+            }
         }
 
         // 拠点名称
@@ -41,7 +56,11 @@ namespace DistLargeGroup.ViewModels
         public string NmKyoten
         {
             get => _nmKyoten;
-            set => SetProperty(ref _nmKyoten, value);
+            set
+            {
+                SetProperty(ref _nmKyoten, value);
+                _isModified = true;
+            }
         }
 
         // 大仕分グループ
@@ -49,7 +68,11 @@ namespace DistLargeGroup.ViewModels
         public string CdLargeGroup
         {
             get => _cdLargeGroup;
-            set => SetProperty(ref _cdLargeGroup, value);
+            set
+            {
+                SetProperty(ref _cdLargeGroup, value);
+                _isModified = true;
+            }
         }
 
         // 大仕分グループ名称
@@ -57,7 +80,11 @@ namespace DistLargeGroup.ViewModels
         public string CdLargeGroupName
         {
             get => _cdLargeGroupName;
-            set => SetProperty(ref _cdLargeGroupName, value);
+            set
+            {
+                SetProperty(ref _cdLargeGroupName, value);
+                _isModified = true;
+            }
         }
 
         // 適用開始日
@@ -65,7 +92,11 @@ namespace DistLargeGroup.ViewModels
         public DateTime DtTekiyoKaishi
         {
             get => _dtTekiyoKaishi;
-            set => SetProperty(ref _dtTekiyoKaishi, value);
+            set
+            {
+                SetProperty(ref _dtTekiyoKaishi, value);
+                _isModified = true;
+            }
         }
 
         // 適用無効日
@@ -73,83 +104,185 @@ namespace DistLargeGroup.ViewModels
         public DateTime DtTekiyoMuko
         {
             get => _dtTekiyoMuko;
-            set => SetProperty(ref _dtTekiyoMuko, value);
+            set
+            {
+                SetProperty(ref _dtTekiyoMuko, value);
+                _isModified = true;
+            }
         }
 
         // 登録日時
-        private DateTime _dtTorokuNichiji;
-        public DateTime DtTorokuNichiji
+        private DateTime? _dtTorokuNichiji;
+        public DateTime? DtTorokuNichiji
         {
             get => _dtTorokuNichiji;
             set => SetProperty(ref _dtTorokuNichiji, value);
         }
 
         // 更新日時
-        private DateTime _dtKoshinNichiji;
-        public DateTime DtKoshinNichiji
+        private DateTime? _dtKoshinNichiji;
+        public DateTime? DtKoshinNichiji
         {
             get => _dtTorokuNichiji;
             set => SetProperty(ref _dtKoshinNichiji, value);
         }
 
         // 更新者コード
-        private string _cdShain = string.Empty;
-        public string CdShain
+        private string _cdHenkosha = string.Empty;
+        public string CdHenkosha
         {
-            get => _cdShain;
-            set => SetProperty(ref _cdShain, value);
+            get => _cdHenkosha;
+            set => SetProperty(ref _cdHenkosha, value);
         }
 
         // 更新者名称
-        private string _nmShain = string.Empty;
-        public string NmShain
+        private string _nmHenkosha = string.Empty;
+        public string NmHenkosha
         {
-            get => _nmShain;
-            set => SetProperty(ref _nmShain, value);
+            get => _nmHenkosha;
+            set => SetProperty(ref _nmHenkosha, value);
         }
+
+        private bool _isDateRelease;
+        public bool IsDateRelease
+        {
+            get => _isDateRelease;
+            set => SetProperty(ref _isDateRelease, value);
+        }
+
 
         // 履歴表示リスト
-        private List<Log> _logs = new List<Log>();
-        public List<Log> Logs
+        private ReferenceLog _referenceLog = new ReferenceLog();
+        public ReferenceLog ReferenceLog
         {
-            get => _logs;
-            set => SetProperty(ref _logs, value);
+            get => _referenceLog;
+            set => SetProperty(ref _referenceLog, value);
         }
 
-        public InputDistLargeGroupDlgViewModel()
+        private bool _isAdd;
+        public bool IsAdd
         {
-            Clear = new DelegateCommand(() =>
-            {
-                Syslog.Debug("InputDistLargeGroupDlgViewModel:Clear");
-                // fixme:クリアボタン押下
-            });
-
-            Register = new DelegateCommand(() =>
-            {
-                Syslog.Debug("InputDistLargeGroupDlgViewModel:Register");
-                // fixme:登録ボタン押下
-            });
-
-            Back = new DelegateCommand(() =>
-            {
-                Syslog.Debug("InputDistLargeGroupDlgViewModel:Back");
-                RequestClose?.Invoke(new DialogResult(ButtonResult.Cancel));
-            });
-
-            Refer = new DelegateCommand(() =>
-            {
-                Syslog.Debug("InputDistLargeGroupDlgViewModel:Refer");
-                // fixme:参照ボタン押下
-            });
-
-            Release = new DelegateCommand(() =>
-            {
-                Syslog.Debug("InputDistLargeGroupDlgViewModel:Release");
-                // fixme:解除ボタン押下
-            });
+            get => _isAdd;
+            set => SetProperty(ref _isAdd, value);
         }
 
-        public bool CanCloseDialog() => true;
+        public InputDistLargeGroupDlgViewModel(IDialogService dialogService)
+        {
+            ClearCommand = new DelegateCommand(Clear);
+            RegistCommand = new DelegateCommand(Regist);
+            BackCommand = new DelegateCommand(Back);
+            ReferCommand = new DelegateCommand(Refer);
+            ReleaseCommand = new DelegateCommand(Release);
+            _dialogService = dialogService;
+        }
+
+        private void Release()
+        {
+            IsDateRelease = true;
+        }
+
+        private void Refer()
+        {
+
+            try
+            {
+                var log = ReferenceLog.GetLogByDateAndSelect(ReferenceDate);
+                if (log is null)
+                {
+                    Clear();
+                    return;
+                }
+
+                var largeDistGroup = LargeGroupRepository.FindById(log.Id);
+                if (largeDistGroup is null)
+                {
+                    Clear();
+                    return;
+                }
+
+                DtTekiyoKaishi = largeDistGroup.DtTekiyoKaishi;
+                CdLargeGroupName = largeDistGroup.CdLargeGroupName;
+                DtTekiyoMuko = largeDistGroup.DtTekiyoMuko;
+                DtTorokuNichiji = largeDistGroup.CreatedAt;
+                DtKoshinNichiji = largeDistGroup.UpdatedAt;
+                CdHenkosha = largeDistGroup.CdHenkosha;
+                NmHenkosha = largeDistGroup.NmHenkosha;
+                _isModified = false;
+            }
+            catch (Exception ex)
+            {
+                WindowLib.Utils.MessageDialog.Show(_dialogService, ex.Message, "エラー");
+            }
+        }
+
+        private void Back()
+        {
+            RequestClose?.Invoke(new DialogResult(ButtonResult.Cancel));
+        }
+
+        private void Regist()
+        {
+            try
+            {
+                // idがnullの時は追加
+                long? id = null;
+                var log = ReferenceLog.GetLogByDateAndSelect(DtTekiyoKaishi);
+                if (log is not null)
+                {
+                    id = LargeGroupRepository.FindById(log.Id)?.IdLargeGroup;
+                }
+
+                if (string.IsNullOrEmpty(CdKyoten) || string.IsNullOrEmpty(NmKyoten))
+                {
+                    WindowLib.Utils.MessageDialog.Show(_dialogService, "拠点コードを入力してください", "入力エラー");
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(CdLargeGroup))
+                {
+                    WindowLib.Utils.MessageDialog.Show(_dialogService, "大仕分グループコードを入力してください", "入力エラー");
+                    return;
+                }
+
+                ReferenceLog.ValidateSummaryDate(DtTekiyoKaishi, DtTekiyoMuko, log is not null);
+
+                var largeGroup = new DistLargeGroup.Models.DistLargeGroup
+                {
+                    IdLargeGroup = id ?? 0,
+                    CdKyoten = CdKyoten,
+                    CdLargeGroup = CdLargeGroup,
+                    CdLargeGroupName = CdLargeGroupName ?? "",
+                    DtTekiyoKaishi = DtTekiyoKaishi,
+                    DtTekiyoMuko = DtTekiyoMuko,
+                    CdHenkosha = _shain?.HenkoshaCode ?? "",
+                    NmHenkosha= _shain?.HenkoshaName ?? "",
+                };
+
+                LargeGroupRepository.Save(largeGroup);
+                _isModified = false;
+                RequestClose?.Invoke(new DialogResult(ButtonResult.OK));
+            }
+            catch (Exception ex)
+            {
+                WindowLib.Utils.MessageDialog.Show(_dialogService, ex.Message, "エラー");
+            }
+        }
+
+        private void Clear()
+        {
+            SetupForAdd();
+        }
+
+        public bool CanCloseDialog()
+        {
+            if (_isModified
+                && WindowLib.Utils.MessageDialog.Show(_dialogService, "変更された情報が登録されていません。\n入力画面に戻りますか？", "変更確認", ButtonMask.Yes | ButtonMask.No) != ButtonResult.No)
+            {
+                return false;
+            }
+
+            return true;
+        }
 
         public void OnDialogClosed()
         {
@@ -158,29 +291,58 @@ namespace DistLargeGroup.ViewModels
         public void OnDialogOpened(IDialogParameters parameters)
         {
             _distLargeGroup = parameters.GetValue<Models.DistLargeGroup>("DistLargeGroup");
+            _shain = parameters.GetValue<Shain>("Shain");
+            IsAdd = _distLargeGroup == null;
             InitDialog();
+            _isModified = false;
         }
 
         private void InitDialog()
         {
-            // 項目欄確認
-            Date = DateTime.Today;
-            CdKyoten = "4201";
-            NmKyoten = "広島工場製品出荷";
-            CdLargeGroup = "1";
-            CdLargeGroupName = "大仕分グループ名称";
-            DtTekiyoKaishi = new DateTime(2023, 10, 1);
-            DtTekiyoMuko = new DateTime(2023, 12, 31);
-            DtTorokuNichiji = new DateTime(2023, 10, 11, 12, 34, 56);
-            DtKoshinNichiji = new DateTime(2023, 10, 11, 12, 34, 56);
-            CdShain = "0033550";
-            NmShain = "小田 賢行";
+            ReferenceDate = DateTime.Today;
+            ReferenceLog.LogInfos.Clear();
 
-            Logs = new List<Log>
+            SetupForAdd();
+            if (!_isAdd)
             {
-                new Log { Selected = false, DtTekiyoKaishi = "20230901", DtTekiyoMuko = "20231001", CdShain = "0033550", },
-                new Log { Selected = true, DtTekiyoKaishi = "20231001", DtTekiyoMuko = "20231231", CdShain = "0033550", },
-            };
+                ReferenceLog.LogInfos = LargeGroupQueryService.GetLog(_distLargeGroup!.CdKyoten, _distLargeGroup.CdLargeGroup).ToList();
+            }
+        }
+
+        private void SetupForAdd()
+        {
+            if (!IsAdd)
+            {
+                CdKyoten = _distLargeGroup!.CdKyoten;
+                CdLargeGroup = _distLargeGroup.CdLargeGroup;
+                CdLargeGroupName = _distLargeGroup.CdLargeGroupName;
+            }
+            else
+            {
+                CdKyoten = string.Empty;
+                CdLargeGroup = string.Empty;
+                CdLargeGroupName = string.Empty;
+            }
+
+            DtTekiyoKaishi = DateTime.Now;
+            DtTekiyoMuko = new DateTime(2999, 12, 31);
+            DtTorokuNichiji = null;
+            DtKoshinNichiji = null;
+            CdHenkosha = string.Empty;
+            NmHenkosha = string.Empty;
+            _isModified = false;
+        }
+
+        private void UpdateKyotenName()
+        {
+            try
+            {
+                NmKyoten = KyotenQueryService.GetName(CdKyoten, ReferenceDate);
+            }
+            catch (Exception ex)
+            {
+                WindowLib.Utils.MessageDialog.Show(_dialogService, ex.Message, "エラー");
+            }
         }
     }
 }

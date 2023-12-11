@@ -208,9 +208,7 @@ namespace TdDpsLib.Models
         }
         public int GetBlinkButton()
         {
-            // 点灯は使用しないので点灯を参照するように変更
-//          int color = LedColors.FindIndex(x => x.IsBlink == true);
-            int color = LedColors.FindIndex(x => x.IsLight == true);
+            int color = LedColors.FindIndex(x => x.IsBlink == true);
             return color == -1 ? -1 : color + 1;
         }
         public string GetNowDisplay()

@@ -1,7 +1,7 @@
-﻿using Customer.Models;
-using Dapper.FastCrud;
+﻿using Dapper.FastCrud;
 using DbLib;
 using DbLib.DbEntities;
+using ReferenceLogLib.Models;
 
 namespace Customer.Loader
 {
