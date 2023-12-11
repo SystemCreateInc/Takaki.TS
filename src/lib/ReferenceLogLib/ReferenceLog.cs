@@ -88,13 +88,11 @@ namespace ReferenceLogLib
         {
             LogInfos = LogInfos.Select(x => new LogInfo
             {
-                Id = x.Id,
                 Selected = x.StartDate == tekiyokaishiDate,
+                ShainCode = x.ShainCode,
                 StartDate = x.StartDate,
                 EndDate = x.EndDate,
-                ShainCode = x.ShainCode,
-            })
-            .ToList();
+            }).ToList();
         }
 
         // d•¡”ÍˆÍæ“¾
@@ -119,7 +117,7 @@ namespace ReferenceLogLib
 
             return string.Empty;
         }
-        
+
         private bool IsInRange(string targetDate, string startDate, string invalidDate)
         {
             // ŠJnˆÈã(1or0) • –³Œø“ú–¢–(-1)

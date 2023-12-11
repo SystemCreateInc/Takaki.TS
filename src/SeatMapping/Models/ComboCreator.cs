@@ -1,14 +1,32 @@
-﻿namespace SeatMapping.Models
+﻿using DbLib.Defs;
+using DbLib;
+using Dapper;
+using System.Windows.Controls.Primitives;
+using ReferenceLogLib.Models;
+
+namespace SeatMapping.Models
 {
     public class ComboCreator
     {
-        public static List<Combo> Create()
+        public static List<Combo> Create(string kyotenCode)
         {
-            return new Combo[]
+            var sql = "SELECT"
+                      + " CD_BLOCK "
+                      + ",ST_TDUNIT_TYPE "
+                      + " FROM TB_BLOCK "
+                      + $" where CD_KYOTEN = @kyotenCode and {CreateTekiyoSql.GetFromDate()}"
+                      + " order by CD_BLOCK";
+
+            using (var con = DbFactory.CreateConnection())
             {
-                new Combo { Index = 0, Id = 0, Name = "1" },
-                new Combo { Index = 1, Id = 1, Name = "2" },
-            }.ToList();
+                return con.Query(sql, new { kyotenCode, selectDate = DateTime.Now.ToString("yyyyMMdd") })
+                    .Select((q, idx) => new Combo
+                    {
+                        Index = idx,
+                        Id = q.CD_BLOCK,
+                        UnitType = q.ST_TDUNIT_TYPE,
+                    }).ToList();
+            }
         }
     }
 }
