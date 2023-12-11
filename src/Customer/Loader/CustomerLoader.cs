@@ -21,7 +21,8 @@ namespace Customer.Loader
                       + ",max(t2.NM_TOKUISAKI) NM_TOKUISAKI"
                       + " FROM TB_SUM_TOKUISAKI t1"
                       +$" left join TB_MTOKUISAKI t2 on t2.CD_TOKUISAKI = t1.CD_SUM_TOKUISAKI and {CreateTekiyoSql.GetFromDate("t2.")}"
-                      + " group by t1.CD_KYOTEN, t1.CD_SUM_TOKUISAKI";
+                      + " group by t1.CD_KYOTEN, t1.CD_SUM_TOKUISAKI"
+                      + " order by t1.CD_KYOTEN, t1.CD_SUM_TOKUISAKI";
 
             using (var con = DbFactory.CreateConnection())
             {
