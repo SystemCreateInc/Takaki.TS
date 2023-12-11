@@ -1,0 +1,311 @@
+﻿<UserControl x:Class="Picking.Views.MainPicking"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:controls="clr-namespace:WindowLib.Views;assembly=WindowLib"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converter="clr-namespace:Picking.Converter"   
+             xmlns:b="clr-namespace:WindowLib.Behaviors;assembly=WindowLib"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors">
+
+    <UserControl.Resources>
+        <Style x:Key="DataGridColumnAlignRight" TargetType="TextBlock" BasedOn="{x:Static DataGridTextColumn.DefaultElementStyle}">
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+        </Style>
+
+        <Style x:Key="ToggleButtonRed" TargetType="{x:Type ToggleButton}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="border" Padding="5,5,5,5" CornerRadius="5,5,5,5" Background="#FFBFACAC" BorderBrush="#FF000000" BorderThickness="1,1,1,1" SnapsToDevicePixels="True">
+                            <ContentPresenter x:Name="contentPresenter"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="Red"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ToggleButtonYellow" TargetType="{x:Type ToggleButton}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="border" Padding="5,5,5,5" CornerRadius="5,5,5,5" Background="#FFBFACAC" BorderBrush="#FF000000" BorderThickness="1,1,1,1" SnapsToDevicePixels="True">
+                            <ContentPresenter x:Name="contentPresenter"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="Yellow"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ToggleButtonGreen" TargetType="{x:Type ToggleButton}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="border" Padding="5,5,5,5" CornerRadius="5,5,5,5" Background="#FFBFACAC" BorderBrush="#FF000000" BorderThickness="1,1,1,1" SnapsToDevicePixels="True">
+                            <ContentPresenter x:Name="contentPresenter"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="#FF008040"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ToggleButtonWhite" TargetType="{x:Type ToggleButton}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="border" Padding="5,5,5,5" CornerRadius="5,5,5,5" Background="#FFBFACAC" BorderBrush="#FF000000" BorderThickness="1,1,1,1" SnapsToDevicePixels="True">
+                            <ContentPresenter x:Name="contentPresenter"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ToggleButtonBlue" TargetType="{x:Type ToggleButton}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="border" Padding="5,5,5,5" CornerRadius="5,5,5,5" Background="#FFBFACAC" BorderBrush="#FF000000" BorderThickness="1,1,1,1" SnapsToDevicePixels="True">
+                            <ContentPresenter x:Name="contentPresenter"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="#FF0080FF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <DockPanel>
+        <DockPanel.Resources>
+            <converter:StatusVisibleConvert x:Key="VisibleConvert"/>
+        </DockPanel.Resources>
+
+
+        <DockPanel DockPanel.Dock="Top">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Row="0" Grid.Column="0" DockPanel.Dock="Top" Orientation="Horizontal">
+                    <TextBlock Text="{Binding DistGroup, Mode=OneWay, StringFormat=仕分Ｇ： {0} }" FontSize="30" Margin="3"/>
+                    <TextBlock Text="{Binding DistGroup.DT_DELIVERY, Mode=OneWay, StringFormat=納品日:yyyy/MM/dd }" FontSize="30" Margin="50,0,0,0"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="1" Grid.Column="0" >
+                    <TextBlock Text="{Binding DistGroup.DistWorkTypeName, Mode=OneWay}" FontSize="50" FontWeight="Bold"  Margin="3">
+                        <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="Blue"/>
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="＜一斉仕分＞">
+                                        <Setter Property="Foreground" Value="Green"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+
+                <StackPanel Grid.Row="0" Grid.Column="1" DockPanel.Dock="Top" Orientation="Horizontal">
+                    <Grid>
+                        <ProgressBar Height="32" Width="300" Minimum="0" Maximum="{Binding PackCnt.ItemCntMax, Mode=OneWay}" Value="{Binding PackCnt.ItemCntValue, Mode=OneWay}" Style="{StaticResource MahApps.Styles.ProgressBar}" />
+                        <TextBlock Text="{Binding PackCnt.ItemCntText, Mode=OneWay, StringFormat=アイテム進捗： {0} }" TextAlignment="Center" Padding="0,10,0,0"/>
+                    </Grid>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Grid.Column="1" DockPanel.Dock="Top" Orientation="Horizontal">
+                    <Grid>
+                        <ProgressBar Height="32" Width="300" Minimum="0" Maximum="{Binding PackCnt.CntMax, Mode=OneWay}" Value="{Binding PackCnt.CntValue, Mode=OneWay}" Style="{StaticResource MahApps.Styles.ProgressBar}"/>
+                        <TextBlock Text="{Binding PackCnt.CntText, Mode=OneWay, StringFormat=バラ数進捗： {0} }" TextAlignment="Center" Padding="0,25,0,0"/>
+                    </Grid>
+                </StackPanel>
+
+            </Grid>
+        </DockPanel>
+
+        <GridSplitter Height="5" Background="MediumAquamarine"/>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="6*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="10*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Grid.Column="0" Margin="20,0,30,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="5*"/>
+                    <ColumnDefinition Width="17*"/>
+                    <ColumnDefinition Width="22*"/>
+                    <ColumnDefinition Width="22*"/>
+                    <ColumnDefinition Width="22*"/>
+                    <ColumnDefinition Width="22*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Command="{Binding OnColorBtn1}" Focusable="False" Margin="3" Height="150" Background="{Binding BackgroundColor1}" Grid.ColumnSpan="2">
+                    <Viewbox>
+                        <TextBlock Text="{Binding ColorBtnName1.NmShain}" Foreground="{Binding ForegroundColor1}"/>
+                    </Viewbox>
+                </Button>
+
+                <Button Grid.Column="2" Command="{Binding OnColorBtn2}" Focusable="False" Margin="3" Height="150" Background="{Binding BackgroundColor2}">
+                    <Viewbox>
+                        <TextBlock Text="{Binding ColorBtnName2.NmShain}" Foreground="{Binding ForegroundColor2}"/>
+                    </Viewbox>
+                </Button>
+
+                <Button Grid.Column="3" Command="{Binding OnColorBtn3}" Focusable="False" Margin="3" Height="150" Background="{Binding BackgroundColor3}">
+                    <Viewbox>
+                        <TextBlock Text="{Binding ColorBtnName3.NmShain}" Foreground="{Binding ForegroundColor3}"/>
+                    </Viewbox>
+                </Button>
+
+                <Button Grid.Column="4" Command="{Binding OnColorBtn4}" Focusable="False" Margin="3" Height="150" Background="{Binding BackgroundColor4}">
+                    <Viewbox>
+                        <TextBlock Text="{Binding ColorBtnName4.NmShain}" Foreground="{Binding ForegroundColor4}"/>
+                    </Viewbox>
+                </Button>
+
+                <Button Grid.Column="5" Command="{Binding OnColorBtn5}" Focusable="False" Margin="3" Height="150" Background="{Binding BackgroundColor5}">
+                    <Viewbox>
+                        <TextBlock Text="{Binding ColorBtnName5.NmShain}" Foreground="{Binding ForegroundColor5}"/>
+                    </Viewbox>
+                </Button>
+            </Grid>
+
+            <controls:GridColumnSetting TargetGrid="{Binding ElementName=distcolorgrid}" SettingsKey="GridDistColorColumns"/>
+            <DataGrid Grid.Column="0" Grid.Row="1" x:Name="distcolorgrid" ItemsSource="{Binding DisplayDistColorDatas}" CurrentItem="{Binding CurrentDistColor, Mode=TwoWay}"
+                  SelectedItem="{Binding CurrentDistColor, Mode=TwoWay}"
+                  CanUserAddRows="False" SelectionMode="Single" CanUserSortColumns="false"
+                  Margin="20,0,30,0"
+                  AutoGenerateColumns="False" IsReadOnly="True" VerticalScrollBarVisibility="Hidden">
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="色" Width="Auto" Binding="{Binding DistColor_name}" IsReadOnly="True">
+                        <DataGridTextColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DistColor_name}" Value="赤">
+                                        <Setter Property="Background" Value="Red" />
+                                        <Setter Property="Foreground" Value="Black" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding DistColor_name}" Value="黄">
+                                        <Setter Property="Background" Value="Yellow" />
+                                        <Setter Property="Foreground" Value="Black" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding DistColor_name}" Value="緑">
+                                        <Setter Property="Background" Value="LightGreen" />
+                                        <Setter Property="Foreground" Value="Black" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding DistColor_name}" Value="白">
+                                        <Setter Property="Background" Value="White" />
+                                        <Setter Property="Foreground" Value="Black" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding DistColor_name}" Value="青">
+                                        <Setter Property="Background" Value="Blue" />
+                                        <Setter Property="Foreground" Value="White" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGridTextColumn.CellStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTextColumn Header="状態" Width="Auto" Binding="{Binding DistType_name}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="担当者" Width="Auto" Binding="{Binding NmShain}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="仕分商品種類" Width="Auto" Binding="{Binding DisplayDistitem_cnt}" IsReadOnly="True"/>
+
+                    <DataGridTextColumn Header="予定数" Width="Auto" Binding="{Binding Display_Dops}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="残数" Width="Auto" Binding="{Binding Display_Ddps}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="店舗予定" Width="Auto" Binding="{Binding DisplayOrderShop_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="店舗残" Width="Auto" Binding="{Binding DisplayRemainShop_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                <Grid DockPanel.Dock="Right" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Grid.Row="0" Command="{Binding OnItemInfo}" Focusable="False" Margin="3" Height="100">
+                        <Viewbox >
+                            <TextBlock Text=" 商品一覧 "/>
+                        </Viewbox>
+                    </Button>
+
+                    <Button Grid.Row="1" Command="{Binding OnCheck}" Focusable="False" Margin="3" Height="100"  Background="{Binding CheckColor}">
+                        <Viewbox>
+                            <TextBlock Text="　 検品 　" />
+                        </Viewbox>
+                    </Button>
+
+                    <Button Grid.Row="2" Command="{Binding OnRemove}" Focusable="False" Margin="3" Height="100">
+                        <Viewbox>
+                            <TextBlock Text="　抜取り　" />
+                        </Viewbox>
+                    </Button>
+
+                    <Button Grid.Row="4" Command="{Binding OnSetShain}" Focusable="False" Margin="3" Height="100">
+                        <Viewbox>
+                            <TextBlock Text="担当者&#10;設定"/>
+                        </Viewbox>
+                    </Button>
+
+                    <Button Grid.Row="5" Command="{Binding OnChangeDistType}" Focusable="False" Margin="3" Height="100">
+                        <Viewbox>
+                            <TextBlock Text="仕分方法&#10;切替え" />
+                        </Viewbox>
+                    </Button>
+
+                    <Button Grid.Column="0" Grid.Row="7" Command="{Binding OnExit}" Focusable="False" Height="100">
+                        <Viewbox>
+                            <TextBlock Text="終了&#10;(Shift)"/>
+                        </Viewbox>
+                    </Button>
+
+                </Grid>
+            </Grid>
+        </Grid>
+    </DockPanel>
+</UserControl>
