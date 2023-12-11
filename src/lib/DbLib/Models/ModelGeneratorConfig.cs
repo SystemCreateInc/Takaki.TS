@@ -750,10 +750,17 @@ namespace DbLib.DbEntities
         public virtual long IDDISTGROUP { get; set; }
 
         /// <summary>
+        /// Represents the column 'CD_SHUKKA_BATCH'.
+        /// </summary>
+        [Key]
+        [Column("CD_SHUKKA_BATCH", Order = 2)]
+        public virtual string CDSHUKKABATCH { get; set; }
+
+        /// <summary>
         /// Represents the column 'NU_COURSE_SEQ'.
         /// </summary>
         [Key]
-        [Column("NU_COURSE_SEQ", Order = 2)]
+        [Column("NU_COURSE_SEQ", Order = 3)]
         public virtual int NUCOURSESEQ { get; set; }
 
         /// <summary>
