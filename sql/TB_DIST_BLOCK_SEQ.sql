@@ -11,7 +11,7 @@ create table TB_DIST_BLOCK_SEQ (
 	NU_BLOCK_SEQ			integer					not null,	/* ブロック順					*/
 	CD_BLOCK				nchar(2),							/* ブロック						*/
 	CD_ADDR_FROM			nchar(4),							/* 開始アドレス					*/
-	CD_ADDR_TO				nchar(3),							/* 終了アドレス					*/
+	CD_ADDR_TO				nchar(4),							/* 終了アドレス					*/
 
 	createdAt 				datetime 				not null,	/*	データ挿入日				*/
 	updatedAt 				datetime 				not null,	/*	データ更新日				*/
