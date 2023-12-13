@@ -48,7 +48,7 @@ namespace SeatThreshold.ViewModels
             set
             {
                 SetProperty(ref _cdKyoten, value);
-                NmKyoten = KyotenLoader.GetName(CdKyoten, ReferenceDate.ToString("yyyyMMdd"));
+                NmKyoten = NameLoader.GetKyoten(CdKyoten);
                 _isChange = true;
             }
         }
@@ -219,7 +219,7 @@ namespace SeatThreshold.ViewModels
                     return;
                 }
 
-                Syslog.Debug("InputCustomerViewModel:Refer");
+                Syslog.Debug("InputSeatThresholdDlgViewModel:Refer");
                 ClearInfo(IsAdd);
                 SetReferenceInfo();
             });
@@ -310,7 +310,7 @@ namespace SeatThreshold.ViewModels
         // 適用名称再取得
         private void ReloadTekiyoName()
         {
-            NmKyoten = KyotenLoader.GetName(CdKyoten, ReferenceDate.ToString("yyyyMMdd"));
+            NmKyoten = NameLoader.GetKyoten(CdKyoten);
         }
 
         private bool ConfirmationExit()

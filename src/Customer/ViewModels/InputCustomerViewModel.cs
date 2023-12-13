@@ -32,7 +32,7 @@ namespace Customer.ViewModels
             get => _referenceDate;
             set
             {
-                SetProperty(ref _referenceDate, value);
+                SetProperty(ref _referenceDate, value);                
                 ReloadTekiyoName();
             }
         }
@@ -45,7 +45,7 @@ namespace Customer.ViewModels
             set
             {
                 SetProperty(ref _cdKyoten, value);
-                NmKyoten = KyotenLoader.GetName(CdKyoten, ReferenceDate.ToString("yyyyMMdd"));
+                NmKyoten = NameLoader.GetKyoten(CdKyoten);
                 _isChange = true;
             }
         }
@@ -66,7 +66,7 @@ namespace Customer.ViewModels
             set
             {
                 SetProperty(ref _cdSumTokuisaki, value);
-                NmSumTokuisaki = CustomerLoader.GetName(CdSumTokuisaki, ReferenceDate.ToString("yyyyMMdd"));
+                NmSumTokuisaki = NameLoader.GetTokuisaki(CdSumTokuisaki);
                 _isChange = true;
             }
         }
@@ -470,11 +470,12 @@ namespace Customer.ViewModels
         // 適用名称再取得
         private void ReloadTekiyoName()
         {
+            // 静的参照日更新
             TekiyoDate.ReferenceDate = ReferenceDate.ToString("yyyyMMdd");
 
-            NmSumTokuisaki = CustomerLoader.GetName(CdSumTokuisaki, TekiyoDate.ReferenceDate);
+            NmSumTokuisaki = NameLoader.GetTokuisaki(CdSumTokuisaki);
 
-            NmKyoten = KyotenLoader.GetName(CdKyoten, TekiyoDate.ReferenceDate);
+            NmKyoten = NameLoader.GetKyoten(CdKyoten);
 
             ChildCustomers = new ObservableCollection<ChildCustomer>(ChildCustomers.Select(x => new ChildCustomer
             {

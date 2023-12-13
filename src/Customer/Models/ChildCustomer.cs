@@ -1,5 +1,6 @@
 ﻿using Customer.Loader;
 using Prism.Mvvm;
+using TakakiLib.Models;
 
 namespace Customer.Models
 {
@@ -12,7 +13,7 @@ namespace Customer.Models
             set
             {
                 SetProperty(ref _cdTokuisakiChild, value);
-                NmTokuisaki = CustomerLoader.GetName(CdTokuisakiChild, TekiyoDate.ReferenceDate);
+                NmTokuisaki = NameLoader.GetTokuisaki(CdTokuisakiChild);
             }
         }
 
