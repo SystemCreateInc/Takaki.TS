@@ -1,7 +1,8 @@
-using Customer.Models;
 using Prism.Mvvm;
+using ReferenceLogLib.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace ReferenceLogLib
@@ -32,6 +33,24 @@ namespace ReferenceLogLib
 
             UpdateSelected(startDate);
             return startDate;
+        }
+
+        public LogInfo? GetLogByDateAndSelect(DateTime selectDate)
+        {
+            LogInfo? log = null;
+            var dateText = selectDate.ToString("yyyyMMdd");
+
+            foreach (var logInfo in LogInfos)
+            {
+                if (IsInRange(dateText, logInfo.StartDate, logInfo.EndDate))
+                {
+                    log = logInfo;
+                    break;
+                }
+            }
+
+            UpdateSelected(log?.StartDate ?? "");
+            return log;
         }
 
         // 適用期間チェック
@@ -98,7 +117,7 @@ namespace ReferenceLogLib
 
             return string.Empty;
         }
-        
+
         private bool IsInRange(string targetDate, string startDate, string invalidDate)
         {
             // 開始以上(1or0) ＆ 無効日未満(-1)
