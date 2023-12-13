@@ -11,13 +11,13 @@ create table TB_DIST_BLOCK_SEQ (
 	NU_BLOCK_SEQ			integer					not null,	/* ブロック順					*/
 	CD_BLOCK				nchar(2),							/* ブロック						*/
 	CD_ADDR_FROM			nchar(4),							/* 開始アドレス					*/
-	CD_ADDR_TO				nchar(3),							/* 終了アドレス					*/
+	CD_ADDR_TO				nchar(4),							/* 終了アドレス					*/
 
 	createdAt 				datetime 				not null,	/*	データ挿入日				*/
 	updatedAt 				datetime 				not null,	/*	データ更新日				*/
 	
 	constraint fk_TB_DIST_BLOCK_SEQ foreign key (ID_DIST_BLOCK) references TB_DIST_BLOCK(ID_DIST_BLOCK) on delete cascade,
 	
-	constraint pk_TB_DIST_BLOCK_SEQ primary key (ID_DIST_BLOCK,NU_SEQ)
+	constraint pk_TB_DIST_BLOCK_SEQ primary key (ID_DIST_BLOCK,NU_BLOCK_SEQ)
 );
 
