@@ -579,17 +579,17 @@ namespace DbLib.DbEntities
         public virtual DateTime UpdatedAt { get; set; }
 
         /// <summary>
-        /// Represents the navigation property for the parent-children relationship involving <seealso cref="TBDISTBLOCKCOURSESEQEntity"/>
+        /// Represents the navigation property for the parent-children relationship involving <seealso cref="TBDISTBLOCKSEQEntity"/>
         /// </summary>
-        [InverseProperty(nameof(TBDISTBLOCKCOURSESEQEntity.TBDISTBLOCK))]
-        public virtual IEnumerable<TBDISTBLOCKCOURSESEQEntity>? TBDISTBLOCKCOURSESEQ { get; set; }
+        [InverseProperty(nameof(TBDISTBLOCKSEQEntity.TBDISTBLOCK))]
+        public virtual IEnumerable<TBDISTBLOCKSEQEntity>? TBDISTBLOCKSEQ { get; set; }
     }
 
     /// <summary>
-    /// Represents the 'TB_DIST_BLOCK_COURSE_SEQ' table.
+    /// Represents the 'TB_DIST_BLOCK_SEQ' table.
     /// </summary>
-    [Table("TB_DIST_BLOCK_COURSE_SEQ")]
-    public partial class TBDISTBLOCKCOURSESEQEntity
+    [Table("TB_DIST_BLOCK_SEQ")]
+    public partial class TBDISTBLOCKSEQEntity
     {
         /// <summary>
         /// Represents the column 'ID_DIST_BLOCK'.
@@ -600,17 +600,17 @@ namespace DbLib.DbEntities
         public virtual long IDDISTBLOCK { get; set; }
 
         /// <summary>
-        /// Represents the column 'NU_COURSE_SEQ'.
+        /// Represents the column 'NU_BLOCK_SEQ'.
         /// </summary>
         [Key]
-        [Column("NU_COURSE_SEQ", Order = 2)]
-        public virtual int NUCOURSESEQ { get; set; }
+        [Column("NU_BLOCK_SEQ", Order = 2)]
+        public virtual int NUBLOCKSEQ { get; set; }
 
         /// <summary>
-        /// Represents the column 'CD_COURSE'.
+        /// Represents the column 'CD_BLOCK'.
         /// </summary>
-        [Column("CD_COURSE")]
-        public virtual string? CDCOURSE { get; set; }
+        [Column("CD_BLOCK")]
+        public virtual string? CDBLOCK { get; set; }
 
         /// <summary>
         /// Represents the column 'CD_ADDR_FROM'.
