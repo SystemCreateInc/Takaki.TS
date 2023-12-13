@@ -17,5 +17,7 @@ namespace DistGroup.Models
             get => _cdCourse;
             set => SetProperty(ref _cdCourse, value);
         }
+
+        public string PadCourse => CdCourse.PadLeft(3, '0');
     }
 }

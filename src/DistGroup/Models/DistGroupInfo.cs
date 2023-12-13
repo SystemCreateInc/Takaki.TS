@@ -4,7 +4,7 @@ using Prism.Mvvm;
 
 namespace DistGroup.Models
 {
-    public class DistGroup : BindableBase
+    public class DistGroupInfo : BindableBase
     {
         private string _cdDistGroup = string.Empty;
         public string CdDistGroup
@@ -56,5 +56,17 @@ namespace DistGroup.Models
             get => _cdLargeGroupName;
             set => SetProperty(ref _cdLargeGroupName, value);
         }
+
+        public long IdDistGroup { get; internal set; }
+
+        // 出荷バッチ、大仕分、コース統合
+        public List<BatchInfo> Batches { get; internal set; } = new List<BatchInfo>();
+        // DBからの受信用
+        public List<LargeDist> LargeDists { get; internal set; } = new List<LargeDist>();
+
+        public string Tekiyokaishi { get; set; } = string.Empty;
+        public string TekiyoMuko { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

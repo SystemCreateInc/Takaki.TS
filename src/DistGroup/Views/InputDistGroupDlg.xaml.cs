@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using DistGroup.Models;
+using System.Windows.Controls;
 
 namespace DistGroup.Views
 {
