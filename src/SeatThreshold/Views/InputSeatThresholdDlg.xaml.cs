@@ -31,8 +31,7 @@ namespace SeatThreshold.Views
             }
             else
             {
-                NuTdunitCnt.Focus();
-                NuTdunitCnt.SelectAll();
+                ReferenceDate.Focus();
             }
         }
     }
