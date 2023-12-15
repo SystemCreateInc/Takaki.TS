@@ -196,7 +196,7 @@ namespace Customer.ViewModels
 
             Refer = new DelegateCommand(() =>
             {
-                if (!ReferenceLog.LogInfos.Any())
+                if (!ReferenceLog.LogInfos.Any() || IsAdd)
                 {
                     return;
                 }
@@ -321,8 +321,8 @@ namespace Customer.ViewModels
 
                 var targetCustomer = new SumCustomer
                 {
-                    CdKyoten = CdKyoten,
-                    CdSumTokuisaki = CdSumTokuisaki,
+                    CdKyoten = CdKyoten.PadLeft(4, '0'),
+                    CdSumTokuisaki = CdSumTokuisaki.PadLeft(6, '0'),
                     Tekiyokaishi = DtTekiyoKaishi.ToString("yyyyMMdd"),
                     TekiyoMuko = DtTekiyoMuko.ToString("yyyyMMdd"),
                     ChildCustomers = new List<ChildCustomer>(ChildCustomers.Where(x => !x.CdTokuisakiChild.IsNullOrEmpty())),
@@ -409,6 +409,7 @@ namespace Customer.ViewModels
         {
             try
             {
+                ReferenceLog.LogInfos = LogLoader.Get(CdKyoten.PadLeft(4, '0'), CdSumTokuisaki.PadLeft(6, '0')).ToList();
                 ReferenceLog.ValidateSummaryDate(DtTekiyoKaishi, DtTekiyoMuko, isUpdate);
                 return true;
             }

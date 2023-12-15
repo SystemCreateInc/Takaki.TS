@@ -49,6 +49,8 @@ namespace Customer.Models
 
                 sumTokuiEntity.DTTEKIYOKAISHI = targetCustomer.Tekiyokaishi;
                 sumTokuiEntity.DTTEKIYOMUKO = targetCustomer.TekiyoMuko;
+                sumTokuiEntity.CDHENKOSHA = shainInfo.HenkoshaCode;
+                sumTokuiEntity.NMHENKOSHA = shainInfo.HenkoshaName;
                 sumTokuiEntity.UpdatedAt = DateTime.Now;
 
                 con.Update(sumTokuiEntity, x => x.AttachToTransaction(tr));
