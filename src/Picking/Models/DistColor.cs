@@ -94,11 +94,11 @@ namespace Picking.Models
             set => SetProperty(ref _itemseqs, value);
         }
 
-        private int _distseq = 0;
-        public int DistSeq
+        private List<int> _distseqs = new List<int>() { 0, 0, 0 };
+        public List<int> DistSeq
         {
-            get => _distseq;
-            set => SetProperty(ref _distseq, value);
+            get => _distseqs;
+            set => SetProperty(ref _distseqs, value);
         }
 
         // 表示器単位の表示するPS数
@@ -113,7 +113,8 @@ namespace Picking.Models
             ItemSeqs = new List<DistItemSeq>();
             Tdunitdisplay.Clear();
             DStatus = (int)Status.Ready;
-            DistSeq = 0;
+            for (int i = 0; i < DistSeq.Count(); i++)
+                DistSeq[i] = 0;
             Clear();
         }
         public override string QtyFieldSpace(int ps)
@@ -162,6 +163,9 @@ namespace Picking.Models
         public string TdDisplay { get; set; } = "";
         public int Status { get; set; }
         public int InSeq { get; set; }
+        public int Zone { get; set; }
+        public int TdUnitSeq { get; set; }
+        public bool bLight { get; set; } = false;
     }
     public class TdColor
     {

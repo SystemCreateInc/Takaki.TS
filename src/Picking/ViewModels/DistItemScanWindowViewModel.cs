@@ -1,6 +1,5 @@
-﻿using DbLib.Defs;
-using ImTools;
-using LogLib;
+﻿using LogLib;
+using Picking.Defs;
 using Picking.Models;
 using Picking.Services;
 using Picking.Views;
@@ -9,22 +8,15 @@ using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Services.Dialogs;
-using SelDistGroupLib.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Runtime;
-using System.Text;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using TdDpsLib.Models;
 using WindowLib.Utils;
-using static ImTools.ImMap;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace Picking.ViewModels
 {
@@ -157,13 +149,19 @@ namespace Picking.ViewModels
             set => SetProperty(ref _isenablescan, value);
         }
 
+        private DistColorInfo? _distcolorinfo = null;
+        public DistColorInfo? DistColorInfo
+        {
+            get => _distcolorinfo;
+            set => SetProperty(ref _distcolorinfo, value);
+        }
+
         private readonly IDialogService _dialogService;
         private readonly IRegionManager _regionManager;
         private readonly IEventAggregator _eventAggregator;
 
-        private DistColorInfo? _distcolorinfo = null;
-        private DistGroupEx? _distgroup = null;
-        public DistGroupEx? DistGroup
+        private DistGroupEx _distgroup;
+        public DistGroupEx DistGroup
         {
             get => _distgroup;
             set => SetProperty(ref _distgroup, value);
@@ -175,7 +173,7 @@ namespace Picking.ViewModels
             _dialogService = dialogService;
             _regionManager = regionManager;
             _eventAggregator = eventAggregator;
-            _distcolorinfo = distcolorinfo;
+            DistColorInfo = distcolorinfo;
             _distgroup = distgroup;
             TdDps = tddps;
 
@@ -389,11 +387,14 @@ namespace Picking.ViewModels
                         distcolor.ItemSeqs = DisplayDistItemDatas!;
                         distcolor.CdShain = SelectedShain.CdShain;
                         distcolor.NmShain = SelectedShain.NmShain;
+                        distcolor.DistWorkMode = IsCheck ? (int)DistWorkMode.Check : (int)DistWorkMode.Dist;
 
                         // 一斉配分の場合は順序を設定
-                        if (DistGroup!.IsDistWorkNormal==true)
+                        if (distcolorinfo.IsDistWorkNormal==true)
                         {
-                            distcolor.DistSeq = ++DistGroup!.DistSeq;
+                            int distseq = ++_distcolorinfo!.DistSeq;
+                            for (int i=0; i<distcolor.DistSeq.Count();i++)
+                                distcolor.DistSeq[i] = distseq;
                         }
 
                         // 明細データ読み込み
@@ -405,12 +406,14 @@ namespace Picking.ViewModels
                             }
                         }
 
-                        bool bRet = TdUnitManager.TdLight(ref distcolor, _distgroup, TdDps);
+                        bool bRet = TdUnitManager.TdLight(ref distcolor, distcolorinfo.IsDistWorkNormal, TdDps);
 
                         // 作業報告書開始
                         distcolor.ReportStart(SelectedShain, distcolor.Distitem_cnt, distcolor.DistWorkMode);
-
                         DisplayDistItemDatas = null;
+
+                        UpdateProgress();
+
                         _regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
                     }
                 }
@@ -478,13 +481,21 @@ namespace Picking.ViewModels
                 DistColor? disstcolor = _distcolorinfo?.GetDistColor(Color);
                 if (disstcolor != null)
                 {
-                    // 内容コピー
-                    if (disstcolor.ItemSeqs.Count() != 0)
+                    if (IsEnableScan)
                     {
-                        for (int i = 0; i < DistBase.ITEMMAX; i++)
+                        // 内容コピー
+                        if (disstcolor.ItemSeqs.Count() != 0)
                         {
-                            SetItemRow(i, disstcolor.ItemSeqs[i]);
+                            for (int i = 0; i < DistBase.ITEMMAX; i++)
+                            {
+                                SetItemRow(i, disstcolor.ItemSeqs[i]);
+                            }
                         }
+                    }
+                    else
+                    {
+                        // 参照
+                        DisplayDistItemDatas = disstcolor.ItemSeqs;
                     }
                 }
             }
@@ -578,18 +589,21 @@ namespace Picking.ViewModels
         void CheckItem(DistItemSeq distitemseq)
         {
             // 選択商品が作業中かチェックする
-            DistColor? disstcolor = _distcolorinfo?.GetDistColor(Color);
-            if (disstcolor != null)
+            for (int i = 0; i < DistBase.ITEMMAX; i++)
+            {
+                if (DisplayDistItemDatas![i].GetUniqueItemKey == distitemseq.GetUniqueItemKey)
+                {
+                    throw new Exception($"選択済みの商品です。");
+                }
+            }
+
+            foreach(var distcolor in _distcolorinfo!.DistColors!)
             {
                 for (int i = 0; i < DistBase.ITEMMAX; i++)
                 {
-                    if (DisplayDistItemDatas![i].GetUniqueItemKey == distitemseq.GetUniqueItemKey)
+                    if (distcolor!.ItemSeqs.Count() == DistBase.ITEMMAX && distcolor!.ItemSeqs[i].GetUniqueItemKey == distitemseq.GetUniqueItemKey)
                     {
-                        throw new Exception($"選択済みの商品です。");
-                    }
-                    if (disstcolor.ItemSeqs.Count() == DistBase.ITEMMAX && disstcolor.ItemSeqs[i].GetUniqueItemKey == distitemseq.GetUniqueItemKey)
-                    {
-                        throw new Exception($"作業中の商品です。");
+                        throw new Exception($"{distcolor.DistColor_name}で作業中の商品です。");
                     }
                 }
             }
@@ -619,6 +633,25 @@ namespace Picking.ViewModels
                     CurrentDistItemSeq.Ops = distdetail.Ops;
                     CurrentDistItemSeq.Dops = distdetail.Dops;
                 }
+            }
+        }
+        private void UpdateProgress()
+        {
+            try
+            {
+                if (DistGroup != null)
+                {
+                    ProgressCnt? progcnt = DistProgressManager.GetProgressCnts(DistGroup);
+                    if (progcnt != null)
+                    {
+                        DistProgressManager.UpdateDistProgress(DistGroup, DistColorInfo!, progcnt);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Syslog.Error($"UpdateProgress:{e.Message}");
+                MessageDialog.Show(_dialogService, e.Message, "エラー");
             }
         }
     }

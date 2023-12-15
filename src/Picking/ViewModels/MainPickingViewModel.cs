@@ -284,11 +284,16 @@ namespace Picking.ViewModels
             set => SetProperty(ref _selectedshain, value);
         }
 
+        private DistColorInfo _distcolorinfo;
+        public DistColorInfo DistColorInfo
+        {
+            get => _distcolorinfo;
+            set => SetProperty(ref _distcolorinfo, value);
+        }
 
         public bool bTdConnectionError { get; set; } = false;
 
         public TdDpsManager TdDps;
-        public DistColorInfo _distcolorinfo;
 
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
@@ -306,6 +311,10 @@ namespace Picking.ViewModels
             TdDps = tddps;
             _distcolorinfo = distcolorinfo;
             _distgroup = distgroup;
+
+
+            // 配分種類デフォルト設定
+            DistColorInfo.DistWorkType = 1;
 
             _mutex = new System.Threading.Mutex(false, "MainPickingViewModel");
 
@@ -401,7 +410,7 @@ namespace Picking.ViewModels
                     }
                 }
 
-                DistGroup.DistWorkType = DistGroup.DistWorkType == 0 ? 1 : 0;
+                distcolorinfo.DistWorkType = distcolorinfo.DistWorkType == 0 ? 1 : 0;
 
             }).ObservesCanExecute(() => CanDistType);
 
@@ -425,6 +434,7 @@ namespace Picking.ViewModels
                         // 作業実績書き込み
                         DistColorManager.WorkReportAppend(DistGroup, _distcolorinfo.RepotShains);
 
+                        UpdateProgress(true);
 
                         WaitProgressDialog.ShowProgress(
                             "表示器消灯",
@@ -517,7 +527,13 @@ namespace Picking.ViewModels
                     {
                         try
                         {
-                            TdUnitManager.TdUnitRcv(TdDps, _distcolorinfo, stno, group, addr, color);
+                            bool bDistEnd = false;
+                            TdUnitManager.TdUnitRcv(TdDps, _distcolorinfo, stno, group, addr, color, ref bDistEnd);
+                            // 完了したので進捗更新
+                            if (bDistEnd)
+                            {
+                                UpdateProgress();
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -605,9 +621,6 @@ namespace Picking.ViewModels
                 _distcolorinfo.DistColors = DistColorManager.SetColors();
 
                 UpdateColorDisplay();
-
-                // 進捗更新
-                UpdateProgress();
             }
             catch (Exception e)
             {
@@ -666,6 +679,7 @@ namespace Picking.ViewModels
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
+            UpdateProgress();
         }
 
         private void Closing(object? sender, CancelEventArgs e)
@@ -768,24 +782,30 @@ namespace Picking.ViewModels
             DisplayDistColorDatas = _distcolorinfo.DistColors?.ToList();
         }
 
-        private void UpdateProgress()
+        private void UpdateProgress(bool bEnd=false)
         {
-            try
+            Task.Run(() =>
             {
-                RefreshToolBarBtn();
-                PackCnt = DistProgressManager.GetProgressCnts(DistGroup);
-                DistProgressManager.UpdateDistProgress(DistGroup, _distcolorinfo, PackCnt);
-            }
-            catch (Exception e)
-            {
-                Syslog.Error($"UpdateProgress:{e.Message}");
-                MessageDialog.Show(_dialogService, e.Message, "エラー");
-            }
+                try
+                {
+                    RefreshToolBarBtn();
+                    PackCnt = DistProgressManager.GetProgressCnts(DistGroup);
+                    if (PackCnt != null)
+                    {
+                        DistProgressManager.UpdateDistProgress(DistGroup, _distcolorinfo, PackCnt, bEnd);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Syslog.Error($"UpdateProgress:{e.Message}");
+                    MessageDialog.Show(_dialogService, e.Message, "エラー");
+                }
 
-            if (PackCnt == null)
-            {
-                PackCnt = new ProgressCnt();
-            }
+                if (PackCnt == null)
+                {
+                    PackCnt = new ProgressCnt();
+                }
+            });
         }
         private void CheckShifted()
         {
@@ -821,7 +841,6 @@ namespace Picking.ViewModels
                 DistGroup.IdPc = distgroup.IdPc;
                 DistGroup.CdBlock = distgroup.CdBlock;
                 DistGroup.CdKyoten = distgroup.CdKyoten;
-                DistGroup.DistWorkType = 0;
                 return true;
             }
             return false;
