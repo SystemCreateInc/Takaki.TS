@@ -347,7 +347,7 @@ namespace SeatThreshold.ViewModels
                     TekiyoMuko = DtTekiyoMuko.ToString("yyyyMMdd"),
                 };
 
-                var existData = SeatThresholdLoader.GetFromKey(CdKyoten, targetData.CdBlock, DtTekiyoKaishi.ToString("yyyyMMdd"));
+                var existData = SeatThresholdLoader.GetFromKey(targetData.CdKyoten, targetData.CdBlock, targetData.Tekiyokaishi);
                 var isExist = existData is not null;
 
                 if (!ValidateSummaryDate(isExist))
@@ -394,7 +394,13 @@ namespace SeatThreshold.ViewModels
                 return false;
             }
 
-            if(!int.TryParse(NuTdunitCnt, out int tdUnitCnt)
+            if (NmKyoten.IsNullOrEmpty())
+            {
+                MessageDialog.Show(_dialogService, "拠点名称が取得出来ていません。", "入力エラー");
+                return false;
+            }
+
+            if (!int.TryParse(NuTdunitCnt, out int tdUnitCnt)
                 || !int.TryParse(NuThreshold, out int threshold))
             {
                 MessageDialog.Show(_dialogService, "表示器数、しきい値を数値で入力してください。", "入力エラー");

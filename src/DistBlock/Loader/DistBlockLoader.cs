@@ -21,7 +21,8 @@ namespace DistBlock.Loader
                     + " FROM TB_DIST_BLOCK t1"
                     + $" left join TB_MKYOTEN t2 on t2.CD_KYOTEN = t1.CD_KYOTEN and {CreateTekiyoSql.GetFromDate("t2.")}"
                     + $" left join TB_DIST_GROUP t3 on t3.CD_DIST_GROUP = t1.CD_DIST_GROUP and {CreateTekiyoSql.GetFromDate("t3.")}"
-                    + " group by t1.CD_KYOTEN, t1.CD_DIST_GROUP";
+                    + " group by t1.CD_KYOTEN, t1.CD_DIST_GROUP"
+                    + " order by t1.CD_KYOTEN, t1.CD_DIST_GROUP";
 
             using (var con = DbFactory.CreateConnection())
             {

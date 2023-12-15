@@ -438,7 +438,7 @@ namespace DistGroup.ViewModels
                     TekiyoMuko = DtTekiyoMuko.ToString("yyyyMMdd"),
                 };
 
-                var existData = DistGroupLoader.GetFromKey(CdKyoten, CdDistGroup, DtTekiyoKaishi.ToString("yyyyMMdd"));
+                var existData = DistGroupLoader.GetFromKey(targetData.CdKyoten, targetData.CdDistGroup, targetData.Tekiyokaishi);
                 var isExist = existData is not null;
 
                 if (!ValidateSummaryDate(isExist))
