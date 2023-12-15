@@ -6,10 +6,10 @@
              xmlns:utils="clr-namespace:WindowLib.Utils;assembly=WindowLib"
              xmlns:controls="clr-namespace:WindowLib.Views;assembly=WindowLib"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             Width="1400" Height="800">
+             Loaded="UserControl_Loaded">
 
     <prism:Dialog.WindowStyle>
-        <Style TargetType="Window" BasedOn="{StaticResource DialogWindow}"/>
+        <Style TargetType="Window" BasedOn="{StaticResource InputDialog}"/>
     </prism:Dialog.WindowStyle>
 
     <UserControl.Resources>
@@ -129,7 +129,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Content="拠点コード" VerticalContentAlignment="Center"/>
-                        <TextBox Grid.Column="1" Text="{Binding CdKyoten, UpdateSourceTrigger=PropertyChanged, Delay=300}" MaxLength="4" IsEnabled="{Binding IsAdd}"/>
+                        <TextBox x:Name="CdKyoten" Grid.Column="1" Text="{Binding CdKyoten, UpdateSourceTrigger=PropertyChanged, Delay=300}" MaxLength="4" IsEnabled="{Binding IsAdd}"/>
                         <Label Grid.Column="2" Background="Blue"/>
                         <TextBlock Grid.Column="2" Text="{Binding NmKyoten}" Foreground="White"/>
                     </Grid>

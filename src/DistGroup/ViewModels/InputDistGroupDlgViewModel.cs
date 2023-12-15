@@ -227,6 +227,7 @@ namespace DistGroup.ViewModels
             {
                 Syslog.Debug("InputDistGroupViewModelDlg:Clear");
                 ClearInfo(IsAdd);
+                Courses.CollectionChanged += Courses_CollectionChanged;
             });
 
             Register = new DelegateCommand(() =>
@@ -254,6 +255,8 @@ namespace DistGroup.ViewModels
                 Syslog.Debug("InputDistGroupViewModelDlg:Refer");
                 ClearInfo(IsAdd);
                 SetReferenceInfo();
+                Batches.CollectionChanged += Batches_CollectionChanged;
+                Courses.CollectionChanged += Courses_CollectionChanged;
             });
 
             Release = new DelegateCommand(() =>
@@ -305,9 +308,6 @@ namespace DistGroup.ViewModels
         {
             ClearInfo(true);
 
-            Batches.CollectionChanged += Batches_CollectionChanged;
-            Courses.CollectionChanged += Courses_CollectionChanged;
-
             if (!IsAdd)
             {
                 CdKyoten = _distGroup.CdKyoten;
@@ -321,6 +321,9 @@ namespace DistGroup.ViewModels
             {
                 ReferenceLog.LogInfos.Clear();
             }
+
+            Batches.CollectionChanged += Batches_CollectionChanged;
+            Courses.CollectionChanged += Courses_CollectionChanged;
         }
 
         private void ClearInfo(bool isAll)
