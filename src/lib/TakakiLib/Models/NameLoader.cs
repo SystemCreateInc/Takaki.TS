@@ -47,6 +47,17 @@ namespace TakakiLib.Models
                     .FirstOrDefault() ?? string.Empty;
             }
         }
+        public static string GetDistGroup(string code)
+        {
+            using (var con = DbFactory.CreateConnection())
+            {
+                return con.Find<TBDISTGROUPEntity>(s => s
+                .Where($"{nameof(TBDISTGROUPEntity.CDDISTGROUP):C} = {nameof(code):P} and {CreateTekiyoSql.GetFromDate()}")
+                .WithParameters(new { code, selectDate }))
+                    .Select(q => q.NMDISTGROUP)
+                    .FirstOrDefault() ?? string.Empty;
+            }
+        }
 
         public static string GetLargeGroup(string code)
         {
