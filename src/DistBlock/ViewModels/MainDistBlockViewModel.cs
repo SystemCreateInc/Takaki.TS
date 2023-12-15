@@ -1,4 +1,5 @@
-﻿using DistBlock.Models;
+﻿using DistBlock.Loader;
+using DistBlock.Models;
 using DistBlock.Views;
 using LogLib;
 using Prism.Commands;
@@ -7,6 +8,7 @@ using Prism.Regions;
 using Prism.Services.Dialogs;
 using System.Collections.ObjectModel;
 using System.Windows;
+using TakakiLib.Models;
 using WindowLib.Utils;
 
 namespace DistBlock.ViewModels
@@ -27,21 +29,21 @@ namespace DistBlock.ViewModels
             set => SetProperty(ref _shain, value);
         }
 
-        private ObservableCollection<Models.DistBlock> _distBlocks = new ObservableCollection<Models.DistBlock>();
-        public ObservableCollection<Models.DistBlock> DistBlocks
+        private ObservableCollection<DistBlockInfo> _distBlocks = new ObservableCollection<DistBlockInfo>();
+        public ObservableCollection<DistBlockInfo> DistBlocks
         {
             get => _distBlocks;
             set => SetProperty(ref _distBlocks, value);
         }
 
-        private Models.DistBlock? _currentDistBlock;
-        public Models.DistBlock? CurrentDistBlock
+        private DistBlockInfo? _currentDistBlock;
+        public DistBlockInfo? CurrentDistBlock
         {
             get => _currentDistBlock;
             set
             {
                 SetProperty(ref _currentDistBlock, value);
-                CanEdit = CurrentDistBlock != null;
+                CanEdit = CurrentDistBlock is not null && SelectedShain;
             }
         }
 
@@ -52,18 +54,29 @@ namespace DistBlock.ViewModels
             set => SetProperty(ref _canEdit, value);
         }
 
+        private bool _selectedShain = false;
+        public bool SelectedShain
+        {
+            get => _selectedShain;
+            set => SetProperty(ref _selectedShain, value);
+        }
+
+        private ShainInfo? _shainInfo = new ShainInfo();
+
         public MainDistBlockViewModel(IDialogService dialogService)
         {
             _dialogService = dialogService;
+            LoadDatas();
+            SetShain();
 
             Add = new DelegateCommand(() =>
             {
                 Syslog.Debug("MainDistBlockViewModel:Add");
-                if (ShowInputDialog(new Models.DistBlock()))
+                if (ShowInputDialog(new DistBlockInfo()))
                 {
                     LoadDatas();
                 }
-            });
+            }).ObservesCanExecute(() => SelectedShain);
 
             Edit = new DelegateCommand(() =>
             {
@@ -90,10 +103,6 @@ namespace DistBlock.ViewModels
                 Syslog.Debug("MainDistBlockViewModel:LeftDoubleClick");
                 Edit.Execute();
             }).ObservesCanExecute(() => CanEdit);
-
-            // fixme:社員コード + 社員名称
-            Shain = "0000033550" + "　" + "小田　賢行";
-            LoadDatas();
         }
 
         private void LoadDatas()
@@ -109,7 +118,7 @@ namespace DistBlock.ViewModels
             }
         }
 
-        private bool ShowInputDialog(Models.DistBlock distBlock)
+        private bool ShowInputDialog(DistBlockInfo distBlock)
         {
             IDialogResult? result = null;
 
@@ -118,10 +127,18 @@ namespace DistBlock.ViewModels
                 new DialogParameters
                 {
                     { "DistBlock", distBlock },
+                    { "ShainInfo", _shainInfo },
                 },
                 r => result = r);
 
             return result?.Result == ButtonResult.OK;
+        }
+
+        private void SetShain()
+        {
+            _shainInfo = ShainLoader.Get();
+            SelectedShain = _shainInfo is not null;
+            Shain = $"{_shainInfo?.HenkoshaCode}  {_shainInfo?.HenkoshaName}";
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace DistBlock.Models
 {
-    public class DistBlock : BindableBase
+    public class DistBlockInfo : BindableBase
     {
         private string _cdKyoten = string.Empty;
         public string CdKyoten
@@ -31,5 +31,14 @@ namespace DistBlock.Models
             get => _nmDistGroup;
             set => SetProperty(ref _nmDistGroup, value);
         }
+
+        public long DistBlockId { get; set; }
+        public List<Block> Blocks = new List<Block>();
+
+        public string Tekiyokaishi { get; set; } = string.Empty;
+        public string TekiyoMuko { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+
     }
 }
