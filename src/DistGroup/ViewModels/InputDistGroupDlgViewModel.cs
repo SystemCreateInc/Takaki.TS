@@ -247,7 +247,7 @@ namespace DistGroup.ViewModels
 
             Refer = new DelegateCommand(() =>
             {
-                if (!ReferenceLog.LogInfos.Any())
+                if (!ReferenceLog.LogInfos.Any() || IsAdd)
                 {
                     return;
                 }
@@ -429,7 +429,7 @@ namespace DistGroup.ViewModels
                 var targetData = new DistGroupInfo
                 {
                     CdKyoten = CdKyoten,
-                    CdDistGroup = CdDistGroup,
+                    CdDistGroup = CdDistGroup.PadLeft(5, '0'),
                     NmDistGroup = NmDistGroup,
                     CdBinSum = BinSumType,
                     Batches = Batches.Where(x => !x.CdShukkaBatch.IsNullOrEmpty()).ToList(),
@@ -498,6 +498,12 @@ namespace DistGroup.ViewModels
                 CdDistGroup.IsNullOrEmpty())
             {
                 MessageDialog.Show(_dialogService, "拠点コード、仕分グループコードを入力してください。", "入力エラー");
+                return false;
+            }
+
+            if (NmKyoten.IsNullOrEmpty())
+            {
+                MessageDialog.Show(_dialogService, "拠点名称が取得出来ていません。", "入力エラー");
                 return false;
             }
 
@@ -623,6 +629,7 @@ namespace DistGroup.ViewModels
         {
             try
             {
+                ReferenceLog.LogInfos = LogLoader.Get(CdKyoten.PadLeft(4, '0'), CdDistGroup.PadLeft(5, '0')).ToList();
                 ReferenceLog.ValidateSummaryDate(DtTekiyoKaishi, DtTekiyoMuko, isUpdate);
                 return true;
             }

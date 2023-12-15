@@ -60,6 +60,8 @@ namespace DistGroup.Models
 
                 entity.DTTEKIYOKAISHI = targetInfo.Tekiyokaishi;
                 entity.DTTEKIYOMUKO = targetInfo.TekiyoMuko;
+                entity.CDHENKOSHA = shainInfo.HenkoshaCode;
+                entity.NMHENKOSHA = shainInfo.HenkoshaName;
                 entity.UpdatedAt = DateTime.Now;
 
                 con.Update(entity, x => x.AttachToTransaction(tr));

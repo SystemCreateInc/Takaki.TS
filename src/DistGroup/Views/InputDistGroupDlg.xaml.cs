@@ -32,7 +32,7 @@ namespace DistGroup.Views
             }
             else
             {
-                dataGrid.Focus();
+                ReferenceDate.Focus();
             }
         }
     }
