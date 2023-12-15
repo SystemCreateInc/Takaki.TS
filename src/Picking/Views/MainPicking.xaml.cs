@@ -14,6 +14,15 @@ namespace Picking.Views
         public MainPicking()
         {
             InitializeComponent();
+
+            this.PreviewKeyDown += (sender, e) =>
+            {
+                distcolorgrid.Focus();
+            };
+        }
+        private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            distcolorgrid.Focus();
         }
     }
 }

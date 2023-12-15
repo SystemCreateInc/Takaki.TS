@@ -285,6 +285,13 @@ namespace Picking.Models
             set => SetProperty(ref _distcolor_name, value);
         }
 
+        private string _distcolor_func_name = "";
+        public string DistColor_Func_name
+        {
+            get => _distcolor_func_name;
+            set => SetProperty(ref _distcolor_func_name, value);
+        }
+
         private int _dstatus;
         public int DStatus
         {
@@ -689,6 +696,7 @@ namespace Picking.Models
             NmTokuisaki = "";
             CdCourse = "";
             CdRoute = "";
+            Csunit = 0;
             Ops = 0;
             Dops = 0;
             Drps = 0;
@@ -699,6 +707,8 @@ namespace Picking.Models
             Order_item_cnt = 0;
             Result_item_cnt = 0;
             Remain_item_cnt = 0;
+            Left_shop_cnt = 0;
+            Right_shop_cnt = 0;
             _isModified = false;
             TdUnitPushTm = null;
         }
@@ -710,36 +720,6 @@ namespace Picking.Models
 
     public class DistGroupEx : DistGroup
     {
-        private int _distworktype = 1;
-        public int DistWorkType
-        {
-            get => _distworktype;
-            set
-            {
-                SetProperty(ref _distworktype, value);
-                DistWorkTypeName = _distworktype == 0 ? "＜追駆け仕分＞" : "＜一斉仕分＞";
-                DistTypeColor = _distworktype == 0 ? ConsoleColor.Blue : ConsoleColor.Green;
-            }
-        }
-        private string _distworktypename = "";
-        public string DistWorkTypeName
-        {
-            get => _distworktypename;
-            set => SetProperty(ref _distworktypename, value);
-        }
-        public bool IsDistWorkNormal
-        {
-            get => DistWorkType==0 ? true : false;
-        }
-
-
-        private ConsoleColor _disttypecolor = ConsoleColor.Black;
-        public ConsoleColor DistTypeColor
-        {
-            get => _disttypecolor;
-            set => SetProperty(ref _disttypecolor, value);
-        }
-
         private int _tdunittype = 0;
         public int Tdunittype
         {
@@ -747,13 +727,6 @@ namespace Picking.Models
             set => SetProperty(ref _tdunittype, value);
         }
 
-        // 配分順番
-        private int _distseq = 0;
-        public int DistSeq
-        {
-            get => _distseq;
-            set => SetProperty(ref _distseq, value);
-        }
 
         public override string ToString()
         {

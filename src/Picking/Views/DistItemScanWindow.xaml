@@ -132,7 +132,7 @@
                                 <KeyBinding Key="F8" Command="{Binding OnStart}"/>
                             </TextBox.InputBindings>
                          </TextBox>
-                        <TextBlock Text="{Binding DistGroup.DistWorkTypeName, Mode=OneWay}" Background="{Binding ColorBack}" Foreground="{Binding ColorText}" FontSize="50" FontWeight="Bold"  Margin="50,0,0,0"/>
+                        <TextBlock Text="{Binding DistColorInfo.DistWorkTypeName, Mode=OneWay}" Background="{Binding ColorBack}" Foreground="{Binding ColorText}" FontSize="50" FontWeight="Bold"  Margin="50,0,0,0"/>
                     </StackPanel>
                 </StackPanel>
             </Grid>

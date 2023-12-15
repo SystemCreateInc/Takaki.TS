@@ -235,6 +235,19 @@ namespace TdDpsLib.Models
 
             return addrdata == null ? false : true;
         }
+        public bool GetTdStartBoxAddr(out TdAddrData? addrdata, int zone, int color)
+        {
+            addrdata = null;
+            addrdata = TdAddrs?.Find(p => p.TdUnitZoneCode == zone && p.TddButton == color
+                && (p.TdUsageid== (int)TdUnitType.TdCeilingBox || p.TdUsageid == (int)TdUnitType.TdRackBox));
+
+            if (addrdata == null)
+            {
+                Syslog.Info($"GetTdStartBoxAddr 取得エラー  zone:{zone}");
+            }
+
+            return addrdata == null ? false : true;
+        }
 
 
         // 表示器点灯 or 消灯

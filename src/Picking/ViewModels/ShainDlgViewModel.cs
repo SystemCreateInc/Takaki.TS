@@ -131,6 +131,37 @@ namespace Picking.ViewModels
             set => SetProperty(ref _btnshain5, value);
         }
 
+        private bool _enableshain1 = true;
+        public bool EnableShain1
+        {
+            get => _enableshain1;
+            set => SetProperty(ref _enableshain1, value);
+        }
+        private bool _enableshain2 = true;
+        public bool EnableShain2
+        {
+            get => _enableshain2;
+            set => SetProperty(ref _enableshain2, value);
+        }
+        private bool _enableshain3 = true;
+        public bool EnableShain3
+        {
+            get => _enableshain3;
+            set => SetProperty(ref _enableshain3, value);
+        }
+        private bool _enableshain4 = true;
+        public bool EnableShain4
+        {
+            get => _enableshain4;
+            set => SetProperty(ref _enableshain4, value);
+        }
+        private bool _enableshain5 = true;
+        public bool EnableShain5
+        {
+            get => _enableshain5;
+            set => SetProperty(ref _enableshain5, value);
+        }
+
         private readonly IDialogService _dialogService;
 
         public ShainDlgViewModel(IDialogService dialogService)
@@ -196,6 +227,12 @@ namespace Picking.ViewModels
             Shain3 = GetShainCombo(BtnShain3.CdShain);
             Shain4 = GetShainCombo(BtnShain4.CdShain);
             Shain5 = GetShainCombo(BtnShain5.CdShain);
+
+            EnableShain1 = _datas[0].IsWorking() ? false : true;
+            EnableShain2 = _datas[1].IsWorking() ? false : true;
+            EnableShain3 = _datas[2].IsWorking() ? false : true;
+            EnableShain4 = _datas[3].IsWorking() ? false : true;
+            EnableShain5 = _datas[4].IsWorking() ? false : true;
         }
         Shain GetShainCombo(string cd_shain)
         {
