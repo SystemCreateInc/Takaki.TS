@@ -79,9 +79,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReferenceLogLib", "lib\Refe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StowageListPrint", "StowageListPrint\StowageListPrint.csproj", "{E3DFF4F8-3B3A-4AA4-88FD-90385B57FFBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkReport", "WorkReport\WorkReport.csproj", "{6E68E633-EB25-430A-87F4-49429B26A3FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkReport", "WorkReport\WorkReport.csproj", "{6E68E633-EB25-430A-87F4-49429B26A3FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TakahataDistListPrint", "TakahataDistListPrint\TakahataDistListPrint.csproj", "{95D88A4D-AC9D-49AA-B38A-B6DCD73BFC21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TakahataDistListPrint", "TakahataDistListPrint\TakahataDistListPrint.csproj", "{95D88A4D-AC9D-49AA-B38A-B6DCD73BFC21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistProg", "DistProg\DistProg.csproj", "{642080E9-ADA5-4F51-86A7-E6F72768A77A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -513,6 +515,18 @@ Global
 		{95D88A4D-AC9D-49AA-B38A-B6DCD73BFC21}.Release|x64.Build.0 = Release|Any CPU
 		{95D88A4D-AC9D-49AA-B38A-B6DCD73BFC21}.Release|x86.ActiveCfg = Release|Any CPU
 		{95D88A4D-AC9D-49AA-B38A-B6DCD73BFC21}.Release|x86.Build.0 = Release|Any CPU
+		{642080E9-ADA5-4F51-86A7-E6F72768A77A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{642080E9-ADA5-4F51-86A7-E6F72768A77A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{642080E9-ADA5-4F51-86A7-E6F72768A77A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{642080E9-ADA5-4F51-86A7-E6F72768A77A}.Debug|x64.Build.0 = Debug|Any CPU
+		{642080E9-ADA5-4F51-86A7-E6F72768A77A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{642080E9-ADA5-4F51-86A7-E6F72768A77A}.Debug|x86.Build.0 = Debug|Any CPU
+		{642080E9-ADA5-4F51-86A7-E6F72768A77A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{642080E9-ADA5-4F51-86A7-E6F72768A77A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{642080E9-ADA5-4F51-86A7-E6F72768A77A}.Release|x64.ActiveCfg = Release|Any CPU
+		{642080E9-ADA5-4F51-86A7-E6F72768A77A}.Release|x64.Build.0 = Release|Any CPU
+		{642080E9-ADA5-4F51-86A7-E6F72768A77A}.Release|x86.ActiveCfg = Release|Any CPU
+		{642080E9-ADA5-4F51-86A7-E6F72768A77A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -551,6 +565,7 @@ Global
 		{E3DFF4F8-3B3A-4AA4-88FD-90385B57FFBA} = {C3ABA3E5-6F69-488B-9268-A657B66834AB}
 		{6E68E633-EB25-430A-87F4-49429B26A3FC} = {C3ABA3E5-6F69-488B-9268-A657B66834AB}
 		{95D88A4D-AC9D-49AA-B38A-B6DCD73BFC21} = {C3ABA3E5-6F69-488B-9268-A657B66834AB}
+		{642080E9-ADA5-4F51-86A7-E6F72768A77A} = {C3ABA3E5-6F69-488B-9268-A657B66834AB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5345CE77-6E48-4989-ABA7-110AFC0E3114}
