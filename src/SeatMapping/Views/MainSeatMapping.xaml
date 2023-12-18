@@ -59,8 +59,12 @@
         </Grid>
 
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+            <TextBlock Text="{Binding DispKyotenCode}"/>
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">            
             <Label Content="ブロック ： "/>
-            <ComboBox Width="100" SelectedValue="{Binding BlockIndex}" ItemsSource="{Binding BlockCombo}" DisplayMemberPath="Name" SelectedValuePath="Index"/>
+            <ComboBox Width="100" SelectedIndex="{Binding BlockIndex}" ItemsSource="{Binding BlockCombo}" DisplayMemberPath="Name"/>
         </StackPanel>
 
         <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid}" SettingsKey="SeatMappingColumns"/>

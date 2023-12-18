@@ -41,5 +41,10 @@
 
             return DateTime.FromOADate(value);
         }
+
+        public static DateTime? ParseNonSeparatedDate(this string? text, DateTime? defvalue = null)
+        {
+            return DateTime.TryParse(text.GetDate(), out var date) ? date : defvalue;
+        }
     }
 }

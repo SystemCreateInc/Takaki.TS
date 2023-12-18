@@ -1,10 +1,17 @@
 ﻿using Prism.Mvvm;
 using System;
 
-namespace Customer.Models
+namespace ReferenceLogLib.Models
 {
     public class LogInfo : BindableBase
     {
+        private long _id;
+        public long Id
+        {
+            get => _id;
+            set => SetProperty(ref _id, value);
+        }
+
         private bool _selected = false;
         public bool Selected
         {

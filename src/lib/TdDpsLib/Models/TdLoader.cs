@@ -56,11 +56,11 @@ namespace TdDpsLib.Models
 
             using (var con = DbFactory.CreateConnection())
             {
-                string sql = @"select tdunitaddrcode,tdunitaddr.tdunitcode,tdunitareacode,tdunitmst.tdunitportcode,tdunitgroup,tdunitaddr,tdunitbutton,tdunitportcom,tdunitporttype,usageid,tdunitseq from tdunitaddr"
+                string sql = @"select tdunitaddrcode,tdunitaddr.tdunitcode,tdunitareacode,tdunitmst.tdunitportcode,tdunitgroup,tdunitaddr,tdunitbutton,tdunitportcom,tdunitporttype,usageid,tdunitseq,tdunitzonecode from tdunitaddr"
                             + " inner join tdunitmst on tdunitmst.tdunitcode=tdunitaddr.tdunitcode"
                             + " inner join tdunitport on tdunitport.tdunitportcode=tdunitmst.tdunitportcode"
                             + " where usageid in (@tdtype1,@tdtype2)"
-                            + " order by tdunitaddrcode,tdunitaddr.tdunitcode";
+                            + " order by tdunitzonecode,tdunitseq,tdunitaddrcode,tdunitaddr.tdunitcode";
 
                 return con.Query(sql, new { @tdtype1 = tdtype1, @tdtype2 = tdtype2 })
                      .Select(q => new TdAddrData
@@ -75,6 +75,7 @@ namespace TdDpsLib.Models
                          TdPortCom = q.tdunitportcom,
                          TdUsageid = q.usageid,
                          TdUnitSeq = q.tdunitseq,
+                         TdUnitZoneCode = q.tdunitzonecode,
 
                          Stno = q.tdunitportcode,
                          TdUnitPortType = (TdControllerType)q.tdunitporttype,

@@ -1,0 +1,163 @@
+﻿<UserControl x:Class="Picking.Views.ShainDlg"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:b="clr-namespace:WindowLib.Behaviors;assembly=WindowLib"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             HorizontalAlignment="Center" VerticalAlignment="Center"
+             Width="600"
+             Loaded="UserControl_Loaded">
+
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window" BasedOn="{StaticResource DialogWindow}"/>
+    </prism:Dialog.WindowStyle>
+
+
+    <DockPanel>
+        <Grid DockPanel.Dock="Top" Margin="5,5,20,5">
+            <Grid.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Margin" Value="3"/>
+                    <Setter Property="FontSize" Value="30"/>
+                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+
+                    <Style.Triggers>
+                        <Trigger Property="Text" Value="赤">
+                            <Setter Property="Background" Value="Red"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </Trigger>
+                        <Trigger Property="Text" Value="黄">
+                            <Setter Property="Background" Value="Yellow" />
+                            <Setter Property="Foreground" Value="Black" />
+                        </Trigger>
+                        <Trigger Property="Text" Value="緑">
+                            <Setter Property="Background" Value="LightGreen" />
+                            <Setter Property="Foreground" Value="Black" />
+                        </Trigger>
+                        <Trigger Property="Text" Value="白">
+                            <Setter Property="Background" Value="White" />
+                            <Setter Property="Foreground" Value="Black" />
+                        </Trigger>
+                        <Trigger Property="Text" Value="青">
+                            <Setter Property="Background" Value="Blue" />
+                            <Setter Property="Foreground" Value="White" />
+                        </Trigger>
+                    </Style.Triggers>
+
+                </Style>
+            </Grid.Resources>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="10*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Grid.Row="0" Width="40" Text="{Binding ColorBtnName1}" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Margin="3"/>
+            <ComboBox x:Name="CdShainText" Grid.Column="1" Grid.Row="0" SelectedItem="{Binding Shain1}" ItemsSource="{Binding ShainCombo}" IsEnabled="{Binding EnableShain1}" Margin="3" 
+                          IsEditable="True" TextSearch.TextPath="CdShain" b:ComboBoxBehavior.MaxLength="7">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding CdShain}" />
+                            <TextBlock Text="  "/>
+                            <TextBlock Text="{Binding NmShain}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left"  Text="{Binding Shain1.NmShain}" VerticalAlignment="Center" Margin="20 0 0 0" />
+
+            <TextBlock Grid.Column="0" Grid.Row="1" Width="40" Text="{Binding ColorBtnName2}" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Margin="3"/>
+            <ComboBox Grid.Column="1" Grid.Row="1" SelectedItem="{Binding Shain2}" ItemsSource="{Binding ShainCombo}" IsEnabled="{Binding EnableShain2}" Margin="3" 
+                          IsEditable="True" TextSearch.TextPath="CdShain" b:ComboBoxBehavior.MaxLength="7">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding CdShain}" />
+                            <TextBlock Text="  "/>
+                            <TextBlock Text="{Binding NmShain}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left"  Text="{Binding Shain2.NmShain}" VerticalAlignment="Center" Margin="20 0 0 0" />
+
+            <TextBlock Grid.Column="0" Grid.Row="2" Width="40" Text="{Binding ColorBtnName3}" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Margin="3"/>
+            <ComboBox Grid.Column="1" Grid.Row="2" SelectedItem="{Binding Shain3}" ItemsSource="{Binding ShainCombo}" IsEnabled="{Binding EnableShain3}" Margin="3" 
+                          IsEditable="True" TextSearch.TextPath="CdShain" b:ComboBoxBehavior.MaxLength="7">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding CdShain}" />
+                            <TextBlock Text="  "/>
+                            <TextBlock Text="{Binding NmShain}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Grid.Column="2" Grid.Row="2" HorizontalAlignment="Left"  Text="{Binding Shain3.NmShain}" VerticalAlignment="Center" Margin="20 0 0 0" />
+
+            <TextBlock Grid.Column="0" Grid.Row="3" Width="40" Text="{Binding ColorBtnName4}" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Margin="3"/>
+            <ComboBox Grid.Column="1" Grid.Row="3" SelectedItem="{Binding Shain4}" ItemsSource="{Binding ShainCombo}" IsEnabled="{Binding EnableShain4}" Margin="3" 
+                          IsEditable="True" TextSearch.TextPath="CdShain" b:ComboBoxBehavior.MaxLength="7">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding CdShain}" />
+                            <TextBlock Text="  "/>
+                            <TextBlock Text="{Binding NmShain}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Grid.Column="2" Grid.Row="3" HorizontalAlignment="Left"  Text="{Binding Shain4.NmShain}" VerticalAlignment="Center" Margin="20 0 0 0" />
+
+            <TextBlock Grid.Column="0" Grid.Row="4" Width="40" Text="{Binding ColorBtnName5}" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Margin="3"/>
+            <ComboBox Grid.Column="1" Grid.Row="4" SelectedItem="{Binding Shain5}" ItemsSource="{Binding ShainCombo}" IsEnabled="{Binding EnableShain5}" Margin="3" 
+                          IsEditable="True" TextSearch.TextPath="CdShain" b:ComboBoxBehavior.MaxLength="7">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding CdShain}" />
+                            <TextBlock Text="  "/>
+                            <TextBlock Text="{Binding NmShain}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Grid.Column="2" Grid.Row="4" HorizontalAlignment="Left"  Text="{Binding Shain5.NmShain}" VerticalAlignment="Center" Margin="20 0 0 0" />
+
+
+        </Grid>
+
+        <StackPanel Orientation="Horizontal" Margin="5" DockPanel.Dock="Bottom" HorizontalAlignment="Center">
+            <Button Width="150" Command="{Binding Save}" Margin="0 0 20 0"
+                    Focusable="True">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Check" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="決定"/>
+                </StackPanel>
+            </Button>
+
+            <Button Width="150" Command="{Binding Cancel}"
+                    Focusable="True" IsCancel="True">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Cancel" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="キャンセル"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </DockPanel>
+</UserControl>

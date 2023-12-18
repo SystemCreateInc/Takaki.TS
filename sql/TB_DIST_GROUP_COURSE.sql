@@ -8,6 +8,7 @@
 create table TB_DIST_GROUP_COURSE (
 	ID_DIST_GROUP			bigint 			 		not null,	/* id							*/
 	
+	CD_SHUKKA_BATCH			nchar(5)				not null,	/* 出荷バッチ					*/
 	NU_COURSE_SEQ			integer					not null,	/* コース表示順					*/
 	CD_COURSE				nchar(3)				not null,	/* コース						*/
 
@@ -16,6 +17,6 @@ create table TB_DIST_GROUP_COURSE (
 	
 	constraint fk_TB_DIST_GROUP_COURSE foreign key (ID_DIST_GROUP) references TB_DIST_GROUP(ID_DIST_GROUP) on delete cascade,
 	
-	constraint pk_TB_DIST_GROUP_COURSE primary key (ID_DIST_GROUP,NU_COURSE_SEQ)
+	constraint pk_TB_DIST_GROUP_COURSE primary key (ID_DIST_GROUP,CD_SHUKKA_BATCH,NU_COURSE_SEQ)
 );
 
