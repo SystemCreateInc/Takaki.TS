@@ -6,8 +6,8 @@
              xmlns:controls="clr-namespace:WindowLib.Views;assembly=WindowLib"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converter="clr-namespace:Picking.Converter"   
-             xmlns:b="clr-namespace:WindowLib.Behaviors;assembly=WindowLib"
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors">
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             Loaded="UserControl_Loaded">
 
     <UserControl.Resources>
         <Style x:Key="DataGridColumnAlignRight" TargetType="TextBlock" BasedOn="{x:Static DataGridTextColumn.DefaultElementStyle}">
@@ -106,7 +106,6 @@
             <converter:StatusVisibleConvert x:Key="VisibleConvert"/>
         </DockPanel.Resources>
 
-
         <DockPanel DockPanel.Dock="Top">
             <Grid>
                 <Grid.RowDefinitions>
@@ -124,7 +123,7 @@
                 </StackPanel>
 
                 <StackPanel Grid.Row="1" Grid.Column="0" >
-                    <TextBlock Text="{Binding DistGroup.DistWorkTypeName, Mode=OneWay}" FontSize="50" FontWeight="Bold"  Margin="3">
+                    <TextBlock Text="{Binding DistColorInfo.DistWorkTypeName, Mode=OneWay}" FontSize="50" FontWeight="Bold"  Margin="3">
                         <TextBlock.Style>
                             <Style TargetType="{x:Type TextBlock}">
                                 <Setter Property="Foreground" Value="Blue"/>
@@ -212,10 +211,19 @@
                   SelectedItem="{Binding CurrentDistColor, Mode=TwoWay}"
                   CanUserAddRows="False" SelectionMode="Single" CanUserSortColumns="false"
                   Margin="20,0,30,0"
+                      FontSize="40"
                   AutoGenerateColumns="False" IsReadOnly="True" VerticalScrollBarVisibility="Hidden">
 
+                <DataGrid.InputBindings>
+                    <KeyBinding Key="F1" Command="{Binding OnColorBtn1}"/>
+                    <KeyBinding Key="F2" Command="{Binding OnColorBtn2}"/>
+                    <KeyBinding Key="F3" Command="{Binding OnColorBtn3}"/>
+                    <KeyBinding Key="F4" Command="{Binding OnColorBtn4}"/>
+                    <KeyBinding Key="F5" Command="{Binding OnColorBtn5}"/>
+                </DataGrid.InputBindings>
+
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="色" Width="Auto" Binding="{Binding DistColor_name}" IsReadOnly="True">
+                    <DataGridTextColumn Header="色" Width="Auto" Binding="{Binding DistColor_Func_name}" IsReadOnly="True">
                         <DataGridTextColumn.CellStyle>
                             <Style TargetType="DataGridCell">
                                 <Style.Triggers>

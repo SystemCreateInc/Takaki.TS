@@ -19,12 +19,6 @@ namespace DbLib
                 .Build();
 
             var conStr = config.GetConnectionString("data");
-
-            // (local)をIPアドレスへ変更
-            if (serverip != null && serverip != "")
-            {
-                conStr = conStr.Replace("(local)",serverip);
-            }
             var builder = new SqlConnectionStringBuilder(conStr);
             // アプリケーション名をセット
             builder.ApplicationName = AppDomain.CurrentDomain.FriendlyName;

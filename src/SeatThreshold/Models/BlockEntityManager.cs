@@ -50,6 +50,8 @@ namespace Customer.Models
 
                 entity.DTTEKIYOKAISHI = thresholdInfo.Tekiyokaishi;
                 entity.DTTEKIYOMUKO = thresholdInfo.TekiyoMuko;
+                entity.CDHENKOSHA = shainInfo.HenkoshaCode;
+                entity.NMHENKOSHA = shainInfo.HenkoshaName;
                 entity.UpdatedAt = DateTime.Now;
 
                 con.Update(entity);

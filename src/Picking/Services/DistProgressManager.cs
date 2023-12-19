@@ -50,8 +50,12 @@ namespace Picking.Services
             }
         }
 
-        public static void UpdateDistProgress(DistGroup distgroup, DistColorInfo distcolorinfo, ProgressCnt pcnt)
+        public static void UpdateDistProgress(DistGroup distgroup, DistColorInfo distcolorinfo, ProgressCnt pcnt, bool bEnd=false)
         {
+            // 数量０は更新しない
+            if (pcnt.CntMax==0)
+                return;
+
             using (var con = DbFactory.CreateConnection())
             {
                 DateTime endtm = DateTime.Now;
@@ -59,7 +63,7 @@ namespace Picking.Services
                 var tr = con.BeginTransaction();
                 try
                 {
-                    bool bEnd = pcnt.CntMax == pcnt.CntValue;
+                    bool bCpmpleted = pcnt.CntMax == pcnt.CntValue;
 
                     var p = GetDistGroupProgress(con, tr, distgroup);
                     if (p==null)
@@ -81,7 +85,7 @@ namespace Picking.Services
                             NURITEMCNT = pcnt.ItemCntValue,
                             NUOPS = pcnt.CntMax,
                             NURPS = pcnt.CntValue,
-                            FGDSTATUS = (short)(bEnd ? (short)Status.Completed : (short)Status.Inprog),
+                            FGDSTATUS = (short)(bCpmpleted ? (short)Status.Completed : (short)Status.Inprog),
                             FGWORKING = (short)Status.Inprog,
                             CreatedAt = DateTime.Now,
                             UpdatedAt = DateTime.Now,
@@ -92,22 +96,31 @@ namespace Picking.Services
                     {
                         if (p.FGDSTATUS == (int)Status.Completed)
                         {
-                            //既に完了しているのでタ作業者のみ更新
+                            //既に完了しているので作業者のみ更新
                         }
                         else
                         {
                             // 更新
                             p.IDPC = distgroup.IdPc;
-                            p.DTEND = bEnd ? DateTime.Now : null;
+
+                            if (bCpmpleted = false && p.DTEND != null)
+                            {
+                                p.DTEND = null;
+                            }
+                            if ((bCpmpleted && p.DTEND==null) || (bEnd && p.DTEND == null))
+                            {
+                                p.DTEND = DateTime.Now;
+                            }
+
                             p.NUOITEMCNT = pcnt.ItemCntMax;
                             p.NURITEMCNT = pcnt.ItemCntValue;
                             p.NUOPS = pcnt.CntMax;
                             p.NURPS = pcnt.CntValue;
-                            p.FGDSTATUS = (short)(bEnd ? (short)Status.Completed : (short)Status.Inprog);
+                            p.FGDSTATUS = (short)(bCpmpleted ? (short)Status.Completed : (short)Status.Inprog);
                         }
 
                         p.UpdatedAt = DateTime.Now;
-                        p.FGWORKING = (short)Status.Inprog;
+                        p.FGWORKING = bEnd ? (short)Status.Ready : (short)Status.Inprog;
 
                         // 担当者設定
                         p.CDSHAIN = null;
@@ -160,7 +173,7 @@ namespace Picking.Services
             return con.Find<TBDISTGROUPPROGRESSEntity>(s => s
                     .Where($"{nameof(TBDISTGROUPPROGRESSEntity.DTDELIVERY):C}=@dtdelivery and {nameof(TBDISTGROUPPROGRESSEntity.CDKYOTEN):C}=@cdkyoten and {nameof(TBDISTGROUPPROGRESSEntity.CDDISTGROUP):C}=@cddistgroup and {nameof(TBDISTGROUPPROGRESSEntity.CDBLOCK):C}=@cdblock")
                     .WithParameters(new { 
-                        dtdelivery= distgroup.DtDelivery,
+                        dtdelivery= distgroup.DtDelivery.ToString("yyyyMMdd"),
                         cdkyoten = distgroup.CdKyoten,
                         cddistgroup = distgroup.CdDistGroup,
                         cdblock = distgroup.CdBlock,

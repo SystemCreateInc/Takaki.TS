@@ -98,6 +98,7 @@ namespace Picking.Services
                     {
                         DistColor_code = i + 1,
                         DistColor_name = color_name[i],
+                        DistColor_Func_name = color_name[i] + string.Format("(F{0})",i+1),
                     }
                 );
             }
@@ -370,10 +371,11 @@ namespace Picking.Services
                             }
 
                             // 配分のみ更新
-                            if (distcolor.DistWorkMode == 1)
+                            if (distcolor.DistWorkMode == (int)Defs.DistWorkMode.Dist)
                             {
                                 foreach (var d in itemseq.Details)
                                 {
+#if false
                                     var dist = GetDist(con, tr, d.IdDist);
                                     if (dist != null)
                                     {
@@ -389,8 +391,38 @@ namespace Picking.Services
                                         }
                                         dist.UpdatedAt = DateTime.Now;
 
-//                                        con.Update(dist, s => s.AttachToTransaction(tr));
+                                        var sql = "update dist set NU_DRPS=@drps,FGDSTATUS=@status,updatedAt=@updt where ID_DIST=@iddist";
+
+                                        con.Execute(sql,
+                                        new
+                                        {
+                                            status = dist.FGDSTATUS,
+                                            drps = dist.NUDRPS,
+                                            iddist = dist.IDDIST,
+                                            updt = DateTime.Now,
+                                        }, tr);
+
+                                        // 大仕分けで更新する可能性があるので全項目更新は止める
+                                        //con.Update(dist, s => s.AttachToTransaction(tr));
                                     }
+#else
+
+                                    int status = d.Ops == d.Drps ? (short)DbLib.Defs.Status.Completed : (short)DbLib.Defs.Status.Inprog;
+
+                                    var sql = "update TB_DIST set NU_DRPS=@drps,FG_DSTATUS=@status,CD_SHAIN_DIST=@cdshain,NM_SHAIN_DIST=@nmshain,DT_WORKDT_DIST=@dtwork,updatedAt=@updt where ID_DIST=@iddist";
+
+                                    con.Execute(sql,
+                                    new
+                                    {
+                                        status = status,
+                                        drps = d.Drps,
+                                        cdshain = distcolor.CdShain,
+                                        nmshain = distcolor.NmShain,
+                                        iddist = d.IdDist,
+                                        dtwork = DateTime.Now,
+                                        updt = DateTime.Now,
+                                    }, tr);
+#endif
                                 }
                             }
 
@@ -414,7 +446,7 @@ namespace Picking.Services
         private static TBDISTEntity? GetDist(IDbConnection con, IDbTransaction tr, long iddist)
         {
             return con.Find<TBDISTEntity>(s => s
-                    .Where($"{nameof(TBDISTEntity.IDDIST)}=@distid")
+                    .Where($"{nameof(TBDISTEntity.IDDIST)}=@iddist")
                     .WithParameters(new { iddist })
                     .AttachToTransaction(tr))
                 .FirstOrDefault();

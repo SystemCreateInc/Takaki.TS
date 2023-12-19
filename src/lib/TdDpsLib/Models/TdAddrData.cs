@@ -1,4 +1,5 @@
-﻿using ImTools;
+﻿using DbLib.Defs;
+using ImTools;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -50,6 +51,7 @@ namespace TdDpsLib.Models
         public string TdUnitAreaName { get; set; } = "";            // エリア表示灯名称
         public int TdUsageid { get; set; }
         public int TdUnitSeq { get; set; }
+        public int TdUnitZoneCode { get; set; } = 0;           // ゾーン範囲
 
         public string Physics                       // 分岐-物理
         {
@@ -93,6 +95,19 @@ namespace TdDpsLib.Models
 
         // バッテリー状態
         public TdDisplayUnitStatus BatteryInfo { get; set; } = TdDisplayUnitStatus.Ready;
+
+        // スタートＢＯＸか？
+        public bool IsUnitStartBox()
+        {
+            return (TdUsageid == (int)TdUnitType.TdCeilingBox
+                || TdUsageid == (int)TdUnitType.TdRackBox) ? true : false;
+        }
+        // 通常表示器か？
+        public bool IsUnitNormal()
+        {
+            return (TdUsageid == (int)TdUnitType.TdCeiling
+                || TdUsageid == (int)TdUnitType.TdRack) ? true : false;
+        }
 
 
         //
@@ -211,6 +226,11 @@ namespace TdDpsLib.Models
             int color = LedColors.FindIndex(x => x.IsBlink == true);
             return color == -1 ? -1 : color + 1;
         }
+        public int GetLightButton()
+        {
+            int color = LedColors.FindIndex(x => x.IsLight == true);
+            return color == -1 ? -1 : color + 1;
+        }
         public string GetNowDisplay()
         {
             string display="";
@@ -253,10 +273,6 @@ namespace TdDpsLib.Models
             }
 
             return false;
-        }
-        public bool IsZoneBtn()
-        {
-            return TdUsageid == 4 ? true : false;
         }
 
         public string nowDisplay = "";

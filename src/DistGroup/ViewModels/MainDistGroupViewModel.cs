@@ -1,4 +1,4 @@
-﻿using DistGroup.Models;
+﻿using DistGroup.Loader;
 using DistGroup.Views;
 using LogLib;
 using Prism.Commands;
@@ -7,6 +7,7 @@ using Prism.Regions;
 using Prism.Services.Dialogs;
 using System.Collections.ObjectModel;
 using System.Windows;
+using TakakiLib.Models;
 using WindowLib.Utils;
 
 namespace DistGroup.ViewModels
@@ -27,21 +28,21 @@ namespace DistGroup.ViewModels
             set => SetProperty(ref _shain, value);
         }
 
-        private ObservableCollection<Models.DistGroup> _distGroups = new ObservableCollection<Models.DistGroup>();
-        public ObservableCollection<Models.DistGroup> DistGroups
+        private ObservableCollection<Models.DistGroupInfo> _distGroups = new ObservableCollection<Models.DistGroupInfo>();
+        public ObservableCollection<Models.DistGroupInfo> DistGroups
         {
             get => _distGroups;
             set => SetProperty(ref _distGroups, value);
         }
 
-        private Models.DistGroup? _currentDistGroup;
-        public Models.DistGroup? CurrentDistGroup
+        private Models.DistGroupInfo? _currentDistGroup;
+        public Models.DistGroupInfo? CurrentDistGroup
         {
             get => _currentDistGroup;
             set
             {
                 SetProperty(ref _currentDistGroup, value);
-                CanEdit = CurrentDistGroup != null;
+                CanEdit = CurrentDistGroup != null && IsSelectedShain;
             }
         }
 
@@ -52,18 +53,30 @@ namespace DistGroup.ViewModels
             set => SetProperty(ref _canEdit, value);
         }
 
+
+        private bool _isSelectedShain = false;
+        public bool IsSelectedShain
+        {
+            get => _isSelectedShain;
+            set => SetProperty(ref _isSelectedShain, value);
+        }
+
+        private ShainInfo? _shainInfo = new ShainInfo();
+
         public MainDistGroupViewModel(IDialogService dialogService)
         {
             _dialogService = dialogService;
+            SetShain();
+            LoadDatas();
 
             Add = new DelegateCommand(() =>
             {
                 Syslog.Debug("MainDistGroupViewModel:Add");
-                if (ShowInputDialog(new Models.DistGroup()))
+                if (ShowInputDialog(new Models.DistGroupInfo()))
                 {
                     LoadDatas();
                 }
-            });
+            }).ObservesCanExecute(() => IsSelectedShain);
 
             Edit = new DelegateCommand(() =>
             {
@@ -90,11 +103,6 @@ namespace DistGroup.ViewModels
                 Syslog.Debug("MainDistGroupViewModel:LeftDoubleClick");
                 Edit.Execute();
             }).ObservesCanExecute(() => CanEdit);
-
-            // fixme:社員コード + 社員名称
-            Shain = "0000033550" + "　" + "小田賢行";
-
-            LoadDatas();
         }
 
         private void LoadDatas()
@@ -110,7 +118,7 @@ namespace DistGroup.ViewModels
             }
         }
 
-        private bool ShowInputDialog(Models.DistGroup distGroup)
+        private bool ShowInputDialog(Models.DistGroupInfo distGroup)
         {
             IDialogResult? result = null;
 
@@ -119,10 +127,19 @@ namespace DistGroup.ViewModels
                 new DialogParameters
                 {
                     { "DistGroup", distGroup },
+                    { "ShainInfo", _shainInfo },
                 },
                 r => result = r);
 
             return result?.Result == ButtonResult.OK;
+        }
+
+        private void SetShain()
+        {
+            _shainInfo = ShainLoader.Get();
+
+            IsSelectedShain = _shainInfo is not null;
+            Shain = $"{_shainInfo?.HenkoshaCode}  {_shainInfo?.HenkoshaName}";
         }
     }
 }

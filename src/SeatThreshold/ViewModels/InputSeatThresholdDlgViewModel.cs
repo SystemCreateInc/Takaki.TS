@@ -48,7 +48,7 @@ namespace SeatThreshold.ViewModels
             set
             {
                 SetProperty(ref _cdKyoten, value);
-                NmKyoten = KyotenLoader.GetName(CdKyoten, ReferenceDate.ToString("yyyyMMdd"));
+                NmKyoten = NameLoader.GetKyoten(CdKyoten);
                 _isChange = true;
             }
         }
@@ -214,12 +214,12 @@ namespace SeatThreshold.ViewModels
 
             Refer = new DelegateCommand(() =>
             {
-                if (!ReferenceLog.LogInfos.Any())
+                if (!ReferenceLog.LogInfos.Any() || IsAdd)
                 {
                     return;
                 }
 
-                Syslog.Debug("InputCustomerViewModel:Refer");
+                Syslog.Debug("InputSeatThresholdDlgViewModel:Refer");
                 ClearInfo(IsAdd);
                 SetReferenceInfo();
             });
@@ -310,7 +310,8 @@ namespace SeatThreshold.ViewModels
         // 適用名称再取得
         private void ReloadTekiyoName()
         {
-            NmKyoten = KyotenLoader.GetName(CdKyoten, ReferenceDate.ToString("yyyyMMdd"));
+            TekiyoDate.ReferenceDate = ReferenceDate.ToString("yyyyMMdd");
+            NmKyoten = NameLoader.GetKyoten(CdKyoten);
         }
 
         private bool ConfirmationExit()
@@ -337,7 +338,7 @@ namespace SeatThreshold.ViewModels
                 var targetData = new ThresholdInfo
                 {
                     CdKyoten = CdKyoten,
-                    CdBlock = CdBlock,
+                    CdBlock = CdBlock.PadLeft(2, '0'),
                     TdUnitType = TdUnitType,
                     NuTdunitCnt = int.Parse(NuTdunitCnt),
                     NuThreshold = int.Parse(NuThreshold),
@@ -346,7 +347,7 @@ namespace SeatThreshold.ViewModels
                     TekiyoMuko = DtTekiyoMuko.ToString("yyyyMMdd"),
                 };
 
-                var existData = SeatThresholdLoader.GetFromKey(CdKyoten, CdBlock, DtTekiyoKaishi.ToString("yyyyMMdd"));
+                var existData = SeatThresholdLoader.GetFromKey(targetData.CdKyoten, targetData.CdBlock, targetData.Tekiyokaishi);
                 var isExist = existData is not null;
 
                 if (!ValidateSummaryDate(isExist))
@@ -393,10 +394,16 @@ namespace SeatThreshold.ViewModels
                 return false;
             }
 
-            if(!int.TryParse(NuTdunitCnt, out int tdUnitCnt)
+            if (NmKyoten.IsNullOrEmpty())
+            {
+                MessageDialog.Show(_dialogService, "拠点名称が取得出来ていません。", "入力エラー");
+                return false;
+            }
+
+            if (!int.TryParse(NuTdunitCnt, out int tdUnitCnt)
                 || !int.TryParse(NuThreshold, out int threshold))
             {
-                MessageDialog.Show(_dialogService, "表示器数、しきい値を入力してください。", "入力エラー");
+                MessageDialog.Show(_dialogService, "表示器数、しきい値を数値で入力してください。", "入力エラー");
                 return false;
             }
 
@@ -408,6 +415,7 @@ namespace SeatThreshold.ViewModels
         {
             try
             {
+                ReferenceLog.LogInfos = LogLoader.Get(CdKyoten, CdBlock.PadLeft(2, '0')).ToList();
                 ReferenceLog.ValidateSummaryDate(DtTekiyoKaishi, DtTekiyoMuko, isUpdate);
                 return true;
             }

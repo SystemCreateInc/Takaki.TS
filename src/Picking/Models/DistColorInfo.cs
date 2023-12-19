@@ -12,28 +12,42 @@ namespace Picking.Models
 {
     public class DistColorInfo : BindableBase
     {
-#if false
-        public DistColor? GetDistZone(int zoneno)
+        private int _distworktype = 1;
+        public int DistWorkType
         {
-            return DistZones?.Find(x=>x.Zoneno == zoneno);
-        }
-        public DistColor? GetDistZoneIndex(int zoneidx)
-        {
-            return DistZones?.Find(x => x.Zoneidx == zoneidx);
-        }
-        public DistColor? GetDistZoneButton(int tabletdid)
-        {
-            foreach (var zone in DistZones!)
+            get => _distworktype;
+            set
             {
-                var zoneaddr = zone.Zoneaddrs?.Find(x => x.Tabletid == tabletdid);
-                if (zoneaddr != null)
-                {
-                    return zone;
-                }
+                SetProperty(ref _distworktype, value);
+                DistWorkTypeName = _distworktype == 0 ? "＜追駆け仕分＞" : "＜一斉仕分＞";
+                DistTypeColor = _distworktype == 0 ? ConsoleColor.Blue : ConsoleColor.Green;
             }
-            return null;
         }
-#endif
+        private string _distworktypename = "";
+        public string DistWorkTypeName
+        {
+            get => _distworktypename;
+            set => SetProperty(ref _distworktypename, value);
+        }
+        public bool IsDistWorkNormal
+        {
+            get => DistWorkType == 1 ? true : false;
+        }
+        private ConsoleColor _disttypecolor = ConsoleColor.Black;
+        public ConsoleColor DistTypeColor
+        {
+            get => _disttypecolor;
+            set => SetProperty(ref _disttypecolor, value);
+        }
+
+        // 配分順番
+        private int _distseq = 0;
+        public int DistSeq
+        {
+            get => _distseq;
+            set => SetProperty(ref _distseq, value);
+        }
+
         public DistColor? GetDistColor(int color)
         {
             return DistColors?.Find(x => x.DistColor_code == color);
@@ -57,9 +71,10 @@ namespace Picking.Models
             return false;
         }
 
-        public DistColor? GetNetDistSeq(int distseq, string tdunitaddrcode)
+        // 一斉配分で次の色に点灯表示器があるか
+        public DistColor? GetNextDistSeq(int distseq, string tdunitaddrcode)
         {
-            var tmp = DistColors!.Where(x => x.DistSeq != 0 && distseq < x.DistSeq)
+            var tmp = DistColors!.Where(x => x.DistSeq[1] != 0 && distseq < x.DistSeq[1])
                 .OrderBy(x => x.DistSeq).ToList();
 
             foreach (var distcolor in tmp)

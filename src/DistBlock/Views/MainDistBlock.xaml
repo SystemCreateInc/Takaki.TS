@@ -57,7 +57,7 @@
                 </ToolBar>
             </ToolBarTray>
 
-            <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" Visibility="{Binding LineInfoVisible}">
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" Visibility="{Binding SelectedShain, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <TextBlock Text="社員コード：" TextAlignment="Right" Width="150"/>
                 <TextBlock Text="{Binding Shain}"/>
             </StackPanel>

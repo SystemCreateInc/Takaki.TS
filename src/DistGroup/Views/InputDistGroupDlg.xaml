@@ -6,10 +6,10 @@
              xmlns:utils="clr-namespace:WindowLib.Utils;assembly=WindowLib"
              xmlns:controls="clr-namespace:WindowLib.Views;assembly=WindowLib"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             Width="1400" Height="800">
+             Loaded="UserControl_Loaded">
 
     <prism:Dialog.WindowStyle>
-        <Style TargetType="Window" BasedOn="{StaticResource DialogWindow}"/>
+        <Style TargetType="Window" BasedOn="{StaticResource InputDialog}"/>
     </prism:Dialog.WindowStyle>
 
     <UserControl.Resources>
@@ -116,7 +116,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Content="参照日"/>
-                        <TextBox Grid.Column="1" Text="{Binding Date, StringFormat=yyyy/MM/dd}"/>
+                        <DatePicker x:Name="ReferenceDate" Grid.Column="1" SelectedDate="{Binding ReferenceDate}"/>
                         <Button Grid.Column="2" Content="参照" Command="{Binding Refer}" Margin="3"
                                 Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=Height}" Width="80"/>
                     </Grid>
@@ -129,7 +129,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Content="拠点コード" VerticalContentAlignment="Center"/>
-                        <TextBox Grid.Column="1" Text="{Binding CdKyoten}"/>
+                        <TextBox x:Name="CdKyoten" Grid.Column="1" Text="{Binding CdKyoten, UpdateSourceTrigger=PropertyChanged, Delay=300}" MaxLength="4" IsEnabled="{Binding IsAdd}"/>
                         <Label Grid.Column="2" Background="Blue"/>
                         <TextBlock Grid.Column="2" Text="{Binding NmKyoten}" Foreground="White"/>
                     </Grid>
@@ -142,8 +142,8 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Content="仕分グループコード"/>
-                        <TextBox Grid.Column="1" Text="{Binding CdDistGroup}"/>
-                        <TextBox Grid.Column="2" Text="{Binding NmDistGroup}"/>
+                        <TextBox Grid.Column="1" Text="{Binding CdDistGroup}" MaxLength="5" IsEnabled="{Binding IsAdd}"/>
+                        <TextBox Grid.Column="2" Text="{Binding NmDistGroup}" MaxLength="40" IsEnabled="{Binding IsAdd}"/>
                     </Grid>
 
                     <Grid Grid.Row="3">
@@ -154,9 +154,9 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Content="配送便集計"/>
-                        <RadioButton Grid.Column="1" Content="しない" Margin="3" FontSize="18"
+                        <RadioButton Grid.Column="1" Content="しない" Margin="3" FontSize="18" IsEnabled="{Binding IsAdd}"
                                      IsChecked="{Binding BinSumType, Mode=TwoWay, Converter={StaticResource Enum}, ConverterParameter=No}"/>
-                        <RadioButton Grid.Column="2" Content="する" Margin="3" FontSize="18"
+                        <RadioButton Grid.Column="2" Content="する" Margin="3" FontSize="18" IsEnabled="{Binding IsAdd}"
                                      IsChecked="{Binding BinSumType, Mode=TwoWay, Converter={StaticResource Enum}, ConverterParameter=Yes}"/>
                     </Grid>
 
@@ -170,11 +170,11 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Content="適用開始日・無効日"/>
-                        <TextBox Grid.Column="1" Text="{Binding DtTekiyoKaishi, StringFormat=yyyy/MM/dd}"
-                                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
+                        <DatePicker Grid.Column="1" SelectedDate="{Binding DtTekiyoKaishi}"
+                                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{Binding IsDateRelease}"/>
                         <Label Grid.Column="2" Content="～" HorizontalAlignment="Center"/>
-                        <TextBox Grid.Column="3" Text="{Binding DtTekiyoMuko, StringFormat=yyyy/MM/dd}"
-                                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"/>
+                        <DatePicker Grid.Column="3" SelectedDate="{Binding DtTekiyoMuko}"
+                                 HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{Binding IsDateRelease}"/>
                         <Button Grid.Column="4" Content="解除" Command="{Binding Release}" Margin="3"
                                 Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=Height}"/>
                     </Grid>
@@ -220,10 +220,12 @@
 
                     <Label Grid.Row="0" Content="【対象出荷バッチ】"/>
                     <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid}" SettingsKey="InputBatchColumns"/>
-                    <DataGrid Grid.Row="1" x:Name="dataGrid" ItemsSource="{Binding Batches}" AutoGenerateColumns="False"
-                              IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                              SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="All"
-                              Style="{StaticResource MaterialDesignDataGrid}" Margin="3" FontSize="18">
+                    <DataGrid Grid.Row="1" x:Name="dataGrid" ItemsSource="{Binding Batches, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                              AutoGenerateColumns="False" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True" 
+                              SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="All" 
+                              CanUserAddRows="{Binding BinSumType, Mode=TwoWay, Converter={StaticResource Enum}, ConverterParameter=Yes}"
+                              SelectedIndex="{Binding SelectBatchIndex}"
+                          Style="{StaticResource MaterialDesignDataGrid}" Margin="3" FontSize="18">
                         <DataGrid.ColumnHeaderStyle>
                             <Style TargetType="DataGridColumnHeader">
                                 <Setter Property="Background" Value="LightGray"/>
@@ -235,9 +237,15 @@
                         </DataGrid.ColumnHeaderStyle>
 
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="出荷バッチ" Binding="{Binding CdShukkaBatch}" Width="1.5*"
-                                                ElementStyle="{StaticResource CenterTextElement}"/>
-                            <DataGridTextColumn Header="名称" Binding="{Binding NmShukkaBatch}" Width="3.5*">
+                            <DataGridTextColumn Header="出荷バッチ" Binding="{Binding CdShukkaBatch, UpdateSourceTrigger=PropertyChanged, Delay=300}" Width="1.5*"
+                            ElementStyle="{StaticResource CenterTextElement}">
+                                <DataGridTextColumn.EditingElementStyle>
+                                    <Style TargetType="TextBox">
+                                        <Setter Property="MaxLength" Value="5"/>
+                                    </Style>
+                                </DataGridTextColumn.EditingElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="名称" Binding="{Binding NmShukkaBatch}" Width="3.5*" IsReadOnly="True">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="Blue"/>
@@ -250,9 +258,15 @@
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="大仕分" Binding="{Binding CdLargeGroup}" Width="1.5*"
-                                                ElementStyle="{StaticResource CenterTextElement}"/>
-                            <DataGridTextColumn Header="名称" Binding="{Binding CdLargeGroupName}" Width="3.5*">
+                            <DataGridTextColumn Header="大仕分" Binding="{Binding CdLargeGroup, UpdateSourceTrigger=PropertyChanged, Delay=300}" Width="1.5*"
+                            ElementStyle="{StaticResource CenterTextElement}">
+                                <DataGridTextColumn.EditingElementStyle>
+                                    <Style TargetType="TextBox">
+                                        <Setter Property="MaxLength" Value="3"/>
+                                    </Style>
+                                </DataGridTextColumn.EditingElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="名称" Binding="{Binding NmLargeGroup}" Width="3.5*" IsReadOnly="True">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="Blue"/>
@@ -285,7 +299,7 @@
 
                     <Label Grid.Row="0" Content="【履歴表示】" FontSize="18" Margin="3" VerticalContentAlignment="Center"/>
                     <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid2}" SettingsKey="InputLogColumns"/>
-                    <DataGrid Grid.Row="1" x:Name="dataGrid2" ItemsSource="{Binding Logs}" AutoGenerateColumns="False"
+                    <DataGrid Grid.Row="1" x:Name="dataGrid2" ItemsSource="{Binding ReferenceLog.LogInfos}" AutoGenerateColumns="False"
                               IsReadOnly="True" VerticalScrollBarVisibility="Visible" IsSynchronizedWithCurrentItem="True"
                               SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="All"
                               Style="{StaticResource MaterialDesignDataGrid}" Margin="3" FontSize="18">
@@ -303,7 +317,7 @@
                             <DataGridTextColumn Header="選択" Binding="{Binding DispSelected}" Width="0.3*"
                                                 ElementStyle="{StaticResource CenterTextElement}"/>
 
-                            <DataGridTextColumn Header="適用開始日" Binding="{Binding DtTekiyoKaishi}" Width="1*">
+                            <DataGridTextColumn Header="適用開始日" Binding="{Binding StartDate}" Width="1*">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="Blue"/>
@@ -318,7 +332,7 @@
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
 
-                            <DataGridTextColumn Header="適用無効日" Binding="{Binding DtTekiyoMuko}" Width="1*">
+                            <DataGridTextColumn Header="適用無効日" Binding="{Binding EndDate}" Width="1*">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="Blue"/>
@@ -333,7 +347,7 @@
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
 
-                            <DataGridTextColumn Header="変更者" Binding="{Binding CdShain}" Width="1*">
+                            <DataGridTextColumn Header="変更者" Binding="{Binding ShainCode}" Width="1*">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="DataGridCell">
                                         <Setter Property="Background" Value="Blue"/>
@@ -375,8 +389,8 @@
                         </Grid.ColumnDefinitions>
 
                         <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid3}" SettingsKey="InputCourseColumns"/>
-                        <DataGrid Grid.Column="1" x:Name="dataGrid3" ItemsSource="{Binding Courses}" AutoGenerateColumns="False"
-                                  IsReadOnly="True" VerticalScrollBarVisibility="Visible" IsSynchronizedWithCurrentItem="True"
+                        <DataGrid Grid.Column="1" x:Name="dataGrid3" ItemsSource="{Binding Courses, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" SelectedIndex="{Binding SelectCourseIndex}"
+                                  AutoGenerateColumns="False" VerticalScrollBarVisibility="Visible" IsSynchronizedWithCurrentItem="True"
                                   SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="All"
                                   Style="{StaticResource MaterialDesignDataGrid}" Margin="3" FontSize="18">
                             <DataGrid.ColumnHeaderStyle>
@@ -390,10 +404,16 @@
                             </DataGrid.ColumnHeaderStyle>
 
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="順番" Binding="{Binding NuCourseSeq}" Width="1*"
+                                <DataGridTextColumn Header="順番" Binding="{Binding NuCourseSeq}" Width="1*" IsReadOnly="True"
                                                     ElementStyle="{StaticResource RightTextElement}"/>
                                 <DataGridTextColumn Header="コース" Binding="{Binding CdCourse}" Width="1*"
-                                                    ElementStyle="{StaticResource CenterTextElement}"/>
+                                                    ElementStyle="{StaticResource CenterTextElement}">
+                                    <DataGridTextColumn.EditingElementStyle>
+                                        <Style TargetType="TextBox">
+                                            <Setter Property="MaxLength" Value="3"/>
+                                        </Style>
+                                    </DataGridTextColumn.EditingElementStyle>
+                                </DataGridTextColumn>
                             </DataGrid.Columns>
                         </DataGrid>
 
