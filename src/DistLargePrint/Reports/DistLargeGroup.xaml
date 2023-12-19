@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="DistLargePrint.Reports.DistLargeGroup"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DistLargePrint.Reports"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.8cm"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="0.8cm"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3cm"/>
+                <ColumnDefinition Width="4cm"/>
+                <ColumnDefinition Width="16cm"/>
+                <ColumnDefinition Width="2cm"/>
+                <ColumnDefinition Width="3cm"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Text="{Binding CdHimban}"/>
+            <TextBlock Grid.Column="1" Text="{Binding CdJan}"/>
+            <TextBlock Grid.Column="2" Text="{Binding NmHinSeishikimei}"/>
+            <TextBlock Grid.Column="3" Text="{Binding NuBoxunit}" HorizontalAlignment="Center"/>
+            <TextBlock Grid.Column="4" Text="{Binding DispTotalPs}"/>
+        </Grid>
+
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding Details}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <local:DistLargeRow/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>

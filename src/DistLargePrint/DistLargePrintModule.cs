@@ -2,6 +2,7 @@
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Regions;
+using SearchBoxLib.Views;
 
 namespace DistLargePrint
 {
@@ -16,6 +17,8 @@ namespace DistLargePrint
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<MainDistLargePrint>();
+            containerRegistry.RegisterDialog<SelectDistLargeGroupDlg>();
+            containerRegistry.RegisterDialog<SearchBoxDlg>();
         }
     }
 }

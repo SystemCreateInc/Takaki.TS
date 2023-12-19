@@ -41,9 +41,9 @@
                         </Style>
                     </ToolBar.Resources>
 
-                    <Button Command="{Binding Search}">
+                    <Button Command="{Binding Search}" CommandParameter="{Binding ElementName=dataGrid}">
                         <StackPanel Orientation="Vertical">
-                            <materialDesign:PackIcon Kind="Search"/>
+                            <materialDesign:PackIcon Kind="{Binding SearchIcon}"/>
                             <TextBlock Text="検索"/>
                         </StackPanel>
                     </Button>
@@ -100,27 +100,27 @@
                 <DataGridTextColumn Header="品番" Binding="{Binding CdHimban}"/>
                 <DataGridTextColumn Header="JANコード" Binding="{Binding CdJan}"/>
                 <DataGridTextColumn Header="品名" Binding="{Binding NmHinSeishikimei}"/>
-                <DataGridTextColumn Header="入数" Binding="{Binding QtSet}" ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="入数" Binding="{Binding NuBoxunit}" ElementStyle="{StaticResource RightTextElement}"/>
                 <DataGridTextColumn Header="ブロック" Binding="{Binding CdBlock}"/>
-                
-                <DataGridTextColumn Header="予定数&#xa;箱" Binding="{Binding Obox}" HeaderStyle="{StaticResource DoubleRowHeader}"
+
+                <DataGridTextColumn Header="予定数&#xa;箱" Binding="{Binding BoxOps}" HeaderStyle="{StaticResource DoubleRowHeader}"
                                     ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="&#xa;バラ" Binding="{Binding OBara}" ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="&#xa;総個数" Binding="{Binding TotalOps}" ElementStyle="{StaticResource RightTextElement}"/>
-                
-                <DataGridTextColumn Header="大仕分残数&#xa;箱" Binding="{Binding RemainingBox}" HeaderStyle="{StaticResource DoubleRowHeader}"
+                <DataGridTextColumn Header="&#xa;バラ" Binding="{Binding BaraOps}" ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="&#xa;総個数" Binding="{Binding NuLops}" ElementStyle="{StaticResource RightTextElement}"/>
+
+                <DataGridTextColumn Header="大仕分残数&#xa;箱" Binding="{Binding BoxRemainingPs}" HeaderStyle="{StaticResource DoubleRowHeader}"
                                     ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="&#xa;バラ" Binding="{Binding RemainingBara}" ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="&#xa;総個数" Binding="{Binding TotalRemainingps}" ElementStyle="{StaticResource RightTextElement}"/>
-                
-                <DataGridTextColumn Header="大仕分済&#xa;箱" Binding="{Binding Rbox}" HeaderStyle="{StaticResource DoubleRowHeader}"
+                <DataGridTextColumn Header="&#xa;バラ" Binding="{Binding BaraRemainingPs}" ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="&#xa;総個数" Binding="{Binding TotalRemainingPs}" ElementStyle="{StaticResource RightTextElement}"/>
+
+                <DataGridTextColumn Header="大仕分済&#xa;箱" Binding="{Binding BoxRps}" HeaderStyle="{StaticResource DoubleRowHeader}"
                                     ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="&#xa;バラ" Binding="{Binding RBara}" ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="&#xa;総個数" Binding="{Binding TotalRps}" ElementStyle="{StaticResource RightTextElement}"/>
-                
-                <DataGridTextColumn Header="作業日時" Binding="{Binding DtTorokuNichiji, StringFormat=yyyy/MM/dd HH:mm:ss}"
+                <DataGridTextColumn Header="&#xa;バラ" Binding="{Binding BaraRps}" ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="&#xa;総個数" Binding="{Binding NuLrps}" ElementStyle="{StaticResource RightTextElement}"/>
+
+                <DataGridTextColumn Header="作業日時" Binding="{Binding DtWorkdtLarge, StringFormat=yyyy/MM/dd HH:mm:ss}"
                                     HeaderStyle="{StaticResource DoubleRowHeader}"/>
-                <DataGridTextColumn Header="担当者名称" Binding="{Binding NmHenkosha}"/>
+                <DataGridTextColumn Header="担当者名称" Binding="{Binding NMShainLarge}"/>
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>
