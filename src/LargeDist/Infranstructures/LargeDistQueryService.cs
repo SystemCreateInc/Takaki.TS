@@ -125,6 +125,7 @@ namespace LargeDist.Infranstructures
         {
             var mapping = entity.TBDISTMAPPING!.First();
             return new DistItem(entity.IDDIST,
+                entity.DTDELIVERY,
                 entity.CDGTIN13,
                 entity.CDHIMBAN,
                 entity.CDJUCHUBIN,

@@ -10,6 +10,7 @@ namespace LargeDist.Models
     public class DistItem
     {
         public DistItem(long iDDIST,
+            string dTDELIVERY,
             string cDGTIN13,
             string cDHIMBAN,
             string cDJUCHUBIN,
@@ -33,6 +34,7 @@ namespace LargeDist.Models
             string? nMSHUKKABATCH)
         {
             Id = iDDIST;
+            DtDelivery = dTDELIVERY;
             CdGtin13 = cDGTIN13;
             CdHimban = cDHIMBAN;
             CdJuchuBin = cDJUCHUBIN;
@@ -65,12 +67,15 @@ namespace LargeDist.Models
 
         // 入力数
         public int InputPiece { get; set; }
+        // 更新数
+        public int LastInputPiece { get; private set; }
 
         // 商品停止フラグ
         public bool IsStopped { get; set; }
         public bool IsCompleted => RemainPiece == 0;
 
         public long Id { get; }
+        public string DtDelivery { get; }
         public string CdGtin13 { get; }
         public string CdHimban { get; }
         public string CdJuchuBin { get; }
@@ -102,6 +107,7 @@ namespace LargeDist.Models
 
         public void RefrectInputPiece()
         {
+            LastInputPiece = InputPiece;
             ResultPiece += InputPiece;
             // 残数を入力数にする
             InputPiece = RemainPiece;

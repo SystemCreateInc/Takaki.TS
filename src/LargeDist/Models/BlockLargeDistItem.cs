@@ -1,6 +1,5 @@
 ﻿using DbLib;
 using LargeDist.Infranstructures;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -67,20 +66,13 @@ namespace LargeDist.Models
 
         private void UpdateItemQuantity()
         {
-            Items = Items
-                .Select(x =>
+            foreach (var item in Items)
+            {
+                if (!item.IsStopped)
                 {
-                    if (x.IsStopped)
-                    {
-                        return x;
-                    }
-                    else
-                    {
-                        x.RefrectInputPiece();
-                        return x;
-                    }
-                })
-                .ToArray();
+                    item.RefrectInputPiece();
+                }
+            }
         }
     }
 }

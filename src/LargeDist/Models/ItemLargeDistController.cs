@@ -1,4 +1,7 @@
 ﻿using DbLib;
+using LargeDistLabelLib;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace LargeDist.Models
@@ -64,6 +67,37 @@ namespace LargeDist.Models
         public bool IsCompleted()
         {
             return Items.All(x => x.IsCompleted);
+        }
+
+        public IEnumerable<LargeDistLabel> GetLabelForCurrentItem()
+        {
+            return CurrentItem.Items
+                .GroupBy(x => x.CdBlock)
+                .OrderBy(x => x.Key)
+                .Select(x =>
+                {
+                    var item = x.First();
+                    var input = new BoxedQuantity(item.NuBoxUnit, x.Sum(x => x.LastInputPiece));
+                    return new LargeDistLabel
+                    {
+                        DtDelivery = item.DtDelivery,
+                        CdJuchuBin = item.CdJuchuBin,
+                        CdBlock = item.CdBlock ?? "",
+                        CdDistGroup = item.CdDistGroup ?? "",
+                        NmDistGroup = item.NmDistGroup ?? "",
+                        CdShukkaBatch = item.CdShukkaBatch,
+                        NmShukkaBatch = item.NmShukkaBatch ?? "",
+                        CdHimban = item.CdHimban,
+                        CdJan = item.CdGtin13,
+                        NmHinSeishikimei = item.NmHinSeishikimei ?? "",
+                        NuBoxUnit = item.NuBoxUnit,
+                        BoxPs = input.Box,
+                        BaraPs = input.Piece,
+                        TotalPs = input.Total,
+                        Barcode = item.CdGtin13,
+                    };
+                })
+                .ToArray();
         }
     }
 }

@@ -3,6 +3,7 @@ using LargeDist.Infranstructures;
 using LargeDist.Models;
 using LargeDist.Views;
 using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Services.Dialogs;
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using WindowLib.Utils;
 
 namespace LargeDist.ViewModels
 {
@@ -110,10 +112,12 @@ namespace LargeDist.ViewModels
         private BlockLargeDistController? _blockLargeDistController;
         private Person _person = new("", "");
         private bool _initialized = false;
+        private IEventAggregator _eventAggregator;
 
-        public BlockLargeDistViewModel(IDialogService dialogService)
+        public BlockLargeDistViewModel(IDialogService dialogService, IEventAggregator eventAggregator)
         {
             _dialogService = dialogService;
+            _eventAggregator = eventAggregator;
             ItemListCommand = new DelegateCommand(ItemList);
             ItemDescCommand = new DelegateCommand(ItemDesc).ObservesCanExecute(() => IsSelectedItem);
             ModifyQtyCommand = new DelegateCommand(ModifyQty).ObservesCanExecute(() => IsSelectedItem);
@@ -141,6 +145,11 @@ namespace LargeDist.ViewModels
             try
             {
                 _blockLargeDistController!.SaveCurrentItem(_person);
+
+                if (IsPrintLabel)
+                {
+                    new LargeDistLabelPrinter(_blockLargeDistController.GetLabelForCurrentItem(), _eventAggregator).Print(_dialogService);
+                }
 
                 if (_blockLargeDistController.IsCompleted())
                 {

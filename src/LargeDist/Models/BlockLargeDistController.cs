@@ -1,10 +1,8 @@
 ﻿using DbLib;
-using LargeDist.Infranstructures;
-using System;
+using DryIoc;
+using LargeDistLabelLib;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LargeDist.Models
 {
@@ -75,6 +73,37 @@ namespace LargeDist.Models
         public void SaveCurrentItem(Person person)
         {
             CurrentItem.SaveItems(person);
+        }
+
+        public IEnumerable<LargeDistLabel> GetLabelForCurrentItem()
+        {
+            return CurrentItem.Items
+                .GroupBy(x => x.GridPosition)
+                .OrderBy(x => x.Key)
+                .Select(x => 
+                {
+                    var item = x.First();
+                    var input = new BoxedQuantity(item.NuBoxUnit, x.Sum(x => x.LastInputPiece));
+                    return new LargeDistLabel
+                    {
+                        DtDelivery = item.DtDelivery,
+                        CdJuchuBin = item.CdJuchuBin,
+                        CdBlock = item.CdBlock ?? "",
+                        CdDistGroup = item.CdDistGroup ?? "",
+                        NmDistGroup = item.NmDistGroup ?? "",
+                        CdShukkaBatch = item.CdShukkaBatch,
+                        NmShukkaBatch = item.NmShukkaBatch ?? "",
+                        CdHimban = item.CdHimban,
+                        CdJan = item.CdGtin13,
+                        NmHinSeishikimei = item.NmHinSeishikimei ?? "",
+                        NuBoxUnit = item.NuBoxUnit,
+                        BoxPs = input.Box,
+                        BaraPs = input.Piece,
+                        TotalPs = input.Total,
+                        Barcode = item.CdGtin13,
+                    };
+                })
+                .ToArray();
         }
 
         internal bool IsCompleted()

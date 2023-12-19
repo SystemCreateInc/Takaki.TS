@@ -1,4 +1,5 @@
 ﻿using LabelLib;
+using LargeDistLabelLib;
 using LogLib;
 using System.Net.Sockets;
 using System.Text;
@@ -52,8 +53,24 @@ namespace LabelDesign
 
         private void LargeDist_Click(object sender, RoutedEventArgs e)
         {
-            var prm = new Param { Code = "123", IsVertical = false };
-            var data = new LargeDistLabelLib.LabelBuilder(new LargeDistLabelRepository()).Build(prm);
+            var prm = new LargeDistLabel
+            {
+                DtDelivery = "2018/10/15",
+                CdJuchuBin = "001",
+                CdBlock = "6",
+                CdDistGroup = "02001",
+                NmDistGroup = "広島1便(通常)",
+                CdShukkaBatch = "02001",
+                NmShukkaBatch = "広島常温1便",
+                CdHimban = "000022499",
+                CdJan = "4904730002302",
+                NmHinSeishikimei = "ミルクフランス",
+                NuBoxUnit = 12,
+                BoxPs = 1,
+                BaraPs = 2,
+                TotalPs = 14,
+            };
+            var data = new LargeDistLabelLib.LabelBuilder().Build(prm);
             Print(data, address.Text);
         }
     }
