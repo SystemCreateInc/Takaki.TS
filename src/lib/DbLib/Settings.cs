@@ -21,33 +21,33 @@ namespace DbLib
             _dbTransaction = dbTransaction;
         }
 
-        public string Get(string key, string defvalue = "")
+        public string Get(string key, string defvalue = "", string id = "")
         {
             return _dbTransaction.Connection.Find< SettingEntity>(s => s
                 .AttachToTransaction(_dbTransaction)
-                .Where($"{nameof(SettingEntity.Value):C} = {nameof(key):P}")
-                .WithParameters(new { key }))
+                .Where($"{nameof(SettingEntity.Value):C} = {nameof(key):P} and {nameof(SettingEntity.Id):C} = {nameof(id):P}")
+                .WithParameters(new { key, id }))
                 .FirstOrDefault()
                 ?.Data ?? defvalue;
         }
 
-        public int GetInt(string key, int defvalue = 0)
+        public int GetInt(string key, int defvalue = 0, string id = "")
         {
             var data = _dbTransaction.Connection.Find<SettingEntity>(s => s
                 .AttachToTransaction(_dbTransaction)
-                .Where($"{nameof(SettingEntity.Value):C} = {nameof(key):P}")
+                .Where($"{nameof(SettingEntity.Value):C} = {nameof(key):P} and {nameof(SettingEntity.Id):C} = {nameof(id):P}")
                 .WithParameters(new { key }))
                 .FirstOrDefault()
                 ?.Data;
             return int.TryParse(data, out int result) ? result : defvalue;
         }
 
-        public void Set<T>(string key, T data)
+        public void Set<T>(string key, T data, string id = "")
         {
             var dao = _dbTransaction.Connection.Get(new SettingEntity
             {
                 Value = key,
-                Id = "",
+                Id = id,
             }, s => s.AttachToTransaction(_dbTransaction));
 
             if (dao == null)
@@ -56,7 +56,7 @@ namespace DbLib
                 {
                     Value = key,
                     Data = data.ToString(),
-                    Id = "",
+                    Id = id,
                 }, s => s.AttachToTransaction(_dbTransaction));
             }
             else

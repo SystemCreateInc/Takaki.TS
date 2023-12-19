@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <BaseOutputPath>..\..\bin\</BaseOutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LargeDistLabelLib\LargeDistLabelLib.csproj" />
+    <ProjectReference Include="..\lib\DbLib\DbLib.csproj" />
+    <ProjectReference Include="..\lib\LogLib\LogLib.csproj" />
+    <ProjectReference Include="..\lib\SatoPrintLib\SatoPrintLib.csproj" />
+    <ProjectReference Include="..\lib\WindowLib\WindowLib.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Views\BlockListHeaderLine.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>

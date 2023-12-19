@@ -1,0 +1,254 @@
+﻿<UserControl x:Class="LargeDist.Views.ItemLargeDist"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"             
+             xmlns:local="clr-namespace:LargeDist.Views"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:Height="1000" d:Width="1000"
+             prism:ViewModelLocator.AutoWireViewModel="True">
+    <DockPanel>
+        <Grid DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <ToolBarTray>
+                <ToolBar ClipToBounds="False">
+                    <ToolBar.Resources>
+                        <Style TargetType="Button">
+                            <Setter Property="Focusable" Value="False"/>
+                            <Setter Property="Margin" Value="1"/>
+                            <Setter Property="Padding" Value="5"/>
+                        </Style>
+                        <Style TargetType="materialDesign:PackIcon">
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Setter Property="Margin" Value="1"/>
+                            <Setter Property="Height" Value="32"/>
+                            <Setter Property="Width" Value="32"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                        </Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                        </Style>
+                    </ToolBar.Resources>
+
+                    <Button Command="{Binding ItemListCommand}">
+                        <StackPanel Orientation="Vertical">
+                            <materialDesign:PackIcon Kind="ViewList"/>
+                            <TextBlock Text="商品一覧"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Command="{Binding ItemDescCommand}">
+                        <StackPanel Orientation="Vertical">
+                            <materialDesign:PackIcon Kind="ViewList"/>
+                            <TextBlock Text="商品明細"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Command="{Binding ModifyQtyCommand}">
+                        <StackPanel Orientation="Vertical">
+                            <materialDesign:PackIcon Kind="Edit"/>
+                            <TextBlock Text="数量変更"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Command="{Binding ModifyBoxUnitCommand}">
+                        <StackPanel Orientation="Vertical">
+                            <materialDesign:PackIcon Kind="EditBox"/>
+                            <TextBlock Text="箱入数変更"/>
+                        </StackPanel>
+                    </Button>
+                    <Separator/>
+                    <Button Command="{Binding CancelCommand}">
+                        <StackPanel Orientation="Vertical">
+                            <materialDesign:PackIcon Kind="Cancel"/>
+                            <TextBlock Text="大仕分中断(Shift)" />
+                        </StackPanel>
+                    </Button>
+                </ToolBar>
+            </ToolBarTray>
+        </Grid>
+
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="10">
+            <TextBlock>ラベル発行：</TextBlock>
+            <RadioButton IsChecked="{Binding IsPrintLabel}" >有り</RadioButton>
+            <RadioButton Margin="100,0,0,0">無し</RadioButton>
+        </StackPanel>
+
+        <Grid DockPanel.Dock="Top" Margin="10">
+            <Grid.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Foreground" Value="Red"/>
+                    <Setter Property="HorizontalAlignment" Value="Left" />
+                </Style>
+            </Grid.Resources>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock VerticalAlignment="Center" Grid.Column="0">
+                受注便:<Run Text="{Binding CdJuchuBin}" d:Text="000"/>　　
+            </TextBlock>
+            <TextBlock VerticalAlignment="Center" Grid.Column="1">
+                仕分グループ:<Run Text="{Binding CdDistGroup}" d:Text="02001"/>　　
+                <Run Text="{Binding NmDistGroup}" d:Text="仕分グループ"/>
+            </TextBlock>
+            <TextBlock VerticalAlignment="Center" Grid.Column="1" Grid.Row="1">
+                出荷バッチ：<Run Text="{Binding CdShukkaBatch}" d:Text="02001"/>
+                <Run Text="{Binding NmShukkaBatch}" d:Text="出荷バッチ"/>
+            </TextBlock>
+        </Grid>
+
+        <Grid DockPanel.Dock="Bottom">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width=".5*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.Resources>
+                <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                    <Setter Property="Margin" Value="50,10,50,10" />
+                    <Setter Property="FontSize" Value="30" />
+                    <Setter Property="Height" Value="60"/>
+                </Style>
+            </Grid.Resources>
+
+            <Button Command="{Binding MovePrevCommand}" >
+                <StackPanel Orientation="Horizontal">
+                    <Viewbox>
+                        <materialDesign:PackIcon Kind="ArrowLeftBold"/>
+                    </Viewbox>
+                    <Label Content="バック"/>
+                </StackPanel>
+            </Button>
+            <Button Grid.Column="1" Command="{Binding MoveNextCommand}" >
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="スキップ"/>
+                    <Viewbox>
+                        <materialDesign:PackIcon Kind="ArrowRightBold"/>
+                    </Viewbox>
+                </StackPanel>
+            </Button>
+            <Button Content="大仕分完了" Grid.Column="3"  Command="{Binding CompleteCommand}" />
+        </Grid>
+
+        <Grid Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="12*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="BorderThickness" Value="1" />
+                    <Setter Property="BorderBrush" Value="Black" />
+                </Style>
+
+                <Style TargetType="StackPanel">
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="FontSize" Value="30" />
+                </Style>
+            </Grid.Resources>
+
+            <Border Grid.ColumnSpan="2" Padding="10,0,0,0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding CdHimban}" d:Text="23414" Width="300"/>
+                    <TextBlock Text="{Binding CdGtin13}" d:Text="4900000000000" Width="300"/>
+                    <TextBlock Width="200">
+                        入数：<Run Text="{Binding NuBoxUnit}" d:Text="12"/>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Row="1" Grid.ColumnSpan="2" Padding="10,0,0,0">
+                <TextBlock Text="{Binding NmHinSeishikimei}" d:Text="クルミトースト" />
+            </Border>
+
+            <Grid Grid.Row="2" Margin="0,0,1,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+
+                <local:BlockListHeaderLine Grid.Row="0"/>
+                <local:BlockListLine Item="{Binding Chart.Items[0], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="1"/>
+                <local:BlockListLine Item="{Binding Chart.Items[1], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="2"/>
+                <local:BlockListLine Item="{Binding Chart.Items[2], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="3"/>
+                <local:BlockListLine Item="{Binding Chart.Items[3], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="4"/>
+                <local:BlockListLine Item="{Binding Chart.Items[4], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="5"/>
+                <local:BlockListLine Item="{Binding Chart.Items[5], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="6"/>
+                <local:BlockListLine Item="{Binding Chart.Items[6], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="7"/>
+                <local:BlockListLine Item="{Binding Chart.Items[7], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="8"/>
+                <local:BlockListLine Item="{Binding Chart.Items[8], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="9"/>
+                <local:BlockListLine Item="{Binding Chart.Items[9], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="10"/>
+                <local:BlockListLine Item="{Binding Chart.Items[10], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="11"/>
+                <local:BlockListLine Item="{Binding Chart.Items[11], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="12"/>
+            </Grid>
+
+            <Grid Grid.Row="2" Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+
+                <local:BlockListHeaderLine Grid.Row="0"/>
+                <local:BlockListLine Item="{Binding Chart.Items[12], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="1"/>
+                <local:BlockListLine Item="{Binding Chart.Items[13], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="2"/>
+                <local:BlockListLine Item="{Binding Chart.Items[14], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="3"/>
+                <local:BlockListLine Item="{Binding Chart.Items[15], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="4"/>
+                <local:BlockListLine Item="{Binding Chart.Items[16], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="5"/>
+                <local:BlockListLine Item="{Binding Chart.Items[17], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="6"/>
+                <local:BlockListLine Item="{Binding Chart.Items[18], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="7"/>
+                <local:BlockListLine Item="{Binding Chart.Items[19], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="8"/>
+                <local:BlockListLine Item="{Binding Chart.Items[20], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="9"/>
+                <local:BlockListLine Item="{Binding Chart.Items[21], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="10"/>
+                <local:BlockListLine Item="{Binding Chart.Items[22], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="11"/>
+                <local:BlockListLine Item="{Binding Chart.Items[23], Mode=OneWay}" Command="{Binding RowPushCommand}" Grid.Row="12"/>
+            </Grid>
+        </Grid>
+    </DockPanel>
+</UserControl>

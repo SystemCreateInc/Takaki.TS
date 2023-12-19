@@ -1,0 +1,114 @@
+﻿<UserControl x:Class="LargeDist.Views.ModifyQtyDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:prism="http://prismlibrary.com/"             
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:b="clr-namespace:WindowLib.Behaviors;assembly=WindowLib"
+             mc:Ignorable="d"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             Loaded="UserControl_Loaded"
+             Padding="20">
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window" BasedOn="{StaticResource DialogWindow}"/>
+    </prism:Dialog.WindowStyle>
+
+    <StackPanel Orientation="Vertical">
+        <StackPanel.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="Margin" Value="0,0,30,0"/>
+            </Style>
+        </StackPanel.Resources>
+
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock>
+                    品番：<Run Text="{Binding CdHimban}"/>
+                </TextBlock>
+                <TextBlock>
+                    JANコード：<Run Text="{Binding CdGtin13}"/>
+                </TextBlock>
+            </StackPanel>
+            <TextBlock Text="{Binding NmHinSeishikimei}"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock>
+                    容器種別：<Run Text="{Binding StBoxType}"/>
+                </TextBlock>
+                <TextBlock>
+                    容器箱入数：<Run Text="{Binding NuBoxUnit}"/>
+                </TextBlock>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock>
+                    受注便：<Run Text="{Binding CdJuchuBin}"/>
+                </TextBlock>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock>
+                    仕分G：<Run Text="{Binding CdDistGroup}" d:Text="02001"/>
+                </TextBlock>
+                <TextBlock Text="{Binding NmDistGroup}" d:Text="広島常温（通常）"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock>
+                    出荷バッチ：<Run Text="{Binding CdShukkaBatch}" d:Text="02001"/>
+                </TextBlock>
+                <TextBlock Text="{Binding NmShukkaBatch}" d:Text="広島常温"/>
+            </StackPanel>
+            <StackPanel Orientation="Vertical">
+                <StackPanel.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Foreground" Value="Blue"/>
+                        <Setter Property="Margin" Value="0,0,30,0"/>
+                    </Style>
+                </StackPanel.Resources>
+                <TextBlock>
+                    ＜ブロック：<Run Text="{Binding CdBlock}" d:Text="1"/>＞
+                </TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>
+                        予定総数：<Run Text="{Binding Order.Box, Mode=OneWay}" d:Text="12"/>箱  <Run Text="{Binding Order.Piece, Mode=OneWay}" d:Text="33"/>個(<Run Text="{Binding Order.Total, Mode=OneWay}" d:Text="123"/>)
+                    </TextBlock>
+                    <TextBlock>
+                        済総数：<Run Text="{Binding Result.Box, Mode=OneWay}" d:Text="12"/>箱  <Run Text="{Binding Result.Piece, Mode=OneWay}" d:Text="33"/>個(<Run Text="{Binding Result.Total, Mode=OneWay}" d:Text="123"/>)
+                    </TextBlock>
+                    <TextBlock>
+                        残総数：<Run Text="{Binding Remain.Box, Mode=OneWay}" d:Text="12"/>箱  <Run Text="{Binding Remain.Piece, Mode=OneWay}" d:Text="33"/>個(<Run Text="{Binding Remain.Total, Mode=OneWay}" d:Text="123"/>)
+                    </TextBlock>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+            
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,20">
+            <Label Content="実績数："/>
+            <TextBox Text="{Binding Box,UpdateSourceTrigger=PropertyChanged, Delay=100}" Width="100" HorizontalContentAlignment="Right" x:Name="Piece" >
+                <i:Interaction.Behaviors>
+                    <b:NumericTextBoxBehavior/>
+                </i:Interaction.Behaviors>
+            </TextBox>
+            <Label Content="箱"/>
+
+            <TextBox Text="{Binding Piece, UpdateSourceTrigger=PropertyChanged, Delay=100}" Width="100" HorizontalContentAlignment="Right" >
+                <i:Interaction.Behaviors>
+                    <b:NumericTextBoxBehavior/>
+                </i:Interaction.Behaviors>
+            </TextBox>
+            <Label Content="個"/>
+            <TextBlock VerticalAlignment="Center" Margin="10,0,0,0" Width="100">
+                (<Run Text="{Binding Total}"/>)
+            </TextBlock>
+        </StackPanel>
+            
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <StackPanel.Resources>
+                <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+                    <Setter Property="Width" Value="100" />
+                </Style>
+            </StackPanel.Resources>
+            
+            <Button Command="{Binding OKCommand}" Content="OK" Margin="0,0,30,0"/>
+            <Button Command="{Binding CancelCommand}" Content="キャンセル" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>
