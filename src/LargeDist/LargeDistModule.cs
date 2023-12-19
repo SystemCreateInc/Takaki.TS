@@ -21,6 +21,18 @@ namespace LargeDist
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<MainLargeDist>();
+            containerRegistry.RegisterForNavigation<ItemScan>();
+            containerRegistry.RegisterForNavigation<ItemList>();
+            containerRegistry.RegisterForNavigation<BlockLargeDist>();
+            containerRegistry.RegisterForNavigation<ItemLargeDist>();
+            containerRegistry.RegisterForNavigation<LargeDistItemList>();
+            containerRegistry.RegisterForNavigation<LargeDistCustomerList>();
+            containerRegistry.RegisterForNavigation<ModifyQtyDialog>();
+            containerRegistry.RegisterForNavigation<ModifyBoxUnitDialog>();
+            containerRegistry.RegisterForNavigation<CompletedDialog>();
+            containerRegistry.RegisterForNavigation<CancelDistDialog>();
+            containerRegistry.RegisterForNavigation<SelectItemDialog>();
+            containerRegistry.RegisterForNavigation<ScanOrderConfig>();
         }
     }
 }

@@ -1,0 +1,94 @@
+﻿<UserControl x:Class="LargeDist.Views.ScanSlot"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LargeDist.Views"
+             mc:Ignorable="d" 
+             PreviewMouseDown="UserControl_PreviewMouseDown"
+             Background="White" FontSize="40"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style x:Key="LabelText" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Gray"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Margin" Value="10,0,0,0"/>
+        </Style>
+        <Style x:Key="LabelRun" TargetType="Run">
+            <Setter Property="Foreground" Value="Gray"/>
+            <Setter Property="FontSize" Value="20"/>
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="10,0,10,0" />
+        </Style>
+        <Style TargetType="Border">
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+    </UserControl.Resources>
+    
+    <Border BorderBrush="Black" >
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="BorderThickness" Value="1" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Item.IsSelected, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                        <Setter Property="BorderThickness" Value="10" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Item.IsHead, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                        <Setter Property="Background" Value="LightGreen" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Item.IsStopped, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                        <Setter Property="Background" Value="Orange" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>    
+        </Border.Style>
+        
+        <Grid >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" >
+                <TextBlock Text="{Binding Item.Title, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                           FontSize="25"
+                           HorizontalAlignment="Center" VerticalAlignment="Center" d:Text="ミルクフランス"/>
+            </Border>
+            <Border Grid.Row="1" >
+                <Grid VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource LabelText}" VerticalAlignment="Center">入数</TextBlock>
+                    <TextBlock HorizontalAlignment="Right" >
+                        <Run Text="{Binding Item.NuBoxUnit, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                        <Run Style="{StaticResource LabelRun}">個</Run>
+                    </TextBlock>
+                </Grid>
+            </Border>
+            <Border Grid.Row="2" >
+                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Run Text="{Binding Item.TotalPieceCount, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                    <Run Style="{StaticResource LabelRun}">個</Run>
+                </TextBlock>
+            </Border>
+            <Border Grid.Row="3" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" >
+                        <Run Text="{Binding Item.BoxCount, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                        <Run Style="{StaticResource LabelRun}">箱</Run>
+                    </TextBlock>
+                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="1" >
+                        <Run Text="{Binding Item.PieceCount, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
+                        <Run Style="{StaticResource LabelRun}">個</Run>
+                    </TextBlock>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

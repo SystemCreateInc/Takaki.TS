@@ -8,6 +8,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
+             Loaded="UserControl_Loaded"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <DockPanel>
         <Grid DockPanel.Dock="Top">
@@ -68,7 +69,7 @@
                 <StackPanel Orientation="Horizontal">
                     <Label Content="担当者：" VerticalAlignment="Center"/>
                     <ComboBox ItemsSource="{Binding PersonList}" SelectedValue="{Binding CurrentPerson}" Width="100" IsEditable="True"
-                              TextSearch.TextPath="Code" b:ComboBoxBehavior.MaxLength="7">
+                              TextSearch.TextPath="Code" b:ComboBoxBehavior.MaxLength="7" x:Name="Person">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock><Run Text="{Binding Code}"/><Run Text=" "/><Run Text="{Binding Name}"/></TextBlock>
@@ -83,14 +84,15 @@
 
         <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid}" SettingsKey="LargeDistColumns"/>
         <DataGrid x:Name="dataGrid" ItemsSource="{Binding GroupList}"
+                  SelectedItem="{Binding SelectedItem}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
                   SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="None">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="状況" Binding="{Binding StatusText}"/>
-                <DataGridTextColumn Header="大仕分グループ" Binding="{Binding LargeGroup}"/>
-                <DataGridTextColumn Header="大仕分グループ名称" Binding="{Binding LargeGroupName}"/>
+                <DataGridTextColumn Header="大仕分グループ" Binding="{Binding CdLargeGroup}"/>
+                <DataGridTextColumn Header="大仕分グループ名称" Binding="{Binding NmLargeGroup}"/>
                 <DataGridTextColumn Header="予定商品数" Binding="{Binding OrderItemCount}" ElementStyle="{StaticResource RightTextElement}"/>
                 <DataGridTextColumn Header="残商品数" Binding="{Binding ResultItemCount}" ElementStyle="{StaticResource RightTextElement}"/>
             </DataGrid.Columns>

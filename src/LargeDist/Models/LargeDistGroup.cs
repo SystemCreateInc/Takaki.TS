@@ -1,4 +1,4 @@
 ﻿namespace LargeDist.Models
 {
-    public record LargeDistGroup(string LargeGroup, string LargeGroupName, int Seq, int OrderItemCount, int ResultItemCount);
+    public record LargeDistGroup(string StatusText, string CdLargeGroup, string NmLargeGroup, int OrderItemCount, int ResultItemCount);
 }

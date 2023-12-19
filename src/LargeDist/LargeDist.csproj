@@ -17,4 +17,9 @@
     <ProjectReference Include="..\lib\LogLib\LogLib.csproj" />
     <ProjectReference Include="..\lib\WindowLib\WindowLib.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Views\BlockListHeaderLine.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>

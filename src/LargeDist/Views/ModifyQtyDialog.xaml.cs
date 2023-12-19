@@ -3,18 +3,18 @@
 namespace LargeDist.Views
 {
     /// <summary>
-    /// Interaction logic for MainLargeDist
+    /// Interaction logic for ModifyQtyDialog
     /// </summary>
-    public partial class MainLargeDist : UserControl
+    public partial class ModifyQtyDialog : UserControl
     {
-        public MainLargeDist()
+        public ModifyQtyDialog()
         {
             InitializeComponent();
         }
 
         private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            Person.Focus();
+            Piece.Focus();
         }
     }
 }

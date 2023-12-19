@@ -1,5 +1,6 @@
 ﻿using LargeDist.Infranstructures;
 using LargeDist.Models;
+using LargeDist.Views;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using WindowLib.Utils;
 
 namespace LargeDist.ViewModels
 {
@@ -22,7 +24,11 @@ namespace LargeDist.ViewModels
         public DateTime DeliveryDate
         {
             get => _deliveryDate;
-            set => SetProperty(ref _deliveryDate, value);
+            set
+            {
+                SetProperty(ref _deliveryDate, value);
+                Refresh();
+            } 
         }
 
         private IEnumerable<Person> _personList = Enumerable.Empty<Person>();
@@ -36,14 +42,29 @@ namespace LargeDist.ViewModels
         public Person? CurrentPerson
         {
             get => _currentPerson;
-            set => SetProperty(ref _currentPerson, value);
+            set
+            {
+                SetProperty(ref _currentPerson, value);
+                UpdateCanSelect();
+            }
         }
 
-        private ObservableCollection<LargeDistGroup> _groupList;
+        private ObservableCollection<LargeDistGroup> _groupList = new ObservableCollection<LargeDistGroup>();
         public ObservableCollection<LargeDistGroup> GroupList
         {
             get => _groupList;
             set => SetProperty(ref _groupList, value);
+        }
+
+        private LargeDistGroup? _selectedItem;
+        public LargeDistGroup? SelectedItem
+        {
+            get => _selectedItem;
+            set
+            {
+                SetProperty(ref _selectedItem, value);
+                UpdateCanSelect();
+            }
         }
 
 
@@ -73,6 +94,8 @@ namespace LargeDist.ViewModels
             {
                 WindowLib.Utils.MessageDialog.Show(_dialogService, ex.Message, "エラー");
             }
+
+            Refresh();
         }
 
         private void SetupPersonList()
@@ -87,19 +110,29 @@ namespace LargeDist.ViewModels
 
         private void Select()
         {
-            throw new NotImplementedException();
+            _regionManager.RequestNavigate("ContentRegion", nameof(ItemScan), new NavigationParameters
+            {
+                {
+                    "Param", new ScanItemParam(DeliveryDate, CurrentPerson!, SelectedItem!)
+                },
+            }); ;
         }
 
         private void Refresh()
         {
             try
             {
-                GroupList = LargeGroupQueryService.GetAll(DeliveryDate);
+                CollectionViewHelper.SetCollection(GroupList, LargeGroupQueryService.GetAll(DeliveryDate));
             }
             catch (Exception ex)
             {
                 WindowLib.Utils.MessageDialog.Show(_dialogService, ex.Message, "エラー");
             }
+        }
+
+        private void UpdateCanSelect()
+        {
+            CanSelect = CurrentPerson is not null && SelectedItem is not null;
         }
     }
 }

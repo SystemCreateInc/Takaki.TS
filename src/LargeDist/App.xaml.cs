@@ -1,4 +1,5 @@
 ﻿using LargeDist.Views;
+using LogLib;
 using Prism.Ioc;
 using Prism.Modularity;
 using System.Windows;
@@ -13,6 +14,7 @@ namespace LargeDist
     {
         protected override Window CreateShell()
         {
+            Syslog.Init();
             return Container.Resolve<MainWindow>();
         }
 

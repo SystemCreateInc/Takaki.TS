@@ -3,18 +3,18 @@
 namespace LargeDist.Views
 {
     /// <summary>
-    /// Interaction logic for MainLargeDist
+    /// Interaction logic for SelectItemDialog
     /// </summary>
-    public partial class MainLargeDist : UserControl
+    public partial class SelectItemDialog : UserControl
     {
-        public MainLargeDist()
+        public SelectItemDialog()
         {
             InitializeComponent();
         }
 
         private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            Person.Focus();
+            dataGrid.Focus();
         }
     }
 }
