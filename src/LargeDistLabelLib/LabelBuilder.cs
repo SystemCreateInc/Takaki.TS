@@ -2,19 +2,10 @@
 
 namespace LargeDistLabelLib
 {
-    public class LabelBuilder : ILabelBuilder
+    public class LabelBuilder
     {
-        private ILabelRepository _labelRepository;
-
-        public LabelBuilder(ILabelRepository labelRepository)
+        public IEnumerable<string> Build(LargeDistLabel data)
         {
-            _labelRepository = labelRepository;
-        }
-
-        public IEnumerable<string> Build(ILabelBuilderParam param)
-        {
-            var data = _labelRepository.Get();
-
             var fmtr = new SplFormatter();
             fmtr.SetOffset(0, 15);
             fmtr.Start();

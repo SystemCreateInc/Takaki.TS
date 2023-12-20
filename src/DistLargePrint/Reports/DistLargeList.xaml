@@ -1,0 +1,116 @@
+﻿<UserControl x:Class="DistLargePrint.Reports.DistLargeList"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:DistLargePrint.Reports"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             Width="29.7cm" Height="21cm" FontSize="20">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1.5cm"/>
+            <RowDefinition Height="0.65cm"/>
+            <RowDefinition Height="2.6cm"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="0.5*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="Margin" Value="3"/>
+                </Style>
+            </Grid.Resources>
+
+            <TextBlock Grid.Column="0" Text="大仕分リスト" FontSize="40"/>
+            <TextBlock Grid.Column="1" Text="{Binding CreateDate, StringFormat=yyyy/MM/dd HH:mm:ss}" FontSize="25"/>
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <TextBlock Text="PAGE :" FontSize="25"/>
+                <TextBlock Text="{Binding PageInfo}" FontSize="25"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <TextBlock Text="大仕分グループ : "/>
+                <TextBlock Text="{Binding CdLargeGroup}"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <TextBlock Text="納品日 : "/>
+                <TextBlock Text="{Binding DtDelivery}"/>
+            </StackPanel>
+
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1.3cm"/>
+                <RowDefinition Height="1.3cm"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3cm"/>
+                    <ColumnDefinition Width="4cm"/>
+                    <ColumnDefinition Width="16cm"/>
+                    <ColumnDefinition Width="2cm"/>
+                    <ColumnDefinition Width="3cm"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="品番" VerticalAlignment="Bottom"/>
+                <TextBlock Grid.Column="1" Text="JANコード" VerticalAlignment="Bottom"/>
+                <TextBlock Grid.Column="2" Text="品名" VerticalAlignment="Bottom"/>
+                <TextBlock Grid.Column="3" Text="入数" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="4" Text="総数&#xa;箱/個" VerticalAlignment="Bottom"/>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="4cm"/>
+                    <ColumnDefinition Width="2cm"/>
+                    <ColumnDefinition Width="2cm"/>
+                    <ColumnDefinition Width="2cm"/>
+                    <ColumnDefinition Width="2cm"/>
+                    <ColumnDefinition Width="2cm"/>
+                    <ColumnDefinition Width="2cm"/>
+                    <ColumnDefinition Width="2cm"/>
+                    <ColumnDefinition Width="5cm"/>
+                    <ColumnDefinition Width="5cm"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="1" Text="ブロック" VerticalAlignment="Bottom"/>
+                <TextBlock Grid.Column="2" Text="予定数&#xa;箱/バラ" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text="総個数" VerticalAlignment="Bottom"/>
+                <TextBlock Grid.Column="4" Text="仕分残数&#xa;箱/バラ" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="5" Text="総個数" VerticalAlignment="Bottom"/>
+                <TextBlock Grid.Column="6" Text="仕分済数&#xa;箱/バラ" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="7" Text="総個数" VerticalAlignment="Bottom"/>
+                <TextBlock Grid.Column="8" Text="作業日時" VerticalAlignment="Bottom"/>
+                <TextBlock Grid.Column="9" Text="作業担当者" VerticalAlignment="Bottom"/>
+            </Grid>
+        </Grid>
+
+        <ItemsControl Grid.Row="3" ItemsSource="{Binding Groups}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <local:DistLargeGroup/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>

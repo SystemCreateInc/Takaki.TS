@@ -18,102 +18,102 @@ namespace DistLargePrint.Models
             set => SetProperty(ref _cdJan, value);
         }
 
-        private string _nmHinSeishikimei = string.Empty;
-        public string NmHinSeishikimei
+        private string? _nmHinSeishikimei = string.Empty;
+        public string? NmHinSeishikimei
         {
             get => _nmHinSeishikimei;
             set => SetProperty(ref _nmHinSeishikimei, value);
         }
 
-        private int _qtSet;
-        public int QtSet
+        private int _nuBoxunit;
+        public int NuBoxunit
         {
-            get => _qtSet;
-            set => SetProperty(ref _qtSet, value);
+            get => _nuBoxunit;
+            set => SetProperty(ref _nuBoxunit, value);
         }
 
-        private string _cdBlock = string.Empty;
-        public string CdBlock
+        private string? _cdBlock = string.Empty;
+        public string? CdBlock
         {
             get => _cdBlock;
             set => SetProperty(ref _cdBlock, value);
         }
 
-        private int _obox;
-        public int Obox
+        private int _boxOps;
+        public int BoxOps
         {
-            get => _obox;
-            set => SetProperty(ref _obox, value);
+            get => _boxOps;
+            set => SetProperty(ref _boxOps, value);
         }
 
-        private int _oBara;
-        public int OBara
+        private int _baraOps;
+        public int BaraOps
         {
-            get => _oBara;
-            set => SetProperty(ref _oBara, value);
+            get => _baraOps;
+            set => SetProperty(ref _baraOps, value);
         }
 
-        private int _totalOps;
-        public int TotalOps
+        private int _nuLops;
+        public int NuLops
         {
-            get => _totalOps;
-            set => SetProperty(ref _totalOps, value);
+            get => _nuLops;
+            set => SetProperty(ref _nuLops, value);
         }
 
-        private int _remainingBox;
-        public int RemainingBox
+        private int _boxRemainingPs;
+        public int BoxRemainingPs
         {
-            get => _remainingBox;
-            set => SetProperty(ref _remainingBox, value);
+            get => _boxRemainingPs;
+            set => SetProperty(ref _boxRemainingPs, value);
         }
 
-        private int _remainingBara;
-        public int RemainingBara
+        private int _baraRemainingPs;
+        public int BaraRemainingPs
         {
-            get => _remainingBara;
-            set => SetProperty(ref _remainingBara, value);
+            get => _baraRemainingPs;
+            set => SetProperty(ref _baraRemainingPs, value);
         }
 
-        private int _totalRemainingps;
-        public int TotalRemainingps
+        private int _totalRemainingPs;
+        public int TotalRemainingPs
         {
-            get => _totalRemainingps;
-            set => SetProperty(ref _totalRemainingps, value);
+            get => _totalRemainingPs;
+            set => SetProperty(ref _totalRemainingPs, value);
         }
 
-        private int _rbox;
-        public int Rbox
+        private int _boxRps;
+        public int BoxRps
         {
-            get => _rbox;
-            set => SetProperty(ref _rbox, value);
+            get => _boxRps;
+            set => SetProperty(ref _boxRps, value);
         }
 
-        private int _rBara;
-        public int RBara
+        private int _baraRps;
+        public int BaraRps
         {
-            get => _rBara;
-            set => SetProperty(ref _rBara, value);
+            get => _baraRps;
+            set => SetProperty(ref _baraRps, value);
         }
 
-        private int _totalRps;
-        public int TotalRps
+        private int _nuLrps;
+        public int NuLrps
         {
-            get => _totalRps;
-            set => SetProperty(ref _totalRps, value);
+            get => _nuLrps;
+            set => SetProperty(ref _nuLrps, value);
         }
 
-        private DateTime? _dtTorokuNichiji;
-        public DateTime? DtTorokuNichiji
+        private DateTime? _dtWorkdtLarge;
+        public DateTime? DtWorkdtLarge
         {
-            get => _dtTorokuNichiji;
-            set => SetProperty(ref _dtTorokuNichiji, value);
+            get => _dtWorkdtLarge;
+            set => SetProperty(ref _dtWorkdtLarge, value);
         }
 
-        private string _nmHenkosha = string.Empty;
-        public string NmHenkosha
+        private string? _nmShainLarge;
+        public string? NMShainLarge
         {
-            get => _nmHenkosha;
-            set => SetProperty(ref _nmHenkosha, value);
+            get => _nmShainLarge;
+            set => SetProperty(ref _nmShainLarge, value);
         }
     }
 }

@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="DistLargePrint.Views.SelectDistLargeGroupDlg"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             HorizontalAlignment="Center" VerticalAlignment="Center"
+             Loaded="UserControl_Loaded" Width="380">
+
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window" BasedOn="{StaticResource DialogWindow}"/>
+    </prism:Dialog.WindowStyle>
+
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5">
+            <TextBlock Text="大仕分グループ" Width="150" VerticalAlignment="Center" Margin="3"/>
+            <TextBlock Text=":" VerticalAlignment="Center" Margin="3"/>
+            <ComboBox x:Name="LargeDistGroupCombo" SelectedIndex="{Binding LargeDistGroupIndex}" ItemsSource="{Binding LargeDistGroupCombo}"
+                      DisplayMemberPath="Name" Width="150" Margin="3"/>
+        </StackPanel>
+
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="3">
+            <TextBlock Text="納品日" Width="150" VerticalAlignment="Center" Margin="3"/>
+            <TextBlock Text=":" VerticalAlignment="Center" Margin="3"/>
+            <DatePicker SelectedDate="{Binding DeliveryDate}" Language="ja" Width="150" VerticalAlignment="Center" Margin="3"/>
+        </StackPanel>
+
+        <TextBlock DockPanel.Dock="Top" Text="{Binding ErrorMessage}" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+
+        <StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Center">
+            <Button Width="125" Command="{Binding OK}" Margin="5">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Check" VerticalAlignment="Center"/>
+                    <TextBlock Text="OK" Margin="3,0,0,0"/>
+                </StackPanel>
+            </Button>
+
+            <Button Width="125" Command="{Binding Cancel}" Margin="5" IsCancel="True">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Cancel" VerticalAlignment="Center"/>
+                    <TextBlock Text="キャンセル" Margin="3,0,0,0"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </DockPanel>
+</UserControl>
