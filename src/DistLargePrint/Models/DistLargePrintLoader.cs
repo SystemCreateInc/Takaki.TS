@@ -1,102 +1,62 @@
-﻿namespace DistLargePrint.Models
+﻿using DbLib.DbEntities;
+using DbLib;
+using SearchBoxLib;
+using Dapper.FastCrud;
+using DbLib.Defs;
+using System.Runtime.InteropServices;
+
+namespace DistLargePrint.Models
 {
     public class DistLargePrintLoader
     {
-        public static IEnumerable<DistLargePrint> Get()
+        public static IEnumerable<DistLargePrint> Get(SearchConditionType searchConditionType, string cdLargeGroup, string dtDelivery, SearchQueryParam searchQueryParam)
         {
-            // fixme:読み込み機能
-            return new DistLargePrint[]
+            using (var con = DbFactory.CreateConnection())
             {
-                new DistLargePrint
+                // 前回検索時のパラメータ取得
+                var prm = searchQueryParam.GetSearchParameters();
+                var mapStatus = Status.Completed;
+                prm.Add("mapStatus", mapStatus);
+                prm.Add("dtDelivery", dtDelivery);
+                prm.Add("cdLargeGroup", cdLargeGroup);
+
+                var whereSql = searchQueryParam?.GetSearchWhere();
+                whereSql = !string.IsNullOrEmpty(whereSql) ? "and " + whereSql : " and 1=1";
+
+                // 全件、未処理絞り込み
+                if (searchConditionType == SearchConditionType.Uncompleted)
                 {
-                    CdHimban = "227577",
-                    CdJan = "4904730002302",
-                    NmHinSeishikimei = "ミルクフランス",
-                    QtSet = 14,
-                    CdBlock = "1",
-                    Obox = 3,
-                    OBara = 0,
-                    TotalOps = 42,
-                    RemainingBox = 0,
-                    RemainingBara = 0,
-                    TotalRemainingps = 0,
-                    Rbox = 3,
-                    RBara = 0,
-                    TotalRps = 42,
-                    DtTorokuNichiji = DateTime.Now,
-                    NmHenkosha = "佐藤一郎",
-                },
-                new DistLargePrint
-                {
-                    CdHimban = "227577",
-                    CdJan = "4904730002302",
-                    NmHinSeishikimei = "ミルクフランス",
-                    QtSet = 14,
-                    CdBlock = "2",
-                    Obox = 2,
-                    OBara = 3,
-                    TotalOps = 31,
-                    RemainingBox = 0,
-                    RemainingBara = 0,
-                    TotalRemainingps = 0,
-                    Rbox = 2,
-                    RBara= 3,
-                    TotalRps = 31,
-                    DtTorokuNichiji= DateTime.Now,
-                    NmHenkosha = "佐藤一郎",
-                },
-                new DistLargePrint
-                {
-                    CdHimban = "000002",
-                    CdJan = "4900000000002",
-                    NmHinSeishikimei = "品名",
-                    QtSet = 12,
-                    CdBlock = "6",
-                    Obox = 0,
-                    OBara = 10,
-                    TotalOps = 10,
-                    RemainingBox = 0,
-                    RemainingBara = 10,
-                    TotalRemainingps = 10,
-                    Rbox = 0,
-                    RBara= 0,
-                    TotalRps = 0,
-                },
-                new DistLargePrint
-                {
-                    CdHimban = "000003",
-                    CdJan = "4900000000003",
-                    NmHinSeishikimei = "品名",
-                    QtSet = 12,
-                    CdBlock = "2",
-                    Obox = 0,
-                    OBara = 10,
-                    TotalOps = 10,
-                    RemainingBox = 0,
-                    RemainingBara = 10,
-                    TotalRemainingps = 10,
-                    Rbox = 0,
-                    RBara= 0,
-                    TotalRps = 0,
-                },
-                new DistLargePrint
-                {
-                    CdHimban = "000003",
-                    CdJan = "4900000000003",
-                    NmHinSeishikimei = "品名",
-                    QtSet = 12,
-                    CdBlock = "5",
-                    Obox = 1,
-                    OBara = 8,
-                    TotalOps = 21,
-                    RemainingBox = 1,
-                    RemainingBara = 8,
-                    TotalRemainingps = 21,
-                    Rbox = 0,
-                    RBara= 0,
-                    TotalRps = 0,
+                    whereSql += Sql.Format<TBDISTEntity>($" and {nameof(TBDISTEntity.FGLSTATUS):C} < {nameof(searchConditionType):P}");
+                    prm.Add("searchConditionType", Status.Completed);
                 }
-            };
+
+                return con.Find<TBDISTEntity>(s => s
+                .Include<TBDISTMAPPINGEntity>(j => j.InnerJoin())
+                .Where(@$"{nameof(TBDISTEntity.FGMAPSTATUS):C}={nameof(mapStatus):P}
+                    and {nameof(TBDISTEntity.DTDELIVERY):C}={nameof(dtDelivery):P}
+                    and {nameof(TBDISTMAPPINGEntity.CDLARGEGROUP):of TB_DIST_MAPPING}={nameof(cdLargeGroup):P} {whereSql}")
+                .WithParameters(prm))
+                    .GroupBy(x => new { x.CDHIMBAN, x.CDGTIN13, x.TBDISTMAPPING?.FirstOrDefault()?.NMHINSEISHIKIMEI, x.NUBOXUNIT, x.TBDISTMAPPING?.FirstOrDefault()?.CDBLOCK })
+                    .Select(x => new DistLargePrint
+                    {
+                        CdHimban = x.Key.CDHIMBAN,
+                        CdJan = x.Key.CDGTIN13,
+                        NmHinSeishikimei = x.Key.NMHINSEISHIKIMEI,
+                        NuBoxunit = x.Key.NUBOXUNIT,
+                        CdBlock = x.Key.CDBLOCK,
+                        BoxOps = x.Key.NUBOXUNIT == 0 ? 0 : x.Sum(x => x.NULOPS) / x.Key.NUBOXUNIT,
+                        BaraOps = x.Key.NUBOXUNIT == 0 ? 0 : x.Sum(x => x.NULOPS) % x.Key.NUBOXUNIT,
+                        NuLops = x.Sum(x => x.NULOPS),
+                        BoxRps = x.Key.NUBOXUNIT == 0 ? 0 : x.Sum(x => x.NULRPS) / x.Key.NUBOXUNIT,
+                        BaraRps = x.Key.NUBOXUNIT == 0 ? 0 : x.Sum(x => x.NULRPS) % x.Key.NUBOXUNIT,
+                        NuLrps = x.Sum(x => x.NULRPS),
+                        BoxRemainingPs = x.Key.NUBOXUNIT == 0 ? 0 : (x.Sum(x => x.NULOPS) - x.Sum(x => x.NULRPS)) / x.Key.NUBOXUNIT,
+                        BaraRemainingPs = x.Key.NUBOXUNIT == 0 ? (x.Sum(x => x.NULOPS) - x.Sum(x => x.NULRPS)) : (x.Sum(x => x.NULOPS) - x.Sum(x => x.NULRPS)) % x.Key.NUBOXUNIT,
+                        TotalRemainingPs = x.Sum(x => x.NULOPS) - x.Sum(x => x.NULRPS),
+                        DtWorkdtLarge =x.Max(x => x.DTWORKDTLARGE),
+                        NMShainLarge = x.Max(x => x.NMSHAINLARGE),
+                    });
+            }
         }
     }
 }
