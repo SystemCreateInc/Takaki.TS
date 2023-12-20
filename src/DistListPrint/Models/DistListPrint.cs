@@ -4,11 +4,25 @@ namespace DistListPrint.Models
 {
     public class DistListPrint : BindableBase
     {
+        private long _idDist;
+        public long IdDist
+        {
+            get => _idDist;
+            set => SetProperty(ref _idDist, value);
+        }
+
         private string _cdShukkaBatch = string.Empty;
         public string CdShukkaBatch
         {
             get => _cdShukkaBatch;
             set => SetProperty(ref _cdShukkaBatch, value);
+        }
+
+        private string _nmShukkaBatch = string.Empty;
+        public string NmShukkaBatch
+        {
+            get => _nmShukkaBatch;
+            set => SetProperty(ref _nmShukkaBatch, value);
         }
 
         private string _cdCourse = string.Empty;
@@ -46,11 +60,11 @@ namespace DistListPrint.Models
             set => SetProperty(ref _cdHimban, value);
         }
 
-        private string _cdJan = string.Empty;
-        public string CdJan
+        private string _cdGtin13 = string.Empty;
+        public string CdGtin13
         {
-            get => _cdJan;
-            set => SetProperty(ref _cdJan, value);
+            get => _cdGtin13;
+            set => SetProperty(ref _cdGtin13, value);
         }
 
         private string _nmHinSeishikimei = string.Empty;
@@ -60,88 +74,88 @@ namespace DistListPrint.Models
             set => SetProperty(ref _nmHinSeishikimei, value);
         }
 
-        private int _qtUmpanYokiHakoIrisu;
-        public int QtUmpanYokiHakoIrisu
+        private int _nuBoxunit;
+        public int NuBoxunit
         {
-            get => _qtUmpanYokiHakoIrisu;
-            set => SetProperty(ref _qtUmpanYokiHakoIrisu, value);
+            get => _nuBoxunit;
+            set => SetProperty(ref _nuBoxunit, value);
         }
 
-        private int _obox;
-        public int Obox
+        private int _boxOps;
+        public int BoxOps
         {
-            get => _obox;
-            set => SetProperty(ref _obox, value);
+            get => _boxOps;
+            set => SetProperty(ref _boxOps, value);
         }
 
-        private int _oBara;
-        public int OBara
+        private int _baraOps;
+        public int BaraOps
         {
-            get => _oBara;
-            set => SetProperty(ref _oBara, value);
+            get => _baraOps;
+            set => SetProperty(ref _baraOps, value);
         }
 
-        private int _totalOps;
-        public int TotalOps
+        private int _nuOps;
+        public int NuOps
         {
-            get => _totalOps;
-            set => SetProperty(ref _totalOps, value);
+            get => _nuOps;
+            set => SetProperty(ref _nuOps, value);
         }
 
-        private int _remainingBox;
-        public int RemainingBox
+        private int _boxRemainingPs;
+        public int BoxRemainingPs
         {
-            get => _remainingBox;
-            set => SetProperty(ref _remainingBox, value);
+            get => _boxRemainingPs;
+            set => SetProperty(ref _boxRemainingPs, value);
         }
 
-        private int _remainingBara;
-        public int RemainingBara
+        private int _baraRemainingPs;
+        public int BaraRemainingPs
         {
-            get => _remainingBara;
-            set => SetProperty(ref _remainingBara, value);
+            get => _baraRemainingPs;
+            set => SetProperty(ref _baraRemainingPs, value);
         }
 
-        private int _totalRemainingps;
-        public int TotalRemainingps
+        private int _totalRemainingPs;
+        public int TotalRemainingPs
         {
-            get => _totalRemainingps;
-            set => SetProperty(ref _totalRemainingps, value);
+            get => _totalRemainingPs;
+            set => SetProperty(ref _totalRemainingPs, value);
         }
 
-        private int _rbox;
-        public int Rbox
+        private int _boxRps;
+        public int BoxRps
         {
-            get => _rbox;
-            set => SetProperty(ref _rbox, value);
+            get => _boxRps;
+            set => SetProperty(ref _boxRps, value);
         }
 
-        private int _rBara;
-        public int RBara
+        private int _baraRps;
+        public int BaraRps
         {
-            get => _rBara;
-            set => SetProperty(ref _rBara, value);
+            get => _baraRps;
+            set => SetProperty(ref _baraRps, value);
         }
 
-        private int _totalRps;
-        public int TotalRps
+        private int _nuDrps;
+        public int NuDrps
         {
-            get => _totalRps;
-            set => SetProperty(ref _totalRps, value);
+            get => _nuDrps;
+            set => SetProperty(ref _nuDrps, value);
         }
 
-        private DateTime? _dtTorokuNichiji;
-        public DateTime? DtTorokuNichiji
+        private DateTime? _dtWorkdtDist;
+        public DateTime? DtWorkdtDist
         {
-            get => _dtTorokuNichiji;
-            set => SetProperty(ref _dtTorokuNichiji, value);
+            get => _dtWorkdtDist;
+            set => SetProperty(ref _dtWorkdtDist, value);
         }
 
-        private string _nmHenkosha = string.Empty;
-        public string NmHenkosha
+        private string? _nmShainDist;
+        public string? NmShainDist
         {
-            get => _nmHenkosha;
-            set => SetProperty(ref _nmHenkosha, value);
+            get => _nmShainDist;
+            set => SetProperty(ref _nmShainDist, value);
         }
     }
 }
