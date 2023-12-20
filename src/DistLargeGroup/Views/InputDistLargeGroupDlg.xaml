@@ -6,11 +6,10 @@
              xmlns:utils="clr-namespace:WindowLib.Utils;assembly=WindowLib"
              xmlns:controls="clr-namespace:WindowLib.Views;assembly=WindowLib"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             Width="1400" Height="800"
              Loaded="UserControl_Loaded">
 
     <prism:Dialog.WindowStyle>
-        <Style TargetType="Window" BasedOn="{StaticResource DialogWindow}"/>
+        <Style TargetType="Window" BasedOn="{StaticResource InputDialog}"/>
     </prism:Dialog.WindowStyle>
 
     <UserControl.Resources>
