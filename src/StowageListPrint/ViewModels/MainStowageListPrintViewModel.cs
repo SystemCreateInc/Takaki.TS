@@ -168,13 +168,13 @@ namespace StowageListPrint.ViewModels
         {
             IDialogResult? result = null;
 
-            _dialogService.ShowDialog(
-                nameof(InputStowageDlg),
-                new DialogParameters
-                {
-                    { "CurrentStowageListPrint", CurrentStowageListPrint },
-                },
-                r => result = r);
+            //_dialogService.ShowDialog(
+            //    nameof(InputStowageDlg),
+            //    new DialogParameters
+            //    {
+            //        { "CurrentStowageListPrint", CurrentStowageListPrint },
+            //    },
+            //    r => result = r);
 
             return result?.Result == ButtonResult.OK;
         }

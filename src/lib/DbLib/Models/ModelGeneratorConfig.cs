@@ -258,7 +258,7 @@ namespace DbLib.DbEntities
         /// Represents the column 'NU_THRESHOLD'.
         /// </summary>
         [Column("NU_THRESHOLD")]
-        public virtual int NUTHRESHOLD { get; set; }
+        public virtual decimal NUTHRESHOLD { get; set; }
 
         /// <summary>
         /// Represents the column 'DT_TEKIYOKAISHI'.
@@ -1055,6 +1055,24 @@ namespace DbLib.DbEntities
         /// </summary>
         [Column("NM_SUM_TOKUISAKI")]
         public virtual string? NMSUMTOKUISAKI { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_SUM_COURSE'.
+        /// </summary>
+        [Column("CD_SUM_COURSE")]
+        public virtual string? CDSUMCOURSE { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_SUM_ROUTE'.
+        /// </summary>
+        [Column("CD_SUM_ROUTE")]
+        public virtual short? CDSUMROUTE { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_BIN_SUM'.
+        /// </summary>
+        [Column("CD_BIN_SUM")]
+        public virtual short? CDBINSUM { get; set; }
 
         /// <summary>
         /// Represents the column 'CD_BLOCK'.
@@ -4246,6 +4264,12 @@ namespace DbLib.DbEntities
         public virtual string? NMDISTGROUP { get; set; }
 
         /// <summary>
+        /// Represents the column 'CD_BIN_SUM'.
+        /// </summary>
+        [Column("CD_BIN_SUM")]
+        public virtual short? CDBINSUM { get; set; }
+
+        /// <summary>
         /// Represents the column 'CD_SUM_TOKUISAKI'.
         /// </summary>
         [Column("CD_SUM_TOKUISAKI")]
@@ -4256,6 +4280,18 @@ namespace DbLib.DbEntities
         /// </summary>
         [Column("NM_SUM_TOKUISAKI")]
         public virtual string? NMSUMTOKUISAKI { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_SUM_COURSE'.
+        /// </summary>
+        [Column("CD_SUM_COURSE")]
+        public virtual string? CDSUMCOURSE { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_SUM_ROUTE'.
+        /// </summary>
+        [Column("CD_SUM_ROUTE")]
+        public virtual int? CDSUMROUTE { get; set; }
 
         /// <summary>
         /// Represents the column 'tdunitaddrcode'.
