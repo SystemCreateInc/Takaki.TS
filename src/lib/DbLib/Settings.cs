@@ -36,7 +36,7 @@ namespace DbLib
             var data = _dbTransaction.Connection.Find<SettingEntity>(s => s
                 .AttachToTransaction(_dbTransaction)
                 .Where($"{nameof(SettingEntity.Value):C} = {nameof(key):P} and {nameof(SettingEntity.Id):C} = {nameof(id):P}")
-                .WithParameters(new { key }))
+                .WithParameters(new { key, id }))
                 .FirstOrDefault()
                 ?.Data;
             return int.TryParse(data, out int result) ? result : defvalue;

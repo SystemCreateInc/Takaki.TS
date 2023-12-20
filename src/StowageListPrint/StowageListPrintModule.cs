@@ -18,7 +18,7 @@ namespace StowageListPrint
             containerRegistry.RegisterForNavigation<MainStowageListPrint>();
 
             // ダイアログ登録
-            containerRegistry.RegisterDialog<InputStowageDlg>();
+            //containerRegistry.RegisterDialog<InputStowageDlg>();
         }
     }
 }
