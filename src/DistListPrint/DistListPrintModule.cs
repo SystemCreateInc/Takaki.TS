@@ -2,6 +2,8 @@
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Regions;
+using SearchBoxLib.Views;
+using SelDistGroupLib.Views;
 
 namespace DistListPrint
 {
@@ -16,6 +18,8 @@ namespace DistListPrint
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterForNavigation<MainDistListPrint>();
+            containerRegistry.RegisterDialog<SelDistGroupDlg>();
+            containerRegistry.RegisterDialog<SearchBoxDlg>();
         }
     }
 }

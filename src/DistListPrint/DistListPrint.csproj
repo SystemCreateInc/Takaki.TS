@@ -24,6 +24,10 @@
   <ItemGroup>
     <ProjectReference Include="..\lib\DbLib\DbLib.csproj" />
     <ProjectReference Include="..\lib\LogLib\LogLib.csproj" />
+    <ProjectReference Include="..\lib\PrintLib\PrintLib.csproj" />
+    <ProjectReference Include="..\lib\PrintPreviewLib\PrintPreviewLib.csproj" />
+    <ProjectReference Include="..\lib\SearchBoxLib\SearchBoxLib.csproj" />
+    <ProjectReference Include="..\lib\SelDistGroupLib\SelDistGroupLib.csproj" />
     <ProjectReference Include="..\lib\WindowLib\WindowLib.csproj" />
   </ItemGroup>
 

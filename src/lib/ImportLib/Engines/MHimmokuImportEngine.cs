@@ -88,7 +88,7 @@ namespace ImportLib.Engines
 
                     InsertData(fname, repo, token);
                     var importedCount = importDatas.Count();
-                    importResults.Add(new ImportResult(true, targetFile.FilePath, (long)targetFile.FileSize!, importedCount));
+                    importResults.Add(new ImportResult(true, targetFile.FilePath ?? "", (long)targetFile.FileSize!, importedCount));
                 }
 
                 repo.Commit();
