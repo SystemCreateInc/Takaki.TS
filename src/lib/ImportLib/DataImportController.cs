@@ -22,10 +22,14 @@ namespace ImportLib
 
         public event Func<string, string, ButtonResult>? RequestComfirm;
 
+        public event Action<string>? UpdateProgress;
+
         public async Task Import(IImportEngine engine, CancellationToken token)
         {
             try
             {
+                NotifyProgress("");
+
                 var results = await Task.Run(() =>
                 {
                     Syslog.Debug($"Import start {engine.DataName}");
@@ -120,6 +124,11 @@ namespace ImportLib
                 repo.Insert(log);
                 repo.Commit();
             }
+        }
+
+        public void NotifyProgress(string v)
+        {
+            UpdateProgress?.Invoke(v);
         }
     }
 }

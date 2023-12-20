@@ -15,6 +15,7 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Windows.Markup;
 
 namespace ImportLib.Engines
 {
@@ -81,11 +82,15 @@ namespace ImportLib.Engines
 
                 foreach (var targetFile in TargetImportFiles)
                 {
+                    controller.NotifyProgress("ファイル読み込み中");
                     var importDatas = ReadFile(token, targetFile.FilePath!);
                     Syslog.Debug($"Read {importDatas.Count()} lines");
 
-                    var fname = CreateBulkInsertFile(repo, importDatas);
+                    var fname = CreateBulkInsertFile(controller, importDatas);
+                    controller.NotifyProgress("コピー中");
+                    fname = CopyToImportFile(fname, repo);
 
+                    controller.NotifyProgress("取り込み中");
                     InsertData(fname, repo, token);
                     var importedCount = importDatas.Count();
                     importResults.Add(new ImportResult(true, targetFile.FilePath ?? "", (long)targetFile.FileSize!, importedCount));
@@ -96,7 +101,7 @@ namespace ImportLib.Engines
             }
         }
 
-        private string CreateBulkInsertFile(ImportRepository repo, IEnumerable<string> importDatas)
+        private string CopyToImportFile(string srcFile, ImportRepository repo)
         {
             var dir = repo.GetBulkInsertFileDirectoryPath();
             if (string.IsNullOrEmpty(dir))
@@ -105,6 +110,16 @@ namespace ImportLib.Engines
             }
 
             var fname = Path.Combine(dir, "HinmokuBulkImport.dat");
+            File.Delete(fname);
+            File.Copy(srcFile, fname);
+            File.Delete(srcFile);
+
+            return fname;
+        }
+
+        private string CreateBulkInsertFile(DataImportController controller, IEnumerable<string> importDatas)
+        {
+            var fname = Path.GetTempFileName();
             var options = new FileStreamOptions
             {
                 Mode = FileMode.Create,
@@ -114,10 +129,16 @@ namespace ImportLib.Engines
             var dateline = $",\"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}\",\"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}\"";
             using (var ws =  new StreamWriter(fname, Encoding.GetEncoding("Shift_jis"), options))
             {
+                var count = 0;
                 foreach (var line in importDatas)
                 {
                     ws.Write(line.Substring(0, line.Length - 2));
                     ws.WriteLine(dateline);
+
+                    if ((++count % 133)  == 0)
+                    {
+                        controller.NotifyProgress($"{count}/{importDatas.Count()}");
+                    }
                 }
             }
 

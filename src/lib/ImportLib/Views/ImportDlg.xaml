@@ -11,6 +11,7 @@
 
     <StackPanel Orientation="Vertical" Margin="5">
         <TextBlock Text="{Binding Message}" HorizontalAlignment="Center" Margin="5"/>
+        <TextBlock Text="{Binding Message2}" HorizontalAlignment="Center" Margin="5"/>
         <ProgressBar IsIndeterminate="True" Height="10" Margin="5"/>
         <Button Content="キャンセル" Width="100" Command="{Binding CancelCommand}" Margin="5"/>
     </StackPanel>

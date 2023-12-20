@@ -25,6 +25,14 @@ namespace ImportLib.ViewModels
             set => SetProperty(ref _message, value);
         }
 
+        private string _message2 = string.Empty;
+        public string Message2
+        {
+            get => _message2;
+            set => SetProperty(ref _message2, value);
+        }
+
+
         private IDialogService _dialogService;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private Dispatcher _dispatcher;
@@ -70,6 +78,7 @@ namespace ImportLib.ViewModels
             {
                 var importController = new DataImportController();
                 importController.RequestComfirm += ImportController_RequestComfirm;
+                importController.UpdateProgress += ImportController_UpdateProgress;
 
                 foreach (var engine in engines)
                 {
@@ -95,6 +104,11 @@ namespace ImportLib.ViewModels
             }
 
             Syslog.Debug("End import");
+        }
+
+        private void ImportController_UpdateProgress(string message)
+        {
+            _dispatcher.Invoke(() => Message2 = message);
         }
 
         private ButtonResult ImportController_RequestComfirm(string message, string caption)

@@ -77,7 +77,7 @@ namespace ImportLib.Engines
                 foreach (var targetFile in TargetImportFiles)
                 {
                     var importDatas = ReadFile(token, targetFile.FilePath!);
-                    var importedCount = InsertData(importDatas, repo, token);
+                    var importedCount = InsertData(controller, importDatas, repo, token);
                     importResults.Add(new ImportResult(true, targetFile.FilePath!, (long)targetFile.FileSize!, importedCount));
                 }
 
@@ -98,7 +98,7 @@ namespace ImportLib.Engines
             return Task.Run(() => true);
         }
 
-        private int InsertData(IEnumerable<ShukkaBatchFileLine> datas, ImportRepository repo, CancellationToken token)
+        private int InsertData(DataImportController controller, IEnumerable<ShukkaBatchFileLine> datas, ImportRepository repo, CancellationToken token)
         {
             var importedCount = 0;
             foreach (var line in datas)
@@ -151,6 +151,7 @@ namespace ImportLib.Engines
                 });
 
                 ++importedCount;
+                controller.NotifyProgress($"{importedCount}/{datas.Count()}");
             }
 
             return importedCount;
