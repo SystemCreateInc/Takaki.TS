@@ -32,7 +32,7 @@
                 <Label x:Name="MaxPage" Content="/" Width="50" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="18" Margin="3,3"/>
                 <Button x:Name="Next" Content="進む" Click="Next_Click"/>
                 <Button x:Name="Last" Content="最後" Click="Last_Click"/>
-                <Button x:Name="Close" Content="閉じる" Click="Close_Click" Margin="100,0,0,0"/>
+                <Button x:Name="CloseButton" Content="閉じる" Click="CloseButton_Click" Margin="100,0,0,0"/>
 
             </StackPanel>
             <local:DocumentViewerEx x:Name="Viewer" PageViewsChanged="Viewer_PageViewsChanged"/>
