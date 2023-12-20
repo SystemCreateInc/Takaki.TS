@@ -15,6 +15,10 @@ create table TB_DIST_MAPPING (
 
 	CD_SUM_TOKUISAKI	nchar(6),							/* 集約得意先コード(親)			*/
 	NM_SUM_TOKUISAKI	nvarchar(40),						/* 集約得意先名					*/
+	CD_SUM_COURSE		nchar(3),							/* 集約得意先コース				*/
+	CD_SUM_ROUTE		integer,							/* 集約得意先配送順				*/
+	CD_BIN_SUM			smallint,							/* 配送便集計
+																1:便集計する 2:便集計しない	*/
 
 	CD_BLOCK			nchar(2),							/* ブロックコード				*/
 	CD_DIST_GROUP		nchar(5),							/* 仕分グループ					*/
