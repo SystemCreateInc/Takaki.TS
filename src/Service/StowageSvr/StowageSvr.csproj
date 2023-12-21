@@ -27,6 +27,7 @@
 		<ProjectReference Include="..\..\lib\LabelLib\LabelLib.csproj" />
 		<ProjectReference Include="..\..\lib\LogLib\LogLib.csproj" />
 		<ProjectReference Include="..\..\lib\ProcessorLib\ProcessorLib.csproj" />
+		<ProjectReference Include="..\..\lib\ReferenceLogLib\ReferenceLogLib.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

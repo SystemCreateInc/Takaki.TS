@@ -7,13 +7,16 @@ using System.Threading.Tasks;
 
 namespace StowageSvr.HostRequest
 {
-    public class GetTdInfoResponse
+    public class GetStowageResponse
     {
         public string TdCode { get; set; } = string.Empty;
         public IEnumerable<ListRow> Batchs { get; set; } = Enumerable.Empty<ListRow>();
         public IEnumerable<ListRow> Customers { get; set; } = Enumerable.Empty<ListRow>();
-        public int ThickBoxPs { get; set; }
-        public int WeakBoxPs { get; set; }
+
+        public bool IsLastCustomer { get; set; }
+        public IEnumerable<long> StowageIds { get; set; } = Enumerable.Empty<long>();
+        public int LargeBoxPs { get; set; }
+        public int SmallBoxPs { get; set; }
         public int OtherPs { get; set; }
         public int BlueBoxPs { get; set; }
     }

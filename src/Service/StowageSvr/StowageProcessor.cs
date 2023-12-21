@@ -1,8 +1,11 @@
-﻿using ProcessorLib;
+﻿using DbLib.DbEntities;
+using ProcessorLib;
 using ProcessorLib.Models;
 using StowageSvr.HostRequest;
 using StowageSvr.Models;
 using StowageSvr.Reporitories;
+using Microsoft.IdentityModel.Tokens;
+using DbLib.Defs;
 
 namespace StowageSvr
 {
@@ -15,116 +18,156 @@ namespace StowageSvr
             _repositoryFactory = repositoryFactory;
         }
 
+        // ブロック指定（未使用）
         public GetBlockResponse GetBlock(GetBlockRequest request)
         {
             using (var repo = _repositoryFactory.Create())
-            {   
+            {
                 return new GetBlockResponse
-                {  
+                {
                     Block = request.Code,
                 };
             }
         }
 
+        // 仕分グループ選択
         public GetDistGroupResponse GetDistGroup(GetDistGroupRequest request)
         {
             using (var repo = _repositoryFactory.Create())
             {
+                var stowageEntitys = repo.GetStowageEntitys(request.Block, request.DeliveryDate);
+
+                if (!stowageEntitys.Any())
+                {
+                    throw new Exception("指定ブロック、納品日の仕分グループがありません");
+                }
+
+                var stowageDistInfo = stowageEntitys.SelectMany(x => x.TBSTOWAGEMAPPING!).FirstOrDefault(x => x.CDDISTGROUP == request.Code);
+
+                if (stowageDistInfo is null)
+                {
+                    throw new Exception("該当する仕分グループがありません");
+                }
+                repo.Commit();
+
                 return new GetDistGroupResponse
                 {
-                    DistGroup = request.Code,
-                    DistGroupName = "仕分名" + request.Code,
+                    DistGroup = stowageDistInfo.CDDISTGROUP!,
+                    DistGroupName = stowageDistInfo.NMDISTGROUP ?? string.Empty,
                 };
             }
         }
 
+        // 仕分グループ一覧
         public GetDistGroupListResponse GetDistGroupList(GetDistGroupListRequest request)
         {
             using (var repo = _repositoryFactory.Create())
             {
+                var stowageEntitys = repo.GetStowageEntitys(request.Block, request.DeliveryDate);
+
+                if (!stowageEntitys.Any())
+                {
+                    throw new Exception("指定ブロック、納品日の仕分グループがありません");
+                }
+
+                repo.Commit();
                 return new GetDistGroupListResponse
                 {
-                    DistGroups = new List<ListRow> 
-                    { 
-                        new ListRow
-                        {
-                            Code = "001",
-                            Name = "仕分001"
-                        },
-                        new ListRow
-                        {
-                            Code = "002",
-                            Name = "仕分002"
-                        },
-                        new ListRow
-                        {
-                            Code = "003",
-                            Name = "仕分003"
-                        },
-                    }
+                    DistGroups = stowageEntitys.SelectMany(x => x.TBSTOWAGEMAPPING!).Select(x => new ListRow
+                    {
+                        Code = x.CDDISTGROUP!,
+                        Name = x.NMDISTGROUP ?? string.Empty,
+                    }),
                 };
             }
         }
 
-        public GetTdInfoResponse GetTdInfo(GetTdInfoRequest request)
+        // 表示器ﾊﾞｰｺｰﾄﾞｽｷｬﾝ、出荷バッチ選択、得意先選択
+        public GetStowageResponse GetStowage(GetStowageRequest request)
         {
             using (var repo = _repositoryFactory.Create())
             {
-                return new GetTdInfoResponse
+                var stowages = repo.GetStowageEntitys(request.Block, request.DeliveryDate, request.DistGroup, request.TdCode,
+                        request.Batch, request.Customer)
+                    .Select(x => new Stowage(x));
+
+                if (!stowages.Any())
+                {
+                    throw new Exception("該当する積付情報がありません");
+                }
+
+                // 出荷バッチ選択
+                var stowageBatchs = stowages.GroupBy(x => x.ShukkaBatch).OrderBy(x => x.Key).Select(x => new ListRow
+                {
+                    Code = x.Key,
+                    Name = x.First().ShukkaBatchName ?? string.Empty,
+                });
+
+                // 得意先選択
+                var stowageCustomers = stowages.GroupBy(x => x.CustomerCode).OrderBy(x => x.Key).Select(x => new ListRow
+                {
+                    Code = x.Key,
+                    Name = x.First().CustomerName ?? string.Empty,
+                });
+
+                var targetStowages = Enumerable.Empty<Stowage>();
+
+                // 得意先抽出完了
+                if (stowageCustomers.Count() == 1)
+                {
+                    // 箱毎のレコード
+                    targetStowages = stowages.Where(x => x.CustomerCode == stowageCustomers.First().Code);
+                }
+
+                repo.Commit();
+
+                return new GetStowageResponse
                 {
                     TdCode = request.TdCode,
-                    ThickBoxPs = 1,
-                    WeakBoxPs = 2,
-                    OtherPs = 3,
-                    BlueBoxPs = 4,
+                    Batchs = stowageBatchs,
+                    Customers = stowageCustomers,
 
-                    Batchs = new List<ListRow>
-                    {
-                        new ListRow
-                        {
-                            Code = "00001",
-                            Name = "バッチ00001",
-                        },
-
-                        new ListRow
-                        {
-                            Code = "00002",
-                            Name = "バッチ00002",
-                        },
-                    },
-
-
-                    Customers = new List<ListRow> 
-                    { 
-                        new ListRow
-                        {
-                            Code = "001",
-                            Name = "得意先名001"
-                        },
-                        new ListRow
-                        {
-                            Code = "002",
-                            Name = "得意先名002"
-                        },
-                        new ListRow
-                        {
-                            Code = "003",
-                            Name = "得意先名003"
-                        },
-                    }
+                    IsLastCustomer = targetStowages.Any(),
+                    // 空リスト時にパースエラーとなる為、ダミーId追加
+                    StowageIds = targetStowages.Any() ? targetStowages.Select(x => x.Id) : new List<long> { 9999 },
+                    LargeBoxPs = targetStowages.FirstOrDefault(x => x.StBoxType == DbLib.Defs.BoxType.LargeBox)?.OrderBoxCount ?? 0,
+                    SmallBoxPs = targetStowages.FirstOrDefault(x => x.StBoxType == DbLib.Defs.BoxType.SmallBox)?.OrderBoxCount ?? 0,
+                    OtherPs = targetStowages.FirstOrDefault(x => x.StBoxType == DbLib.Defs.BoxType.EtcBox)?.OrderBoxCount ?? 0,
+                    BlueBoxPs = targetStowages.FirstOrDefault(x => x.StBoxType == DbLib.Defs.BoxType.BlueBox)?.OrderBoxCount ?? 0,
                 };
             }
         }
 
+        // 積付確定（得意先情報確認）
         public ResistStowageResponse ResistStowage(ResistStowageRequest request)
         {
             using (var repo = _repositoryFactory.Create())
             {
-                return new ResistStowageResponse
+                var targetStowages = repo.GetStowageEntitys(request.StowageIds).Select(x => new Stowage(x));
+
+                if (!targetStowages.Any())
                 {
-                    Success = true,
-                };
+                    throw new Exception("更新対象の積付情報が見つかりません");
+                }
+
+                foreach (var stowage in targetStowages)
+                {
+                    // 数量変更画面から確定
+                    if (request.IsQuantityChange)
+                    {
+                        stowage.Update(GetBoxCount(stowage.StBoxType, request));
+                    }
+                    else
+                    {
+                        stowage.UpdateStatus();
+                    }
+                    
+                    repo.UpdateStowageEntity(stowage);
+                }
+                repo.Commit();
             }
+
+            return new ResistStowageResponse { Success = true };
         }
 
         public override IEnumerable<string> GetLabelData(PrintLabelRequest request)
@@ -149,6 +192,27 @@ namespace StowageSvr
         public override PrinterType GetPrinterType(PrintLabelRequest request)
         {
             return PrinterType.Sato;
+        }
+
+        private int GetBoxCount(BoxType stBoxType, ResistStowageRequest request)
+        {
+            switch (stBoxType)
+            {
+                case BoxType.LargeBox:
+                    return request.LargeBoxPs;
+
+                case BoxType.SmallBox:
+                    return request.SmallBoxPs;
+
+                case BoxType.EtcBox:
+                    return request.OtherPs;
+
+                case BoxType.BlueBox:
+                    return request.BlueBoxPs;
+
+                default:
+                    return 0;
+            }
         }
     }
 }

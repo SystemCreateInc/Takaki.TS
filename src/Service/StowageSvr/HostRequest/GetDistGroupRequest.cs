@@ -9,5 +9,7 @@ namespace StowageSvr.HostRequest
     public class GetDistGroupRequest
     {
         public string Code { get; set; } = string.Empty;
+        public string Block { get; set; } = string.Empty;
+        public string DeliveryDate { get; set; } = string.Empty;
     }
 }
