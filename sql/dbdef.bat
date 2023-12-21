@@ -1,5 +1,5 @@
 rem target server
-set SERVER=(local)\MSSQL2022ex
+set SERVER=(local)\V2022ex
 
 rem Project root directory
 set ROOT=c:\Projects\Takaki.TS
@@ -12,7 +12,7 @@ set RCVP=simple
 
 rem Authentication
 rem	set AUTH=-E
-set AUTH=-Usa -Psc
+set AUTH=-Usa -PScreate5585
 
 rem Creating tables
 set TABLES=settings.sql interface_logs.sql interfaceFiles.sql

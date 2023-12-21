@@ -277,17 +277,6 @@ namespace ImportLib.Repositories
             return DateTime.Now.Date.AddDays(-expdays);
         }
 
-        private DateTime? GetInventoryLogExpiredDate()
-        {
-            var expdays = new Settings(Transaction).GetInt("InventoryLog_expdays", 365 * 5);
-            if (expdays == 0)
-            {
-                return null;
-            }
-
-            return DateTime.Now.Date.AddDays(-expdays);
-        }
-
         internal static IEnumerable<Log> GetAllLogs(List<DataType> dataTypes)
         {
             using (var con = DbFactory.CreateConnection())
