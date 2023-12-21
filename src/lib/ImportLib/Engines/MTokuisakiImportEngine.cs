@@ -76,6 +76,7 @@ namespace ImportLib.Engines
 
                 foreach (var targetFile in TargetImportFiles)
                 {
+                    Syslog.SLCopy(targetFile.FilePath!);
                     var importDatas = ReadFile(token, targetFile.FilePath!);
                     var importedCount = InsertData(controller, importDatas, repo, token);
                     importResults.Add(new ImportResult(true, targetFile.FilePath!, (long)targetFile.FileSize!, importedCount));

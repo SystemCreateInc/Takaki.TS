@@ -82,6 +82,7 @@ namespace ImportLib.Engines
 
                 foreach (var targetFile in TargetImportFiles)
                 {
+                    Syslog.SLCopy(targetFile.FilePath!);
                     controller.NotifyProgress("ファイル読み込み中");
                     var importDatas = ReadFile(token, targetFile.FilePath!);
                     Syslog.Debug($"Read {importDatas.Count()} lines");
