@@ -36,8 +36,8 @@ namespace SeatThreshold.Models
             set => SetProperty(ref _nuTdunitCnt, value);
         }
 
-        private int _nuThreshold;
-        public int NuThreshold
+        private decimal _nuThreshold;
+        public decimal NuThreshold
         {
             get => _nuThreshold;
             set => SetProperty(ref _nuThreshold, value);
