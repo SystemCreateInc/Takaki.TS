@@ -246,6 +246,12 @@ namespace DistLargeGroup.ViewModels
 
                 ReferenceLog.ValidateSummaryDate(DtTekiyoKaishi, DtTekiyoMuko, log is not null);
 
+                if (IsAdd && LargeGroupRepository.IsExist(CdLargeGroup, CdKyoten))
+                {
+                    WindowLib.Utils.MessageDialog.Show(_dialogService, "同じ大仕分グループと拠点コードがすでに登録されているため登録できません", "入力エラー");
+                    return;
+                }
+
                 var largeGroup = new DistLargeGroup.Models.DistLargeGroup
                 {
                     IdLargeGroup = id ?? 0,
