@@ -2,7 +2,7 @@
 using CsvHelper;
 using CsvHelper.Configuration;
 using DbLib;
-using DbLib.Defs.DbLib.Defs;
+using DbLib.Defs;
 using ImportLib.CSVModels;
 using ImportLib.Models;
 using ImportLib.Repositories;
@@ -132,7 +132,7 @@ namespace ImportLib.Engines
 
                 ++importedCount;
 
-                controller.NotifyProgress($"{importedCount}/{datas.Count()}");
+                controller.NotifyProgress("取込中", importedCount, datas.Count());
             }
 
             return importedCount;

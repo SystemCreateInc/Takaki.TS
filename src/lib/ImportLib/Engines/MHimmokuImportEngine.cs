@@ -5,7 +5,7 @@ using Dapper;
 using Dapper.FastCrud;
 using DbLib;
 using DbLib.DbEntities;
-using DbLib.Defs.DbLib.Defs;
+using DbLib.Defs;
 using ImportLib.CSVModels;
 using ImportLib.Models;
 using ImportLib.Repositories;
@@ -90,7 +90,7 @@ namespace ImportLib.Engines
                     controller.NotifyProgress("コピー中");
                     fname = CopyToImportFile(fname, repo);
 
-                    controller.NotifyProgress("取り込み中");
+                    controller.NotifyProgress("取込中");
                     InsertData(fname, repo, token);
                     var importedCount = importDatas.Count();
                     importResults.Add(new ImportResult(true, targetFile.FilePath ?? "", (long)targetFile.FileSize!, importedCount));
@@ -137,7 +137,7 @@ namespace ImportLib.Engines
 
                     if ((++count % 133)  == 0)
                     {
-                        controller.NotifyProgress($"{count}/{importDatas.Count()}");
+                        controller.NotifyProgress("取込ファイル作成中", count, importDatas.Count());
                     }
                 }
             }

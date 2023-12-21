@@ -32,6 +32,26 @@ namespace ImportLib.ViewModels
             set => SetProperty(ref _message2, value);
         }
 
+        private int _minmum;
+        public int Minimum
+        {
+            get => _minmum;
+            set => SetProperty(ref _minmum, value);
+        }
+
+        private int _maximum;
+        public int Maximum
+        {
+            get => _maximum;
+            set => SetProperty(ref _maximum, value);
+        }
+
+        private int _value;
+        public int Value
+        {
+            get => _value;
+            set => SetProperty(ref _value, value);
+        }
 
         private IDialogService _dialogService;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
@@ -46,8 +66,8 @@ namespace ImportLib.ViewModels
 
         private void Cancel()
         {
+            Syslog.Info("Request Cancel");
             _cancellationTokenSource.Cancel();
-            Close(ButtonResult.Cancel);
         }
 
         public bool CanCloseDialog()
@@ -106,9 +126,15 @@ namespace ImportLib.ViewModels
             Syslog.Debug("End import");
         }
 
-        private void ImportController_UpdateProgress(string message)
+        private void ImportController_UpdateProgress(ProgressInfo info)
         {
-            _dispatcher.Invoke(() => Message2 = message);
+            _dispatcher.Invoke(() => 
+                {
+                    Message2 = info.Message;
+                    Maximum = info.Maximum;
+                    Minimum = info.Minimum;
+                    Value = info.Value;
+                });
         }
 
         private ButtonResult ImportController_RequestComfirm(string message, string caption)

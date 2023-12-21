@@ -2,7 +2,7 @@
 using CsvHelper;
 using CsvHelper.Configuration;
 using DbLib;
-using DbLib.Defs.DbLib.Defs;
+using DbLib.Defs;
 using ImportLib.CSVModels;
 using ImportLib.Models;
 using ImportLib.Repositories;
@@ -87,7 +87,7 @@ namespace ImportLib.Engines
 
                     Syslog.Debug($"Import file {targetFile.Name}");
                     var importDatas = ReadFile(token, targetFile.FilePath!);
-                    var insertedCount = InsertData(importDatas, repo, token);
+                    var insertedCount = InsertData(controller, importDatas, repo, token);
                     importResults.Add(new ImportResult(true, targetFile.FilePath!, (long)targetFile.FileSize!, insertedCount));
                 }
 
@@ -144,7 +144,7 @@ namespace ImportLib.Engines
             return repo.GetDeleteSameDistDatas(distKeyGroup);
         }
 
-        private int InsertData(IEnumerable<DistFileLine> datas, ImportRepository repo, CancellationToken token)
+        private int InsertData(DataImportController controller, IEnumerable<DistFileLine> datas, ImportRepository repo, CancellationToken token)
         {
             var importedCount = 0;
             foreach (var line in datas)
@@ -184,6 +184,11 @@ namespace ImportLib.Engines
                 });
 
                 ++importedCount;
+
+                if ((importedCount % 33) == 0)
+                {
+                    controller.NotifyProgress("取込中", importedCount, datas.Count());
+                }
             }
 
             return importedCount;

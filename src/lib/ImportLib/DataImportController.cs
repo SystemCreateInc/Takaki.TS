@@ -22,7 +22,7 @@ namespace ImportLib
 
         public event Func<string, string, ButtonResult>? RequestComfirm;
 
-        public event Action<string>? UpdateProgress;
+        public event Action<ProgressInfo>? UpdateProgress;
 
         public async Task Import(IImportEngine engine, CancellationToken token)
         {
@@ -126,9 +126,9 @@ namespace ImportLib
             }
         }
 
-        public void NotifyProgress(string v)
+        public void NotifyProgress(string Message, int Value = 0, int Maximum = 0, int Minimum = 0)
         {
-            UpdateProgress?.Invoke(v);
+            UpdateProgress?.Invoke(new ProgressInfo(Message, Value, Maximum, Minimum));
         }
     }
 }

@@ -3,7 +3,6 @@ using Dapper.FastCrud;
 using DbLib;
 using DbLib.DbEntities;
 using DbLib.Defs;
-using DbLib.Defs.DbLib.Defs;
 using ImportLib.Models;
 using ImTools;
 using LogLib;
@@ -17,6 +16,7 @@ namespace ImportLib.Repositories
         public IDbTransaction Transaction { get; set; }
 
         private bool _comitted = false;
+        private ScopeLogger _scopeLogger = new ScopeLogger(nameof(ImportRepository));
 
         public ImportRepository()
         {
@@ -26,6 +26,7 @@ namespace ImportLib.Repositories
 
         public void Dispose()
         {
+            _scopeLogger.Debug("Dispose");
             Dispose(true);
             GC.SuppressFinalize(this);
         }
@@ -47,12 +48,14 @@ namespace ImportLib.Repositories
 
         public void Commit()
         {
+            _scopeLogger.Debug("Commit");
             Transaction.Commit();
             _comitted = true;
         }
 
         public void Rollback()
         {
+            _scopeLogger.Debug("Rollback");
             Transaction.Rollback();
         }
 
