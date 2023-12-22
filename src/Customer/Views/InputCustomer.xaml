@@ -162,7 +162,7 @@
                         <DatePicker Grid.Column="1" SelectedDate="{Binding DtTekiyoKaishi}" Language="ja"
                                  HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{Binding IsDateRelease}"/>
                         <Label Grid.Column="2" Content="～" HorizontalAlignment="Center"/>
-                        <DatePicker Grid.Column="3" SelectedDate="{Binding DtTekiyoMuko}"
+                        <DatePicker Grid.Column="3" SelectedDate="{Binding DtTekiyoMuko}" Language="ja"
                                  HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{Binding IsDateRelease}"/>
                         <Button Grid.Column="4" Content="解除" Command="{Binding Release}" Margin="3" Focusable="False"
                                 Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=Height}"/>

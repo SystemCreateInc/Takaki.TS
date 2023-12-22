@@ -21,7 +21,12 @@
                 <TextBlock Grid.Column="0" Text="社員コード:" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" 
                            Width="140" Margin="3"/>
                 <ComboBox x:Name="Shain" Grid.Column="1" SelectedItem="{Binding Shain}" ItemsSource="{Binding ShainCombo}" Margin="3" 
-                          IsEditable="True" TextSearch.TextPath="CdShain" b:ComboBoxBehavior.MaxLength="7">
+                          IsEditable="True" TextSearch.TextPath="CdShain" b:ComboBoxBehavior.MaxLength="7"
+                          Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}">
+                    <ComboBox.InputBindings>
+                        <KeyBinding Key="Return" Command="{Binding OK}" />
+                    </ComboBox.InputBindings>
+                    
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">

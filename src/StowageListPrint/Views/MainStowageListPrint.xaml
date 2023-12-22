@@ -35,9 +35,9 @@
                         </Style>
                     </ToolBar.Resources>
 
-                    <Button Command="{Binding Search}">
+                    <Button Command="{Binding Search}" CommandParameter="{Binding ElementName=dataGrid}">
                         <StackPanel Orientation="Vertical">
-                            <materialDesign:PackIcon Kind="Search"/>
+                            <materialDesign:PackIcon Kind="{Binding SearchIcon}"/>
                             <TextBlock Text="検索"/>
                         </StackPanel>
                     </Button>
@@ -109,10 +109,10 @@
                 <DataGridTextColumn Header="配送順" Binding="{Binding CdRoute}" ElementStyle="{StaticResource RightTextElement}"/>
                 <DataGridTextColumn Header="得意先コード" Binding="{Binding CdTokuisaki}"/>
                 <DataGridTextColumn Header="得意先名" Binding="{Binding NmTokuisaki}"/>
-                <DataGridTextColumn Header="厚箱" Binding="{Binding LargeBox}" ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="薄箱" Binding="{Binding SmallBox}" ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="青箱" Binding="{Binding BlueBox}" ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="その他" Binding="{Binding EtcBox}" ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="厚箱" Binding="{Binding DispLargeBoxPs}" ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="薄箱" Binding="{Binding DispSmallBoxPs}" ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="青箱" Binding="{Binding DispBlueBoxPs}" ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="その他" Binding="{Binding DispEtcBoxPs}" ElementStyle="{StaticResource RightTextElement}"/>
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>

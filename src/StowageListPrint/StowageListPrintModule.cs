@@ -1,6 +1,8 @@
 ﻿using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Regions;
+using SearchBoxLib.Views;
+using SelDistGroupLib.Views;
 using StowageListPrint.Views;
 
 namespace StowageListPrint
@@ -18,7 +20,9 @@ namespace StowageListPrint
             containerRegistry.RegisterForNavigation<MainStowageListPrint>();
 
             // ダイアログ登録
-            //containerRegistry.RegisterDialog<InputStowageDlg>();
+            containerRegistry.RegisterDialog<InputStowageDlg>();
+            containerRegistry.RegisterDialog<SelDistGroupDlg>();
+            containerRegistry.RegisterDialog<SearchBoxDlg>();
         }
     }
 }

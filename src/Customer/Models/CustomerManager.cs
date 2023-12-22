@@ -76,7 +76,7 @@ namespace Customer.Models
                 .WithParameters(new { sumTokuisakiId }));
         }
 
-        private static void InsertChild(System.Data.IDbTransaction tr, long sumTokuisakiId, List<ChildCustomer> childCustomers)
+        private static void InsertChild(System.Data.IDbTransaction tr, long sumTokuisakiId, IEnumerable<ChildCustomer> childCustomers)
         {
             foreach (var child in childCustomers)
             {
