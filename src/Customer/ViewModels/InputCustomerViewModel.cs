@@ -143,6 +143,8 @@ namespace Customer.ViewModels
             set => SetProperty(ref _childCustomer, value);
         }
 
+        public IEnumerable<ChildCustomer> NotEmptyChildCustomers => ChildCustomers.Where(x => !x.CdTokuisakiChild.IsNullOrEmpty()).ToArray();
+
         private SumCustomer _currentCustomer = new SumCustomer();
 
         private bool _isDateRelease = false;
@@ -325,7 +327,7 @@ namespace Customer.ViewModels
                     CdSumTokuisaki = CdSumTokuisaki.PadLeft(6, '0'),
                     Tekiyokaishi = DtTekiyoKaishi.ToString("yyyyMMdd"),
                     TekiyoMuko = DtTekiyoMuko.ToString("yyyyMMdd"),
-                    ChildCustomers = new List<ChildCustomer>(ChildCustomers.Where(x => !x.CdTokuisakiChild.IsNullOrEmpty())),
+                    ChildCustomers = NotEmptyChildCustomers,
                 };
 
                 var existCustomer = CustomerLoader.GetFromKey(targetCustomer.CdKyoten, targetCustomer.CdSumTokuisaki, targetCustomer.Tekiyokaishi);
@@ -381,13 +383,13 @@ namespace Customer.ViewModels
                 return false;
             }
 
-            if (!ChildCustomers.Any())
+            if (!NotEmptyChildCustomers.Any())
             {
                 MessageDialog.Show(_dialogService, "子得意先を追加して下さい", "入力エラー");
                 return false;
             }
 
-            if (ChildCustomers.Where(x => !x.CdTokuisakiChild.IsNullOrEmpty()).Count() > 10)
+            if (NotEmptyChildCustomers.Count() > 10)
             {
                 MessageDialog.Show(_dialogService, "子得意先は10件まで登録可能です", "入力エラー");
                 return false;
@@ -395,7 +397,7 @@ namespace Customer.ViewModels
 
             // 得意先名取得不可
             if (NmSumTokuisaki.IsNullOrEmpty()
-                || ChildCustomers.Any(x => !x.CdTokuisakiChild.IsNullOrEmpty() && x.NmTokuisaki.IsNullOrEmpty()))
+                || NotEmptyChildCustomers.Any(x => x.NmTokuisaki.IsNullOrEmpty()))
             {
                 MessageDialog.Show(_dialogService, "得意先名が取得出来ていない得意先コードがあります", "入力エラー");
                 return false;
@@ -423,13 +425,13 @@ namespace Customer.ViewModels
         // 
         private bool IsDuplicationCustomer(long? sumTokuisakiId)
         {
-            if(ChildCustomers.Any(x => x.CdTokuisakiChild == CdSumTokuisaki))
+            if(NotEmptyChildCustomers.Any(x => x.CdTokuisakiChild == CdSumTokuisaki))
             {
                 MessageDialog.Show(_dialogService, $"親得意先と子得意先に同一の得意先が存在します", "入力エラー");
                 return false;
             }
 
-            if(ChildCustomers.GroupBy(x => x.CdTokuisakiChild).Any(x => x.Count() > 1))
+            if(NotEmptyChildCustomers.GroupBy(x => x.CdTokuisakiChild).Any(x => x.Count() > 1))
             {
                 MessageDialog.Show(_dialogService, $"子得意先に同一の得意先が存在します", "入力エラー");
                 return false;
@@ -448,14 +450,19 @@ namespace Customer.ViewModels
             }
 
             // 子と同一得意先　更新時：自ID以外
-            sameCustomer = CustomerLoader.GetSameCustomer(ChildCustomers.Select(x => x.CdTokuisakiChild),
+            sameCustomer = CustomerLoader.GetSameCustomer(NotEmptyChildCustomers.Select(x => x.CdTokuisakiChild),
                 DtTekiyoKaishi.ToString("yyyyMMdd"), DtTekiyoMuko.ToString("yyyyMMdd"),
                 sumTokuisakiId);
 
             if (sameCustomer is not null)
             {
+                var duplicatedChildCustomer = sameCustomer.ChildCustomers
+                    .First(x => NotEmptyChildCustomers.Any(y => y.CdTokuisakiChild == x.CdTokuisakiChild));
+
                 MessageDialog.Show(_dialogService,
-                    $"子得意先が、他の集約得意先に登録されています\n\n" + GetSameCustomerMessage(sameCustomer), "入力エラー");
+                    $"子得意先が、他の集約得意先に登録されています\n\n" 
+                    + $"{GetSameCustomerMessage(sameCustomer)}\n"
+                    + $"重複得意先[{ duplicatedChildCustomer.CdTokuisakiChild}]", "入力エラー");
                 return false;
             }
 
