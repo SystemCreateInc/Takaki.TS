@@ -50,10 +50,10 @@ namespace StowageSvr.Reporitories
             var kyotenCd = GetKyotenCode();
 
             // 抽出 or NotNull
-            var whereDistGroup = distGroup.IsNullOrEmpty() ? "is not null" : " = @distGroup";
-            var whereTdCode = tdCode.IsNullOrEmpty() ? "is not null" : " = @tdCode";
-            var whereBatch = batch.IsNullOrEmpty() ? "is not null" : " = @batch";
-            var whereTokuisaki = tokuisaki.IsNullOrEmpty() ? "is not null" : " = @tokuisaki";
+            var whereDistGroup = distGroup.IsNullOrEmpty() ? "is not null" : "= @distGroup";
+            var whereTdCode = tdCode.IsNullOrEmpty() ? "is not null" : "= @tdCode";
+            var whereBatch = batch.IsNullOrEmpty() ? "is not null" : "= @batch";
+            var whereTokuisaki = tokuisaki.IsNullOrEmpty() ? "is not null" : "= @tokuisaki";
 
             return Connection.Find<TBSTOWAGEEntity>(s => s
                 .AttachToTransaction(Transaction)
@@ -78,24 +78,28 @@ namespace StowageSvr.Reporitories
 
         public void UpdateStowageEntity(Stowage stowage)
         {
-            var sql = Sql.Format<TBSTOWAGEEntity>($@"update {nameof(TBSTOWAGEEntity):T} set
-                {nameof(TBSTOWAGEEntity.FGSSTATUS):C} = {nameof(stowage.FgSStatus):P},
-                {nameof(TBSTOWAGEEntity.DTWORKDTSTOWAGE):C} = {nameof(stowage.WorkDate):P},
-                {nameof(TBSTOWAGEEntity.UpdatedAt):C} = {nameof(stowage.UpdatedAt):P}
-                where {nameof(TBSTOWAGEEntity.IDSTOWAGE):C} = {nameof(stowage.Id):P}");
-
             // 数量変更
             if (stowage.IsChangeCount)
             {
-                sql = Sql.Format<TBSTOWAGEEntity>($@"update {nameof(TBSTOWAGEEntity):T} set
+                var sql = Sql.Format<TBSTOWAGEEntity>($@"update {nameof(TBSTOWAGEEntity):T} set
                 {nameof(TBSTOWAGEEntity.NURBOXCNT):C} = {nameof(stowage.ResultBoxCount):P},
                 {nameof(TBSTOWAGEEntity.FGSSTATUS):C} = {nameof(stowage.FgSStatus):P},
                 {nameof(TBSTOWAGEEntity.DTWORKDTSTOWAGE):C} = {nameof(stowage.WorkDate):P},
                 {nameof(TBSTOWAGEEntity.UpdatedAt):C} = {nameof(stowage.UpdatedAt):P}
                 where {nameof(TBSTOWAGEEntity.IDSTOWAGE):C} = {nameof(stowage.Id):P}");
-            }
 
-            Connection.Execute(sql, new { stowage.ResultBoxCount, stowage.FgSStatus, stowage.WorkDate, stowage.UpdatedAt, stowage.Id }, Transaction);
+                Connection.Execute(sql, new { stowage.ResultBoxCount, stowage.FgSStatus, stowage.WorkDate, stowage.UpdatedAt, stowage.Id }, Transaction);
+            }
+            else
+            {
+                var sql = Sql.Format<TBSTOWAGEEntity>($@"update {nameof(TBSTOWAGEEntity):T} set
+                {nameof(TBSTOWAGEEntity.FGSSTATUS):C} = {nameof(stowage.FgSStatus):P},
+                {nameof(TBSTOWAGEEntity.DTWORKDTSTOWAGE):C} = {nameof(stowage.WorkDate):P},
+                {nameof(TBSTOWAGEEntity.UpdatedAt):C} = {nameof(stowage.UpdatedAt):P}
+                where {nameof(TBSTOWAGEEntity.IDSTOWAGE):C} = {nameof(stowage.Id):P}");
+
+                Connection.Execute(sql, new { stowage.FgSStatus, stowage.WorkDate, stowage.UpdatedAt, stowage.Id }, Transaction);
+            }
         }
 
         private string GetKyotenCode()
