@@ -5,7 +5,8 @@
         xmlns:prism="http://prismlibrary.com/"
         prism:ViewModelLocator.AutoWireViewModel="True"
         metro:SaveWindowPosition="True"
-        Title="{Binding Title}" Height="350" Width="525" >
+        Title="{Binding Title}"
+        Style="{StaticResource MainWindowStyle}" Height="350" Width="525" >
     <Grid>
         <ContentControl prism:RegionManager.RegionName="ContentRegion" />
     </Grid>
