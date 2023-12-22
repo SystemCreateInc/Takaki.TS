@@ -1,12 +1,16 @@
 ﻿using CsvLib.Services;
 using LogLib;
+using PrintPreviewLib;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System.Collections.ObjectModel;
+using System.Drawing.Printing;
+using System.Printing;
 using System.Windows;
 using WindowLib.Utils;
 using WorkReport.Models;
+using WorkReport.Reports;
 using WorkReport.Views;
 
 namespace WorkReport.ViewModels
@@ -23,14 +27,22 @@ namespace WorkReport.ViewModels
         public DateTime StartDate
         {
             get => _startDate;
-            set => SetProperty(ref _startDate, value);
+            set
+            {
+                SetProperty(ref _startDate, value);
+                LoadDatas();
+            }
         }
 
         private DateTime _endDate = DateTime.Today;
         public DateTime EndDate
         {
             get => _endDate;
-            set => SetProperty(ref _endDate, value);
+            set
+            {
+                SetProperty(ref _endDate, value);
+                LoadDatas();
+            }
         }
 
         private ObservableCollection<Models.WorkReport> _workReports = new ObservableCollection<Models.WorkReport>();
@@ -54,7 +66,19 @@ namespace WorkReport.ViewModels
             Print = new DelegateCommand(() =>
             {
                 Syslog.Debug("MainWorkReportViewModel:Print");
-                // fixme:印刷ボタン押下
+
+                try
+                {
+                    var list = WorkReportLoader.Get(StartDate.ToString("yyyyMMdd"), EndDate.AddDays(1).ToString("yyyyMMdd"));
+                    var vms = ReportCreator.Create(StartDate, EndDate, list);
+                    var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Portrait);
+                    ppm.PrintPreview("作業報告書", vms);
+                }
+                catch (Exception e)
+                {
+                    Syslog.Error($"Print:{e.Message}");
+                    MessageDialog.Show(_dialogService, e.Message, "エラー");
+                }
             });
 
             CSV = new DelegateCommand<object>(obj =>
@@ -85,7 +109,7 @@ namespace WorkReport.ViewModels
         {
             try
             {
-                CollectionViewHelper.SetCollection(WorkReports, WorkReportLoader.Get());
+                CollectionViewHelper.SetCollection(WorkReports, WorkReportLoader.Get(StartDate.ToString("yyyyMMdd"), EndDate.AddDays(1).ToString("yyyyMMdd")));
                 CanCSV = WorkReports.Any();
             }
             catch (Exception e)

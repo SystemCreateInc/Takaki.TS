@@ -13,9 +13,9 @@ namespace LargeDist.Models
         private int _currentItemIndex;
         private ScopeLogger _logger = new ScopeLogger(nameof(BlockLargeDistController));
 
-        public ItemLargeDistItem[] Items { get; private set; }
+        private LargeDistProcessingUnit[] Items { get; set; }
 
-        public ItemLargeDistItem CurrentItem => Items[_currentItemIndex];
+        public LargeDistProcessingUnit CurrentItem => Items[_currentItemIndex];
 
         public ItemLargeDistController(LargeDistGroup group, ScanGridController gridController)
         {
@@ -33,13 +33,13 @@ namespace LargeDist.Models
                 .ToArray());
         }
 
-        private ItemLargeDistItem[] CreateItemList()
+        private LargeDistProcessingUnit[] CreateItemList()
         {
             return _rootGridController
                 .LargeDistItems
                 .SelectMany(x => x.Items)
                 .GroupBy(x => new ItemLargeDistKey(x.CdHimban, x.CdJuchuBin, x.CdDistGroup, x.CdShukkaBatch),
-                    (key, list) => new ItemLargeDistItem(key, list))
+                    (key, list) => new LargeDistProcessingUnit(list))
                 .ToArray();
         }
 

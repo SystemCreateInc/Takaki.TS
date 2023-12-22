@@ -1,31 +1,36 @@
-﻿using System.Runtime.Intrinsics.X86;
+﻿using Dapper.FastCrud;
+using DbLib;
+using DbLib.DbEntities;
+using System.Runtime.Intrinsics.X86;
 
 namespace WorkReport.Models
 {
     public class WorkReportLoader
     {
-        public static IEnumerable<WorkReport> Get()
+        public static IEnumerable<WorkReport> Get(string startDate, string endDate)
         {
-            // fixme:読み込み機能追加
-            return new WorkReport[]
+            using (var con = DbFactory.CreateConnection())
             {
-                new WorkReport
-                {
-                    DtDelivery = "20231001",
-                    DtStart = DateTime.Now,
-                    DtEnd = DateTime.Now.AddHours(1),
-                    CdDistGroup = "21",
-                    CdBlock = "1",
-                    NmIdle = 600,
-                    NmSyain = "佐藤一郎",
-                    NmWorktime = 9000,
-                    NmItemcnt = 20,
-                    Shopcnt = 50,
-                    NmDistcnt = 1234,
-                    NmCheckcnt = 1,
-                    NmChecktime = 300,
-                },
-            };
+                return con.Find<TBREPORTEntity>(s => s
+                .Where($"{nameof(startDate):P}<={nameof(TBREPORTEntity.DTDELIVERY):C} and {nameof(TBREPORTEntity.DTDELIVERY):C}<{nameof(endDate):P}")
+                .WithParameters(new { startDate, endDate }))
+                    .Select(x => new WorkReport
+                    {
+                        DtDelivery = x.DTDELIVERY,
+                        DtStart = x.DTSTART,
+                        DtEnd = x.DTEND,
+                        CdDistGroup = x.CDDISTGROUP,
+                        CdBlock = x.CDBLOCK,
+                        NmIdle = x.NMIDLE,
+                        NmSyain = x.NMSYAIN,
+                        NmWorktime = x.NMWORKTIME,
+                        NmItemcnt = x.NMITEMCNT,
+                        Shopcnt = x.NMSHOPCNT,
+                        NmDistcnt = x.NMDISTCNT,
+                        NmCheckcnt = x.NMCHECKCNT,
+                        NmChecktime = x.NMCHECKTIME,
+                    });
+            }
         }
     }
 }

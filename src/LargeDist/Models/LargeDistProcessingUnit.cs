@@ -5,37 +5,42 @@ using System.Linq;
 
 namespace LargeDist.Models
 {
-    public class ItemLargeDistItem
+    public class LargeDistProcessingUnit
     {
-        private ItemLargeDistKey _key;
         public IEnumerable<DistItem> Items { get; private set; }
 
-        public string CdJuchuBin => _key.CdJuchuBin;
-        public string? CdDistGroup => _key.CdDistGroup;
-        public string? NmDistGroup => Items.First().NmDistGroup;
-        public string? CdShukkaBatch => _key.CdShukkaBatch;
-        public string? NmShukkaBatch => Items.First().NmShukkaBatch;
-        public string? CdHimban => Items.First().CdHimban;
-        public string? CdGtin13 => Items.First().CdGtin13;
-        public string? NmHinSeishikimei => Items.First().NmHinSeishikimei;
-        public int NuBoxUnit => Items.First().NuBoxUnit;
-
-        public int OrderPiece => Items.Sum(x => x.OrderPiece);
-        public int ResultPiece => Items.Sum(x => x.ResultPiece);
-        public int RemainPiece => Items.Sum(x => x.RemainPiece);
-        public int InputPiece => Items.Sum(x => x.InputPiece);
+        public string? CdBlock { get; }
+        public string CdJuchuBin { get; }
+        public string? CdDistGroup { get; }
+        public string? NmDistGroup { get; }
+        public string? CdShukkaBatch { get; }
+        public string? NmShukkaBatch { get; }
+        public string? CdHimban { get; }
+        public string? CdGtin13 { get; }
+        public string? NmHinSeishikimei { get; }
+        public int NuBoxUnit { get; }
 
         public bool IsCompleted => Items.All(x => x.IsCompleted);
 
-        public ItemLargeDistItem(ItemLargeDistKey key, IEnumerable<DistItem> list)
+        public LargeDistProcessingUnit(IEnumerable<DistItem> list)
         {
-            _key = key;
             Items = list;
+            var first = list.First();
+            CdBlock = first.CdBlock;
+            CdJuchuBin = first.CdJuchuBin;
+            CdDistGroup = first.CdDistGroup;
+            NmDistGroup = first.NmDistGroup;
+            CdShukkaBatch = first.CdShukkaBatch;
+            NmShukkaBatch += first.NmShukkaBatch;
+            CdHimban = first.CdHimban;
+            CdGtin13 = first.CdGtin13;
+            NmHinSeishikimei = first.NmHinSeishikimei;
+            NuBoxUnit = first.NuBoxUnit;
         }
 
         public void SaveItems(Person person)
         {
-            var logger = new ScopeLogger(nameof(BlockLargeDistItem));
+            var logger = new ScopeLogger(nameof(LargeDistProcessingUnit));
 
             using (logger.BeginScope("SaveCurrentItem"))
             {

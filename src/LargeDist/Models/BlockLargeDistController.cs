@@ -10,11 +10,11 @@ namespace LargeDist.Models
     {
         private LargeDistGroup _group;
         private ScanGridController _rootGridController;
-        private BlockLargeDistItem[] _items;
+        private LargeDistProcessingUnit[] _items;
         private int _currentItemIndex;
         private ScopeLogger _logger = new ScopeLogger(nameof(BlockLargeDistController));
 
-        public BlockLargeDistItem CurrentItem => _items[_currentItemIndex];
+        public LargeDistProcessingUnit CurrentItem => _items[_currentItemIndex];
 
         public BlockLargeDistController(LargeDistGroup group, ScanGridController gridController)
         {
@@ -32,7 +32,7 @@ namespace LargeDist.Models
             }
         }
 
-        private BlockLargeDistItem[] CreateBlockedItem()
+        private LargeDistProcessingUnit[] CreateBlockedItem()
         {
             return _rootGridController
                 .LargeDistItems
@@ -50,7 +50,7 @@ namespace LargeDist.Models
                 .ThenBy(x => x.Key.CdJuchuBin)
                 .ThenBy(x => x.Key.CdDistGroup)
                 .ThenBy(x => x.Key.CdShukkaBatch)
-                .Select(x => new BlockLargeDistItem(x.Key, x))
+                .Select(x => new LargeDistProcessingUnit(x))
                 .ToArray();
         }
 
