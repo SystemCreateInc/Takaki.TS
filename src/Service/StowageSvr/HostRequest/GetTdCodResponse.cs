@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace StowageSvr.HostRequest
 {
-    public class GetBlockRequest
+    public class GetTdCodResponse
     {
-        public string Code { get; set; } = string.Empty;
+        public string TdCode { get; set; } = string.Empty;
     }
 }

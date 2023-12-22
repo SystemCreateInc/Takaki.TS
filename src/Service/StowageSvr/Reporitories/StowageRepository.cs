@@ -83,6 +83,7 @@ namespace StowageSvr.Reporitories
                 {nameof(TBSTOWAGEEntity.UpdatedAt):C} = {nameof(stowage.UpdatedAt):P}
                 where {nameof(TBSTOWAGEEntity.IDSTOWAGE):C} = {nameof(stowage.Id):P}");
 
+            // 数量変更
             if (stowage.IsChangeCount)
             {
                 sql = Sql.Format<TBSTOWAGEEntity>($@"update {nameof(TBSTOWAGEEntity):T} set

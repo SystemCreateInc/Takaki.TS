@@ -1,5 +1,7 @@
 ﻿using DbLib.DbEntities;
 using DbLib.Defs;
+using Microsoft.IdentityModel.Tokens;
+using System.Reflection.Emit;
 
 namespace StowageSvr.Models
 {
@@ -26,6 +28,8 @@ namespace StowageSvr.Models
 
         public TBSTOWAGEEntity Entity { get; set; }
 
+        public IEnumerable<string> TdCodes { get; set; }
+
         public Stowage(TBSTOWAGEEntity entity)
         {
             Entity = entity;
@@ -43,6 +47,9 @@ namespace StowageSvr.Models
             OrderBoxCount = entity.NUOBOXCNT;
             ResultBoxCount = entity.NURBOXCNT;
             PersonName = entity.NMHENKOSHA;
+
+            TdCodes = entity.TBSTOWAGEMAPPING?.Where(x => !x.Tdunitaddrcode.IsNullOrEmpty()).Select(x => x.Tdunitaddrcode!) ?? Enumerable.Empty<string>();
+
             UpdatedAt = entity.UpdatedAt;
         }
 

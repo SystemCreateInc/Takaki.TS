@@ -18,18 +18,6 @@ namespace StowageSvr
             _repositoryFactory = repositoryFactory;
         }
 
-        // ブロック指定（未使用）
-        public GetBlockResponse GetBlock(GetBlockRequest request)
-        {
-            using (var repo = _repositoryFactory.Create())
-            {
-                return new GetBlockResponse
-                {
-                    Block = request.Code,
-                };
-            }
-        }
-
         // 仕分グループ選択
         public GetDistGroupResponse GetDistGroup(GetDistGroupRequest request)
         {
@@ -135,6 +123,37 @@ namespace StowageSvr
                     OtherPs = targetStowages.FirstOrDefault(x => x.StBoxType == DbLib.Defs.BoxType.EtcBox)?.OrderBoxCount ?? 0,
                     BlueBoxPs = targetStowages.FirstOrDefault(x => x.StBoxType == DbLib.Defs.BoxType.BlueBox)?.OrderBoxCount ?? 0,
                 };
+            }
+        }
+
+        // 最小表示器コード取得(F4：スキャン無)
+        public GetTdCodResponse GetTdCode(GetTdCodeRequest request)
+        {
+            using (var repo = _repositoryFactory.Create())
+            {
+                var stowages = repo.GetStowageEntitys(request.Block, request.DeliveryDate, request.DistGroup)
+                    .Select(x => new Stowage(x));
+
+                if (!stowages.Any())
+                {
+                    throw new Exception("該当する積付情報がありません");
+                }
+
+                var unfinishedTdCodes = stowages.Where(x => x.FgSStatus != Status.Completed && x.TdCodes.Any())
+                    .SelectMany(x => x.TdCodes).OrderBy(x => x);
+                
+                if (!unfinishedTdCodes.Any())
+                {
+                    // 自動取得時は空欄返し、F4押下時はエラー表示
+                    if (request.IsAuto)
+                    {
+                        return new GetTdCodResponse { TdCode = string.Empty };
+                    }
+
+                    throw new Exception("全件積付済みです");
+                }
+
+                return new GetTdCodResponse { TdCode = unfinishedTdCodes.First() };                
             }
         }
 
