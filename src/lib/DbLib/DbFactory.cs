@@ -22,6 +22,7 @@ namespace DbLib
             var builder = new SqlConnectionStringBuilder(conStr);
             // アプリケーション名をセット
             builder.ApplicationName = AppDomain.CurrentDomain.FriendlyName;
+            builder.CommandTimeout = 0;
             SqlClientFactory.Instance.CreateConnection();
             DbProviderFactories.RegisterFactory("System.Data.SqlClient", SqlClientFactory.Instance);
             var factory = DbProviderFactories.GetFactory("System.Data.SqlClient");
