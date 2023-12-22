@@ -115,7 +115,7 @@ namespace Customer.ViewModels
         private DateTime? _dtKoshinNichiji;
         public DateTime? DtKoshinNichiji
         {
-            get => _dtTorokuNichiji;
+            get => _dtKoshinNichiji;
             set => SetProperty(ref _dtKoshinNichiji, value);
         }
 
