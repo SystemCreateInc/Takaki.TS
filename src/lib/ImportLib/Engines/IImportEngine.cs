@@ -1,4 +1,4 @@
-﻿using DbLib.Defs.DbLib.Defs;
+﻿using DbLib.Defs;
 using ImportLib.Models;
 using System.IO;
 

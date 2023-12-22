@@ -121,7 +121,7 @@ namespace SeatThreshold.ViewModels
         private DateTime? _dtKoshinNichiji;
         public DateTime? DtKoshinNichiji
         {
-            get => _dtTorokuNichiji;
+            get => _dtKoshinNichiji;
             set => SetProperty(ref _dtKoshinNichiji, value);
         }
 
@@ -341,7 +341,7 @@ namespace SeatThreshold.ViewModels
                     CdBlock = CdBlock.PadLeft(2, '0'),
                     TdUnitType = TdUnitType,
                     NuTdunitCnt = int.Parse(NuTdunitCnt),
-                    NuThreshold = int.Parse(NuThreshold),
+                    NuThreshold = decimal.Parse(NuThreshold),
 
                     Tekiyokaishi = DtTekiyoKaishi.ToString("yyyyMMdd"),
                     TekiyoMuko = DtTekiyoMuko.ToString("yyyyMMdd"),
@@ -400,10 +400,21 @@ namespace SeatThreshold.ViewModels
                 return false;
             }
 
-            if (!int.TryParse(NuTdunitCnt, out int tdUnitCnt)
-                || !int.TryParse(NuThreshold, out int threshold))
+            if (!int.TryParse(NuTdunitCnt, out int tdUnitCnt))
             {
-                MessageDialog.Show(_dialogService, "表示器数、しきい値を数値で入力してください。", "入力エラー");
+                MessageDialog.Show(_dialogService, "表示器数を入力してください。", "入力エラー");
+                return false;
+            }
+
+            if (!decimal.TryParse(NuThreshold, out var threshold))
+            {
+                MessageDialog.Show(_dialogService, "しきい値を入力してください。", "入力エラー");
+                return false;
+            }
+
+            if (threshold > 9999.9m)
+            {
+                MessageDialog.Show(_dialogService, "しきい値は9999.9以下で入力してください。", "入力エラー");
                 return false;
             }
 

@@ -31,7 +31,7 @@ namespace Customer.Models
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 
-        public List<ChildCustomer> ChildCustomers = new List<ChildCustomer> ();
+        public IEnumerable<ChildCustomer> ChildCustomers { get; set; } = Enumerable.Empty<ChildCustomer>();
 
     }
 }

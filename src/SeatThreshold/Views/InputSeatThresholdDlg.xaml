@@ -232,9 +232,9 @@
                     </Grid.ColumnDefinitions>
 
                     <Label Grid.Column="0" Content="しきい値"/>
-                    <TextBox Grid.Column="1" Text="{Binding NuThreshold, UpdateSourceTrigger=PropertyChanged}" MaxLength="4" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Right">
+                    <TextBox Grid.Column="1" Text="{Binding NuThreshold, UpdateSourceTrigger=PropertyChanged}" MaxLength="6" InputMethod.IsInputMethodEnabled="False" HorizontalContentAlignment="Right">
                         <i:Interaction.Behaviors>
-                            <b:NumericTextBoxBehavior/>
+                            <b:NumericTextBoxBehavior Dot="True"/>
                         </i:Interaction.Behaviors>
                     </TextBox>
                 </Grid>

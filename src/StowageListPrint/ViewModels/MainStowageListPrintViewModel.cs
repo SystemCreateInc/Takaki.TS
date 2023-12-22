@@ -1,20 +1,31 @@
 ﻿using CsvLib.Services;
+using Dapper.FastCrud;
+using DbLib.DbEntities;
 using DbLib.Extensions;
 using LogLib;
+using MaterialDesignThemes.Wpf;
+using PrintPreviewLib;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
+using SearchBoxLib;
+using SearchBoxLib.Models;
+using SelDistGroupLib.Models;
+using SelDistGroupLib.Services.Auth;
 using StowageListPrint.Models;
+using StowageListPrint.Reports;
 using StowageListPrint.Views;
 using System.Collections.ObjectModel;
+using System.Printing;
 using System.Windows;
+using System.Windows.Controls;
 using WindowLib.Utils;
 
 namespace StowageListPrint.ViewModels
 {
     public class MainStowageListPrintViewModel : BindableBase
     {
-        public DelegateCommand Search { get; }
+        public DelegateCommand<object> Search { get; }
         public DelegateCommand Reload { get; }
         public DelegateCommand Print { get; }
         public DelegateCommand Edit { get; }
@@ -23,6 +34,14 @@ namespace StowageListPrint.ViewModels
         public DelegateCommand LeftDoubleClick { get; }
 
         private readonly IDialogService _dialogService;
+        private SearchBoxService _searchBoxService = new SearchBoxService();
+
+        private PackIconKind _searchIcon = PackIconKind.Search;
+        public PackIconKind SearchIcon
+        {
+            get => _searchIcon;
+            set => SetProperty(ref _searchIcon, value);
+        }
 
         private string _cdDistGroup = string.Empty;
         public string CdDistGroup
@@ -85,22 +104,47 @@ namespace StowageListPrint.ViewModels
         {
             _dialogService = dialogService;
 
-            Search = new DelegateCommand(() =>
+            Search = new DelegateCommand<object>(obj =>
             {
                 Syslog.Debug("MainStowageListPrintViewModel:Search");
-                // fixme:検索ボタン押下
+
+                var dataGrid = obj as DataGrid;
+                if (dataGrid == null)
+                {
+                    return;
+                }
+
+                if (_searchBoxService.ShowSearchBox(dialogService, GetSearchContents()))
+                {
+                    LoadDatas();
+                    SearchIcon = PackIconKind.SearchAdd;
+                }
             });
 
             Reload = new DelegateCommand(() =>
             {
                 Syslog.Debug("MainStowageListPrintViewModel:Reload");
-                // fixme:更新ボタン押下
+                _searchBoxService.Clear();
+                LoadDatas();
+                SearchIcon = PackIconKind.Search;
             });
 
             Print = new DelegateCommand(() =>
             {
                 Syslog.Debug("MainStowageListPrintViewModel:Print");
-                // fixme:積付表発行ボタン押下
+
+                try
+                {
+                    var reportList = StowageListPrintLoader.Get(CdDistGroup, DtDelivery, _searchBoxService.GetQuery());
+                    var vms = StowageReportCreator.Create(CdDistGroup, NmDistGroup, DispDtDelivery, reportList);
+                    var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Landscape);
+                    ppm.PrintPreview("積付表", vms);
+                }
+                catch (Exception e)
+                {
+                    Syslog.Error($"Print:{e.Message}");
+                    MessageDialog.Show(_dialogService, e.Message, "エラー");
+                }
             });
 
             Edit = new DelegateCommand(() =>
@@ -140,21 +184,32 @@ namespace StowageListPrint.ViewModels
                 Edit.Execute();
             }).ObservesCanExecute(() => CanEdit);
 
-            // fixme:仕分グループ + 仕分名称
-            CdDistGroup = "02001";
-            NmDistGroup = "広島常温1便";
-
-            // fixme:納品日
-            DtDelivery = "20231015";
+            if (!SelectDistGroup())
+            {
+                Application.Current.MainWindow.Close();
+                return;
+            }
 
             LoadDatas();
+        }
+
+        private bool SelectDistGroup()
+        {
+            if (AuthenticateService.AuthDistGroupDialog(_dialogService) is DistGroup distGroup)
+            {
+                CdDistGroup = distGroup.CdDistGroup;
+                NmDistGroup = distGroup.NmDistGroup;
+                DtDelivery = distGroup.DtDelivery.ToString("yyyyMMdd");
+                return true;
+            }
+            return false;
         }
 
         private void LoadDatas()
         {
             try
             {
-                CollectionViewHelper.SetCollection(StowageListPrints, StowageListPrintLoader.Get());
+                CollectionViewHelper.SetCollection(StowageListPrints, StowageListPrintLoader.Get(CdDistGroup, DtDelivery, _searchBoxService.GetQuery()));
                 CanCSV = StowageListPrints.Any();
             }
             catch (Exception e)
@@ -168,15 +223,25 @@ namespace StowageListPrint.ViewModels
         {
             IDialogResult? result = null;
 
-            //_dialogService.ShowDialog(
-            //    nameof(InputStowageDlg),
-            //    new DialogParameters
-            //    {
-            //        { "CurrentStowageListPrint", CurrentStowageListPrint },
-            //    },
-            //    r => result = r);
+            _dialogService.ShowDialog(
+                nameof(InputStowageDlg),
+                new DialogParameters
+                {
+                    { "CurrentStowageListPrint", CurrentStowageListPrint },
+                },
+                r => result = r);
 
             return result?.Result == ButtonResult.OK;
+        }
+
+        private IEnumerable<Content> GetSearchContents()
+        {
+            return new List<Content>()
+            {
+                new () { ContentName = "コース", TableName = Sql.Format<TBSTOWAGEEntity>($"{nameof(TBSTOWAGEEntity):T}.{nameof(TBSTOWAGEEntity.CDCOURSE):C}") },
+                new () { ContentName = "得意先コード", TableName = Sql.Format<TBSTOWAGEEntity>($"{nameof(TBSTOWAGEEntity):T}.{nameof(TBSTOWAGEEntity.CDTOKUISAKI):C}") },
+                new () { ContentName = "得意先名", TableName = Sql.Format<TBSTOWAGEMAPPINGEntity>($"{nameof(TBSTOWAGEMAPPINGEntity):T}.{nameof(TBSTOWAGEMAPPINGEntity.NMTOKUISAKI):C}") },
+            };
         }
     }
 }

@@ -7,6 +7,7 @@
 
 create table TB_REPORT (
 	ID_REPORT		integer identity not null,	/* id						*/
+	DT_DELIVERY		nchar(8)		not null,	/* 納品日					*/
 	CD_DIST_GROUP	nchar(5)		not null,	/* 仕分グループ				*/
 	NM_DIST_GROUP	nvarchar(40)	not null,	/* 仕分グループ名称			*/
 	CD_BLOCK		nchar(2)		not null,	/* ブロックコード			*/

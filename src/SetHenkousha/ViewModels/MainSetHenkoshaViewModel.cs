@@ -41,6 +41,12 @@ namespace SetHenkosha.ViewModels
             set => SetProperty(ref _errorMessage, value);
         }
 
+        private string _text = string.Empty;
+        public string Text
+        {
+            get => _text;
+            set => SetProperty(ref _text, value);
+        }
 
 
         public MainSetHenkoshaViewModel(IDialogService dialogService)
@@ -89,6 +95,14 @@ namespace SetHenkosha.ViewModels
 
         private bool Check()
         {
+            // 入力テキストが7桁未満なら先頭０を追加して７桁にする
+            if (Text.Length < 7)
+            {
+                Text = Text.PadLeft(7, '0');
+            }
+
+            Shain = ShainCombo.FirstOrDefault(x => x.CdShain == Text);
+
             if (Shain == null)
             {
                 ErrorMessage = "社員を選択してください";

@@ -31,6 +31,10 @@ create table TB_STOWAGE (
 
 	NM_HENKOSHA			nvarchar(40)			not null,	/* 変更者名称					*/
 
+	DT_WORKDT_STOWAGE	datetime,							/* 積み付け作業日				*/
+
+	DT_SENDDT_STOWAGE	datetime,							/* 実績送信日時					*/
+	
 	createdAt 			datetime 				not null,	/*	データ挿入日				*/
 	updatedAt 			datetime 				not null,	/*	データ更新日				*/
 

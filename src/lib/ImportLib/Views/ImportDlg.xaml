@@ -3,15 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"             
              prism:ViewModelLocator.AutoWireViewModel="True"
-             Width="300">
+             Padding="20"
+             >
 
     <prism:Dialog.WindowStyle>
         <Style TargetType="Window" BasedOn="{StaticResource DialogWindow}"/>
     </prism:Dialog.WindowStyle>
 
-    <StackPanel Orientation="Vertical" Margin="5">
+    <StackPanel Orientation="Vertical">
         <TextBlock Text="{Binding Message}" HorizontalAlignment="Center" Margin="5"/>
-        <ProgressBar IsIndeterminate="True" Height="10" Margin="5"/>
-        <Button Content="キャンセル" Width="100" Command="{Binding CancelCommand}" Margin="5"/>
+        <TextBlock Text="{Binding Message2}" HorizontalAlignment="Center" Margin="5"/>
+        <Grid>
+            <ProgressBar Minimum="{Binding Minimum}" Maximum="{Binding Maximum}" Value="{Binding Value}" Height="30" Margin="5"/>
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Run Text="{Binding Value}"/> / <Run Text="{Binding Maximum}" />
+            </TextBlock>
+        </Grid>
+        <Button Content="キャンセル" Width="100" Command="{Binding CancelCommand}" Margin="10"/>
     </StackPanel>
 </UserControl>

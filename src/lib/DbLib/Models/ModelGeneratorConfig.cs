@@ -3988,6 +3988,12 @@ namespace DbLib.DbEntities
         public virtual int IDREPORT { get; set; }
 
         /// <summary>
+        /// Represents the column 'DT_DELIVERY'.
+        /// </summary>
+        [Column("DT_DELIVERY")]
+        public virtual string DTDELIVERY { get; set; }
+
+        /// <summary>
         /// Represents the column 'CD_DIST_GROUP'.
         /// </summary>
         [Column("CD_DIST_GROUP")]
@@ -4193,6 +4199,18 @@ namespace DbLib.DbEntities
         /// </summary>
         [Column("NM_HENKOSHA")]
         public virtual string NMHENKOSHA { get; set; }
+
+        /// <summary>
+        /// Represents the column 'DT_WORKDT_STOWAGE'.
+        /// </summary>
+        [Column("DT_WORKDT_STOWAGE")]
+        public virtual DateTime? DTWORKDTSTOWAGE { get; set; }
+
+        /// <summary>
+        /// Represents the column 'DT_SENDDT_STOWAGE'.
+        /// </summary>
+        [Column("DT_SENDDT_STOWAGE")]
+        public virtual DateTime? DTSENDDTSTOWAGE { get; set; }
 
         /// <summary>
         /// Represents the column 'createdAt'.
