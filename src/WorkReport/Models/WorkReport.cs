@@ -109,5 +109,6 @@ namespace WorkReport.Models
         }
 
         public TimeSpan DispNmChecktime => new TimeSpan(0, 0, NmChecktime);
+        public string WorkDate => DtStart.ToString("yyyyMMdd");
     }
 }

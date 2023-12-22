@@ -1,0 +1,105 @@
+﻿<UserControl x:Class="WorkReport.Reports.Report"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:WorkReport.Reports"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             Width="29.7cm" Height="21cm" FontSize="20">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1.5cm"/>
+            <RowDefinition Height="0.65cm"/>
+            <RowDefinition Height="1.5cm"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="0.5*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="Margin" Value="3"/>
+                </Style>
+            </Grid.Resources>
+
+            <TextBlock Grid.Column="0" Text="作業報告書" FontSize="40"/>
+            <TextBlock Grid.Column="1" Text="{Binding CreateDate, StringFormat=yyyy/MM/dd HH:mm:ss}" FontSize="25"/>
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <TextBlock Text="PAGE :" FontSize="25"/>
+                <TextBlock Text="{Binding PageInfo}" FontSize="25"/>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <TextBlock Text="納品日 : "/>
+            <TextBlock Text="{Binding StartDate, StringFormat=yyyy/MM/dd}"/>
+            <TextBlock Text="～"/>
+            <TextBlock Text="{Binding EndDate, StringFormat=yyyy/MM/dd}"/>
+        </StackPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.75cm"/>
+                <RowDefinition Height="0.75cm"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3cm"/>
+                    <ColumnDefinition Width="3cm"/>
+                    <ColumnDefinition Width="3cm"/>
+                    <ColumnDefinition Width="3cm"/>
+                    <ColumnDefinition Width="3cm"/>
+                    <ColumnDefinition Width="3cm"/>
+                    <ColumnDefinition Width="3cm"/>
+                    <ColumnDefinition Width="3cm"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="納品日"/>
+                <TextBlock Grid.Column="1" Text="作業日付"/>
+                <TextBlock Grid.Column="2" Text="仕分G" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text="ブロック" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="4" Text="作業開始"/>
+                <TextBlock Grid.Column="5" Text="作業終了"/>
+                <TextBlock Grid.Column="6" Text="作業時間"/>
+                <TextBlock Grid.Column="7" Text="休憩時間"/>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2cm"/>
+                    <ColumnDefinition Width="5cm"/>
+                    <ColumnDefinition Width="3cm"/>
+                    <ColumnDefinition Width="2cm"/>
+                    <ColumnDefinition Width="2.5cm"/>
+                    <ColumnDefinition Width="2cm"/>
+                    <ColumnDefinition Width="3cm"/>
+                    <ColumnDefinition Width="3cm"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="1" Text="作業担当者"/>
+                <TextBlock Grid.Column="2" Text="作業時間"/>
+                <TextBlock Grid.Column="3" Text="商品数" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="4" Text="仕分回数" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="5" Text="仕分数" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="6" Text="検品回数" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="7" Text="検品時間" Margin="20,0,0,0"/>
+            </Grid>
+        </Grid>
+
+        <ItemsControl Grid.Row="3" ItemsSource="{Binding Groups}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <local:ReportGroup/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>
