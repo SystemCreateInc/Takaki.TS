@@ -64,7 +64,7 @@ namespace StowageSvr.Reporitories
                         {nameof(TBSTOWAGEMAPPINGEntity.CDDISTGROUP):of TB_STOWAGE_MAPPING} {whereDistGroup} and
                         {nameof(TBSTOWAGEMAPPINGEntity.Tdunitaddrcode):of TB_STOWAGE_MAPPING} {whereTdCode} and
                         {nameof(TBSTOWAGEEntity.CDSHUKKABATCH):C} {whereBatch} and
-                        {nameof(TBSTOWAGEEntity.CDTOKUISAKI):C} {whereTokuisaki}")                
+                        {nameof(TBSTOWAGEEntity.CDTOKUISAKI):C} {whereTokuisaki}")
                 .WithParameters(new { kyotenCd, block, deliveryDate, distGroup, tdCode, batch, tokuisaki }));
         }
 
@@ -80,6 +80,7 @@ namespace StowageSvr.Reporitories
         {
             var sql = Sql.Format<TBSTOWAGEEntity>($@"update {nameof(TBSTOWAGEEntity):T} set
                 {nameof(TBSTOWAGEEntity.FGSSTATUS):C} = {nameof(stowage.FgSStatus):P},
+                {nameof(TBSTOWAGEEntity.DTWORKDTSTOWAGE):C} = {nameof(stowage.WorkDate):P},
                 {nameof(TBSTOWAGEEntity.UpdatedAt):C} = {nameof(stowage.UpdatedAt):P}
                 where {nameof(TBSTOWAGEEntity.IDSTOWAGE):C} = {nameof(stowage.Id):P}");
 
@@ -89,11 +90,12 @@ namespace StowageSvr.Reporitories
                 sql = Sql.Format<TBSTOWAGEEntity>($@"update {nameof(TBSTOWAGEEntity):T} set
                 {nameof(TBSTOWAGEEntity.NURBOXCNT):C} = {nameof(stowage.ResultBoxCount):P},
                 {nameof(TBSTOWAGEEntity.FGSSTATUS):C} = {nameof(stowage.FgSStatus):P},
+                {nameof(TBSTOWAGEEntity.DTWORKDTSTOWAGE):C} = {nameof(stowage.WorkDate):P},
                 {nameof(TBSTOWAGEEntity.UpdatedAt):C} = {nameof(stowage.UpdatedAt):P}
                 where {nameof(TBSTOWAGEEntity.IDSTOWAGE):C} = {nameof(stowage.Id):P}");
             }
 
-            Connection.Execute(sql, new { stowage.ResultBoxCount, stowage.FgSStatus, stowage.UpdatedAt, stowage.Id }, Transaction);
+            Connection.Execute(sql, new { stowage.ResultBoxCount, stowage.FgSStatus, stowage.WorkDate, stowage.UpdatedAt, stowage.Id }, Transaction);
         }
 
         private string GetKyotenCode()

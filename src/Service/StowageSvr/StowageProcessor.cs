@@ -61,10 +61,10 @@ namespace StowageSvr
                 repo.Commit();
                 return new GetDistGroupListResponse
                 {
-                    DistGroups = stowageEntitys.SelectMany(x => x.TBSTOWAGEMAPPING!).Select(x => new ListRow
+                    DistGroups = stowageEntitys.SelectMany(x => x.TBSTOWAGEMAPPING!).GroupBy(x => x.CDDISTGROUP).Where(x => !x.Key.IsNullOrEmpty()).Select(x => new ListRow
                     {
-                        Code = x.CDDISTGROUP!,
-                        Name = x.NMDISTGROUP ?? string.Empty,
+                        Code = x.Key ?? string.Empty,
+                        Name = x.Max(x => x.NMDISTGROUP) ?? string.Empty,
                     }),
                 };
             }
@@ -141,7 +141,7 @@ namespace StowageSvr
 
                 var unfinishedTdCodes = stowages.Where(x => x.FgSStatus != Status.Completed && x.TdCodes.Any())
                     .SelectMany(x => x.TdCodes).OrderBy(x => x);
-                
+
                 if (!unfinishedTdCodes.Any())
                 {
                     // 自動取得時は空欄返し、F4押下時はエラー表示
@@ -153,7 +153,7 @@ namespace StowageSvr
                     throw new Exception("全件積付済みです");
                 }
 
-                return new GetTdCodResponse { TdCode = unfinishedTdCodes.First() };                
+                return new GetTdCodResponse { TdCode = unfinishedTdCodes.First() };
             }
         }
 
@@ -180,7 +180,7 @@ namespace StowageSvr
                     {
                         stowage.UpdateStatus();
                     }
-                    
+
                     repo.UpdateStowageEntity(stowage);
                 }
                 repo.Commit();

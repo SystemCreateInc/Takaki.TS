@@ -23,7 +23,7 @@ namespace StowageSvr.Models
 
         public string PersonName { get; set; }
         public DateTime UpdatedAt { get; set; }
-
+        public DateTime? WorkDate { get; set; }
         public bool IsChangeCount { get; set; }
 
         public TBSTOWAGEEntity Entity { get; set; }
@@ -50,6 +50,7 @@ namespace StowageSvr.Models
 
             TdCodes = entity.TBSTOWAGEMAPPING?.Where(x => !x.Tdunitaddrcode.IsNullOrEmpty()).Select(x => x.Tdunitaddrcode!) ?? Enumerable.Empty<string>();
 
+            WorkDate = entity.DTWORKDTSTOWAGE;
             UpdatedAt = entity.UpdatedAt;
         }
 
@@ -58,6 +59,7 @@ namespace StowageSvr.Models
             ResultBoxCount = boxCount;
             FgSStatus = Status.Completed;
             UpdatedAt = DateTime.Now;
+            WorkDate = DateTime.Now;
             IsChangeCount = true;
         }
 
@@ -65,6 +67,7 @@ namespace StowageSvr.Models
         public void UpdateStatus()
         {
             FgSStatus = Status.Completed;
+            WorkDate = DateTime.Now;
             UpdatedAt = DateTime.Now;
             IsChangeCount = false;
         }
