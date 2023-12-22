@@ -129,7 +129,7 @@ namespace StowageListPrint.Models
         public int EtcBoxRps
         {
             get => _etcBoxRps;
-            set => SetProperty(ref _etcBoxRps, value); 
+            set => SetProperty(ref _etcBoxRps, value);
         }
 
         private int _dispEtcBoxPs;
@@ -137,6 +137,13 @@ namespace StowageListPrint.Models
         {
             get => _dispEtcBoxPs;
             set => SetProperty(ref _dispEtcBoxPs, value);
+        }
+
+        private DateTime? _dtWorkdtStowage;
+        public DateTime? DtWorkdtStowage
+        {
+            get => _dtWorkdtStowage;
+            set => SetProperty(ref _dtWorkdtStowage, value);
         }
     }
 }

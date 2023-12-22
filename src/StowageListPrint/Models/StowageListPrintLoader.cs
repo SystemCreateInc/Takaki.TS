@@ -59,6 +59,7 @@ namespace StowageListPrint.Models
                             EtcBoxOps = etcBoxOps,
                             EtcBoxRps = etcBoxRps,
                             DispEtcBoxPs = etcBoxRps != 0 ? etcBoxRps : etcBoxOps,
+                            DtWorkdtStowage = x.Max(x => x.DTWORKDTSTOWAGE),
                         };
 
                         return stowageListPrint;

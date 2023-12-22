@@ -106,17 +106,17 @@
                                         ElementStyle="{StaticResource CenterTextElement}"/>
                     <DataGridTextColumn Header="得意先コード" Width="2.5cm" Binding="{Binding CdTokuisaki}" CanUserSort="False"
                                         ElementStyle="{StaticResource CenterTextElement}"/>
-                    <DataGridTextColumn Header="得意先名" Width="10.81cm" Binding="{Binding NmTokuisaki}" CanUserSort="False"
+                    <DataGridTextColumn Header="得意先名" Width="12.21cm" Binding="{Binding NmTokuisaki}" CanUserSort="False"
                                         ElementStyle="{StaticResource CenterLeftTextElement}"/>
-                    <DataGridTextColumn Header="厚箱" Width="1.3cm" Binding="{Binding LargeBoxPs}" CanUserSort="False"
+                    <DataGridTextColumn Header="厚箱" Width="1.3cm" Binding="{Binding DispLargeBoxPs}" CanUserSort="False"
                                         ElementStyle="{StaticResource CenterTextElement}"/>
-                    <DataGridTextColumn Header="薄箱" Width="1.3cm" Binding="{Binding SmallBoxPs}" CanUserSort="False"
+                    <DataGridTextColumn Header="薄箱" Width="1.3cm" Binding="{Binding DispSmallBoxPs}" CanUserSort="False"
                                         ElementStyle="{StaticResource CenterTextElement}"/>
-                    <DataGridTextColumn Header="青箱" Width="1.3cm" Binding="{Binding BlueBoxPs}" CanUserSort="False"
+                    <DataGridTextColumn Header="青箱" Width="1.3cm" Binding="{Binding DispBlueBoxPs}" CanUserSort="False"
                                         ElementStyle="{StaticResource CenterTextElement}"/>
-                    <DataGridTextColumn Header="その他" Width="1.3cm" Binding="{Binding EtcBoxPs}" CanUserSort="False"
+                    <DataGridTextColumn Header="その他" Width="1.3cm" Binding="{Binding DispEtcBoxPs}" CanUserSort="False"
                                         ElementStyle="{StaticResource CenterTextElement}"/>
-                    <DataGridTextColumn Header="作業日時" Width="5cm" Binding="{Binding DtWorkdtDist, StringFormat=yyyy/MM/dd HH:mm:ss}"
+                    <DataGridTextColumn Header="作業日時" Width="3.6cm" Binding="{Binding DtWorkdtStowage, StringFormat=yyyy/MM/dd HH:mm:ss}"
                                         CanUserSort="False" ElementStyle="{StaticResource CenterLeftTextElement}"/>
                 </DataGrid.Columns>
             </DataGrid>

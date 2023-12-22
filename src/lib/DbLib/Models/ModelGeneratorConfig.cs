@@ -4198,13 +4198,13 @@ namespace DbLib.DbEntities
         /// Represents the column 'DT_WORKDT_STOWAGE'.
         /// </summary>
         [Column("DT_WORKDT_STOWAGE")]
-        public virtual string DTWORKDTSTOWAGE { get; set; }
+        public virtual DateTime? DTWORKDTSTOWAGE { get; set; }
 
         /// <summary>
         /// Represents the column 'DT_SENDDT_STOWAGE'.
         /// </summary>
         [Column("DT_SENDDT_STOWAGE")]
-        public virtual string DTSENDDTSTOWAGE { get; set; }
+        public virtual DateTime? DTSENDDTSTOWAGE { get; set; }
 
         /// <summary>
         /// Represents the column 'createdAt'.

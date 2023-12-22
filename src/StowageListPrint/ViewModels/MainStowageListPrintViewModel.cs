@@ -137,7 +137,7 @@ namespace StowageListPrint.ViewModels
                 {
                     var reportList = StowageListPrintLoader.Get(CdDistGroup, DtDelivery, _searchBoxService.GetQuery());
                     var vms = StowageReportCreator.Create(CdDistGroup, NmDistGroup, DispDtDelivery, reportList);
-                    var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Portrait);
+                    var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Landscape);
                     ppm.PrintPreview("積付表", vms);
                 }
                 catch (Exception e)

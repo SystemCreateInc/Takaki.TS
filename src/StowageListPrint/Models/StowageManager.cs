@@ -38,6 +38,10 @@ namespace StowageListPrint.Models
                             break;
                     }
 
+                    // 積付作業日とデータ更新日時を更新する
+                    entity.DTWORKDTSTOWAGE = DateTime.Now;
+                    entity.UpdatedAt = DateTime.Now;
+
                     con.Update(entity, x => x.AttachToTransaction(tr));
                 }
 
