@@ -4195,6 +4195,18 @@ namespace DbLib.DbEntities
         public virtual string NMHENKOSHA { get; set; }
 
         /// <summary>
+        /// Represents the column 'DT_WORKDT_STOWAGE'.
+        /// </summary>
+        [Column("DT_WORKDT_STOWAGE")]
+        public virtual string DTWORKDTSTOWAGE { get; set; }
+
+        /// <summary>
+        /// Represents the column 'DT_SENDDT_STOWAGE'.
+        /// </summary>
+        [Column("DT_SENDDT_STOWAGE")]
+        public virtual string DTSENDDTSTOWAGE { get; set; }
+
+        /// <summary>
         /// Represents the column 'createdAt'.
         /// </summary>
         [Column("createdAt")]

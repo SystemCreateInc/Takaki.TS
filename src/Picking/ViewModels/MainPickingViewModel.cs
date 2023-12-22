@@ -313,7 +313,7 @@ namespace Picking.ViewModels
             _distgroup = distgroup;
 
 
-            // 配分種類デフォルト設定
+            // 配分種類デフォルト設定 1:一斉　0:追駆け
             DistColorInfo.DistWorkType = 1;
 
             _mutex = new System.Threading.Mutex(false, "MainPickingViewModel");
