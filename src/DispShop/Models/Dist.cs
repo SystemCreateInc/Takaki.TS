@@ -38,31 +38,31 @@ namespace DispShop.Models
             set => SetProperty(ref _cd_dist_group, value);
         }
 
-        private string _cd_course = string.Empty;
-        public string CdCource
+        private string _cd_sum_course = string.Empty;
+        public string CdSumCource
         {
-            get => _cd_course;
-            set => SetProperty(ref _cd_course, value);
+            get => _cd_sum_course;
+            set => SetProperty(ref _cd_sum_course, value);
         }
-        private int _cd_route = 0;
-        public int CdRoute
+        private int _cd_sum_route = 0;
+        public int CdSumRoute
         {
-            get => _cd_route;
-            set => SetProperty(ref _cd_route, value);
-        }
-
-        private string _cd_tokuisaki = string.Empty;
-        public string CdTokuisaki
-        {
-            get => _cd_tokuisaki;
-            set => SetProperty(ref _cd_tokuisaki, value);
+            get => _cd_sum_route;
+            set => SetProperty(ref _cd_sum_route, value);
         }
 
-        private string _nm_tokuisaki = string.Empty;
-        public string NmTokuisaki
+        private string _cd_sum_tokuisaki = string.Empty;
+        public string CdSumTokuisaki
         {
-            get => _nm_tokuisaki;
-            set => SetProperty(ref _nm_tokuisaki, value);
+            get => _cd_sum_tokuisaki;
+            set => SetProperty(ref _cd_sum_tokuisaki, value);
+        }
+
+        private string _nm_sum_tokuisaki = string.Empty;
+        public string NmSumTokuisaki
+        {
+            get => _nm_sum_tokuisaki;
+            set => SetProperty(ref _nm_sum_tokuisaki, value);
         }
 
 

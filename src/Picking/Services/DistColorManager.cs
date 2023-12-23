@@ -467,6 +467,7 @@ namespace Picking.Services
                     {
                         TBREPORTEntity r = new TBREPORTEntity()
                         {
+                            DTDELIVERY = distgroup.DtDelivery.ToString("yyyyMMdd"),
                             CDDISTGROUP = distgroup.CdDistGroup,
                             NMDISTGROUP = distgroup.NmDistGroup,
                             CDBLOCK = distgroup.CdBlock,
