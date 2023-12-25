@@ -38,16 +38,15 @@ namespace DistBlock.Loader
         }
 
         // 拠点、仕分グループ、適用日から取得(入力DLG)
-        public static DistBlockInfo? GetFromKey(string cdKyoten, string cdDistGroup, string dtTekiyoKaishi)
+        public static DistBlockInfo? GetFromKey(string cdDistGroup, string dtTekiyoKaishi)
         {
             using (var con = DbFactory.CreateConnection())
             {
                 return con.Find<TBDISTBLOCKEntity>(s => s
                 .Include<TBDISTBLOCKSEQEntity>(x => x.InnerJoin())
-                .Where(@$"{nameof(TBDISTBLOCKEntity.CDKYOTEN):C} = {nameof(cdKyoten):P} and
-                            {nameof(TBDISTBLOCKEntity.CDDISTGROUP):C} = {nameof(cdDistGroup):P} and
+                .Where(@$"{nameof(TBDISTBLOCKEntity.CDDISTGROUP):C} = {nameof(cdDistGroup):P} and
                             {nameof(TBDISTBLOCKEntity.DTTEKIYOKAISHI):C} = {nameof(dtTekiyoKaishi):P}")
-                .WithParameters(new { cdKyoten, cdDistGroup, dtTekiyoKaishi }))
+                .WithParameters(new { cdDistGroup, dtTekiyoKaishi }))
                     .Select(q => CreateDistBlockInfo(q))
                     .FirstOrDefault();
             }
