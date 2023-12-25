@@ -1,8 +1,7 @@
 ﻿using Dapper.FastCrud;
 using DbLib;
 using DbLib.DbEntities;
-using Microsoft.VisualBasic;
-using ReferenceLogLib.Models;
+using System;
 using System.Linq;
 
 namespace TakakiLib.Models
@@ -10,7 +9,7 @@ namespace TakakiLib.Models
     // 適用日参照名称取得
     public class NameLoader
     {
-        static string selectDate = TekiyoDate.ReferenceDate;
+        public static string selectDate = DateTime.Today.ToString();
 
         public static string GetTokuisaki(string code)
         {

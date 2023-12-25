@@ -1,4 +1,4 @@
-﻿namespace ReferenceLogLib.Models
+﻿namespace TakakiLib.Models
 {
     public class CreateTekiyoSql
     {
