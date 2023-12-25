@@ -107,8 +107,6 @@ namespace Mapping.Models
         public void LoadDatas(string dtdelivery, List<string> seldistgroups)
         {
             DtDelivery = dtdelivery;
-            TekiyoDate.ReferenceDate = DtDelivery;
-
             sumtokuisakis = MappingLoader.GetSumTokuisakis(DtDelivery);
             blocks = MappingLoader.GetBlocks(DtDelivery);
             distgroups = MappingLoader.GetDistGroups(DtDelivery, seldistgroups);
@@ -532,8 +530,6 @@ namespace Mapping.Models
         public void ClearDatas(string dtdelivery, List<string> seldistgroups)
         {
             DtDelivery = dtdelivery;
-            TekiyoDate.ReferenceDate = DtDelivery;
-
             sumtokuisakis = MappingLoader.GetSumTokuisakis(DtDelivery);
             blocks = MappingLoader.GetBlocks( DtDelivery);
             distgroups = MappingLoader.GetDistGroups(DtDelivery, seldistgroups);
