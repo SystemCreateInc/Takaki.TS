@@ -313,7 +313,7 @@ namespace DistGroup.ViewModels
                 CdKyoten = _distGroup.CdKyoten;
                 CdDistGroup = _distGroup.CdDistGroup;
                 NmDistGroup = _distGroup.NmDistGroup;
-                ReferenceLog.LogInfos = LogLoader.Get(_distGroup.CdKyoten, _distGroup.CdDistGroup).ToList();
+                ReferenceLog.LogInfos = LogLoader.Get(_distGroup.CdDistGroup).ToList();
 
                 SetReferenceInfo();
             }
@@ -354,7 +354,7 @@ namespace DistGroup.ViewModels
         private void SetReferenceInfo()
         {
             var tekiyoDate = ReferenceLog.GetStartDateInRange(ReferenceDate.ToString("yyyyMMdd"));
-            var data = DistGroupLoader.GetFromKey(_distGroup.CdKyoten, _distGroup.CdDistGroup, tekiyoDate);
+            var data = DistGroupLoader.GetFromKey(_distGroup.CdDistGroup, tekiyoDate);
 
             if (data is not null)
             {
@@ -438,7 +438,7 @@ namespace DistGroup.ViewModels
                     TekiyoMuko = DtTekiyoMuko.ToString("yyyyMMdd"),
                 };
 
-                var existData = DistGroupLoader.GetFromKey(targetData.CdKyoten, targetData.CdDistGroup, targetData.Tekiyokaishi);
+                var existData = DistGroupLoader.GetFromKey(targetData.CdDistGroup, targetData.Tekiyokaishi);
                 var isExist = existData is not null;
 
                 if (!ValidateSummaryDate(isExist))
@@ -456,7 +456,7 @@ namespace DistGroup.ViewModels
                     if (isExist)
                     {
                         MessageDialog.Show(_dialogService, "同一組み合わせのデータが登録済みです" +
-                            $"\n拠点[{CdKyoten}],仕分グループ[{CdDistGroup}],適用開始日[{DtTekiyoKaishi.ToString("yyyyMMdd")}]\n"
+                            $"\n仕分グループ[{CdDistGroup}],適用開始日[{DtTekiyoKaishi.ToString("yyyyMMdd")}]\n"
                             , "入力エラー");
                         return false;
                     }
@@ -629,7 +629,7 @@ namespace DistGroup.ViewModels
         {
             try
             {
-                ReferenceLog.LogInfos = LogLoader.Get(CdKyoten.PadLeft(4, '0'), CdDistGroup.PadLeft(5, '0')).ToList();
+                ReferenceLog.LogInfos = LogLoader.Get(CdDistGroup.PadLeft(5, '0')).ToList();
                 ReferenceLog.ValidateSummaryDate(DtTekiyoKaishi, DtTekiyoMuko, isUpdate);
                 return true;
             }

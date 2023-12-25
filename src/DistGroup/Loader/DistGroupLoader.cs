@@ -43,8 +43,8 @@ namespace DistGroup.Loader
             }
         }
 
-        // 拠点、仕分グループコード、適用開始日から取得(入力DLG)
-        public static DistGroupInfo? GetFromKey(string cdKyoten, string cdDistGroup, string dtTekiyoKaishi)
+        // 仕分グループコード、適用開始日から取得(入力DLG)
+        public static DistGroupInfo? GetFromKey(string cdDistGroup, string dtTekiyoKaishi)
         {
             using (var con = DbFactory.CreateConnection())
             {
@@ -52,10 +52,9 @@ namespace DistGroup.Loader
                 .Include<TBDISTGROUPSHUKKABATCHEntity>()
                 .Include<TBDISTGROUPLARGEGROUPEntity>()
                 .Include<TBDISTGROUPCOURSEEntity>()
-                .Where(@$"{nameof(TBDISTGROUPEntity.CDKYOTEN):C} = {nameof(cdKyoten):P} and
-                            {nameof(TBDISTGROUPEntity.CDDISTGROUP):C} = {nameof(cdDistGroup):P} and
+                .Where(@$"{nameof(TBDISTGROUPEntity.CDDISTGROUP):C} = {nameof(cdDistGroup):P} and
                             {nameof(TBDISTGROUPEntity.DTTEKIYOKAISHI):C} = {nameof(dtTekiyoKaishi):P}")
-                .WithParameters(new { cdKyoten, cdDistGroup, dtTekiyoKaishi }))
+                .WithParameters(new { cdDistGroup, dtTekiyoKaishi }))
                     .Select(q => CreateDisgGroupInfos(q))
                     .FirstOrDefault();
             }
