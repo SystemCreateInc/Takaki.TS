@@ -537,7 +537,7 @@ namespace DistBlock.ViewModels
 
         private void ReloadTekiyoData()
         {
-            TekiyoDate.ReferenceDate = ReferenceDate.ToString("yyyyMMdd");
+            NameLoader.selectDate = ReferenceDate.ToString("yyyyMMdd");
             NmKyoten = NameLoader.GetKyoten(CdKyoten);
             NmDistGroup = NameLoader.GetDistGroup(CdDistGroup);
 

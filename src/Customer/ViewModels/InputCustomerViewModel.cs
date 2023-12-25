@@ -479,7 +479,7 @@ namespace Customer.ViewModels
         private void ReloadTekiyoName()
         {
             // 静的参照日更新
-            TekiyoDate.ReferenceDate = ReferenceDate.ToString("yyyyMMdd");
+            NameLoader.selectDate = ReferenceDate.ToString("yyyyMMdd");
 
             NmSumTokuisaki = NameLoader.GetTokuisaki(CdSumTokuisaki);
 

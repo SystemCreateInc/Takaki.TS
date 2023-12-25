@@ -310,7 +310,7 @@ namespace SeatThreshold.ViewModels
         // 適用名称再取得
         private void ReloadTekiyoName()
         {
-            TekiyoDate.ReferenceDate = ReferenceDate.ToString("yyyyMMdd");
+            NameLoader.selectDate = ReferenceDate.ToString("yyyyMMdd");
             NmKyoten = NameLoader.GetKyoten(CdKyoten);
         }
 

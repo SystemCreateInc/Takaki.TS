@@ -3,7 +3,7 @@ using Dapper;
 using Dapper.FastCrud;
 using DbLib;
 using DbLib.DbEntities;
-using ReferenceLogLib.Models;
+using TakakiLib.Models;
 
 namespace Customer.Loader
 {

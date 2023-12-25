@@ -2,7 +2,7 @@
 using DbLib;
 using DbLib.DbEntities;
 using DistBlock.Models;
-using ReferenceLogLib.Models;
+using TakakiLib.Models;
 
 namespace DistBlock.Loader
 {

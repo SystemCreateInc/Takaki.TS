@@ -2,7 +2,7 @@
 using DbLib;
 using Dapper;
 using System.Windows.Controls.Primitives;
-using ReferenceLogLib.Models;
+using TakakiLib.Models;
 
 namespace SeatMapping.Models
 {

@@ -4,7 +4,7 @@ using DbLib;
 using DbLib.DbEntities;
 using DistBlock.Models;
 using ImTools;
-using ReferenceLogLib.Models;
+using TakakiLib.Models;
 using System.Windows.Controls.Primitives;
 
 namespace DistBlock.Loader

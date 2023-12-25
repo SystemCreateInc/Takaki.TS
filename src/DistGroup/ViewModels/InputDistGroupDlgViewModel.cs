@@ -404,7 +404,7 @@ namespace DistGroup.ViewModels
         // 適用名称再取得
         private void ReloadTekiyoName()
         {
-            TekiyoDate.ReferenceDate = ReferenceDate.ToString("yyyyMMdd");
+            NameLoader.selectDate = ReferenceDate.ToString("yyyyMMdd");
 
             NmKyoten = NameLoader.GetKyoten(CdKyoten);
             Batches = new ObservableCollection<BatchInfo>(Batches.Select(x => new BatchInfo { CdShukkaBatch = x.CdShukkaBatch, CdLargeGroup = x.CdLargeGroup }));
