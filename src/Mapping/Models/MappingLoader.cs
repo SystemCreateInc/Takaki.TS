@@ -123,17 +123,22 @@ namespace Mapping.Models
                          CdShukkaBatch = x.CDSHUKKABATCH,
                      }).ToList();
 
+                    distgroup.Courses = new List<string>();
                     foreach (var shukkabatch in distgroup.ShukkaBatchs)
                     {
                         // 出荷バッチコース取得
                         shukkabatch.NmShukkaBatch = NameLoader.GetNmShukkaBatch(shukkabatch.CdShukkaBatch);
 
-                        shukkabatch.Courses = con.Find<TBDISTGROUPCOURSEEntity>(s => s
-                            .Where($"{nameof(TBDISTGROUPCOURSEEntity.IDDISTGROUP):C}=@IdDistGroup and {nameof(TBDISTGROUPCOURSEEntity.CDSHUKKABATCH):C}=@cdshukkabatch")
-                            .WithParameters(new { @IdDistGroup = distgroup.IdDistGroup, @cdshukkabatch = shukkabatch.CdShukkaBatch })
-                            .OrderBy($"{nameof(TBDISTGROUPCOURSEEntity.NUCOURSESEQ)}"))
-                            .Select(x => x.CDCOURSE)
-                            .ToList();
+                        // 先頭の出荷バッチのコースを使用
+                        if (distgroup.Courses.Count == 0)
+                        {
+                            distgroup.Courses = con.Find<TBDISTGROUPCOURSEEntity>(s => s
+                                .Where($"{nameof(TBDISTGROUPCOURSEEntity.IDDISTGROUP):C}=@IdDistGroup and {nameof(TBDISTGROUPCOURSEEntity.CDSHUKKABATCH):C}=@cdshukkabatch")
+                                .WithParameters(new { @IdDistGroup = distgroup.IdDistGroup, @cdshukkabatch = shukkabatch.CdShukkaBatch })
+                                .OrderBy($"{nameof(TBDISTGROUPCOURSEEntity.NUCOURSESEQ)}"))
+                                .Select(x => x.CDCOURSE)
+                                .ToList();
+                        }
                     }
 
                     // 大仕分け
@@ -182,27 +187,28 @@ namespace Mapping.Models
                 return distgroups;
             }
         }
-        public static List<Dist> GetDists(string cdkyoten, string dtdelivery, List<ShukkaBatch> shukkabaths)
+        public static List<Dist> GetDists(DistGroup distgroup, string dtdelivery)
         {
             string whereCourse = string.Empty;
-
-            foreach (var p in shukkabaths)
+            foreach (var syukkabatch in distgroup.ShukkaBatchs)
             {
                 whereCourse += whereCourse == string.Empty ? " and (" : " or ";
-
-                whereCourse += $" (CD_SHUKKA_BATCH='" + p.CdShukkaBatch + "'";
-                whereCourse += $" and CD_COURSE in " + "('" + String.Join("','", p.Courses) + "'))";
+                whereCourse += $" (CD_SHUKKA_BATCH='" + syukkabatch.CdShukkaBatch + "')";
             }
-
             if (whereCourse != string.Empty)
                 whereCourse += ")";
+
+            if (distgroup.Courses.Count() != 0)
+            {
+                whereCourse += $" and CD_COURSE in ('" + String.Join("','", distgroup.Courses) + "')";
+            }
 
 
             using (var con = DbFactory.CreateConnection())
             {
                 var dists = con.Find<TBDISTEntity>(s => s
                 .Where($"{nameof(TBDISTEntity.CDKYOTEN):C}=@cdkyoten and {nameof(TBDISTEntity.DTDELIVERY):C} = @dtdelivery {whereCourse}")
-                .WithParameters(new { cdkyoten, dtdelivery })
+                .WithParameters(new { cdkyoten = distgroup.CdKyoten, dtdelivery })
                 .OrderBy($"{nameof(TBDISTEntity.IDDIST)}"))
                 .Select((x) => new Dist
                 {
@@ -214,31 +220,36 @@ namespace Mapping.Models
                     CdRoute = x.CDROUTE,
                     CdTokuisaki = x.CDTOKUISAKI,
                     CdHimban = x.CDHIMBAN,
+                    CdGtin13 = x.CDGTIN13,
+                    Ops = x.NULOPS,
 
                 }).ToList();
 
                 return dists;
             }
         }
-        public static List<Dist> GetStowages(string cdkyoten, string dtdelivery, List<ShukkaBatch> shukkabaths)
+        public static List<Dist> GetStowages(DistGroup distgroup, string dtdelivery)
         {
             string whereCourse = string.Empty;
-            foreach (var p in shukkabaths)
+
+            foreach (var syukkabatch in distgroup.ShukkaBatchs)
             {
                 whereCourse += whereCourse == string.Empty ? " and (" : " or ";
-
-                whereCourse += $" (CD_SHUKKA_BATCH='" + p.CdShukkaBatch + "'";
-                whereCourse += $" and CD_COURSE in " + "('" + String.Join("','", p.Courses) + "'))";
+                whereCourse += $" (CD_SHUKKA_BATCH='" + syukkabatch.CdShukkaBatch + "')";
             }
-
             if (whereCourse != string.Empty)
                 whereCourse += ")";
+
+            if (distgroup.Courses.Count() != 0)
+            {
+                whereCourse += $" and CD_COURSE in ('" + String.Join("','", distgroup.Courses) + "')";
+            }
 
             using (var con = DbFactory.CreateConnection())
             {
                 var stowages = con.Find<TBSTOWAGEEntity>(s => s
                 .Where($"{nameof(TBSTOWAGEEntity.CDKYOTEN):C}=@cdkyoten and {nameof(TBSTOWAGEEntity.DTDELIVERY):C} = @dtdelivery {whereCourse}")
-                .WithParameters(new { cdkyoten, dtdelivery })
+                .WithParameters(new { distgroup.CdKyoten, dtdelivery })
                 .OrderBy($"{nameof(TBSTOWAGEEntity.IDSTOWAGE)}"))
                 .Select((x) => new Dist
                 {

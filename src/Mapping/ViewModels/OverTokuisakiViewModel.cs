@@ -15,6 +15,7 @@ using Mapping.Views;
 using ControlzEx.Standard;
 using Prism.Events;
 using Prism.Regions;
+using ReferenceLogLib.Models;
 
 namespace Mapping.ViewModels
 {
@@ -50,12 +51,25 @@ namespace Mapping.ViewModels
             OnPrint = new DelegateCommand(() =>
             {
                 Syslog.Debug("OverTokuisakiViewModel:OverPrint");
+
+                MessageDialog.Show(_dialogService, "印刷！", "確認");
+
+                if (_mapping != null)
+                    _mapping.IsSave = true;
+
+                regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
             });
 
 
             OnBack = new DelegateCommand(() =>
             {
                 Syslog.Info("【戻る】OverTokuisakiViewModel:OnBack");
+
+                if (MessageDialog.Show(_dialogService, "座席マッピングの実行結果をキャンセルします。よろしいですか？", "確認", ButtonMask.OK | ButtonMask.Cancel) != ButtonResult.OK)
+                    return;
+
+                if (_mapping != null)
+                    _mapping.IsCancel = true;
 
                 regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
             });
@@ -80,14 +94,39 @@ namespace Mapping.ViewModels
             _mapping = navigationContext.Parameters.GetValue<MappingManager>("Mapping");
             _distgroupinfo = navigationContext.Parameters.GetValue<DistGroupInfo>("currentdistinfo");
 
-            LoadDatas();
+            try
+            {
+                CollectionViewHelper.SetCollection(OverInfos, LoadDatas());
+            }
+            catch (Exception e)
+            {
+                Syslog.Error($"OverTokuisakiViewModel:LoadDatas:{e.Message}");
+                MessageDialog.Show(_dialogService, e.Message, "エラー");
+            }
 
             Syslog.Info($"OverTokuisakiViewModel:OnNavigatedTo");
         }
 
-        public void LoadDatas()
+        public IEnumerable<Models.OverInfo> LoadDatas()
         {
+            List<Models.OverInfo> overs = new List<Models.OverInfo>();
 
+            var distgroup = _mapping!.distgroups.Where(x => x.CdDistGroup == _distgroupinfo!.CdDistGroup).FirstOrDefault();
+            if (distgroup != null)
+            {
+                // アドレスなしのみ表示
+                foreach (var dist in distgroup.dists)
+                {
+                    if (dist.tdunitaddrcode=="")
+                    {
+                        overs.Add(new Models.OverInfo(dist, distgroup));
+                    }
+                }
+            }
+
+            TokuisakiCnt = overs.Select(x=>x.CdTokuisaki).Distinct().Count();
+
+            return overs;
         }
     }
 }

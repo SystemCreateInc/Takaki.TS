@@ -60,35 +60,29 @@
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="仕分Ｇ：" TextAlignment="Left" />
                 <TextBlock Text="{Binding CdDistGroup}"/>
-                <TextBlock Text="{Binding NmDistGroup}" Margin="10,0,0,0"/>
-                <TextBlock Text="得意先数：" TextAlignment="Left" />
+                <TextBlock Text="{Binding NmDistGroup}" Margin="20,0,0,0"/>
+                <TextBlock Text="得意先数：" Margin="50,0,0,0" />
                 <TextBlock Text="{Binding TokuisakiCnt}"/>
             </StackPanel>
         </Grid>
 
         <controls:GridColumnSetting TargetGrid="{Binding ElementName=gridlocinfo}" SettingsKey="MappingColumns"/>
         <DataGrid Margin="3" DockPanel.Dock="Left" 
-                        Name="gridlocinfo" ItemsSource="{Binding LocInfos, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"                          
-                        CanUserSortColumns="False"
-                        CanUserReorderColumns="False"
-                        AutoGenerateColumns="False"
-                        VerticalScrollBarVisibility="Auto"
-                        HorizontalScrollBarVisibility="Auto"
-                        RowHeaderWidth="0" CanUserAddRows="False"
-                        CanUserResizeRows="False" FrozenColumnCount="0"
-                        SelectionMode="Extended"
-                        Background="White" IsReadOnly="False">
+                      Name="gridlocinfo" ItemsSource="{Binding LocInfos, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"                          
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
+                      SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="None">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ブロック" Width="Auto" Binding="{Binding CdBlock}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="棚番" Width="Auto" Binding="{Binding Tdunitaddrcode}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="コース" Width="Auto" Binding="{Binding CdCourse}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="配送順" Width="Auto" Binding="{Binding CdRoute}"  IsReadOnly="True" ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="得意先コード" Width="Auto" Binding="{Binding CdTokuisaki}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="得意先名称" Width="Auto" Binding="{Binding NmTokuisaki}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="便集計" Width="Auto" Binding="{Binding CdBinSum}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="集約得意先" Width="Auto" Binding="{Binding CdSumTokuisaki}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="座席数" Width="Auto" Binding="{Binding Maguchi}" IsReadOnly="True" ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="ブロック" Width="Auto" Binding="{Binding CdBlock}" />
+                <DataGridTextColumn Header="棚番" Width="Auto" Binding="{Binding Tdunitaddrcode}" />
+                <DataGridTextColumn Header="コース" Width="Auto" Binding="{Binding CdCourse}" />
+                <DataGridTextColumn Header="配送順" Width="Auto" Binding="{Binding CdRoute}"  ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="得意先コード" Width="Auto" Binding="{Binding CdTokuisaki}" />
+                <DataGridTextColumn Header="得意先名称" Width="Auto" Binding="{Binding NmTokuisaki}" />
+                <DataGridTextColumn Header="便集計" Width="Auto" Binding="{Binding CdBinSum}" />
+                <DataGridTextColumn Header="集約得意先" Width="Auto" Binding="{Binding CdSumTokuisaki}" />
+                <DataGridTextColumn Header="座席数" Width="Auto" Binding="{Binding Maguchi}" ElementStyle="{StaticResource RightTextElement}"/>
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>

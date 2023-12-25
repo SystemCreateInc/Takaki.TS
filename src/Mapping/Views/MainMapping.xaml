@@ -104,15 +104,9 @@
         <DataGrid Margin="3" DockPanel.Dock="Left" 
                         Name="griddistgroupmapping" ItemsSource="{Binding DistGroupInfos, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"                          
                         SelectedItem="{Binding CurrentDistGroupInfo, Mode=TwoWay}"
-                        CanUserSortColumns="False"
-                        CanUserReorderColumns="False"
-                        AutoGenerateColumns="False"
-                        VerticalScrollBarVisibility="Auto"
-                        HorizontalScrollBarVisibility="Auto"
-                        RowHeaderWidth="0" CanUserAddRows="False"
-                        CanUserResizeRows="False" FrozenColumnCount="0"
-                        SelectionMode="Extended"
-                        Background="White" IsReadOnly="False">
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
+                      SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="None">
 
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="選択" Width="Auto" SortMemberPath="Logic" IsReadOnly="True">
@@ -125,13 +119,13 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTextColumn Header="仕分Ｇ" Width="Auto" Binding="{Binding CdDistGroup}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="仕分Ｇ名" Width="Auto" Binding="{Binding NmDistGroup}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="得意先数" Width="Auto" Binding="{Binding ShopCnt}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="座席数" Width="Auto" Binding="{Binding LocCnt}"  ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="あふれ得意先数" Width="Auto" Binding="{Binding OverShopCnt}"  ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="大仕分" Width="Auto" Binding="{Binding NmLStatus}"  ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="得意先仕分" Width="Auto" Binding="{Binding NmDStatus}"  ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="仕分Ｇ" Width="Auto" Binding="{Binding CdDistGroup}" />
+                <DataGridTextColumn Header="仕分Ｇ名" Width="Auto" Binding="{Binding NmDistGroup}" />
+                <DataGridTextColumn Header="得意先数" Width="Auto" Binding="{Binding ShopCnt}" ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="座席数" Width="Auto" Binding="{Binding LocCnt}"  ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="あふれ得意先数" Width="Auto" Binding="{Binding OverShopCnt}"  ElementStyle="{StaticResource RightTextElement}" />
+                <DataGridTextColumn Header="大仕分" Width="Auto" Binding="{Binding NmLStatus}"  ElementStyle="{StaticResource RightTextElement}" />
+                <DataGridTextColumn Header="得意先仕分" Width="Auto" Binding="{Binding NmDStatus}"  ElementStyle="{StaticResource RightTextElement}" />
 
             </DataGrid.Columns>
             <i:Interaction.Behaviors>

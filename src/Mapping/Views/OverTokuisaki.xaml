@@ -63,7 +63,7 @@
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="あふれた得意先数：" TextAlignment="Left" />
-                    <TextBlock Text="{Binding TokuisakiCnt}"/>
+                    <TextBlock Text="{Binding TokuisakiCnt}" Foreground="Red"/>
                 </StackPanel>
             </StackPanel>
         </Grid>
@@ -79,17 +79,21 @@
                         RowHeaderWidth="0" CanUserAddRows="False"
                         CanUserResizeRows="False" FrozenColumnCount="0"
                         SelectionMode="Extended"
-                        Background="White" IsReadOnly="False">
+                        Background="White" IsReadOnly="True">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="仕分Ｇ" Width="Auto" Binding="{Binding CdDistGroup}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="仕分Ｇ名" Width="Auto" Binding="{Binding NmDistGroup}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="出荷バッチ" Width="Auto" Binding="{Binding CdDistGroup}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="出荷バッチ名" Width="Auto" Binding="{Binding NmDistGroup}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="コース" Binding="{Binding CdCource}"/>
+                <DataGridTextColumn Header="仕分Ｇ" Width="Auto" Binding="{Binding CdDistGroup}" />
+                <DataGridTextColumn Header="仕分Ｇ名" Width="Auto" Binding="{Binding NmDistGroup}"/>
+                <DataGridTextColumn Header="出荷バッチ" Width="Auto" Binding="{Binding CdDistGroup}" />
+                <DataGridTextColumn Header="出荷バッチ名" Width="Auto" Binding="{Binding NmDistGroup}" />
+                <DataGridTextColumn Header="コース" Binding="{Binding CdCourse}"/>
                 <DataGridTextColumn Header="配送順" Binding="{Binding CdRoute}" ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="得意先コード" Width="Auto" Binding="{Binding CdDistGroup}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="得意先名称" Width="Auto" Binding="{Binding NmDistGroup}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="得意先コード" Width="Auto" Binding="{Binding CdTokuisaki}" />
+                <DataGridTextColumn Header="得意先名称" Width="Auto" Binding="{Binding NmTokuisaki}" />
+                <DataGridTextColumn Header="品番" Width="Auto" Binding="{Binding CdHimban}" />
+                <DataGridTextColumn Header="JANｺｰﾄﾞ" Width="Auto" Binding="{Binding CdGtin13}" />
+                <DataGridTextColumn Header="品名" Width="Auto" Binding="{Binding NmHinSeishikimei}" />
+                <DataGridTextColumn Header="数量" Binding="{Binding Ops}" ElementStyle="{StaticResource RightTextElement}"/>
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>

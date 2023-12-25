@@ -1,4 +1,5 @@
-﻿using Prism.Mvvm;
+﻿using DbLib.Defs;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace Mapping.Models
             CdRoute = dist.CdSumRoute.ToString();
             CdTokuisaki = dist.CdSumTokuisaki;
             NmTokuisaki = dist.NmSumTokuisaki;
-            CdBinSum = ""; // fixme
+            CdBinSum = dist.CdBinSum == (int)BinSumType.Yes ? "●" : "";
             CdSumTokuisaki = dist.CdTokuisaki != dist.CdSumTokuisaki ? "●" : "";
             Maguchi = dist.Maguchi.ToString();
         }

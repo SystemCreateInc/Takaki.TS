@@ -10,6 +10,22 @@ using System.Threading.Tasks;
 
 namespace Mapping.Models
 {
+    public class Tokuisaki
+    {
+        public string CdShukkaBatch = string.Empty;
+        public string NmShukkaBatch = string.Empty;
+        public string CdLargeGroup = string.Empty;
+        public string NmLargeGroup = string.Empty;
+        public string CdTokuisaki = string.Empty;
+        public string NmTokuisaki = string.Empty;
+        public string CdCourse = string.Empty;
+        public int CdRoute = 0;
+        public string CdSumTokuisaki = string.Empty;
+        public string NmSumTokuisaki = string.Empty;
+        public string CdSumCourse = string.Empty;
+        public int CdSumRoute = 0;
+    }
+
     public class Dist
     {
         public Dist()
@@ -60,21 +76,28 @@ namespace Mapping.Models
         public string NmTokuisaki = string.Empty;
         public string CdHimban = string.Empty;
         public string NmHinSeishikimei = string.Empty;
+        public string CdGtin13 = string.Empty;
         public string CdSumTokuisaki = string.Empty;
         public string NmSumTokuisaki = string.Empty;
         public string CdSumCourse = string.Empty;
         public int CdSumRoute = 0;
         public string tdunitaddrcode = string.Empty;
+        public int Ops = 0;
         public int MappingSeq = 0;
         public int Maguchi = 0;
+        public int CdBinSum = 0;
 
         public int StBoxType = 0;
         public int NuBoxCnt = 0;
         public string CdHaiShobin = string.Empty;
         public string DtDelivery = string.Empty;
 
+        public List<Tokuisaki>  Tokuisakis = new List<Tokuisaki>();
+
         public int LargeBox = 0;    // 厚箱
         public int SmallBox = 0;    // 薄箱
+        public int BlueBox = 0;    // 青箱
+
 
         public decimal GetBoxSize()
         {
@@ -82,13 +105,13 @@ namespace Mapping.Models
         }
         public int GetMaguchi(decimal NuThreshold)
         {
-            decimal a = GetBoxSize();
             decimal box = Math.Floor(GetBoxSize() / NuThreshold);
 
-            int resut =  box * NuThreshold == GetBoxSize() ? (int)box : (int)box + 1;
-            Syslog.Info($"しきい値計算 Seq[{MappingSeq}] CdShukkaBatch[{CdShukkaBatch}] CdSumCourse[{CdSumCourse}] CdSumRoute[{CdSumRoute}] CdCourse[{CdCourse}] CdRoute[{CdRoute}] CdSumTokuisaki[{CdSumTokuisaki}] CdTokuisaki[{CdTokuisaki}] しきい値[{NuThreshold}] 箱[{GetBoxSize()}] 間口[{resut}]");
+            int resut = box * NuThreshold == GetBoxSize() ? (int)box : (int)box + 1;
+            Syslog.Info($"しきい値計算 CdShukkaBatch[{CdShukkaBatch}] CdSumCourse[{CdSumCourse}] CdSumRoute[{CdSumRoute}] CdCourse[{CdCourse}] CdRoute[{CdRoute}] CdSumTokuisaki[{CdSumTokuisaki}] CdTokuisaki[{CdTokuisaki}] しきい値[{NuThreshold}] 箱[{GetBoxSize()}] 間口[{resut}]");
             return resut;
         }
+
 
     }
 }

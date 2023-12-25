@@ -64,6 +64,8 @@ namespace Mapping.ViewModels
             OnPrint = new DelegateCommand(() =>
             {
                 Syslog.Debug("LocInfoViewModel:OverPrint");
+
+                MessageDialog.Show(_dialogService, "印刷！", "確認");
             });
 
 
@@ -72,19 +74,6 @@ namespace Mapping.ViewModels
                 Syslog.Info("【戻る】LocInfoViewModel:OnBack");
 
                 regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
-
-                if (_distgroupinfo != null)
-                {
-                    if (_distgroupinfo.OverShopCnt != 0)
-                    {
-                        _regionManager.RequestNavigate("ContentRegion", nameof(Views.OverTokuisaki), new NavigationParameters
-                        {
-                            { "currentdistinfo", _distgroupinfo },
-                            { "Mapping", _mapping              },
-                        });
-                    }
-                }
-
             });
 
         }

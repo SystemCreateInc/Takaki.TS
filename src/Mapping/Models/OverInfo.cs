@@ -1,9 +1,29 @@
-﻿using Prism.Mvvm;
+﻿using DbLib.Defs;
+using Prism.Mvvm;
 
 namespace Mapping.Models
 {
     public class OverInfo : BindableBase
     {
+        public OverInfo(Dist dist, DistGroup distgroup)
+        {
+            CdShukkaBatch = dist.CdShukkaBatch;
+            NmShukkaBatch = dist.NmShukkaBatch;
+
+            CdDistGroup = distgroup.CdDistGroup;
+            NmDistGroup = distgroup.NmDistGroup;
+
+            CdCourse = dist.CdSumCourse;
+            CdRoute = dist.CdSumRoute;
+            CdTokuisaki = dist.CdTokuisaki;
+            NmTokuisaki = dist.NmTokuisaki;
+
+            CdHimban = dist.CdHimban;
+            NmHinSeishikimei = dist.NmHinSeishikimei;
+            CdGtin13 = dist.CdGtin13;
+            Ops = dist.Ops;
+        }
+
         private string _cdDistGroup = string.Empty;
         public string CdDistGroup
         {
@@ -57,6 +77,34 @@ namespace Mapping.Models
         {
             get => _cdRoute;
             set => SetProperty(ref _cdRoute, value);
+        }
+
+        private string _cdHimban = string.Empty;
+        public string CdHimban
+        {
+            get => _cdHimban;
+            set => SetProperty(ref _cdHimban, value);
+        }
+
+        private string _nmHinSeishikimei = string.Empty;
+        public string NmHinSeishikimei
+        {
+            get => _nmHinSeishikimei;
+            set => SetProperty(ref _nmHinSeishikimei, value);
+        }
+
+        private string _cdGtin13 = string.Empty;
+        public string CdGtin13
+        {
+            get => _cdGtin13;
+            set => SetProperty(ref _cdGtin13, value);
+        }
+
+        private int _ops = 0;
+        public int Ops
+        {
+            get => _ops;
+            set => SetProperty(ref _ops, value);
         }
     }
 }

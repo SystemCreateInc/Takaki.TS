@@ -1,8 +1,10 @@
-﻿using Dapper;
+﻿using ControlzEx.Standard;
+using Dapper;
 using Dapper.FastCrud;
 using DbLib;
 using DbLib.DbEntities;
 using DbLib.Defs;
+using DryIoc;
 using LogLib;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -15,9 +17,22 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using TakakiLib.Models;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace Mapping.Models
 {
+    public class ItemMst
+    {
+        public ItemMst(Dist dist)
+        {
+            code = dist.CdHimban;
+            name = NameLoader.GetHimban(dist.CdHimban);
+        }
+
+        public string code = string.Empty;
+        public string name = string.Empty;
+    }
+
     class TokusakiComparer : IEqualityComparer<Dist>
     {
         public bool Equals(Dist? x, Dist? y)
@@ -60,6 +75,9 @@ namespace Mapping.Models
         public string DtDelivery = string.Empty;
 
         public int RackAllocMax = 10;
+        public bool IsSave = false;
+        public bool IsCancel = false;
+
 
         public MappingManager()
         {
@@ -73,7 +91,7 @@ namespace Mapping.Models
 
             if (distgroup != null)
             {
-                cnt = distgroup.dists.Where(x => x.tdunitaddrcode != "").Select(x => x.CdTokuisaki).Distinct().Count();
+                cnt = distgroup.mappings.Where(x => x.tdunitaddrcode != "").Select(x => x.tdunitaddrcode).Count();
             }
             return cnt;
         }
@@ -99,7 +117,7 @@ namespace Mapping.Models
 
             if (distgroup != null)
             {
-                cnt = distgroup.mappings.Where(x => x.tdunitaddrcode=="").Select(x => x.CdTokuisaki).Distinct().Count();
+                cnt = distgroup.dists.Where(x => x.tdunitaddrcode=="").Select(x => x.CdTokuisaki).Distinct().Count();
             }
             return cnt;
         }
@@ -107,7 +125,7 @@ namespace Mapping.Models
         public void LoadDatas(string dtdelivery, List<string> seldistgroups)
         {
             DtDelivery = dtdelivery;
-            TekiyoDate.ReferenceDate = DtDelivery;
+            NameLoader.selectDate = DtDelivery;
 
             sumtokuisakis = MappingLoader.GetSumTokuisakis(DtDelivery);
             blocks = MappingLoader.GetBlocks(DtDelivery);
@@ -117,12 +135,12 @@ namespace Mapping.Models
         {
             foreach (var distgroup in distgroups)
             {
-                distgroup.dists = MappingLoader.GetDists(distgroup.CdKyoten, DtDelivery, distgroup.ShukkaBatchs);
+                distgroup.dists = MappingLoader.GetDists(distgroup, DtDelivery);
                 if (distgroup.dists.Count == 0)
                 {
                     throw new Exception($"マッピング可能な出荷データが１件もありません\n仕分グループ:[{distgroup.CdDistGroup} {distgroup.NmDistGroup}]");
                 }
-                distgroup.stowages = MappingLoader.GetStowages(distgroup.CdKyoten, DtDelivery, distgroup.ShukkaBatchs);
+                distgroup.stowages = MappingLoader.GetStowages(distgroup, DtDelivery);
                 if (distgroup.stowages.Count == 0)
                 {
                     throw new Exception($"マッピング可能な箱数データが１件もありません\n仕分グループ:[{distgroup.CdDistGroup} {distgroup.NmDistGroup}]");
@@ -222,31 +240,56 @@ namespace Mapping.Models
         public List<Dist> ChiceMappingTokuisaki(DistGroup distgroup)
         {
             List<Dist> lists =
-                distgroup.CdBinSum == 1 
+                distgroup.CdBinSum == (int)BinSumType.Yes 
                 ? distgroup.dists.Distinct(new CourseRouteComparer()).ToList()  // 集計する
                 : distgroup.dists.Distinct(new TokusakiComparer()).ToList();    // 集計しない
 
             LogOut("得意先抽出", lists);
 
-            // 出荷バッチ、コース順に連番をつける
+            // コース順に連番をつける
             int seq = 0;
-            foreach (var shukkabatch in distgroup.ShukkaBatchs)
+            foreach (var course in distgroup.Courses)
             {
-                foreach (var course in shukkabatch.Courses)
+                var p = lists.Where(x => x.CdSumCourse == course);
+                if (p != null)
                 {
-                    var p = lists.Where(x => x.CdShukkaBatch == shukkabatch.CdShukkaBatch && x.CdSumCourse == course);
-                    if (p != null)
+                    seq++;
+                    foreach (var pp in p)
                     {
-                        seq++;
-                        foreach (var pp in p)
+                        pp.MappingSeq = seq;
+
+                        foreach (var syukkabatch in distgroup.ShukkaBatchs)
                         {
-                            pp.MappingSeq = seq;
-                            pp.CdShukkaBatch = shukkabatch.CdShukkaBatch;
-                            pp.NmShukkaBatch = shukkabatch.NmShukkaBatch;
-                            pp.CdLargeGroup = shukkabatch.CdLargeGroup;
-                            pp.NmLargeGroup = shukkabatch.NmLargeGroup;
-                            pp.NmTokuisaki = NameLoader.GetTokuisaki(pp.CdTokuisaki);
-                            pp.NmSumTokuisaki = NameLoader.GetTokuisaki(pp.CdSumTokuisaki);
+                            var shops =
+                                distgroup.CdBinSum == (int)BinSumType.Yes ?
+                                distgroup.dists.Where(x => x.CdCourse == pp.CdCourse && x.CdRoute == pp.CdRoute).Distinct(new TokusakiComparer()).ToList()
+                                : distgroup.dists.Where(x => x.CdCourse == pp.CdCourse && x.CdRoute == pp.CdRoute && x.CdSumTokuisaki == pp.CdSumTokuisaki).Distinct(new TokusakiComparer()).ToList();
+
+                            foreach (var shop in shops)
+                            {
+                                if (pp.Tokuisakis.Find(x=>x.CdSumTokuisaki == shop.CdSumTokuisaki)==null)
+                                {
+                                    shop.NmTokuisaki = NameLoader.GetTokuisaki(shop.CdTokuisaki);
+
+                                    pp.Tokuisakis.Add(
+                                        new Tokuisaki
+                                        {
+                                            CdShukkaBatch = syukkabatch.CdShukkaBatch,
+                                            NmShukkaBatch = syukkabatch.NmShukkaBatch,
+                                            CdLargeGroup = syukkabatch.CdLargeGroup,
+                                            NmLargeGroup = syukkabatch.NmLargeGroup,
+                                            CdTokuisaki = shop.CdTokuisaki,
+                                            NmTokuisaki = shop.NmTokuisaki,
+                                            CdCourse = shop.CdCourse,
+                                            CdRoute = shop.CdRoute,
+                                            CdSumTokuisaki = shop.CdSumTokuisaki,
+                                            NmSumTokuisaki = shop.CdSumTokuisaki == shop.CdTokuisaki ? shop.NmTokuisaki : NameLoader.GetTokuisaki(shop.CdSumTokuisaki),
+                                            CdSumCourse = shop.CdSumCourse,
+                                            CdSumRoute = shop.CdSumRoute,
+                                        }
+                                    );
+                                }
+                            }
                         }
                     }
                 }
@@ -255,16 +298,25 @@ namespace Mapping.Models
             // 箱数設定
             foreach (var d in lists)
             {
-                var p = distgroup.stowages.Find(x => x.CdSumCourse == d.CdSumCourse && x.CdSumRoute == d.CdSumRoute && x.StBoxType == (int)BoxType.SmallBox);
-                if (p != null)
+                foreach (var shop in d.Tokuisakis)
                 {
-                    d.SmallBox += p.NuBoxCnt;
-                }
+                    var p = distgroup.stowages.Find(x => x.CdSumTokuisaki == shop.CdSumTokuisaki && x.StBoxType == (int)BoxType.SmallBox);
+                    if (p != null)
+                    {
+                        d.SmallBox += p.NuBoxCnt;
+                    }
 
-                p = distgroup.stowages.Find(x => x.CdSumCourse == d.CdSumCourse && x.CdSumRoute == d.CdSumRoute && x.StBoxType == (int)BoxType.LargeBox);
-                if (p != null)
-                {
-                    d.LargeBox += p.NuBoxCnt;
+                    p = distgroup.stowages.Find(x => x.CdSumTokuisaki == shop.CdSumTokuisaki && x.StBoxType == (int)BoxType.LargeBox);
+                    if (p != null)
+                    {
+                        d.LargeBox += p.NuBoxCnt;
+                    }
+
+                    p = distgroup.stowages.Find(x => x.CdSumTokuisaki == shop.CdSumTokuisaki && x.StBoxType == (int)BoxType.BlueBox);
+                    if (p != null)
+                    {
+                        d.BlueBox += p.NuBoxCnt;
+                    }
                 }
             }
 
@@ -324,6 +376,16 @@ namespace Mapping.Models
                 }
             }
 
+            // distに品名設定
+            List<ItemMst> itemmsts = new List<ItemMst>();
+            foreach (var dist in distgroup.dists)
+            {
+                if (itemmsts.Find(x => x.code == dist.CdHimban)==null)
+                {
+                    itemmsts.Add(new ItemMst(dist));
+                }
+            }
+
             // dist,stowageに項目設定
             foreach (var dist in distgroup.dists)
             {
@@ -333,14 +395,22 @@ namespace Mapping.Models
                 {
                     dist.CdBlock = mapping.CdBlock;
                     dist.tdunitaddrcode = mapping.tdunitaddrcode;
-                    dist.NmShukkaBatch = mapping.NmShukkaBatch;
                     dist.NmKyoten = distgroup.NmKyoten;
-                    dist.NmTokuisaki = mapping.NmTokuisaki;
-                    dist.NmSumTokuisaki = mapping.NmSumTokuisaki;
-                    dist.NmHinSeishikimei = NameLoader.GetHimban(dist.CdHimban);
-                    dist.CdLargeGroup = mapping.CdLargeGroup;
-                    dist.NmLargeGroup = mapping.NmLargeGroup;
+                    var item = itemmsts.Where(x => x.code == dist.CdHimban).FirstOrDefault();
+                    dist.NmHinSeishikimei = item == null ? "" : item.name;
                     dist.Maguchi = mapping.Maguchi;
+                    dist.CdBinSum = mapping.Tokuisakis.Count==1 ? (int)BinSumType.No : (int)BinSumType.Yes;
+
+                    var shop = mapping.Tokuisakis.Find(x => x.CdSumTokuisaki == dist.CdSumTokuisaki);
+                    if (shop != null)
+                    {
+                        dist.NmTokuisaki = shop.NmTokuisaki;
+                        dist.NmSumTokuisaki = shop.NmSumTokuisaki;
+                        dist.CdShukkaBatch = shop.CdShukkaBatch;
+                        dist.NmShukkaBatch = shop.NmShukkaBatch;
+                        dist.CdLargeGroup = shop.CdLargeGroup;
+                        dist.NmLargeGroup = shop.NmLargeGroup;
+                    }
                 }
             }
             foreach (var stowage in distgroup.stowages)
@@ -353,11 +423,17 @@ namespace Mapping.Models
                     stowage.tdunitaddrcode = mapping.tdunitaddrcode;
                     stowage.NmShukkaBatch = mapping.NmShukkaBatch;
                     stowage.NmKyoten = distgroup.NmKyoten;
-                    stowage.NmTokuisaki = mapping.NmTokuisaki;
-                    stowage.NmSumTokuisaki = mapping.NmSumTokuisaki;
-                    stowage.CdLargeGroup = mapping.CdLargeGroup;
-                    stowage.NmLargeGroup = mapping.NmLargeGroup;
                     stowage.Maguchi = mapping.Maguchi;
+                    var shop = mapping.Tokuisakis.Find(x => x.CdSumTokuisaki == stowage.CdSumTokuisaki);
+                    if (shop != null)
+                    {
+                        stowage.NmTokuisaki = shop.NmTokuisaki;
+                        stowage.NmSumTokuisaki = shop.NmSumTokuisaki;
+                        stowage.CdShukkaBatch = shop.CdShukkaBatch;
+                        stowage.NmShukkaBatch = shop.NmShukkaBatch;
+                        stowage.CdLargeGroup = shop.CdLargeGroup;
+                        stowage.NmLargeGroup = shop.NmLargeGroup;
+                    }
                 }
             }
 
@@ -374,6 +450,11 @@ namespace Mapping.Models
                 {
                     foreach (BoxType boxtype in Enum.GetValues(typeof(BoxType)))
                     {
+                        if(stowage.CdSumTokuisaki== "202335")
+                        {
+                            string a = stowage.CdShukkaBatch;
+                        }
+
                         var p = distgroup.stowages.Find(x => x.CdTokuisaki == stowage.CdSumTokuisaki && x.StBoxType == (int)boxtype);
                         if (p == null)
                         {
@@ -394,13 +475,24 @@ namespace Mapping.Models
                     {
                         foreach (var dist in distgroup.dists)
                         {
+                            bool over = dist.tdunitaddrcode == "" ? true : false;
+
                             // dist更新
-                            var sql = "update TB_DIST set FG_MAPSTATUS=@status where ID_DIST=@id";
+                            var sql = over 
+                                 ? "update TB_DIST set FG_MAPSTATUS=@mapstatus,FG_LSTATUS=@lstatus,FG_DSTATUS=@dstatus,NU_LOPS=@ops,NU_LRPS=@ops,NU_DOPS=@ops,NU_DRPS=@ops,updatedAt=@update,DT_WORKDT_LARGE=@update,DT_WORKDT_DIST=@update where ID_DIST=@id"
+                                 : "update TB_DIST set FG_MAPSTATUS=@mapstatus where ID_DIST=@id";
 
                             con.Execute(sql,
                             new
                             {
-                                status = dist.tdunitaddrcode=="" ? 1 : 2,
+                                mapstatus = over ? (int)DbLib.Defs.Status.Inprog : (int)DbLib.Defs.Status.Completed,
+                                lstatus = over ? (int)DbLib.Defs.Status.Completed : (int)DbLib.Defs.Status.Ready,
+                                dstatus = over ? (int)DbLib.Defs.Status.Completed : (int)DbLib.Defs.Status.Ready,
+                                ops = dist.Ops,
+                                lrps = over ? dist.Ops : 0,
+                                dops = over ? dist.Ops : 0,
+                                drps = over ? dist.Ops : 0,
+                                update = DateTime.Now,
                                 id = dist.Id,
                             }, tr);
 
@@ -415,7 +507,7 @@ namespace Mapping.Models
                                 NMSUMTOKUISAKI = dist.NmSumTokuisaki,
                                 CDSUMCOURSE = dist.CdSumCourse,
                                 CDSUMROUTE = (short)dist.CdSumRoute,
-                                CDBINSUM = (short)distgroup.CdBinSum,
+                                CDBINSUM = (short)dist.CdBinSum,
                                 CDBLOCK = dist.CdBlock,
                                 CDDISTGROUP = distgroup.CdDistGroup,
                                 NMDISTGROUP = distgroup.NmDistGroup,
@@ -472,7 +564,7 @@ namespace Mapping.Models
                                     NMSUMTOKUISAKI = dist.NmSumTokuisaki,
                                     CDSUMCOURSE = dist.CdSumCourse,
                                     CDSUMROUTE = (short)dist.CdSumRoute,
-                                    CDBINSUM = (short)distgroup.CdBinSum,
+                                    CDBINSUM = (short)dist.CdBinSum,
                                     CDBLOCK = dist.CdBlock,
                                     CDDISTGROUP = distgroup.CdDistGroup,
                                     NMDISTGROUP = distgroup.NmDistGroup,
@@ -523,7 +615,10 @@ namespace Mapping.Models
         {
             foreach (var d in lists)
             {
-                Syslog.Info($"{title} Seq[{d.MappingSeq}] CdShukkaBatch[{d.CdShukkaBatch}] CdSumCourse[{d.CdSumCourse}] CdSumRoute[{d.CdSumRoute}] CdCourse[{d.CdCourse}] CdRoute[{d.CdRoute}] CdSumTokuisaki[{d.CdSumTokuisaki}] CdTokuisaki[{d.CdTokuisaki}] SmallBox[{d.SmallBox}] LargeBox[{d.LargeBox}] Block[{d.CdBlock}] Addr[{d.tdunitaddrcode}]");
+                foreach (var shop in d.Tokuisakis)
+                {
+                    Syslog.Info($"{title} Seq[{d.MappingSeq}] CdShukkaBatch[{shop.CdShukkaBatch}] CdSumCourse[{shop.CdSumCourse}] CdSumRoute[{shop.CdSumRoute}] CdCourse[{shop.CdCourse}] CdRoute[{shop.CdRoute}] CdSumTokuisaki[{shop.CdSumTokuisaki}] CdTokuisaki[{shop.CdTokuisaki}] SmallBox[{d.SmallBox}] LargeBox[{d.LargeBox}] Block[{d.CdBlock}] Addr[{d.tdunitaddrcode}] 間口[{d.Maguchi}]");
+                }
             }
         }
 
@@ -532,7 +627,7 @@ namespace Mapping.Models
         public void ClearDatas(string dtdelivery, List<string> seldistgroups)
         {
             DtDelivery = dtdelivery;
-            TekiyoDate.ReferenceDate = DtDelivery;
+            NameLoader.selectDate = DtDelivery;
 
             sumtokuisakis = MappingLoader.GetSumTokuisakis(DtDelivery);
             blocks = MappingLoader.GetBlocks( DtDelivery);
@@ -541,8 +636,8 @@ namespace Mapping.Models
             // 該当データを抽出
             foreach (var distgroup in distgroups)
             {
-                distgroup.dists = MappingLoader.GetDists(distgroup.CdKyoten, DtDelivery, distgroup.ShukkaBatchs);
-                distgroup.stowages = MappingLoader.GetStowages(distgroup.CdKyoten, DtDelivery, distgroup.ShukkaBatchs);
+                distgroup.dists = MappingLoader.GetDists(distgroup, DtDelivery);
+                distgroup.stowages = MappingLoader.GetStowages(distgroup, DtDelivery);
             }
 
             using (var con = DbFactory.CreateConnection())
