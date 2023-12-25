@@ -248,7 +248,7 @@ namespace Customer.ViewModels
         private void SetReferenceCustomer()
         {
             var tekiyoDate = ReferenceLog.GetStartDateInRange(ReferenceDate.ToString("yyyyMMdd"));
-            var customer = CustomerLoader.GetFromKey(_currentCustomer.CdKyoten, _currentCustomer.CdSumTokuisaki, tekiyoDate);
+            var customer = CustomerLoader.GetFromKey(_currentCustomer.CdSumTokuisaki, tekiyoDate);
 
             if (customer is not null)
             {
@@ -277,7 +277,7 @@ namespace Customer.ViewModels
             {
                 CdKyoten = _currentCustomer.CdKyoten;
                 CdSumTokuisaki = _currentCustomer.CdSumTokuisaki;
-                ReferenceLog.LogInfos = LogLoader.Get(_currentCustomer.CdKyoten, _currentCustomer.CdSumTokuisaki).ToList();
+                ReferenceLog.LogInfos = LogLoader.Get(_currentCustomer.CdSumTokuisaki).ToList();
 
                 // 参照日初期値で履歴から検索
                 SetReferenceCustomer();
@@ -330,7 +330,7 @@ namespace Customer.ViewModels
                     ChildCustomers = NotEmptyChildCustomers,
                 };
 
-                var existCustomer = CustomerLoader.GetFromKey(targetCustomer.CdKyoten, targetCustomer.CdSumTokuisaki, targetCustomer.Tekiyokaishi);
+                var existCustomer = CustomerLoader.GetFromKey(targetCustomer.CdSumTokuisaki, targetCustomer.Tekiyokaishi);
                 var isExist = existCustomer is not null;
 
                 if (!ValidateSummaryDate(isExist))
@@ -347,7 +347,8 @@ namespace Customer.ViewModels
                 {
                     if (isExist)
                     {
-                        MessageDialog.Show(_dialogService, $"拠点[{CdKyoten}],集約得意先[{CdSumTokuisaki}],適用開始日[{DtTekiyoKaishi}]\n同一組み合わせのデータが登録済みです", "入力エラー");
+                        MessageDialog.Show(_dialogService, $"集約得意先[{CdSumTokuisaki}],適用開始日[{DtTekiyoKaishi}]\n同一組み合わせのデータが登録済みです", "入力エラー");
+                        return false;
                     }
 
                     CustomerManager.Regist(targetCustomer, _shainInfo);
@@ -411,7 +412,7 @@ namespace Customer.ViewModels
         {
             try
             {
-                ReferenceLog.LogInfos = LogLoader.Get(CdKyoten.PadLeft(4, '0'), CdSumTokuisaki.PadLeft(6, '0')).ToList();
+                ReferenceLog.LogInfos = LogLoader.Get(CdSumTokuisaki.PadLeft(6, '0')).ToList();
                 ReferenceLog.ValidateSummaryDate(DtTekiyoKaishi, DtTekiyoMuko, isUpdate);
                 return true;
             }

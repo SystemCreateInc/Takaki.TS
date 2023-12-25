@@ -35,17 +35,16 @@ namespace Customer.Loader
             }
         }
 
-        // 拠点、集約得意先、適用日から取得(入力DLG)
-        public static SumCustomer? GetFromKey(string cdKyoten, string cdSumTokuisaki, string dtTekiyoKaishi)
+        // 集約得意先、適用日から取得(入力DLG)
+        public static SumCustomer? GetFromKey(string cdSumTokuisaki, string dtTekiyoKaishi)
         {
             using (var con = DbFactory.CreateConnection())
             {
                 return con.Find<TBSUMTOKUISAKIEntity>(s => s
                 .Include<TBSUMTOKUISAKICHILDEntity>()
-                .Where(@$"{nameof(TBSUMTOKUISAKIEntity.CDKYOTEN):C} = {nameof(cdKyoten):P} and
-                            {nameof(TBSUMTOKUISAKIEntity.CDSUMTOKUISAKI):C} = {nameof(cdSumTokuisaki):P} and
+                .Where(@$"{nameof(TBSUMTOKUISAKIEntity.CDSUMTOKUISAKI):C} = {nameof(cdSumTokuisaki):P} and
                             {nameof(TBSUMTOKUISAKIEntity.DTTEKIYOKAISHI):C} = {nameof(dtTekiyoKaishi):P}")
-                .WithParameters(new { cdKyoten, cdSumTokuisaki, dtTekiyoKaishi }))
+                .WithParameters(new { cdSumTokuisaki, dtTekiyoKaishi }))
                     .Select(q => CreateSumcustomer(q))
                     .FirstOrDefault();
             }
@@ -55,7 +54,7 @@ namespace Customer.Loader
         public static SumCustomer? GetSameCustomer(IEnumerable<string> targetCustomers, string startDate, string endDate, long? excludeId)
         {
             // 更新時、自ID対象外
-            var updateId = excludeId.ToString() ?? "-1";
+            var updateId = excludeId?.ToString() ?? "-1";
 
             using (var con = DbFactory.CreateConnection())
             {
