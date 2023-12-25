@@ -15,6 +15,7 @@ namespace LargeDist.ViewModels
     public class ScanOrderConfigViewModel : BindableBase, INavigationAware
     {
         public DelegateCommand SaveCommand { get; }
+        public DelegateCommand ClearCommand { get; }
         public DelegateCommand BackCommand { get; }
         public DelegateCommand<object> SlotPushCommand { get; }
 
@@ -41,8 +42,20 @@ namespace LargeDist.ViewModels
         {
             _dialogService = dialogService;
             SaveCommand = new DelegateCommand(Save).ObservesCanExecute(() => CanSave);
+            ClearCommand = new DelegateCommand(Clear);
             BackCommand = new DelegateCommand(Back);
             SlotPushCommand = new(SlotPush);
+        }
+
+        private void Clear()
+        {
+            for (var i = 0; i < Indexes.Count(); ++i)
+            {
+                Indexes[i] = null;
+            }
+
+            _nextIndex = 1;
+            CanSave = false;
         }
 
         private void SlotPush(object obj)
@@ -87,6 +100,8 @@ namespace LargeDist.ViewModels
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
             _regionNavigationService = navigationContext.NavigationService;
+            Indexes = new(LargeDistGridOrderRepository.Get());
+            _nextIndex = Indexes.Where(x => x is not null).Cast<int>().Max() + 1;
         }
     }
 }

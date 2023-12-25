@@ -37,6 +37,13 @@
                     </StackPanel>
                 </Button>
 
+                <Button Command="{Binding ClearCommand}">
+                    <StackPanel Orientation="Vertical">
+                        <materialDesign:PackIcon Kind="Clear"/>
+                        <TextBlock Text="クリア"/>
+                    </StackPanel>
+                </Button>
+
                 <Button Command="{Binding BackCommand}">
                     <StackPanel Orientation="Vertical">
                         <materialDesign:PackIcon Kind="ArrowBack"/>
