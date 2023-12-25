@@ -52,33 +52,6 @@ namespace DistBlock.Loader
             }
         }
 
-        public static List<SameDistBlock> GetSameBlocks(IEnumerable<string> blocks, string startDate, string endDate, long excludeId)
-        {
-            using (var con = DbFactory.CreateConnection())
-            {
-                return con.Find<TBDISTBLOCKSEQEntity>(s => s
-                        .Include<TBDISTBLOCKEntity>()
-                        .Where(@$"{nameof(TBDISTBLOCKSEQEntity.CDBLOCK):C} in {nameof(blocks):P} and
-                            {nameof(TBDISTBLOCKSEQEntity.CDADDRFROM):C} is not null and
-                            {nameof(TBDISTBLOCKSEQEntity.CDADDRTO):C} is not null and
-                            {nameof(TBDISTBLOCKSEQEntity.IDDISTBLOCK):of TB_DIST_BLOCK_SEQ} <> @excludeId and
-                            {CreateTekiyoSql.GetFromRange()}")
-                .WithParameters(new { blocks, startDate, endDate, excludeId }))
-                    .Select(q => new SameDistBlock
-                    {
-                        DistBlockId = q.IDDISTBLOCK,
-                        CdKyoten = q.TBDISTBLOCK.CDKYOTEN,
-                        CdDistGroup = q.TBDISTBLOCK.CDDISTGROUP,
-                        CdBlock = q.CDBLOCK ?? string.Empty,                        
-                        CdAddrFrom = q.CDADDRFROM!,
-                        CdAddrTo = q.CDADDRTO!,
-
-                        Tekiyokaishi = q.TBDISTBLOCK.DTTEKIYOKAISHI,
-                        TekiyoMuko = q.TBDISTBLOCK.DTTEKIYOMUKO,
-                    }).ToList();
-            }
-        }
-
         private static DistBlockInfo CreateDistBlockInfo(TBDISTBLOCKEntity entity)
         {
             return new DistBlockInfo
