@@ -9,6 +9,7 @@ using Prism.Services.Dialogs;
 using ReferenceLogLib;
 using ReferenceLogLib.Models;
 using System.Windows;
+using TakakiLib.Models;
 using WindowLib.Utils;
 using static ImTools.ImMap;
 
@@ -28,7 +29,7 @@ namespace DistLargeGroup.ViewModels
         private Models.DistLargeGroup? _distLargeGroup;
         private IDialogService _dialogService;
         private bool _isModified;
-        private Shain? _shain;
+        private ShainInfo? _shain;
 
         // 参照日
         private DateTime _referenceDate;
@@ -297,7 +298,7 @@ namespace DistLargeGroup.ViewModels
         public void OnDialogOpened(IDialogParameters parameters)
         {
             _distLargeGroup = parameters.GetValue<Models.DistLargeGroup>("DistLargeGroup");
-            _shain = parameters.GetValue<Shain>("Shain");
+            _shain = parameters.GetValue<ShainInfo>("Shain");
             IsAdd = _distLargeGroup == null;
             InitDialog();
             _isModified = false;
@@ -343,7 +344,8 @@ namespace DistLargeGroup.ViewModels
         {
             try
             {
-                NmKyoten = KyotenQueryService.GetName(CdKyoten, ReferenceDate);
+                NameLoader.selectDate = ReferenceDate.ToString("yyyyMMdd");
+                NmKyoten = NameLoader.GetKyoten(CdKyoten);
             }
             catch (Exception ex)
             {

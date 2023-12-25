@@ -30,6 +30,7 @@
     <ProjectReference Include="..\lib\DbLib\DbLib.csproj" />
     <ProjectReference Include="..\lib\LogLib\LogLib.csproj" />
     <ProjectReference Include="..\lib\ReferenceLogLib\ReferenceLogLib.csproj" />
+    <ProjectReference Include="..\lib\TakakiLib\TakakiLib.csproj" />
     <ProjectReference Include="..\lib\WindowLib\WindowLib.csproj" />
   </ItemGroup>
 

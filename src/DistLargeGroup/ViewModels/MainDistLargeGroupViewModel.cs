@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using TakakiLib.Models;
 using WindowLib.Utils;
 
 namespace DistLargeGroup.ViewModels
@@ -28,8 +29,8 @@ namespace DistLargeGroup.ViewModels
 
         private readonly IDialogService _dialogService;
 
-        private Shain? _shain;
-        public Shain? Shain
+        private ShainInfo? _shain;
+        public ShainInfo? Shain
         {
             get => _shain;
             set => SetProperty(ref _shain, value);
@@ -71,7 +72,7 @@ namespace DistLargeGroup.ViewModels
 
             try
             {
-                Shain = ShainQueryService.Get();
+                Shain = ShainLoader.Get();
             }
             catch (Exception ex)
             {
