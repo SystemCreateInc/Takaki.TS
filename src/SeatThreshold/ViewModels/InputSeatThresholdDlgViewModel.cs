@@ -269,7 +269,7 @@ namespace SeatThreshold.ViewModels
             {
                 ReferenceDate = DateTime.Today;
                 CdKyoten = string.Empty;
-                CdBlock = "0";
+                CdBlock = string.Empty;
             }
 
             TdUnitType = TdUnitType.TdCeiling;
@@ -281,8 +281,8 @@ namespace SeatThreshold.ViewModels
             CdShain = string.Empty;
             NmShain = string.Empty;
 
-            NuTdunitCnt = "1";
-            NuThreshold = "1";
+            NuTdunitCnt = string.Empty;
+            NuThreshold = string.Empty;
         }        
 
         // 参照日から情報取得
@@ -400,21 +400,21 @@ namespace SeatThreshold.ViewModels
                 return false;
             }
 
-            if (!int.TryParse(NuTdunitCnt, out int tdUnitCnt))
+            if (!int.TryParse(CdBlock, out int block) || block < 1 || block > 99)
             {
-                MessageDialog.Show(_dialogService, "表示器数を入力してください。", "入力エラー");
+                MessageDialog.Show(_dialogService, "ブロックに1以上、99以下の数値を入力してください", "入力エラー");
                 return false;
             }
 
-            if (!decimal.TryParse(NuThreshold, out var threshold))
+            if (!int.TryParse(NuTdunitCnt, out int tdUnitCnt) || tdUnitCnt < 1)
             {
-                MessageDialog.Show(_dialogService, "しきい値を入力してください。", "入力エラー");
+                MessageDialog.Show(_dialogService, "表示器数に1以上の数値を入力してください。", "入力エラー");
                 return false;
             }
 
-            if (threshold > 9999.9m)
+            if (!decimal.TryParse(NuThreshold, out var threshold) || threshold > 9999.9m || threshold < 1)
             {
-                MessageDialog.Show(_dialogService, "しきい値は9999.9以下で入力してください。", "入力エラー");
+                MessageDialog.Show(_dialogService, "しきい値を1以上、9999.9以下で入力してください。", "入力エラー");
                 return false;
             }
 
