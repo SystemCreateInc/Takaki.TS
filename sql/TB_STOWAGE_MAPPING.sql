@@ -23,6 +23,7 @@ create table TB_STOWAGE_MAPPING (
 	CD_SUM_ROUTE		integer,							/* 集約得意先配送順				*/
 
 	tdunitaddrcode		nvarchar(10),						/* アドレスCD(論理アドレス)		*/
+	NU_MAGICHI			integer,							/* 間口数						*/
 
 	createdAt 			datetime 				not null,	/*	データ挿入日				*/
 	updatedAt 			datetime 				not null,	/*	データ更新日				*/

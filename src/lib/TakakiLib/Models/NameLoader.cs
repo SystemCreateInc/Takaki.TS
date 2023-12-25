@@ -69,5 +69,16 @@ namespace TakakiLib.Models
                     .FirstOrDefault() ?? string.Empty;
             }
         }
+        public static string GetHimban(string code)
+        {
+            using (var con = DbFactory.CreateConnection())
+            {
+                return con.Find<TBMHIMMOKUEntity>(s => s
+                .Where(@$"{nameof(TBMHIMMOKUEntity.CDHIMBAN):C} = {nameof(code):P} and {CreateTekiyoSql.GetFromDate()}")
+                .WithParameters(new { code, selectDate }))
+                    .Select(q => q.NMHINSEISHIKIMEI)
+                    .FirstOrDefault() ?? string.Empty;
+            }
+        }
     }
 }

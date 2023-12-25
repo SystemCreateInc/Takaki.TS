@@ -4,15 +4,14 @@ using Microsoft.Extensions.Configuration;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
-using SelDistGroupLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 
-namespace SelDistGroupLib.ViewModels
+namespace Mapping.ViewModels
 {
-    public class SelDistGroupDlgViewModel : BindableBase, IDialogAware
+    public class SelDeleveryDateDlgModel : BindableBase, IDialogAware
     {
         public DelegateCommand Enter { get; }
         public DelegateCommand OK { get; }
@@ -20,36 +19,18 @@ namespace SelDistGroupLib.ViewModels
 
         public event Action<IDialogResult>? RequestClose;
 
-        private string _title = "仕分グループ選択";
+        private string _title = "納品日選択";
         public string Title
         {
             get => _title;
             set => SetProperty(ref _title, value);
         }
 
-        private DistGroup? _distgroup;
-        public DistGroup? DistGroup
-        {
-            get => _distgroup;
-            set => SetProperty(ref _distgroup, value);
-        }
-
-        private IList<DistGroup> _distgroupCombo = Array.Empty<DistGroup>();
-        public IList<DistGroup> DistGroupCombo
-        {
-            get => _distgroupCombo;
-            set => SetProperty(ref _distgroupCombo, value);
-        }
-
         private DateTime _dt_delivery = DateTime.Now.AddDays(1);
         public DateTime DtDelivery
         {
             get => _dt_delivery;
-            set
-            {
-                SetProperty(ref _dt_delivery, value);
-                LoadCombo();
-            }
+            set => SetProperty(ref _dt_delivery, value);
         }
 
         private string _errorMessage = string.Empty;
@@ -60,7 +41,7 @@ namespace SelDistGroupLib.ViewModels
         }
 
 
-        public SelDistGroupDlgViewModel(IDialogService dialogService)
+        public SelDeleveryDateDlgModel(IDialogService dialogService)
         {
             OK = new DelegateCommand(() =>
             {
@@ -71,22 +52,9 @@ namespace SelDistGroupLib.ViewModels
                     return;
                 }
 
-                // ブロック設定
-                if (DistGroup!=null)
-                {
-                    DistGroup.CdBlock = BlockLoader.GetBlock();
-
-                    var config = new ConfigurationBuilder()
-                    .AddJsonFile("common.json", true, true)
-                    .Build();
-
-                    DistGroup.IdPc = int.Parse(config.GetSection("pc")?["idpc"] ?? "1");
-                }
-
                 // ダイアログを閉じる
                 RequestClose?.Invoke(new DialogResult(ButtonResult.OK, new DialogParameters
                 {
-                    { "DistGroup", DistGroup },
                     { "DtDelivery", DtDelivery },
                 }));
             });
@@ -114,30 +82,10 @@ namespace SelDistGroupLib.ViewModels
 
         public void OnDialogOpened(IDialogParameters parameters)
         {
-            LoadCombo();
         }
         private bool Check()
         {
-            if (DistGroup == null)
-            {
-                ErrorMessage = "仕分グループを選択してください";
-                return false;
-            }
-
             return true;
-        }
-        private void LoadCombo()
-        {
-            try
-            {
-                DistGroupCombo = DistGroupComboLoader.GetDistGroupCombos(DtDelivery.ToString("yyyyMMdd"));
-                DistGroup = DistGroupCombo.FirstOrDefault();
-            }
-            catch (Exception e)
-            {
-                Syslog.Error($"DistGroupComboLoader():{e.Message}");
-                ErrorMessage = e.Message;
-            }
         }
     }
 }

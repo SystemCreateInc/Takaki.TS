@@ -403,11 +403,11 @@ namespace DispShop.ViewModels
                 switch (LightType)
                 {
                     case 0:
-                        tddsplay = string.Format("{0,3}{1,3}", p.CdCource, p.CdRoute);
+                        tddsplay = string.Format("{0,3}{1,3}", p.CdSumCource, p.CdSumRoute);
                         ledColor = (int)TdLedColor.Red;
                         break;
                     case 1:
-                        tddsplay = string.Format("{0,6}", p.CdTokuisaki);
+                        tddsplay = string.Format("{0,6}", p.CdSumTokuisaki);
                         ledColor = (int)TdLedColor.Yellow;
                         break;
                     case 2:

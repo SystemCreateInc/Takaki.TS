@@ -24,6 +24,7 @@ namespace SelDistGroupLib.Models
                     {
                         CdDistGroup = x.CDDISTGROUP,
                         NmDistGroup = x.NMDISTGROUP,
+                        CdKyoten = x.CDKYOTEN,
                     }).ToList();
             }
         }

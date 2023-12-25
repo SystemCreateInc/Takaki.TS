@@ -21,9 +21,9 @@ namespace DispShop.Models
                     + " TB_DIST.CD_KYOTEN,"
                     + " TB_DIST_MAPPING.CD_DIST_GROUP,"
                     + " TB_DIST_MAPPING.CD_SUM_TOKUISAKI,"
-                    + " TB_DIST_MAPPING.NM_TOKUISAKI,"
-                    + " TB_DIST.CD_COURSE,"
-                    + " TB_DIST.CD_ROUTE,"
+                    + " TB_DIST_MAPPING.NM_SUM_TOKUISAKI,"
+                    + " TB_DIST_MAPPING.CD_SUM_COURSE,"
+                    + " TB_DIST_MAPPING.CD_SUM_ROUTE,"
                     + " sum(NU_OPS) ops,"
                     + " sum(NU_DRPS) rps,"
                     + " sum(box0) box0,"
@@ -45,16 +45,16 @@ namespace DispShop.Models
                     + " group by DT_DELIVERY,CD_KYOTEN,CD_DIST_GROUP,CD_SUM_TOKUISAKI,ST_BOXTYPE"
                     + ") STOWAGE on TB_DIST.DT_DELIVERY = STOWAGE.DT_DELIVERY and TB_DIST.CD_KYOTEN = STOWAGE.CD_KYOTEN"
                     + " and TB_DIST_MAPPING.CD_DIST_GROUP = STOWAGE.CD_DIST_GROUP and TB_DIST_MAPPING.CD_SUM_TOKUISAKI = STOWAGE.CD_SUM_TOKUISAKI"
-                    + " where TB_DIST.DT_DELIVERY = @dt_delivdt and TB_DIST_MAPPING.CD_DIST_GROUP = @cd_dist_group" 
+                    + " where TB_DIST.DT_DELIVERY = @dt_delivdt and TB_DIST_MAPPING.CD_DIST_GROUP = @cd_dist_group"
                     + " group by "
                     + " TB_DIST_MAPPING.tdunitaddrcode,"
                     + " TB_DIST.DT_DELIVERY,"
                     + " TB_DIST.CD_KYOTEN,"
                     + " TB_DIST_MAPPING.CD_DIST_GROUP,"
                     + " TB_DIST_MAPPING.CD_SUM_TOKUISAKI,"
-                    + " TB_DIST_MAPPING.NM_TOKUISAKI,"
-                    + " TB_DIST.CD_COURSE,"
-                    + " TB_DIST.CD_ROUTE";
+                    + " TB_DIST_MAPPING.NM_SUM_TOKUISAKI,"
+                    + " TB_DIST_MAPPING.CD_SUM_COURSE,"
+                    + " TB_DIST_MAPPING.CD_SUM_ROUTE";
 
                 return con.Query(sql, new
                 {
@@ -67,10 +67,10 @@ namespace DispShop.Models
                          DtDelivery = q.DT_DELIVERY,
                          CdKyoten = q.CD_KYOTEN,
                          CdDistGroup = q.CD_DIST_GROUP,
-                         CdTokuisaki = q.CD_SUM_TOKUISAKI,
-                         NmTokuisaki = q.NM_TOKUISAKI,
-                         CdCource = q.CD_COURSE,
-                         CdRoute = q.CD_ROUTE,
+                         CdSumTokuisaki = q.CD_SUM_TOKUISAKI,
+                         NmSumTokuisaki = q.NM_SUM_TOKUISAKI,
+                         CdSumCource = q.CD_SUM_COURSE,
+                         CdSumRoute = q.CD_SUM_ROUTE,
                          Ops = q.ops,
                          Rps = q.rps,
                          Box0 = q.box0 ?? 0,

@@ -27,6 +27,7 @@ create table TB_DIST_MAPPING (
 	NM_LARGE_GROUP		nvarchar(40),						/* 大仕分グループ名称			*/
 
 	tdunitaddrcode		nvarchar(10),						/* アドレスCD(論理アドレス)		*/
+	NU_MAGICHI			integer,							/* 間口数						*/
 
 	createdAt 			datetime 				not null,	/*	データ挿入日				*/
 	updatedAt 			datetime 				not null,	/*	データ更新日				*/

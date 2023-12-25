@@ -26,13 +26,5 @@ namespace SelDistGroupLib.Models
                 return r == null ? string.Empty : r.CDBLOCK;
             }
         }
-        public static string GetKyoten()
-        {
-            var config = new ConfigurationBuilder()
-            .AddJsonFile("common.json", true, true)
-            .Build();
-
-            return config.GetSection("pc")?["cdkyoten"] ?? "4201";
-        }
     }
 }
