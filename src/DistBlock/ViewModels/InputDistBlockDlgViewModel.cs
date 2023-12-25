@@ -337,7 +337,7 @@ namespace DistBlock.ViewModels
                 var existCustomer = DistBlockLoader.GetFromKey(targetInfo.CdKyoten, targetInfo.CdDistGroup, targetInfo.Tekiyokaishi);
                 var isExist = existCustomer is not null;
 
-                if (!ValidateSummaryDate(isExist))
+                if (!ValidateSummaryDate())
                 {
                     return false;
                 }
@@ -520,12 +520,12 @@ namespace DistBlock.ViewModels
         }
 
         // 適用期間チェック
-        private bool ValidateSummaryDate(bool isUpdate)
+        private bool ValidateSummaryDate()
         {
             try
             {
                 ReferenceLog.LogInfos = LogLoader.Get(CdKyoten, CdDistGroup.PadLeft(4, '0')).ToList();
-                ReferenceLog.ValidateSummaryDate(DtTekiyoKaishi, DtTekiyoMuko, isUpdate);
+                ReferenceLog.ValidateSummaryDate(DtTekiyoKaishi, DtTekiyoMuko, !IsAdd);
                 return true;
             }
             catch (Exception ex)

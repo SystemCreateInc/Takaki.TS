@@ -333,7 +333,7 @@ namespace Customer.ViewModels
                 var existCustomer = CustomerLoader.GetFromKey(targetCustomer.CdKyoten, targetCustomer.CdSumTokuisaki, targetCustomer.Tekiyokaishi);
                 var isExist = existCustomer is not null;
 
-                if (!ValidateSummaryDate(isExist))
+                if (!ValidateSummaryDate())
                 {
                     return false;
                 }
@@ -348,6 +348,7 @@ namespace Customer.ViewModels
                     if (isExist)
                     {
                         MessageDialog.Show(_dialogService, $"拠点[{CdKyoten}],集約得意先[{CdSumTokuisaki}],適用開始日[{DtTekiyoKaishi}]\n同一組み合わせのデータが登録済みです", "入力エラー");
+                        return false;
                     }
 
                     CustomerManager.Regist(targetCustomer, _shainInfo);
@@ -407,12 +408,12 @@ namespace Customer.ViewModels
         }
 
         // 適用期間チェック
-        private bool ValidateSummaryDate(bool isUpdate)
+        private bool ValidateSummaryDate()
         {
             try
             {
                 ReferenceLog.LogInfos = LogLoader.Get(CdKyoten.PadLeft(4, '0'), CdSumTokuisaki.PadLeft(6, '0')).ToList();
-                ReferenceLog.ValidateSummaryDate(DtTekiyoKaishi, DtTekiyoMuko, isUpdate);
+                ReferenceLog.ValidateSummaryDate(DtTekiyoKaishi, DtTekiyoMuko, !IsAdd);
                 return true;
             }
             catch (Exception ex)
