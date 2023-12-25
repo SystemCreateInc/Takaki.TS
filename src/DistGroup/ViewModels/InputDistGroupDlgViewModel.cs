@@ -167,11 +167,7 @@ namespace DistGroup.ViewModels
         public int SelectBatchIndex
         {
             get => _selectBatchIndex;
-            set
-            {
-                SetProperty(ref _selectBatchIndex, value);
-                ReSetCourseFromBatch();
-            }
+            set => SetProperty(ref _selectBatchIndex, value);
         }
 
         // コース順リスト
@@ -181,6 +177,8 @@ namespace DistGroup.ViewModels
             get => _courses;
             set => SetProperty(ref _courses, value);
         }
+        // 入力有りコース
+        private IEnumerable<Course> _inputedCourses => Courses.Where(x => !x.CdCourse.IsNullOrEmpty());
 
         private int _selectCourseIndex;
         public int SelectCourseIndex
@@ -336,9 +334,8 @@ namespace DistGroup.ViewModels
             }
 
             BinSumType = BinSumType.No;
-            // デフォルトで出荷バッチ&コース1件
-            Batches = new ObservableCollection<BatchInfo> { new BatchInfo() { Courses = new ObservableCollection<Course>() } };
-            Courses = Batches[0].Courses;
+            Batches = new ObservableCollection<BatchInfo> { new BatchInfo() };
+            Courses.Clear();
 
             DtTekiyoKaishi = DateTime.Today;
             DtTekiyoMuko = new DateTime(2999, 12, 31);
@@ -360,8 +357,7 @@ namespace DistGroup.ViewModels
             {
                 BinSumType = data.CdBinSum;
                 Batches = new ObservableCollection<BatchInfo>(GetJoinBatch(data.Batches, data.LargeDists));
-                Courses = Batches[0].Courses;
-                ReSetCourseFromBatch();
+                Courses = new ObservableCollection<Course>(data.Courses);
 
                 DtTorokuNichiji = data.CreatedAt;
                 DtKoshinNichiji = data.UpdatedAt;
@@ -384,7 +380,6 @@ namespace DistGroup.ViewModels
                         IdDistGroup = batch.IdDistGroup,
                         CdShukkaBatch = batch.CdShukkaBatch,
                         CdLargeGroup = largeDist.CdLargeGroup,
-                        Courses = new ObservableCollection<Course>(CourseLoader.Get(batch.IdDistGroup, batch.CdShukkaBatch)),
                     }).ToList();
         }
 
@@ -414,13 +409,6 @@ namespace DistGroup.ViewModels
         {
             try
             {
-                DeleteNullCourse();
-                // WARNING:Bindingが外れている場合がある為、再度代入する
-                if(ValidateIndex(SelectBatchIndex, Batches.Count))
-                {
-                    Batches[SelectBatchIndex].Courses = Courses;
-                }
-
                 if (!ValidateInput())
                 {
                     return false;
@@ -446,7 +434,7 @@ namespace DistGroup.ViewModels
                     return false;
                 }
 
-                if (!IsDuplicationBatchCourse(existData?.IdDistGroup))
+                if (!IsDuplicationCourse(existData?.IdDistGroup))
                 {
                     return false;
                 }
@@ -461,16 +449,16 @@ namespace DistGroup.ViewModels
                         return false;
                     }
 
-                    DistGroupEntityManager.Regist(targetData, _shainInfo);
+                    DistGroupEntityManager.Regist(targetData, _shainInfo, _inputedCourses);
                 }
                 else if (isExist)
                 {
                     targetData.IdDistGroup = existData!.IdDistGroup;
-                    DistGroupEntityManager.Update(targetData, _shainInfo);
+                    DistGroupEntityManager.Update(targetData, _shainInfo, _inputedCourses);
                 }
                 else
                 {
-                    DistGroupEntityManager.Regist(targetData, _shainInfo);
+                    DistGroupEntityManager.Regist(targetData, _shainInfo, _inputedCourses);
                 }
 
                 _isChange = false;
@@ -480,15 +468,6 @@ namespace DistGroup.ViewModels
             {
                 MessageDialog.Show(_dialogService, ex.Message, "エラー");
                 return false;
-            }
-        }
-
-        // 全コースのキー未入力行を削除
-        private void DeleteNullCourse()
-        {
-            foreach (var batch in Batches)
-            {
-                batch.Courses = new ObservableCollection<Course>(batch.Courses.Where(x => !x.CdCourse.IsNullOrEmpty()));
             }
         }
 
@@ -545,75 +524,49 @@ namespace DistGroup.ViewModels
                 return false;
             }
 
-            // 全バッチのコース入力確認
-            if (validBatches.Any(x => !x.Courses.Any()))
+            if (!_inputedCourses.Any())
             {
-                var emptyCourseBatchs = Batches.Where(x => !x.Courses.Any()).Select(x => x.CdShukkaBatch);
-                MessageDialog.Show(_dialogService, $"コースが登録されていない出荷バッチがあります\n出荷バッチ「{string.Join(",", emptyCourseBatchs)}」", "入力エラー");
+                MessageDialog.Show(_dialogService, $"コースを追加してください", "入力エラー");
                 return false;
             }
 
             return true;
         }
 
-        private bool IsDuplicationBatchCourse(long? idDistGroup)
+        private bool IsDuplicationCourse(long? idDistGroup)
         {
-            // バッチグループ化
-            var batchGroup = Batches.Where(x => !x.PadBatch.IsNullOrEmpty()).GroupBy(x => x.PadBatch);
+            var inputduplicationCourse = _inputedCourses.GroupBy(x => x.CdCourse).Where(x => x.Count() > 1);
 
-            foreach (var batch in batchGroup)
+            if (inputduplicationCourse.Any())
             {
-                // 同一バッチ内で重複したコース
-                var duplicationCourse = batch.SelectMany(x => x.Courses).GroupBy(x => x.PadCourse).Where(x => x.Count() > 1);
-                if (duplicationCourse.Any())
-                {
-                    MessageDialog.Show(_dialogService, $"出荷バッチ[{batch.Key}]でコースが重複しています" +
-                        $"\n\nコース[{string.Join(",", duplicationCourse.Select(x => x.Key))}]", "入力エラー");
-                    return false;
-                }
+                MessageDialog.Show(_dialogService, "入力したコース内で重複があります\n\n" +
+                    $"コース[{string.Join(",", inputduplicationCourse.Select(x => x.Key))}]", "入力エラー");
+                return false;
             }
 
-            // 登録済み　同一出荷バッチコース
-            var sameBatchs = DistGroupLoader.GetSameBatchCourse(batchGroup.Select(x => x.Key), idDistGroup ?? -1,
+            // 他仕分グループの重複コース
+            var sameCourseDistGroups = DistGroupLoader.GetSameCourse(_inputedCourses.Select(x => x.PadCourse), idDistGroup ?? -1,
                 DtTekiyoKaishi.ToString("yyyyMMdd"), DtTekiyoMuko.ToString("yyyyMMdd"));
 
-            var joinBatchCourse = from sameBatch in sameBatchs
-                                  join batch in batchGroup
-                                  on sameBatch.CdShukkaBatch equals batch.Key
-                                  select new
-                                  {
-                                      sameBatch.CdKyoten,
-                                      sameBatch.CdDistGroup,
-                                      sameBatch.CdShukkaBatch,
-                                      sameBatch.Tekiyokaishi,
-                                      sameBatch.TekiyoMuko,
+            // 1件目の仕分グループ情報を表示
+            var sameCourseDist = sameCourseDistGroups.FirstOrDefault();
 
-                                      LoadCourses = sameBatch.Courses,
-                                      inputCourses = batch.SelectMany(x => x.Courses.Select(x => x.PadCourse)),
-                                  };
-
-            foreach (var batch in joinBatchCourse)
+            if (sameCourseDist != null)
             {
-                var duplicationCourse = batch.LoadCourses.Intersect(batch.inputCourses);
-
-                if(duplicationCourse.Any())
+                var distInfo = new DistGroupInfo
                 {
-                    var distInfo = new DistGroupInfo
-                    {
-                        CdKyoten = batch.CdKyoten,
-                        CdDistGroup = batch.CdDistGroup,
-                        Tekiyokaishi = batch.Tekiyokaishi,
-                        TekiyoMuko = batch.TekiyoMuko
-                    };
+                    CdKyoten = sameCourseDist.CdKyoten,
+                    CdDistGroup = sameCourseDist.CdDistGroup,
+                    Tekiyokaishi = sameCourseDist.Tekiyokaishi,
+                    TekiyoMuko = sameCourseDist.TekiyoMuko,
+                };
 
-                    MessageDialog.Show(_dialogService,
-                    $"他の仕分グループに登録されたコースが入力されています"
-                    + $"\n\n{GetSameDistMessage(distInfo)}"
-                    + $"\n\n出荷バッチ[{batch.CdShukkaBatch}] コース[{string.Join(",", duplicationCourse)}]", "入力エラー");
-
-                    return false;
-                }
-            }
+                MessageDialog.Show(_dialogService,
+                $"他の仕分グループに登録されたコースが入力されています"
+                + $"\n\n{GetSameDistMessage(distInfo)}"
+                + $"\n\nコース[{string.Join(",", sameCourseDist.Courses.Select(x => x.CdCourse))}]", "入力エラー");
+                return false;
+            }            
 
             return true;
         }
@@ -648,22 +601,7 @@ namespace DistGroup.ViewModels
 
         private void Batches_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            ReSetCourseFromBatch();
             _isChange = true;
-        }
-
-        // 対象バッチのコースに置き換え
-        private void ReSetCourseFromBatch()
-        {
-            if (SelectBatchIndex != -1)
-            {
-                if (Batches.Count > SelectBatchIndex)
-                {
-                    Courses.CollectionChanged -= Courses_CollectionChanged;
-                    Courses = Batches[SelectBatchIndex].Courses;
-                    Courses.CollectionChanged += Courses_CollectionChanged;
-                }
-            }
         }
 
         // コース編集関連
@@ -698,6 +636,10 @@ namespace DistGroup.ViewModels
 
         private void InsertCourse()
         {
+            if (!ValidateIndex(SelectCourseIndex, Courses.Count))
+            {
+                return;
+            }
             Courses.Insert(SelectCourseIndex, new Course());
         }
 

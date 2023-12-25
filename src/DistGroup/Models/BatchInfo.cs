@@ -53,7 +53,5 @@ namespace DistGroup.Models
 
         // リスト順
         public int Sequence { get; set; }
-
-        public ObservableCollection<Course> Courses { get; set; } = new ObservableCollection<Course>();
     }
 }
