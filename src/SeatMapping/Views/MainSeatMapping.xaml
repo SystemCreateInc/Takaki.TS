@@ -58,10 +58,6 @@
             </ToolBarTray>
         </Grid>
 
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-            <TextBlock Text="{Binding DispKyotenCode}"/>
-        </StackPanel>
-
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">            
             <Label Content="ブロック ： "/>
             <ComboBox Width="100" SelectedIndex="{Binding BlockIndex}" ItemsSource="{Binding BlockCombo}" DisplayMemberPath="Name"/>
