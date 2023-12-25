@@ -88,7 +88,18 @@ namespace LargeDist.ViewModels
         public bool CanLargeDist
         {
             get => _canLargeDist;
-            set => SetProperty(ref _canLargeDist, value);
+            set
+            {
+                SetProperty(ref _canLargeDist, value);
+                CanScanOrder = !_canLargeDist;
+            }
+        }
+
+        private bool _canScanOrder;
+        public bool CanScanOrder
+        {
+            get => _canScanOrder;
+            set => SetProperty(ref _canScanOrder, value);
         }
 
         public ScanGridController ScanGrid { get; } = new ScanGridController();
@@ -109,7 +120,7 @@ namespace LargeDist.ViewModels
             ItemListCommand = new DelegateCommand(ItemList);
             CancelModeCommand = new DelegateCommand(CancelMode);
             DeleteItemCommand = new DelegateCommand(DeleteItem);
-            ScanOrderCommand = new DelegateCommand(ScanOrder);
+            ScanOrderCommand = new DelegateCommand(ScanOrder).ObservesCanExecute(() => CanScanOrder);
             BackCommand = new DelegateCommand(Back);
             BlockLargeDistCommand = new DelegateCommand(BlockLargeDist).ObservesCanExecute(() => CanLargeDist);
             ItemLargeDistCommand = new DelegateCommand(ItemLargeDist).ObservesCanExecute(() => CanLargeDist);
@@ -313,6 +324,7 @@ namespace LargeDist.ViewModels
             Refresh();
             SetupGrid();
             _initialized = true;
+            CanLargeDist = false;
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
