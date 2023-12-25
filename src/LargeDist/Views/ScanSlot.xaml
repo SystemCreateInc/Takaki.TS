@@ -54,24 +54,35 @@
             </Grid.RowDefinitions>
 
             <Border Grid.Row="0" >
-                <TextBlock Text="{Binding Item.Title, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                           FontSize="25"
-                           HorizontalAlignment="Center" VerticalAlignment="Center" d:Text="ミルクフランス"/>
+                <Viewbox Stretch="Uniform">
+                    <TextBlock Text="{Binding Item.Title, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                               FontSize="25"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" d:Text="ミルクフランス"/>
+                </Viewbox>
             </Border>
-            <Border Grid.Row="1" >
+            <Border Grid.Row="1">
                 <Grid VerticalAlignment="Center">
-                    <TextBlock Style="{StaticResource LabelText}" VerticalAlignment="Center">入数</TextBlock>
-                    <TextBlock HorizontalAlignment="Right" >
-                        <Run Text="{Binding Item.NuBoxUnit, RelativeSource={RelativeSource AncestorType=UserControl}}" />
-                        <Run Style="{StaticResource LabelRun}">個</Run>
-                    </TextBlock>
+                    <Viewbox HorizontalAlignment="Left">
+                        <TextBlock >
+                            <Run Text=""/>
+                            <Run Style="{StaticResource LabelRun}">入数 </Run>
+                        </TextBlock>
+                    </Viewbox>
+                    <Viewbox HorizontalAlignment="Right">
+                        <TextBlock >
+                            <Run Text="{Binding Item.NuBoxUnit, RelativeSource={RelativeSource AncestorType=UserControl}}" d:Text="123" />
+                            <Run Style="{StaticResource LabelRun}">個</Run>
+                        </TextBlock>
+                    </Viewbox>
                 </Grid>
             </Border>
             <Border Grid.Row="2" >
-                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Run Text="{Binding Item.TotalPieceCount, RelativeSource={RelativeSource AncestorType=UserControl}}" />
-                    <Run Style="{StaticResource LabelRun}">個</Run>
-                </TextBlock>
+                <Viewbox HorizontalAlignment="Right">
+                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Run Text="{Binding Item.TotalPieceCount, RelativeSource={RelativeSource AncestorType=UserControl}}" d:Text="123" />
+                        <Run Style="{StaticResource LabelRun}">個</Run>
+                    </TextBlock>
+                </Viewbox>
             </Border>
             <Border Grid.Row="3" >
                 <Grid>
@@ -79,14 +90,18 @@
                         <RowDefinition Height="1*"/>
                         <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" >
-                        <Run Text="{Binding Item.BoxCount, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-                        <Run Style="{StaticResource LabelRun}">箱</Run>
-                    </TextBlock>
-                    <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="1" >
-                        <Run Text="{Binding Item.PieceCount, RelativeSource={RelativeSource AncestorType=UserControl}}"/>
-                        <Run Style="{StaticResource LabelRun}">個</Run>
-                    </TextBlock>
+                    <Viewbox HorizontalAlignment="Right">
+                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" >
+                            <Run Text="{Binding Item.BoxCount, RelativeSource={RelativeSource AncestorType=UserControl}}" d:Text="222"/>
+                            <Run Style="{StaticResource LabelRun}">箱</Run>
+                        </TextBlock>
+                    </Viewbox>
+                    <Viewbox HorizontalAlignment="Right" Grid.Row="1">
+                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <Run Text="{Binding Item.PieceCount, RelativeSource={RelativeSource AncestorType=UserControl}}" d:Text="123"/>
+                            <Run Style="{StaticResource LabelRun}">個</Run>
+                        </TextBlock>
+                    </Viewbox>
                 </Grid>
             </Border>
         </Grid>
