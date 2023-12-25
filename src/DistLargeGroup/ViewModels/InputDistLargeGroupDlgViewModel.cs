@@ -247,9 +247,9 @@ namespace DistLargeGroup.ViewModels
 
                 ReferenceLog.ValidateSummaryDate(DtTekiyoKaishi, DtTekiyoMuko, log is not null);
 
-                if (IsAdd && LargeGroupRepository.IsExist(CdLargeGroup, CdKyoten))
+                if (IsAdd && LargeGroupRepository.IsExist(CdLargeGroup))
                 {
-                    WindowLib.Utils.MessageDialog.Show(_dialogService, "同じ大仕分グループと拠点コードがすでに登録されているため登録できません", "入力エラー");
+                    WindowLib.Utils.MessageDialog.Show(_dialogService, "同じ大仕分グループがすでに登録されているため登録できません", "入力エラー");
                     return;
                 }
 
@@ -310,9 +310,9 @@ namespace DistLargeGroup.ViewModels
             ReferenceLog.LogInfos.Clear();
 
             SetupForAdd();
-            if (!_isAdd)
+            if (!_isAdd && _distLargeGroup is not null)
             {
-                ReferenceLog.LogInfos = LargeGroupQueryService.GetLog(_distLargeGroup!.CdKyoten, _distLargeGroup.CdLargeGroup).ToList();
+                ReferenceLog.LogInfos = LargeGroupQueryService.GetLog(_distLargeGroup.CdLargeGroup).ToList();
             }
         }
 

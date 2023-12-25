@@ -8,14 +8,14 @@ namespace DistLargeGroup.Infranstructures
 {
     internal static class LargeGroupQueryService
     {
-        internal static LogInfo[] GetLog(string cdKyoten, string cdLargeGroup)
+        internal static LogInfo[] GetLog(string cdLargeGroup)
         {
             using (var con = DbFactory.CreateConnection())
             {
                 return con.Find<TBLARGEGROUPEntity>(s => s
-                    .Where($"{nameof(TBLARGEGROUPEntity.CDKYOTEN):C} = {nameof(cdKyoten):P} and {nameof(TBLARGEGROUPEntity.CDLARGEGROUP):C} = {nameof(cdLargeGroup):P}")
+                    .Where($"{nameof(TBLARGEGROUPEntity.CDLARGEGROUP):C} = {nameof(cdLargeGroup):P}")
                     .OrderBy($"{nameof(TBLARGEGROUPEntity.DTTEKIYOKAISHI):C}")
-                    .WithParameters(new { cdKyoten, cdLargeGroup }))
+                    .WithParameters(new { cdLargeGroup }))
                     .Select(x => new LogInfo
                     {
                         Id = x.IDLARGEGROUP,
