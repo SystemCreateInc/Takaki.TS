@@ -85,18 +85,18 @@ namespace LargeDist.ViewModels
         }
 
         private bool _canLargeDist;
-        public bool CanLargeDist
+        public bool IsScannedItem
         {
             get => _canLargeDist;
             set
             {
                 SetProperty(ref _canLargeDist, value);
-                CanScanOrder = !_canLargeDist;
+                IsEmptyItem = !_canLargeDist;
             }
         }
 
         private bool _canScanOrder;
-        public bool CanScanOrder
+        public bool IsEmptyItem
         {
             get => _canScanOrder;
             set => SetProperty(ref _canScanOrder, value);
@@ -118,12 +118,12 @@ namespace LargeDist.ViewModels
             _dialogService = dialogService;
             RefreshCommand = new DelegateCommand(Refresh);
             ItemListCommand = new DelegateCommand(ItemList);
-            CancelModeCommand = new DelegateCommand(CancelMode);
+            CancelModeCommand = new DelegateCommand(CancelMode).ObservesCanExecute(() => IsEmptyItem);
             DeleteItemCommand = new DelegateCommand(DeleteItem);
-            ScanOrderCommand = new DelegateCommand(ScanOrder).ObservesCanExecute(() => CanScanOrder);
+            ScanOrderCommand = new DelegateCommand(ScanOrder).ObservesCanExecute(() => IsEmptyItem);
             BackCommand = new DelegateCommand(Back);
-            BlockLargeDistCommand = new DelegateCommand(BlockLargeDist).ObservesCanExecute(() => CanLargeDist);
-            ItemLargeDistCommand = new DelegateCommand(ItemLargeDist).ObservesCanExecute(() => CanLargeDist);
+            BlockLargeDistCommand = new DelegateCommand(BlockLargeDist).ObservesCanExecute(() => IsScannedItem);
+            ItemLargeDistCommand = new DelegateCommand(ItemLargeDist).ObservesCanExecute(() => IsScannedItem);
             EnterScancodeCommand = new DelegateCommand(EnterScancode);
             SlotPushCommand = new DelegateCommand<object>(SlotPush);
         }
@@ -204,7 +204,7 @@ namespace LargeDist.ViewModels
             }
 
             ScanGrid.PushItem(item);
-            CanLargeDist = true;
+            IsScannedItem = true;
         }
 
         private LargeDistItem? SelectItem(IEnumerable<LargeDistItem> items)
@@ -274,7 +274,7 @@ namespace LargeDist.ViewModels
         private void DeleteItem()
         {
             ScanGrid.DeleteSelectedItem();
-            CanLargeDist = ScanGrid.HasScanItem;
+            IsScannedItem = ScanGrid.HasScanItem;
         }
 
         private void CancelMode()
@@ -324,7 +324,7 @@ namespace LargeDist.ViewModels
             Refresh();
             SetupGrid();
             _initialized = true;
-            CanLargeDist = false;
+            IsScannedItem = false;
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
