@@ -68,8 +68,11 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="担当者：" VerticalAlignment="Center"/>
-                    <ComboBox ItemsSource="{Binding PersonList}" SelectedValue="{Binding CurrentPerson}" Width="100" IsEditable="True"
+                    <ComboBox ItemsSource="{Binding PersonList}" SelectedValue="{Binding CurrentPerson}" Text="{Binding PersonCode}" Width="100" IsEditable="True"
                               TextSearch.TextPath="Code" b:ComboBoxBehavior.MaxLength="7" x:Name="Person">
+                        <ComboBox.InputBindings>
+                            <KeyBinding Key="Return" Command="{Binding EnterComboCommand}" />
+                        </ComboBox.InputBindings>
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock><Run Text="{Binding Code}"/><Run Text=" "/><Run Text="{Binding Name}"/></TextBlock>
