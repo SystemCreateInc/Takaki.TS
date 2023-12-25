@@ -35,16 +35,15 @@ namespace SeatThreshold.Loader
             }
         }
 
-        // 拠点、ブロック、適用開始日から取得(入力DLG)
-        public static ThresholdInfo? GetFromKey(string cdKyoten, string cdBlock, string dtTekiyoKaishi)
+        // ブロック、適用開始日から取得(入力DLG)
+        public static ThresholdInfo? GetFromKey(string cdBlock, string dtTekiyoKaishi)
         {
             using (var con = DbFactory.CreateConnection())
             {
                 return con.Find<TBBLOCKEntity>(s => s
-                .Where(@$"{nameof(TBBLOCKEntity.CDKYOTEN):C} = {nameof(cdKyoten):P} and
-                            {nameof(TBBLOCKEntity.CDBLOCK):C} = {nameof(cdBlock):P} and
+                .Where(@$"{nameof(TBBLOCKEntity.CDBLOCK):C} = {nameof(cdBlock):P} and
                             {nameof(TBBLOCKEntity.DTTEKIYOKAISHI):C} = {nameof(dtTekiyoKaishi):P}")
-                .WithParameters(new { cdKyoten, cdBlock, dtTekiyoKaishi }))
+                .WithParameters(new { cdBlock, dtTekiyoKaishi }))
                     .Select(q => CreateThresholdInfo(q))
                     .FirstOrDefault();
             }

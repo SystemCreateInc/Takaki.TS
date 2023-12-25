@@ -253,7 +253,7 @@ namespace SeatThreshold.ViewModels
             {
                 CdKyoten = _seatThreshold.CdKyoten;
                 CdBlock = _seatThreshold.CdBlock;
-                ReferenceLog.LogInfos = LogLoader.Get(_seatThreshold.CdKyoten, _seatThreshold.CdBlock).ToList();
+                ReferenceLog.LogInfos = LogLoader.Get(_seatThreshold.CdBlock).ToList();
 
                 SetReferenceInfo();
             }
@@ -289,7 +289,7 @@ namespace SeatThreshold.ViewModels
         private void SetReferenceInfo()
         {
             var tekiyoDate = ReferenceLog.GetStartDateInRange(ReferenceDate.ToString("yyyyMMdd"));
-            var data = SeatThresholdLoader.GetFromKey(_seatThreshold.CdKyoten, _seatThreshold.CdBlock, tekiyoDate);
+            var data = SeatThresholdLoader.GetFromKey(_seatThreshold.CdBlock, tekiyoDate);
 
             if (data is not null)
             {
@@ -347,7 +347,7 @@ namespace SeatThreshold.ViewModels
                     TekiyoMuko = DtTekiyoMuko.ToString("yyyyMMdd"),
                 };
 
-                var existData = SeatThresholdLoader.GetFromKey(targetData.CdKyoten, targetData.CdBlock, targetData.Tekiyokaishi);
+                var existData = SeatThresholdLoader.GetFromKey(targetData.CdBlock, targetData.Tekiyokaishi);
                 var isExist = existData is not null;
 
                 if (!ValidateSummaryDate(isExist))
@@ -359,7 +359,7 @@ namespace SeatThreshold.ViewModels
                 {
                     if (isExist)
                     {
-                        MessageDialog.Show(_dialogService, $"同一組み合わせのデータが登録済みです\n拠点[{CdKyoten}],ブロック[{CdBlock}],適用開始日[{DtTekiyoKaishi.ToString("yyyyMMdd")}]\n", "入力エラー");
+                        MessageDialog.Show(_dialogService, $"同一組み合わせのデータが登録済みです\nブロック[{CdBlock}],適用開始日[{DtTekiyoKaishi.ToString("yyyyMMdd")}]\n", "入力エラー");
                         return false;
                     }
 
@@ -426,7 +426,7 @@ namespace SeatThreshold.ViewModels
         {
             try
             {
-                ReferenceLog.LogInfos = LogLoader.Get(CdKyoten, CdBlock.PadLeft(2, '0')).ToList();
+                ReferenceLog.LogInfos = LogLoader.Get(CdBlock.PadLeft(2, '0')).ToList();
                 ReferenceLog.ValidateSummaryDate(DtTekiyoKaishi, DtTekiyoMuko, isUpdate);
                 return true;
             }

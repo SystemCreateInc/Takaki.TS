@@ -7,14 +7,14 @@ namespace SeatThreshold.Loader
 {
     public class LogLoader
     {
-        public static IEnumerable<LogInfo> Get(string cdKyoten, string cdBlock)
+        public static IEnumerable<LogInfo> Get(string cdBlock)
         {
             using (var con = DbFactory.CreateConnection())
             {
                 return con.Find<TBBLOCKEntity>(s => s
-                .Where($"{nameof(TBBLOCKEntity.CDKYOTEN):C} = {nameof(cdKyoten):P} and {nameof(TBBLOCKEntity.CDBLOCK):C} = {nameof(cdBlock):P}")
+                .Where($"{nameof(TBBLOCKEntity.CDBLOCK):C} = {nameof(cdBlock):P}")
                 .OrderBy($"{nameof(TBBLOCKEntity.DTTEKIYOKAISHI)} desc")
-                .WithParameters(new { cdKyoten, cdBlock }))
+                .WithParameters(new { cdBlock }))
                     .Select(s => new LogInfo
                     {
                         StartDate = s.DTTEKIYOKAISHI,
