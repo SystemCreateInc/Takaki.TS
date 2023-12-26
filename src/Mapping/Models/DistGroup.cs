@@ -13,7 +13,6 @@ namespace Mapping.Models
         public string NmShukkaBatch = string.Empty;
         public string CdLargeGroup = string.Empty;
         public string NmLargeGroup = string.Empty;
-        public List<string> Courses = new List<string>();
     }
     public class DistBlockSeq
     {
@@ -37,6 +36,7 @@ namespace Mapping.Models
         public int CdBinSum = 0;
         public List<ShukkaBatch> ShukkaBatchs = new List<ShukkaBatch>();
         public List<DistBlockSeq> DistBlockSeqs = new List<DistBlockSeq>();
+        public List<string> Courses = new List<string>();
 
         // 予定データ
         public List<Dist> dists = new List<Dist>();

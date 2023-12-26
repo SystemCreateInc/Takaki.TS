@@ -187,14 +187,22 @@ namespace Mapping.ViewModels
 
                 try
                 {
-                    Mapping.Saves();
-
-                    MessageDialog.Show(_dialogService, "座席が正常に終了しました。", "確認");
-
-                    LoadDatas();
-
-                    CanMapping = true;
-                    CanDecision = false;
+                    if (CurrentDistGroupInfo != null)
+                    {
+                        if (CurrentDistGroupInfo.OverShopCnt != 0)
+                        {
+                            _regionManager.RequestNavigate("ContentRegion", nameof(Views.OverTokuisaki), new NavigationParameters
+                            {
+                                { "currentdistinfo", CurrentDistGroupInfo },
+                                { "Mapping", Mapping              },
+                            });
+                        }
+                        else
+                        {
+                            // 保存
+                            Save(false);
+                        }
+                    }
                 }
                 catch (Exception e)
                 {
@@ -346,6 +354,40 @@ namespace Mapping.ViewModels
 
             return true;
         }
+
+        private void Save(bool bCancel)
+        {
+            if (bCancel != true)
+            {
+                Mapping.Saves();
+            }
+
+            // クリア
+            Mapping = new MappingManager();
+
+            LoadDatas();
+
+            CanMapping = true;
+            CanDecision = false;
+
+            if (bCancel != true)
+            {
+                foreach (var p in DistGroupInfos)
+                {
+                    if (p.Select == true)
+                    {
+                        if (Mapping.GetOverCnt(p.CdDistGroup) == 0)
+                        {
+                            MessageDialog.Show(_dialogService, "座席が正常に終了しました。", "確認");
+                        }
+                    }
+                }
+            }
+            else
+            {
+                MessageDialog.Show(_dialogService, "座席実績をキャンセルしました。", "確認");
+            }
+        }
         public bool IsNavigationTarget(NavigationContext navigationContext)
         {
             return true;
@@ -360,6 +402,12 @@ namespace Mapping.ViewModels
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
             Syslog.Info($"MainMappingViewModel:OnNavigatedTo");
+
+            if (Mapping.IsSave==true || Mapping.IsCancel == true)
+            {
+                Save(Mapping.IsCancel);
+            }
+
         }
     }
 }

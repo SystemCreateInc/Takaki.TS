@@ -48,7 +48,7 @@ namespace LargeDist.Infranstructures
                 var recs = con.Find<TBDISTEntity>(s => s
                     .Include<TBDISTMAPPINGEntity>()
                     .Where($@"{nameof(TBDISTMAPPINGEntity.CDLARGEGROUP):of TB_DIST_MAPPING} = {nameof(group.CdLargeGroup):P}
-                        and {nameof(TBDISTEntity.CDGTIN13):C} = {nameof(scancode):P}")
+                        and {nameof(TBDISTEntity.CDGTIN13):C} = {nameof(scancode):P} or {nameof(TBDISTEntity.CDHIMBAN):C} = {nameof(scancode):P}")
                     .WithParameters(new { group.CdLargeGroup, scancode }))
                     .Select(x => CreateDistItem(x))
                     .ToArray();
