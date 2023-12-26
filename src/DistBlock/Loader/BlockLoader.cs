@@ -12,11 +12,13 @@ namespace DistBlock.Loader
         {
             using (var con = DbFactory.CreateConnection())
             {
+                // MEMO:結果0件時、nullではなく0が返る為匿名型に
                 return con.Find<TBBLOCKEntity>(s => s
                         .Where(@$"{nameof(TBBLOCKEntity.CDBLOCK):C} = {nameof(cdBlock):P} and
                                 {CreateTekiyoSql.GetFromDate()}")
                         .WithParameters(new { cdBlock, selectDate }))
-                        .Select(q => q.NUTDUNITCNT).FirstOrDefault();
+                        .Select(x => new { x.NUTDUNITCNT })
+                        .FirstOrDefault()?.NUTDUNITCNT;                
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using DistBlock.Loader;
+using LogLib;
 using Microsoft.IdentityModel.Tokens;
 using Prism.Mvvm;
 
@@ -44,33 +45,36 @@ namespace DistBlock.Models
         public string ReferenceDate
         {
             get => _referenceDate;
-            set
-            {
-                SetProperty(ref _referenceDate, value);
-                ResetAddr();
-            }
+            set => SetProperty(ref _referenceDate, value);
         }
 
         private void ResetAddr()
-        {
+        {            
             if (CdBlock.IsNullOrEmpty() || ReferenceDate.IsNullOrEmpty())
             {
                 return;
             }
 
-            // 表示器数取得、終了No入力
-            var blockCount = BlockLoader.GetBlockCount(PadBlock, ReferenceDate);
-            if (blockCount is not null)
+            try
             {
-                IsExistTbBlock = true;
-                CdAddrFrom = "0001";
-                CdAddrTo = (1 + blockCount).ToString()!.PadLeft(4, '0');
+                // 表示器数取得、終了No入力
+                var blockCount = BlockLoader.GetBlockCount(PadBlock, ReferenceDate);
+                if (blockCount is not null)
+                {
+                    IsExistTbBlock = true;
+                    CdAddrFrom = "0001";
+                    CdAddrTo = (blockCount).ToString()!.PadLeft(4, '0');
+                }
             }
+            catch (Exception ex)
+            {
+                Syslog.Debug($"GetBlockCount Error{ex.Message}");
+            }            
         }
 
         // 開始が終了より小さい
         public bool IsVaridRange => !CdAddrFrom.IsNullOrEmpty() && !CdAddrTo.IsNullOrEmpty() &&
-                                    PadAddrFrom.CompareTo(PadAddrTo) == -1;
+                                    PadAddrFrom.CompareTo(PadAddrTo) != 1;
 
         public bool IsExistTbBlock = false;
 
