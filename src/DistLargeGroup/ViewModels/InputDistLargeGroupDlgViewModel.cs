@@ -1,17 +1,10 @@
 ﻿using DistLargeGroup.Infranstructures;
-using DistLargeGroup.Models;
-using LogLib;
-using MahApps.Metro.Controls.Dialogs;
 using Prism.Commands;
 using Prism.Mvvm;
-using Prism.Regions;
 using Prism.Services.Dialogs;
 using ReferenceLogLib;
-using ReferenceLogLib.Models;
-using System.Windows;
 using TakakiLib.Models;
 using WindowLib.Utils;
-using static ImTools.ImMap;
 
 namespace DistLargeGroup.ViewModels
 {
@@ -283,7 +276,7 @@ namespace DistLargeGroup.ViewModels
         public bool CanCloseDialog()
         {
             if (_isModified
-                && WindowLib.Utils.MessageDialog.Show(_dialogService, "変更された情報が登録されていません。\n入力画面に戻りますか？", "変更確認", ButtonMask.Yes | ButtonMask.No) != ButtonResult.No)
+                && MessageDialog.Show(_dialogService, "変更された情報が登録されていません。\n一覧画面に戻りますか？", "変更確認", ButtonMask.Yes | ButtonMask.No) != ButtonResult.Yes)
             {
                 return false;
             }
