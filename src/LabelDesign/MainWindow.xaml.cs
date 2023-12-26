@@ -55,7 +55,7 @@ namespace LabelDesign
         {
             var prm = new LargeDistLabel
             {
-                DtDelivery = "2018/10/15",
+                DtDelivery = "20181015",
                 CdJuchuBin = "001",
                 CdBlock = "6",
                 CdDistGroup = "02001",

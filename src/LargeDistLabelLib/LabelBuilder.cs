@@ -1,4 +1,5 @@
-﻿using LabelLib;
+﻿using DbLib.Extensions;
+using LabelLib;
 
 namespace LargeDistLabelLib
 {
@@ -15,7 +16,7 @@ namespace LargeDistLabelLib
             fmtr.SetPitch(0);
 
             fmtr.String(10, 0, SatoFont.K16, "納品日:");
-            fmtr.String(70, 0, SatoFont.X22, $"{data.DtDelivery}");
+            fmtr.String(70, 0, SatoFont.X22, $"{data.DtDelivery.GetDate()}");
 
             fmtr.String(340, 0, SatoFont.K16, "受注便:");
             fmtr.String(410, 0, SatoFont.X22, $"{data.CdJuchuBin}");
