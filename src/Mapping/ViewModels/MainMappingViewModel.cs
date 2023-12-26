@@ -236,7 +236,6 @@ namespace Mapping.ViewModels
                     {
                         if (rc.Result != ButtonResult.OK)
                         {
-                            Application.Current.MainWindow.Close();
                             return;
                         }
 

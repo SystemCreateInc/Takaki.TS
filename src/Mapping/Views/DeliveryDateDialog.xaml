@@ -51,7 +51,7 @@
                     </StackPanel>
                 </Button>
 
-                <Button Width="125" Command="{Binding Cancel}" Margin="5" IsCancel="True">
+                <Button Width="125" Command="{Binding CancelCommand}" Margin="5" IsCancel="True">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Cancel" VerticalAlignment="Center"/>
                         <TextBlock Text="キャンセル" Margin="3,0,0,0"/>

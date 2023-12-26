@@ -185,4 +185,8 @@
                            Text="{Binding ElementName=validationTarget, Path=AdornedElement.(Validation.Errors)[0].ErrorContent}"/>
         </StackPanel>
     </ControlTemplate>
+
+    <Style TargetType="DatePicker" BasedOn="{StaticResource MaterialDesignDatePicker}">
+        <Setter Property="Language" Value="ja" />
+    </Style>
 </ResourceDictionary>

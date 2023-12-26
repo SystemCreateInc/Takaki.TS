@@ -16,16 +16,16 @@ namespace DistGroup.Loader
             var sql = "SELECT"
                      + " t1.CD_KYOTEN"
                      + ",t1.CD_DIST_GROUP"
-                     + ",max(t1.NM_DIST_GROUP) NM_DIST_GROUP"
-                     + ",max(t1.CD_BIN_SUM) CD_BIN_SUM"
-                     + ",max(t3.CD_LARGE_GROUP) CD_LARGE_GROUP"
-                     + ",max(t3.CD_LARGE_GROUP_NAME) CD_LARGE_GROUP_NAME"
-                     + ",max(t4.NM_KYOTEN) NM_KYOTEN"
+                     + ",t1.NM_DIST_GROUP "
+                     + ",t1.CD_BIN_SUM "
+                     + ",t3.CD_LARGE_GROUP "
+                     + ",t3.CD_LARGE_GROUP_NAME "
+                     + ",t4.NM_KYOTEN NM_KYOTEN"
                      + " FROM TB_DIST_GROUP t1"
-                     + " left join TB_DIST_GROUP_LARGE_GROUP t2 on t2.ID_DIST_GROUP = t2.ID_DIST_GROUP"
+                     + " left join TB_DIST_GROUP_LARGE_GROUP t2 on t2.ID_DIST_GROUP = t1.ID_DIST_GROUP"
                      + " left join TB_LARGE_GROUP t3 on t3.CD_LARGE_GROUP = t2.CD_LARGE_GROUP"
                      + " left join TB_MKYOTEN t4 on t4.CD_KYOTEN = t1.CD_KYOTEN"
-                     + " group by t1.CD_KYOTEN, t1.CD_DIST_GROUP"
+                     +$" {CreateTekiyoSql.GetFromLastUpdateJoin("TB_DIST_GROUP", "CD_KYOTEN,CD_DIST_GROUP")}"
                      + " order by t1.CD_KYOTEN, t1.CD_DIST_GROUP";
 
             using (var con = DbFactory.CreateConnection())
