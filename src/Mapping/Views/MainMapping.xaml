@@ -128,9 +128,6 @@
                 <DataGridTextColumn Header="得意先仕分" Width="Auto" Binding="{Binding NmDStatus}"  ElementStyle="{StaticResource RightTextElement}" />
 
             </DataGrid.Columns>
-            <i:Interaction.Behaviors>
-                <b:DataGridSelectedItemsBlendBehavior SelectedItems="{Binding SelectedItems}" />
-            </i:Interaction.Behaviors>
         </DataGrid>
     </DockPanel>
 </UserControl>
