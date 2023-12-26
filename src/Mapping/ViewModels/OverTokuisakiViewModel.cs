@@ -16,6 +16,10 @@ using ControlzEx.Standard;
 using Prism.Events;
 using Prism.Regions;
 using ReferenceLogLib.Models;
+using PrintPreviewLib;
+using System.Printing;
+using Mapping.Reports;
+using PrintLib;
 
 namespace Mapping.ViewModels
 {
@@ -51,13 +55,37 @@ namespace Mapping.ViewModels
             OnPrint = new DelegateCommand(() =>
             {
                 Syslog.Debug("OverTokuisakiViewModel:OverPrint");
+                try
+                {
 
-                MessageDialog.Show(_dialogService, "印刷！", "確認");
 
-                if (_mapping != null)
-                    _mapping.IsSave = true;
+                    var overs = OverInfos.ToList();
 
-                regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
+                    if (overs == null || overs.Count == 0)
+                    {
+                        return;
+                    }
+
+                    var viewModel = ReportCreator.GetOverList(overs);
+#if DEBUG
+                    var ppm = new PrintManager(PageMediaSizeName.ISOA4, PageOrientation.Landscape);
+                    ppm.Print("ロケーション一覧", viewModel);
+#else
+                    var ppm = new PrintManager(PageMediaSizeName.ISOA4, PageOrientation.Landscape);
+                    ppm.Print("ロケーション一覧", viewModel);
+#endif
+
+                    if (_mapping != null)
+                        _mapping.IsSave = true;
+
+                    regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
+                }
+                catch (Exception e)
+                {
+                    Syslog.Error($"MainMappingViewModel:Clear:{e.Message}");
+                    MessageDialog.Show(_dialogService, e.Message, "エラー");
+                }
+
             });
 
 

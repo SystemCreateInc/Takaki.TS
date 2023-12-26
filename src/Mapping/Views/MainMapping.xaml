@@ -71,12 +71,20 @@
                         </StackPanel>
                     </Button>
 
+                    <Button Command="{Binding PathCommand}" >
+                        <StackPanel Orientation="Vertical">
+                            <materialDesign:PackIcon Kind="Gear"/>
+                            <TextBlock Text="送信先パス"/>
+                        </StackPanel>
+                    </Button>
+
                     <Button Command="{Binding Exit}" >
                         <StackPanel Orientation="Vertical">
                             <materialDesign:PackIcon Kind="ExitToApp"/>
                             <TextBlock Text="終了"/>
                         </StackPanel>
                     </Button>
+
 
                     <Button Command="{Binding DistClear}" Margin="100,0,0,0">
                         <StackPanel Orientation="Vertical">
@@ -113,7 +121,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <CheckBox IsChecked="{Binding Select, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <CheckBox IsChecked="{Binding Select, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsHitTestVisible="{Binding IsSelectEnabled}" Content="{Binding MStatus_name}"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

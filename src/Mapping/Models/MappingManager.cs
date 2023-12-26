@@ -1,16 +1,21 @@
 ﻿using ControlzEx.Standard;
+using CsvLib.Models;
 using Dapper;
 using Dapper.FastCrud;
 using DbLib;
 using DbLib.DbEntities;
 using DbLib.Defs;
 using DryIoc;
+using ExportLib.Infranstructures;
+using ExportLib.Models;
 using LogLib;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -125,6 +130,7 @@ namespace Mapping.Models
         public void LoadDatas(string dtdelivery, List<string> seldistgroups)
         {
             DtDelivery = dtdelivery;
+            NameLoader.selectDate = dtdelivery;
             sumtokuisakis = MappingLoader.GetSumTokuisakis(DtDelivery);
             blocks = MappingLoader.GetBlocks(DtDelivery);
             distgroups = MappingLoader.GetDistGroups(DtDelivery, seldistgroups);
@@ -448,11 +454,6 @@ namespace Mapping.Models
                 {
                     foreach (BoxType boxtype in Enum.GetValues(typeof(BoxType)))
                     {
-                        if(stowage.CdSumTokuisaki== "202335")
-                        {
-                            string a = stowage.CdShukkaBatch;
-                        }
-
                         var p = distgroup.stowages.Find(x => x.CdTokuisaki == stowage.CdSumTokuisaki && x.StBoxType == (int)boxtype);
                         if (p == null)
                         {
@@ -477,17 +478,15 @@ namespace Mapping.Models
 
                             // dist更新
                             var sql = over 
-                                 ? "update TB_DIST set FG_MAPSTATUS=@mapstatus,FG_LSTATUS=@lstatus,FG_DSTATUS=@dstatus,NU_LOPS=@ops,NU_LRPS=@ops,NU_DOPS=@ops,NU_DRPS=@ops,updatedAt=@update,DT_WORKDT_LARGE=@update,DT_WORKDT_DIST=@update where ID_DIST=@id"
+                                 ? "update TB_DIST set FG_MAPSTATUS=@mapstatus,FG_DSTATUS=@dstatus,NU_LOPS=@ops,NU_DOPS=@ops,NU_DRPS=@ops,updatedAt=@update,DT_WORKDT_DIST=@update where ID_DIST=@id"
                                  : "update TB_DIST set FG_MAPSTATUS=@mapstatus where ID_DIST=@id";
 
                             con.Execute(sql,
                             new
                             {
                                 mapstatus = over ? (int)DbLib.Defs.Status.Inprog : (int)DbLib.Defs.Status.Completed,
-                                lstatus = over ? (int)DbLib.Defs.Status.Completed : (int)DbLib.Defs.Status.Ready,
                                 dstatus = over ? (int)DbLib.Defs.Status.Completed : (int)DbLib.Defs.Status.Ready,
                                 ops = dist.Ops,
-                                lrps = over ? dist.Ops : 0,
                                 dops = over ? dist.Ops : 0,
                                 drps = over ? dist.Ops : 0,
                                 update = DateTime.Now,
@@ -620,11 +619,39 @@ namespace Mapping.Models
             }
         }
 
+        // 出荷実績データ作成
+        public void Export()
+        {
+            // 作成中
+
+            string tmppath = Path.GetTempFileName();
+
+            string path = GetExportPath();
+
+            foreach (var distgroup in distgroups)
+            {
+//                CsvManager.Create<Dist>(distgroup.dists, tmppath);
+            }
+        }
+
+
+        public string GetExportPath()
+        {
+            using (var repo = new ExportRepository())
+            {
+                if (repo.GetInterfaceFile(DbLib.Defs.DataType.PickResult) is InterfaceFile interfaceFile)
+                {
+                    return interfaceFile.FileName;
+                }
+            }
+            return "";
+        }
 
         // データ初期化
         public void ClearDatas(string dtdelivery, List<string> seldistgroups)
         {
             DtDelivery = dtdelivery;
+            NameLoader.selectDate = dtdelivery;
             sumtokuisakis = MappingLoader.GetSumTokuisakis(DtDelivery);
             blocks = MappingLoader.GetBlocks( DtDelivery);
             distgroups = MappingLoader.GetDistGroups(DtDelivery, seldistgroups);

@@ -29,16 +29,19 @@ namespace Mapping.Models
 
                 if (r.Count()!=0)
                 {
+                    // 未処理の１件目に選択チェック
+                    bool InitSelect = true;
+ 
                     foreach (var p in r)
                     {
                         // 各仕分グループ件数取得
                         var sql = "select CD_DIST_GROUP"
-                            + ", count(distinct CD_BLOCK+tdunitaddrcode) shopcnt"
+                            + ", count(distinct case when tdunitaddrcode='' then null else CD_BLOCK+tdunitaddrcode end) shopcnt"
                             + ",count(distinct case when FG_MAPSTATUS = 1 then CD_TOKUISAKI else null end) overshopcnt"
                             + " from TB_DIST"
                             + " inner join TB_DIST_MAPPING on TB_DIST_MAPPING.ID_DIST = TB_DIST.ID_DIST"
                             + " where DT_DELIVERY = @dtdelivdt"
-                            + " and  CD_DIST_GROUP = @cddistgroup"
+                            + " and CD_DIST_GROUP = @cddistgroup"
                             + " group by CD_DIST_GROUP";
 
                         var result = con.Query(sql, new
@@ -53,12 +56,20 @@ namespace Mapping.Models
                              }).FirstOrDefault();
                         if (result != null)
                         {
-                            p.Select = false;
                             p.OverShopCnt = result.OverShopCnt;
                             p.ShopCnt = result.ShopCnt;
+                            p.MStatus = result.ShopCnt == 0 ? Defs.MStatus.Ready : Defs.MStatus.Decision;
+                        }
+                        else
+                        {
+                            // 未処理の１件目に選択チェック
+                            p.Select = InitSelect;
+                            InitSelect = false;
                         }
 
                         sql = "select sum(NU_MAGUCHI) maguchi"
+                                    + ",(case when max(lstatus) <> min(lstatus) then @status_inprog else max(lstatus) end) lstatus"
+                                    + ",(case when max(dstatus)<> min(dstatus) then @status_inprog else max(dstatus) end) dstatus"
                                     + " from(select"
                                     + " max(NU_MAGICHI) NU_MAGUCHI"
                                     + ",(case when max(FG_LSTATUS) <> min(FG_LSTATUS) then @status_inprog else max(FG_LSTATUS) end) lstatus"
@@ -69,7 +80,7 @@ namespace Mapping.Models
                                     + " and  CD_DIST_GROUP = @cddistgroup"
                                     + " and NU_MAGICHI<>0"
                                     + " and FG_MAPSTATUS=@mapstatus"
-                                    + " group by CD_DIST_GROUP, tdunitaddrcode) d";
+                                    + " group by CD_DIST_GROUP, CD_BLOCK, tdunitaddrcode) d";
 
                         result = con.Query(sql, new
                         {

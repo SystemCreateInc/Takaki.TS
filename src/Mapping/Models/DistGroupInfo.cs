@@ -1,14 +1,41 @@
-﻿using Prism.Mvvm;
+﻿using DbLib.Extensions;
+using Mapping.Defs;
+using Prism.Mvvm;
 
 namespace Mapping.Models
 {
     public class DistGroupInfo : BindableBase
     {
-        private bool _select = true;
+        private bool _select = false;
         public bool Select
         {
             get => _select;
             set => SetProperty(ref _select, value);
+        }
+
+        private bool _isSelectEnabled = true;
+        public bool IsSelectEnabled
+        {
+            get => _isSelectEnabled;
+            set => SetProperty(ref _isSelectEnabled, value);
+        }
+
+        private Defs.MStatus _mstatus = Defs.MStatus.Ready;
+        public Defs.MStatus MStatus
+        {
+            get => _mstatus;
+            set
+            {
+                SetProperty(ref _mstatus, value);
+                MStatus_name = EnumExtensions.GetDescription(value);
+            }
+        }
+
+        private string _mstatus_name = string.Empty;
+        public string MStatus_name
+        {
+            get => _mstatus_name;
+            set => SetProperty(ref _mstatus_name, value);
         }
 
         private string _cdDelivdt = string.Empty;
