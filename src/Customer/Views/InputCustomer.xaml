@@ -245,7 +245,7 @@
                             </i:Interaction.Triggers>
 
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="子得意先コード" Binding="{Binding CdTokuisakiChild, UpdateSourceTrigger=PropertyChanged, Delay=300}" Width="1*"
+                                <DataGridTextColumn Header="子得意先コード" Binding="{Binding CdTokuisakiChild, UpdateSourceTrigger=PropertyChanged, Delay=300}" Width="3*"
                                                     ElementStyle="{StaticResource CenterTextElement}">
                                     <DataGridTextColumn.EditingElementStyle>
                                         <Style TargetType="TextBox">
@@ -254,7 +254,7 @@
                                     </DataGridTextColumn.EditingElementStyle>
                                 </DataGridTextColumn>
 
-                                <DataGridTextColumn Header="得意先名称" Binding="{Binding NmTokuisaki}" Width="1*" IsReadOnly="True">
+                                <DataGridTextColumn Header="得意先名称" Binding="{Binding NmTokuisaki}" Width="7*" IsReadOnly="True">
                                     <DataGridTextColumn.CellStyle>
                                         <Style TargetType="DataGridCell">
                                             <Setter Property="Background" Value="Blue"/>
