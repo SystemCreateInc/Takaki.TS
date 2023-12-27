@@ -481,7 +481,7 @@ namespace DistBlock.ViewModels
             var noExistBlocks = ValidBlocks.Where(x => !x.IsExistTbBlock);
             if (noExistBlocks.Any())
             {
-                MessageDialog.Show(_dialogService, $"座席しきい値情報に未登録のブロックがあります\nブロック[{string.Join(",", noExistBlocks)}]", "入力エラー");
+                MessageDialog.Show(_dialogService, $"座席しきい値情報に未登録のブロックがあります\nブロック[{string.Join(",", noExistBlocks.Select(x => x.CdBlock))}]", "入力エラー");
                 return false;
             }
 

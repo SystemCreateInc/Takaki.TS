@@ -65,6 +65,10 @@ namespace DistBlock.Models
                     CdAddrFrom = "0001";
                     CdAddrTo = (blockCount).ToString()!.PadLeft(4, '0');
                 }
+                else
+                {
+                    IsExistTbBlock = false;
+                }
             }
             catch (Exception ex)
             {
@@ -76,7 +80,7 @@ namespace DistBlock.Models
         public bool IsVaridRange => !CdAddrFrom.IsNullOrEmpty() && !CdAddrTo.IsNullOrEmpty() &&
                                     PadAddrFrom.CompareTo(PadAddrTo) != 1;
 
-        public bool IsExistTbBlock = false;
+        public bool IsExistTbBlock = true;
 
         public string PadBlock => CdBlock.PadLeft(2, '0');
         public string PadAddrFrom => CdAddrFrom.PadLeft(4, '0');
