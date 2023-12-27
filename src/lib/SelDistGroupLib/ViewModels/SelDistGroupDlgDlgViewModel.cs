@@ -1,4 +1,5 @@
 ﻿using Azure;
+using ImTools;
 using LogLib;
 using Microsoft.Extensions.Configuration;
 using Prism.Commands;
@@ -130,8 +131,12 @@ namespace SelDistGroupLib.ViewModels
         {
             try
             {
+                var cddistgroup = DistGroup?.CdDistGroup; ;
+
                 DistGroupCombo = DistGroupComboLoader.GetDistGroupCombos(DtDelivery.ToString("yyyyMMdd"));
-                DistGroup = DistGroupCombo.FirstOrDefault();
+
+                DistGroup = cddistgroup == null ? DistGroupCombo.FirstOrDefault()
+                    : DistGroupCombo.FindFirst(x => x.CdDistGroup == cddistgroup);
             }
             catch (Exception e)
             {
