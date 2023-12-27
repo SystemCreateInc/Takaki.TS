@@ -9,6 +9,14 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              Loaded="UserControl_Loaded">
 
+    <UserControl.InputBindings>
+        <KeyBinding Key="F1" Command="{Binding OnColorBtn1}"/>
+        <KeyBinding Key="F2" Command="{Binding OnColorBtn2}"/>
+        <KeyBinding Key="F3" Command="{Binding OnColorBtn3}"/>
+        <KeyBinding Key="F4" Command="{Binding OnColorBtn4}"/>
+        <KeyBinding Key="F5" Command="{Binding OnColorBtn5}"/>
+    </UserControl.InputBindings>
+
     <UserControl.Resources>
         <Style x:Key="DataGridColumnAlignRight" TargetType="TextBlock" BasedOn="{x:Static DataGridTextColumn.DefaultElementStyle}">
             <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -213,15 +221,6 @@
                   Margin="20,0,30,0"
                       FontSize="40"
                   AutoGenerateColumns="False" IsReadOnly="True" VerticalScrollBarVisibility="Hidden">
-
-                <DataGrid.InputBindings>
-                    <KeyBinding Key="F1" Command="{Binding OnColorBtn1}"/>
-                    <KeyBinding Key="F2" Command="{Binding OnColorBtn2}"/>
-                    <KeyBinding Key="F3" Command="{Binding OnColorBtn3}"/>
-                    <KeyBinding Key="F4" Command="{Binding OnColorBtn4}"/>
-                    <KeyBinding Key="F5" Command="{Binding OnColorBtn5}"/>
-                </DataGrid.InputBindings>
-
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="色" Width="Auto" Binding="{Binding DistColor_Func_name}" IsReadOnly="True">
                         <DataGridTextColumn.CellStyle>

@@ -51,7 +51,9 @@ namespace TdDpsLib.Models
         public string TdUnitAreaName { get; set; } = "";            // エリア表示灯名称
         public int TdUsageid { get; set; }
         public int TdUnitSeq { get; set; }
+        public int TdUnitSeqReverse { get; set; }
         public int TdUnitZoneCode { get; set; } = 0;           // ゾーン範囲
+        public int TdUnitFront { get; set; }                    // STARTBOX 0:前 1:後
 
         public string Physics                       // 分岐-物理
         {
