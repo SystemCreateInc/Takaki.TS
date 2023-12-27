@@ -12,9 +12,9 @@
         <Style TargetType="Window" BasedOn="{StaticResource DialogWindow}"/>
     </prism:Dialog.WindowStyle>
 
-    <StackPanel Orientation="Vertical">
+    <StackPanel Orientation="Vertical" FocusManager.FocusedElement="{Binding ElementName=button}">
         <TextBlock Text="{Binding Text}" d:Text="大仕分グループ：001 大仕分グループ名称"/>
         <TextBlock Text="大仕分け作業が終了しました。"  Foreground="#0070c0"/>
-        <Button Content="OK" Command="{Binding OKCommand}" Width="100" Margin="0,20,0,0"/>
+        <Button x:Name="button" Content="OK" Command="{Binding OKCommand}" Width="100" Margin="0,20,0,0" />
     </StackPanel>
 </UserControl>

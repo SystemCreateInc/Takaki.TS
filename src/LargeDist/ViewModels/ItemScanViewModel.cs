@@ -238,7 +238,7 @@ namespace LargeDist.ViewModels
                 }
             });
 
-            //_requestClearItem = true;
+            _requestClearItem = true;
         }
 
         private void BlockLargeDist()
@@ -250,7 +250,7 @@ namespace LargeDist.ViewModels
                 }
             });
 
-            //_requestClearItem = true;
+            _requestClearItem = true;
         }
 
         private void Back()

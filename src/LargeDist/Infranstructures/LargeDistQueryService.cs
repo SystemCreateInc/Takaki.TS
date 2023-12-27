@@ -46,7 +46,7 @@ namespace LargeDist.Infranstructures
             using (var con = DbFactory.CreateConnection())
             {
                 var recs = con.Find<TBDISTEntity>(s => s
-                    .Include<TBDISTMAPPINGEntity>()
+                    .Include<TBDISTMAPPINGEntity>(ss => ss.InnerJoin())
                     .Where($@"{nameof(TBDISTMAPPINGEntity.CDLARGEGROUP):of TB_DIST_MAPPING} = {nameof(group.CdLargeGroup):P}
                         and {nameof(TBDISTEntity.CDGTIN13):C} = {nameof(scancode):P} or {nameof(TBDISTEntity.CDHIMBAN):C} = {nameof(scancode):P}")
                     .WithParameters(new { group.CdLargeGroup, scancode }))
@@ -105,7 +105,7 @@ namespace LargeDist.Infranstructures
                 var extraWhere = uncompletedOnly ? " and NU_LRPS=0" : " and 0=0";
 
                 var recs = con.Find<TBDISTEntity>(s => s
-                    .Include<TBDISTMAPPINGEntity>()
+                    .Include<TBDISTMAPPINGEntity>(ss => ss.InnerJoin())
                     .Where($@"{nameof(TBDISTMAPPINGEntity.CDLARGEGROUP):of TB_DIST_MAPPING}={nameof(group.CdLargeGroup):P} {extraWhere}")
                     .WithParameters(new { group.CdLargeGroup }))
                     .Select(x => CreateDistItem(x))
