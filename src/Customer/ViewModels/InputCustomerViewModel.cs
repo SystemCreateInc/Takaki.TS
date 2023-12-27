@@ -143,7 +143,7 @@ namespace Customer.ViewModels
             set => SetProperty(ref _childCustomer, value);
         }
 
-        public IEnumerable<ChildCustomer> NotEmptyChildCustomers => ChildCustomers.Where(x => !x.CdTokuisakiChild.IsNullOrEmpty()).ToArray();
+        public IEnumerable<ChildCustomer> NotEmptyChildCustomers => ChildCustomers.Where(x => !x.CdTokuisakiChild.Trim().IsNullOrEmpty()).ToArray();
 
         private SumCustomer _currentCustomer = new SumCustomer();
 
@@ -377,8 +377,8 @@ namespace Customer.ViewModels
         {
             bool isValid = true;
 
-            if (CdKyoten.IsNullOrEmpty() ||
-                CdSumTokuisaki.IsNullOrEmpty())
+            if (CdKyoten.Trim().IsNullOrEmpty() ||
+                CdSumTokuisaki.Trim().IsNullOrEmpty())
             {
                 MessageDialog.Show(_dialogService, "拠点コード、集約得意先コードを入力してください。", "入力エラー");
                 return false;
@@ -420,7 +420,7 @@ namespace Customer.ViewModels
             {
                 MessageDialog.Show(_dialogService, ex.Message, "入力エラー");
                 return false;
-            }            
+            }
         }
 
         // 
