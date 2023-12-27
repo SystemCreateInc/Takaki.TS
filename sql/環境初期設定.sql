@@ -13,6 +13,11 @@ insert into TB_BLOCK values('4201','03','5',128,13,'20231201','29991231','003355
 insert into TB_BLOCK values('4201','04','5',128,13,'20231201','29991231','0033550','小田　賢行',getdate(),getdate());
 insert into TB_BLOCK values('4201','05','5',128,13,'20231201','29991231','0033550','小田　賢行',getdate(),getdate());
 insert into TB_BLOCK values('4201','06','5',128,13,'20231201','29991231','0033550','小田　賢行',getdate(),getdate());
+insert into TB_BLOCK values('4201','51','6',256,4,'20231201','29991231','0033550','小田　賢行',getdate(),getdate());
+insert into TB_BLOCK values('4201','52','6',256,4,'20231201','29991231','0033550','小田　賢行',getdate(),getdate());
+insert into TB_BLOCK values('4201','53','6',256,4,'20231201','29991231','0033550','小田　賢行',getdate(),getdate());
+insert into TB_BLOCK values('4201','61','5',128,13,'20231201','29991231','0033550','小田　賢行',getdate(),getdate());
+insert into TB_BLOCK values('4201','62','5',128,13,'20231201','29991231','0033550','小田　賢行',getdate(),getdate());
 
 -- 仕分ブロック順
 delete from TB_DIST_BLOCK
