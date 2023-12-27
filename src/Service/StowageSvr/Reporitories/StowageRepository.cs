@@ -47,25 +47,22 @@ namespace StowageSvr.Reporitories
         public IEnumerable<TBSTOWAGEEntity> GetStowageEntitys(string block, string deliveryDate,
             string? distGroup = null, string? tdCode = null, string? batch = null, string? tokuisaki = null)
         {
-            var kyotenCd = GetKyotenCode();
-
-            // 抽出 or NotNull
-            var whereDistGroup = distGroup.IsNullOrEmpty() ? "is not null" : "= @distGroup";
-            var whereTdCode = tdCode.IsNullOrEmpty() ? "is not null" : "= @tdCode";
-            var whereBatch = batch.IsNullOrEmpty() ? "is not null" : "= @batch";
-            var whereTokuisaki = tokuisaki.IsNullOrEmpty() ? "is not null" : "= @tokuisaki";
-
             return Connection.Find<TBSTOWAGEEntity>(s => s
                 .AttachToTransaction(Transaction)
                 .Include<TBSTOWAGEMAPPINGEntity>(x => x.InnerJoin())
-                .Where(@$"{nameof(TBSTOWAGEEntity.CDKYOTEN):C} = {nameof(kyotenCd):P} and
-                        {nameof(TBSTOWAGEEntity.DTDELIVERY):C} = {nameof(deliveryDate):P} and
+                .Where(@$"{nameof(TBSTOWAGEEntity.DTDELIVERY):C} = {nameof(deliveryDate):P} and
                         {nameof(TBSTOWAGEMAPPINGEntity.CDBLOCK):of TB_STOWAGE_MAPPING} = {nameof(block):P} and
-                        {nameof(TBSTOWAGEMAPPINGEntity.CDDISTGROUP):of TB_STOWAGE_MAPPING} {whereDistGroup} and
-                        {nameof(TBSTOWAGEMAPPINGEntity.Tdunitaddrcode):of TB_STOWAGE_MAPPING} {whereTdCode} and
-                        {nameof(TBSTOWAGEEntity.CDSHUKKABATCH):C} {whereBatch} and
-                        {nameof(TBSTOWAGEEntity.CDTOKUISAKI):C} {whereTokuisaki}")
-                .WithParameters(new { kyotenCd, block, deliveryDate, distGroup, tdCode, batch, tokuisaki }));
+                        {nameof(TBSTOWAGEMAPPINGEntity.CDDISTGROUP):of TB_STOWAGE_MAPPING} {GetWhereParamSql(distGroup, nameof(distGroup))} and
+                        {nameof(TBSTOWAGEMAPPINGEntity.Tdunitaddrcode):of TB_STOWAGE_MAPPING} {GetWhereParamSql(tdCode, nameof(tdCode))} and
+                        {nameof(TBSTOWAGEEntity.CDSHUKKABATCH):C} {GetWhereParamSql(batch, nameof(batch))} and
+                        {nameof(TBSTOWAGEEntity.CDTOKUISAKI):C} {GetWhereParamSql(tokuisaki, nameof(tokuisaki))}")
+                .WithParameters(new { block, deliveryDate, distGroup, tdCode, batch, tokuisaki }));
+        }
+
+        // 抽出 or NotNull
+        private object GetWhereParamSql(string? param, string paramName)
+        {
+            return param.IsNullOrEmpty() ? "is not null" : $"= @{paramName}";
         }
 
         public IEnumerable<TBSTOWAGEEntity> GetStowageEntitys(IEnumerable<long> stowageIds)
@@ -100,22 +97,6 @@ namespace StowageSvr.Reporitories
 
                 Connection.Execute(sql, new { stowage.FgSStatus, stowage.WorkDate, stowage.UpdatedAt, stowage.Id }, Transaction);
             }
-        }
-
-        private string GetKyotenCode()
-        {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("common.json", true, true)
-                .Build();
-
-            var kyotenCd = config.GetSection("pc")?["cdkyoten"];
-
-            if (string.IsNullOrEmpty(kyotenCd))
-            {
-                throw new Exception("拠点コードが設定されていません");
-            }
-
-            return kyotenCd;
         }
     }
 }
