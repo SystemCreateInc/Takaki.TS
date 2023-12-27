@@ -273,6 +273,7 @@ namespace LargeDist.ViewModels
 
         private void DeleteItem()
         {
+            _logger.Debug("Delete Item");
             ScanGrid.DeleteSelectedItem();
             IsScannedItem = ScanGrid.HasScanItem;
         }
@@ -280,6 +281,7 @@ namespace LargeDist.ViewModels
         private void CancelMode()
         {
             IsCancelMode = !IsCancelMode;
+            _logger.Debug($"Cancel Mode {IsCancelMode}");
         }
 
         private void ItemList()
@@ -303,6 +305,7 @@ namespace LargeDist.ViewModels
             {
                 if (_requestClearItem)
                 {
+                    _logger.Debug("Request Clear Item");
                     _requestClearItem = false;
                     Refresh();
                     ScanGrid.Clear();
@@ -310,6 +313,7 @@ namespace LargeDist.ViewModels
 
                 if (_requestGridSetup)
                 {
+                    _logger.Debug("Request Grid Setup");
                     SetupGrid();
                 }
 
@@ -325,6 +329,7 @@ namespace LargeDist.ViewModels
             SetupGrid();
             _initialized = true;
             IsScannedItem = false;
+            _logger.Debug("Initialized");
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
@@ -338,6 +343,7 @@ namespace LargeDist.ViewModels
 
         private void SetupGrid()
         {
+            _logger.Debug("Setup Grid");
             ScanGrid.Clear();
 
             try
