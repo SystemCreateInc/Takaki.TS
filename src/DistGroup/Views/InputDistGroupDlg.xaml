@@ -131,7 +131,8 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Content="拠点コード" VerticalContentAlignment="Center"/>
-                        <TextBox x:Name="CdKyoten" Grid.Column="1" Text="{Binding CdKyoten, UpdateSourceTrigger=PropertyChanged, Delay=300}" MaxLength="4" IsEnabled="{Binding IsAdd}"/>
+                        <TextBox x:Name="CdKyoten" Grid.Column="1" Text="{Binding CdKyoten, UpdateSourceTrigger=PropertyChanged, Delay=300}" MaxLength="4" IsEnabled="{Binding IsAdd}"
+                                 InputMethod.IsInputMethodEnabled="False"/>
                         <Label Grid.Column="2" Background="Blue"/>
                         <TextBlock Grid.Column="2" Text="{Binding NmKyoten}" Foreground="White"/>
                     </Grid>
@@ -144,7 +145,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Content="仕分グループコード"/>
-                        <TextBox Grid.Column="1" Text="{Binding CdDistGroup, UpdateSourceTrigger=PropertyChanged}" MaxLength="5" IsEnabled="{Binding IsAdd}"/>
+                        <TextBox Grid.Column="1" Text="{Binding CdDistGroup, UpdateSourceTrigger=PropertyChanged}" MaxLength="5" IsEnabled="{Binding IsAdd}" InputMethod.IsInputMethodEnabled="False"/>
                         <TextBox Grid.Column="2" Text="{Binding NmDistGroup, UpdateSourceTrigger=PropertyChanged}" MaxLength="40" IsEnabled="{Binding IsAdd}"/>
                     </Grid>
 
@@ -244,6 +245,7 @@
                                 <DataGridTextColumn.EditingElementStyle>
                                     <Style TargetType="TextBox">
                                         <Setter Property="MaxLength" Value="5"/>
+                                        <Setter Property="InputMethod.IsInputMethodEnabled" Value="False"/>
                                     </Style>
                                 </DataGridTextColumn.EditingElementStyle>
                             </DataGridTextColumn>
@@ -265,6 +267,7 @@
                                 <DataGridTextColumn.EditingElementStyle>
                                     <Style TargetType="TextBox">
                                         <Setter Property="MaxLength" Value="3"/>
+                                        <Setter Property="InputMethod.IsInputMethodEnabled" Value="False"/>
                                     </Style>
                                 </DataGridTextColumn.EditingElementStyle>
                             </DataGridTextColumn>
@@ -403,6 +406,7 @@
                                     <DataGridTextColumn.EditingElementStyle>
                                         <Style TargetType="TextBox">
                                             <Setter Property="MaxLength" Value="3"/>
+                                            <Setter Property="InputMethod.IsInputMethodEnabled" Value="False"/>
                                         </Style>
                                     </DataGridTextColumn.EditingElementStyle>
                                 </DataGridTextColumn>

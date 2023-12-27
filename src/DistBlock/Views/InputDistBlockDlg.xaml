@@ -238,6 +238,7 @@
                                     <DataGridTextColumn.EditingElementStyle>
                                         <Style TargetType="TextBox">
                                             <Setter Property="MaxLength" Value="2"/>
+                                            <Setter Property="InputMethod.IsInputMethodEnabled" Value="False"/>
                                         </Style>
                                     </DataGridTextColumn.EditingElementStyle>
                                 </DataGridTextColumn>
@@ -246,6 +247,7 @@
                                     <DataGridTextColumn.EditingElementStyle>
                                         <Style TargetType="TextBox">
                                             <Setter Property="MaxLength" Value="4"/>
+                                            <Setter Property="InputMethod.IsInputMethodEnabled" Value="False"/>
                                         </Style>
                                     </DataGridTextColumn.EditingElementStyle>
                                 </DataGridTextColumn>
@@ -254,6 +256,7 @@
                                     <DataGridTextColumn.EditingElementStyle>
                                         <Style TargetType="TextBox">
                                             <Setter Property="MaxLength" Value="4"/>
+                                            <Setter Property="InputMethod.IsInputMethodEnabled" Value="False"/>
                                         </Style>
                                     </DataGridTextColumn.EditingElementStyle>
                                 </DataGridTextColumn>
