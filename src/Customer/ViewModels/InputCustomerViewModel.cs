@@ -21,6 +21,7 @@ namespace Customer.ViewModels
         public DelegateCommand Back { get; }
         public DelegateCommand Refer { get; }
         public DelegateCommand Release { get; }
+        public DelegateCommand<string> EndCodeEdit { get; }
 
         private readonly IDialogService _dialogService;
 
@@ -213,9 +214,11 @@ namespace Customer.ViewModels
                 Syslog.Debug("InputCustomerViewModel:Release");
                 IsDateRelease = true;
             });
+
+            EndCodeEdit = new DelegateCommand<string>(inputName => ValidateGetName(inputName));
         }
 
-        public void OnDialogClosed()
+		public void OnDialogClosed()
         {
             ChildCustomers.CollectionChanged -= ChildCustomers_CollectionChanged;
         }
@@ -229,6 +232,38 @@ namespace Customer.ViewModels
             InitDisplay();
 
             ChildCustomers.CollectionChanged += ChildCustomers_CollectionChanged;
+        }
+
+        // 名称未取得でフォーカス変更時にエラー
+        private async void ValidateGetName(string inputName)
+        {
+            // BindingのDelay待ち
+            await Task.Delay(350);
+
+            string? errorTextName;
+
+            switch (inputName)
+            {
+                case "Kyoten":
+                    errorTextName = !CdKyoten.IsNullOrEmpty() && NmKyoten.IsNullOrEmpty() ? "拠点" : null;
+                    break;
+
+                case "SumTokuisaki":
+                    errorTextName = !CdSumTokuisaki.IsNullOrEmpty() && NmSumTokuisaki.IsNullOrEmpty() ? "集約得意先" : null;
+                    break;
+
+                case "CdTokuisakiChild":
+                    errorTextName = NotEmptyChildCustomers.Any(x => x.NmTokuisaki.IsNullOrEmpty()) ? "子得意先" : null;
+                    break;
+
+                default:
+                    return;
+            }
+
+            if (!errorTextName.IsNullOrEmpty())
+            {
+                MessageDialog.Show(_dialogService, $"{errorTextName}名称が取得できませんでした", "入力エラー");
+            }
         }
 
         private bool ConfirmationExit()

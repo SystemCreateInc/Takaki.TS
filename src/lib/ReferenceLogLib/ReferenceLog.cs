@@ -89,6 +89,7 @@ namespace ReferenceLogLib
             LogInfos = LogInfos.Select(x => new LogInfo
             {
                 Selected = x.StartDate == tekiyokaishiDate,
+                Id = x.Id,
                 ShainCode = x.ShainCode,
                 StartDate = x.StartDate,
                 EndDate = x.EndDate,

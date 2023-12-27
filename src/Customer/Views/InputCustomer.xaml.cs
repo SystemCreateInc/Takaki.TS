@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using Customer.Models;
+using Microsoft.IdentityModel.Tokens;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using WindowLib.Utils;
@@ -32,7 +34,23 @@ namespace Customer.Views
             else
             {
                 ReferenceDate.Focus();
-            }            
+            }
         }
+
+        //private void dataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        //{
+        //    var child = e.Row.Item as ChildCustomer;
+
+        //    if(child is null)
+        //    {
+        //        return;
+        //    }
+
+        //    // 得意先名が取得出来ていない場合、編集を完了しない
+        //    if (child.NmTokuisaki.IsNullOrEmpty())
+        //    {
+        //        e.Cancel = true;
+        //    }
+        //}
     }
 }
