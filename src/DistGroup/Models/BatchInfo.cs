@@ -16,7 +16,7 @@ namespace DistGroup.Models
                 SetProperty(ref _cdShukkaBatch, value);
                 NmShukkaBatch = NameLoader.GetNmShukkaBatch(PadBatch);
                 Syslog.Debug($"BatchInfo:GetNmShukkaBatch Cdbatch={CdShukkaBatch}, Name={NmShukkaBatch}");
-            }            
+            }
         }
 
         private string _nmShukkaBatch = string.Empty;
