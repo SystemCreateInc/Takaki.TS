@@ -71,7 +71,7 @@
                       SelectionUnit="FullRow" FrozenColumnCount="0">
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="エリア" Binding="{Binding Tdunitareacode}" ElementStyle="{StaticResource CenterTextElement}"/>
+                    <DataGridTextColumn Header="エリア" Binding="{Binding IdPc}" ElementStyle="{StaticResource CenterTextElement}"/>
                     <DataGridTextColumn Header="ブロック" Binding="{Binding CdBlock}" ElementStyle="{StaticResource CenterTextElement}"/>
                     <DataGridTextColumn Header="担当者" Binding="{Binding NmShain}"/>
                     <DataGridTextColumn Header="仕分グループ" Binding="{Binding DistGroupInfo}"/>
@@ -86,8 +86,8 @@
                     <DataGridTextColumn Header="&#xa;予定" Binding="{Binding NuOitemcnt}" ElementStyle="{StaticResource CenterTextElement}"/>
 
                     <DataGridTextColumn Header="仕分個数&#xa;済" Binding="{Binding NuRps}" HeaderStyle="{StaticResource DoubleRowHeader}"
-                                        ElementStyle="{StaticResource RightTextElement}"/>
-                    <DataGridTextColumn Header="&#xa;予定" Binding="{Binding NuOps}" ElementStyle="{StaticResource RightTextElement}"/>
+                                        ElementStyle="{StaticResource CenterTextElement}"/>
+                    <DataGridTextColumn Header="&#xa;予定" Binding="{Binding NuOps}" ElementStyle="{StaticResource CenterTextElement}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

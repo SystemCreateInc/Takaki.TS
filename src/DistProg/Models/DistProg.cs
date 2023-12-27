@@ -6,40 +6,40 @@ namespace DistProg.Models
     public class DistProg : BindableBase
     {
         // エリア
-        private int _tdunitareacode;
-        public int Tdunitareacode
+        private int? _idPc;
+        public int? IdPc
         {
-            get => _tdunitareacode;
-            set => SetProperty(ref _tdunitareacode, value);
+            get => _idPc;
+            set => SetProperty(ref _idPc, value);
         }
 
         // ブロック
-        private string _cdBlock = string.Empty;
-        public string CdBlock
+        private string? _cdBlock;
+        public string? CdBlock
         {
             get => _cdBlock;
             set => SetProperty(ref _cdBlock, value);
         }
 
         // 担当者
-        private string _nmShain = string.Empty;
-        public string NmShain
+        private string? _nmShain;
+        public string? NmShain
         {
             get => _nmShain;
             set => SetProperty(ref _nmShain, value);
         }
 
         // 仕分グループコード
-        private string _cdDistGroup = string.Empty;
-        public string CdDistGroup
+        private string? _cdDistGroup;
+        public string? CdDistGroup
         {
             get => _cdDistGroup;
             set => SetProperty(ref _cdDistGroup, value);
         }
 
         // 仕分グループ名
-        private string _nmDistGroup = string.Empty;
-        public string NmDistGroup
+        private string? _nmDistGroup;
+        public string? NmDistGroup
         {
             get => _nmDistGroup;
             set => SetProperty(ref _nmDistGroup, value);
@@ -92,43 +92,43 @@ namespace DistProg.Models
                     return DateTime.Now - DtStart;
                 }
 
-                 return DtEnd - DtStart;
+                return DtEnd - DtStart;
             }
         }
 
         // アイテム数(済)
-        private int _nuRitemcnt;
-        public int NuRitemcnt
+        private int? _nuRitemcnt;
+        public int? NuRitemcnt
         {
             get => _nuRitemcnt;
             set => SetProperty(ref _nuRitemcnt, value);
         }
 
         // アイテム数(予定)
-        private int _nuOitemcnt;
-        public int NuOitemcnt
+        private int? _nuOitemcnt;
+        public int? NuOitemcnt
         {
             get => _nuOitemcnt;
             set => SetProperty(ref _nuOitemcnt, value);
         }
 
         // 仕分個数(済)
-        private int _nuRps;
-        public int NuRps
+        private int? _nuRps;
+        public int? NuRps
         {
             get => _nuRps;
             set => SetProperty(ref _nuRps, value);
         }
 
         // 仕分個数(予定)
-        private int _nuOps;
-        public int NuOps
+        private int? _nuOps;
+        public int? NuOps
         {
             get => _nuOps;
             set => SetProperty(ref _nuOps, value);
         }
 
         // 個数進捗率
-        public decimal NuProg => (decimal)NuRps / (decimal)NuOps;
+        public decimal? NuProg => NuRps == null || NuOps == null ? null : (decimal)NuRps / (decimal)NuOps;
     }
 }

@@ -18,6 +18,8 @@ namespace DistProg
             containerRegistry.RegisterForNavigation<MainDistProg>();
             containerRegistry.RegisterForNavigation<DistUncompleted>();
             containerRegistry.RegisterForNavigation<DistCompleted>();
+
+            containerRegistry.RegisterDialog<SelectDeliveryDateDlg>();
         }
     }
 }
