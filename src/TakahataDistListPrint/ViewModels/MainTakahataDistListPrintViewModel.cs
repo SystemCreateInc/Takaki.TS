@@ -1,24 +1,42 @@
-﻿using DbLib.Extensions;
+﻿using Dapper.FastCrud;
+using DbLib.DbEntities;
+using DbLib.Extensions;
 using LogLib;
+using MaterialDesignThemes.Wpf;
+using PrintPreviewLib;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
+using SearchBoxLib;
+using SearchBoxLib.Models;
 using System.Collections.ObjectModel;
+using System.Printing;
 using System.Windows;
+using System.Windows.Controls;
 using TakahataDistListPrint.Models;
+using TakahataDistListPrint.Reports;
+using TakahataDistListPrint.Views;
 using WindowLib.Utils;
 
 namespace TakahataDistListPrint.ViewModels
 {
     public class MainTakahataDistListPrintViewModel : BindableBase
     {
-        public DelegateCommand Search { get; }
+        public DelegateCommand<object> Search { get; }
         public DelegateCommand Reload { get; }
         public DelegateCommand CustomerPrint { get; }
         public DelegateCommand ItemPrint { get; }
         public DelegateCommand Exit { get; }
 
         private readonly IDialogService _dialogService;
+        private SearchBoxService _searchBoxService = new SearchBoxService();
+
+        private PackIconKind _searchIcon = PackIconKind.Search;
+        public PackIconKind SearchIcon
+        {
+            get => _searchIcon;
+            set => SetProperty(ref _searchIcon, value);
+        }
 
         private string _dtDelivery = string.Empty;
         public string DtDelivery
@@ -40,28 +58,63 @@ namespace TakahataDistListPrint.ViewModels
         {
             _dialogService = dialogService;
 
-            Search = new DelegateCommand(() =>
+            Search = new DelegateCommand<object>(obj =>
             {
                 Syslog.Debug("MainTakahataDistListPrintViewModel:Search");
-                // fixme:検索ボタン押下
+
+                var dataGrid = obj as DataGrid;
+                if (dataGrid == null)
+                {
+                    return;
+                }
+
+                if (_searchBoxService.ShowSearchBox(dialogService, GetSearchContents()))
+                {
+                    LoadDatas();
+                    SearchIcon = PackIconKind.SearchAdd;
+                }
             });
 
             Reload = new DelegateCommand(() =>
             {
                 Syslog.Debug("MainTakahataDistListPrintViewModel:Reload");
-                //fixme:更新ボタン押下
+                _searchBoxService.Clear();
+                LoadDatas();
+                SearchIcon = PackIconKind.Search;
             });
 
             CustomerPrint = new DelegateCommand(() =>
             {
                 Syslog.Debug("MainTakahataDistListPrintViewModel:CustomerPrint");
-                // fixme:得意先別ボタン押下
+
+                try
+                {
+                    var vms = ReportCreator.CreateCustomerReport(TakahataDistListPrints.Select(x => x.IdDist), DispDtDelivery);
+                    var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Portrait);
+                    ppm.PrintPreview("得意先別仕分リスト(対象外)", vms);
+                }
+                catch (Exception e)
+                {
+                    Syslog.Error($"CustomerPrint:{e.Message}");
+                    MessageDialog.Show(_dialogService, e.Message, "エラー");
+                }
             });
 
             ItemPrint = new DelegateCommand(() =>
             {
                 Syslog.Debug("MainTakahataDistListPrintViewModel:ItemPrint");
-                // 商品別ボタン押下
+
+                try
+                {
+                    var vms = ReportCreator.CreateItemReport(TakahataDistListPrints.Select(x => x.IdDist), DispDtDelivery);
+                    var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Portrait);
+                    ppm.PrintPreview("商品別仕分リスト(対象外)", vms);
+                }
+                catch (Exception e)
+                {
+                    Syslog.Error($"ItemPrint:{e.Message}");
+                    MessageDialog.Show(_dialogService, e.Message, "エラー");
+                }
             });
 
             Exit = new DelegateCommand(() =>
@@ -70,9 +123,7 @@ namespace TakahataDistListPrint.ViewModels
                 Application.Current.MainWindow.Close();
             });
 
-            // fixme:納品日
-            DtDelivery = "20231015";
-
+            SelectDeliveryDate();
             LoadDatas();
         }
 
@@ -80,13 +131,42 @@ namespace TakahataDistListPrint.ViewModels
         {
             try
             {
-                CollectionViewHelper.SetCollection(TakahataDistListPrints, TakahataDistListPrintLoader.Get());
+                CollectionViewHelper.SetCollection(TakahataDistListPrints, TakahataDistListPrintLoader.Get(DtDelivery, _searchBoxService.GetQuery()));
             }
             catch (Exception e)
             {
                 Syslog.Error($"LoadDatas:{e.Message}");
                 MessageDialog.Show(_dialogService, e.Message, "エラー");
             }
+        }
+
+        private void SelectDeliveryDate()
+        {
+            _dialogService.ShowDialog(nameof(SelectDeliveryDateDlg),
+                rc =>
+                {
+                    if (rc.Result != ButtonResult.OK)
+                    {
+                        Application.Current.MainWindow.Close();
+                        return;
+                    }
+
+                    DtDelivery = rc.Parameters.GetValue<DateTime>("Date").ToString("yyyyMMdd");
+                });
+        }
+
+        private IEnumerable<Content> GetSearchContents()
+        {
+            return new List<Content>()
+            {
+                new () { ContentName = "出荷バッチ", TableName = Sql.Format<TBDISTEntity>($"{nameof(TBDISTEntity):T}.{nameof(TBDISTEntity.CDSHUKKABATCH):C}") },
+                new () { ContentName = "コース", TableName = Sql.Format<TBDISTEntity>($"{nameof(TBDISTEntity):T}.{nameof(TBDISTEntity.CDCOURSE):C}") },
+                new () { ContentName = "得意先コード", TableName = Sql.Format<TBDISTEntity>($"{nameof(TBDISTEntity):T}.{nameof(TBDISTEntity.CDTOKUISAKI):C}") },
+                new () { ContentName = "得意先名", TableName = Sql.Format<TBDISTMAPPINGEntity>($"{nameof(TBDISTMAPPINGEntity):T}.{nameof(TBDISTMAPPINGEntity.NMTOKUISAKI):C}") },
+                new () { ContentName = "品番", TableName = Sql.Format<TBDISTEntity>($"{nameof(TBDISTEntity):T}.{nameof(TBDISTEntity.CDHIMBAN):C}") },
+                new () { ContentName = "JANコード", TableName = Sql.Format<TBDISTEntity>($"{nameof(TBDISTEntity):T}.{nameof(TBDISTEntity.CDGTIN13):C}") },
+                new () { ContentName = "品名", TableName = Sql.Format<TBDISTMAPPINGEntity>($"{nameof(TBDISTMAPPINGEntity):T}.{nameof(TBDISTMAPPINGEntity.NMHINSEISHIKIMEI):C}") },
+            };
         }
     }
 }
