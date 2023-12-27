@@ -218,13 +218,16 @@ namespace SatoPrintLib
             return data.ToArray();
         }
 
-        private void WaitPrinterReady()
+        public void WaitPrinterReady()
         {
             while (true)
             {
                 GetStatusFromDevice();
 
                 if (Status.DeviceState == PrinterDeviceState.OnlineReady
+                    || Status.DeviceState == PrinterDeviceState.OnlineAnalyzingReady
+                    || Status.DeviceState == PrinterDeviceState.OnlinePrintingReady
+                    || Status.DeviceState == PrinterDeviceState.OnlineWaitingReady
                     || Status.DeviceState == PrinterDeviceState.OnlineBatteryNearEnd
                     || Status.DeviceState == PrinterDeviceState.OnlinePrintingBatteryNearEnd
                     || Status.DeviceState == PrinterDeviceState.OnlineWaitingBatteryNearEnd
@@ -236,6 +239,7 @@ namespace SatoPrintLib
 
                 Syslog.Debug($"{Address}: Printer status not ready {Status.DeviceState}");
                 _cancellationToken.WaitHandle.WaitOne(1000);
+                _cancellationToken.ThrowIfCancellationRequested();
             }
         }
 
@@ -273,7 +277,7 @@ namespace SatoPrintLib
             return valid;
         }
 
-        private void SendData(string data)
+        public void SendData(string data)
         {
             Syslog.Debug($"{Address}: Send data {data.Length} bytes");
             Send(data);
