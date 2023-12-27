@@ -1,12 +1,13 @@
 ﻿using DbLib.Extensions;
 using DistProg.Models;
-using DistProg.Views;
 using LogLib;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Services.Dialogs;
 using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Threading;
 using WindowLib.Utils;
 
 namespace DistProg.ViewModels
@@ -17,6 +18,7 @@ namespace DistProg.ViewModels
         public DelegateCommand Back { get; }
 
         private readonly IDialogService _dialogService;
+        private readonly DispatcherTimer _reloadTimer = new DispatcherTimer(DispatcherPriority.ApplicationIdle, Application.Current.Dispatcher);
 
         private string _dtDelivery = string.Empty;
         public string DtDelivery
@@ -57,7 +59,7 @@ namespace DistProg.ViewModels
             Reload = new DelegateCommand(() =>
             {
                 Syslog.Debug("DistCompletedViewModel:Reload");
-                // fixme:更新ボタン
+                LoadDatas();
             });
 
             Back = new DelegateCommand(() =>
@@ -74,21 +76,23 @@ namespace DistProg.ViewModels
 
         public void OnNavigatedFrom(NavigationContext navigationContext)
         {
+            _reloadTimer.Stop();
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
+            DtDelivery = navigationContext.Parameters.GetValue<string>("DtDelivery");
             LoadDatas();
-
-            // fixme:納品日
-            DtDelivery = DateTime.Today.ToString("yyyyMMdd");
+            _reloadTimer.Tick += (s, e) => LoadDatas();
+            _reloadTimer.Interval = new TimeSpan(0, 1, 0);
+            _reloadTimer.Start();
         }
 
         private void LoadDatas()
         {
             try
             {
-                CollectionViewHelper.SetCollection(DistCompleteds, DistProgLoader.Get());
+                CollectionViewHelper.SetCollection(DistCompleteds, DistProgLoader.GetCompleteds(DtDelivery));
                 LatestTime = DateTime.Now;
             }
             catch (Exception e)

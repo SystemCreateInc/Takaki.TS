@@ -1,69 +1,113 @@
-﻿namespace DistProg.Models
+﻿using Dapper;
+using Dapper.FastCrud;
+using DbLib;
+using DbLib.DbEntities;
+using DbLib.Defs;
+
+namespace DistProg.Models
 {
     public class DistProgLoader
     {
         public static IEnumerable<DistProg> Get()
         {
-            return new DistProg[]
+            // TB_PCを親にしてTB_DIST_GROUP_PROGRESSの最新の一行を表示する
+            var sql = "select "
+                + "TB_PC.ID_PC, "
+                + "v1.CD_BLOCK, "
+                + "v1.NM_SHAIN, "
+                + "v1.CD_DIST_GROUP, "
+                + "v1.NM_DIST_GROUP, "
+                + "v1.DT_DELIVERY, "
+                + "v1.DT_START, "
+                + "v1.DT_END, "
+                + "v1.NU_RITEMCNT, "
+                + "v1.NU_OITEMCNT, "
+                + "v1.NU_RPS, "
+                + "v1.NU_OPS "
+                + "from TB_PC "
+                + "left join("
+                    + "select * from(select ID_PC, CD_BLOCK, NM_SHAIN, CD_DIST_GROUP, NM_DIST_GROUP, DT_DELIVERY, DT_START, DT_END, NU_RITEMCNT, NU_OITEMCNT, NU_RPS, NU_OPS, row_number() over(partition by ID_PC order by updatedAt desc) no "
+                    + "from TB_DIST_GROUP_PROGRESS) t1 where no = 1) v1 "
+                + "on TB_PC.ID_PC = v1.ID_PC";
+
+            using (var con = DbFactory.CreateConnection())
             {
-                new DistProg
-                {
-                    Tdunitareacode = 1,
-                    CdBlock = "01",
-                    NmShain = "サトウイチロウ",
-                    CdDistGroup = "02001",
-                    NmDistGroup = "仕分グループ1",
-                    DtDelivery = "20231015",
-                    DtStart = new DateTime(2023, 12, 8, 9, 1, 0),
-                    DtEnd = null,
-                    NuRitemcnt = 15,
-                    NuOitemcnt = 100,
-                    NuRps = 300,
-                    NuOps = 5000,
-                }
-            };
+                return con.Query(sql)
+                    .Select(q => new DistProg
+                    {
+                        IdPc = q.ID_PC,
+                        CdBlock = q.CD_BLOCK,
+                        NmShain = q.NM_SHAIN,
+                        CdDistGroup = q.CD_DIST_GROUP,
+                        NmDistGroup = q.NM_DIST_GROUP,
+                        DtDelivery = q.DT_DELIVERY ?? string.Empty,
+                        DtStart = q.DT_START,
+                        DtEnd = q.DT_END,
+                        NuRitemcnt = q.NU_RITEMCNT,
+                        NuOitemcnt = q.NU_OITEMCNT,
+                        NuRps = q.NU_RPS,
+                        NuOps = q.NU_OPS,
+                    });
+            }
         }
 
-        public static IEnumerable<DistProg> GetUncompleteds()
+        // 仕分未完了リスト取得
+        public static IEnumerable<DistProg> GetUncompleteds(string dtDelivery)
         {
-            return new DistProg[]
+            var completed = Status.Completed;
+            using (var con = DbFactory.CreateConnection())
             {
-                new DistProg
-                {
-                    CdBlock = "01",
-                    NmShain = "サトウイチロウ",
-                    CdDistGroup = "02001",
-                     NmDistGroup = "仕分グループ1",
-                     DtStart = new DateTime(2023, 12, 18, 9, 25, 0),
-                     DtEnd = null,
-                     NuRitemcnt = 15,
-                     NuOitemcnt = 100,
-                     NuRps = 300,
-                     NuOps = 5000,
-                }
-            };
+                return con.Find<TBDISTGROUPPROGRESSEntity>(s => s
+                .Where(@$"{nameof(TBDISTGROUPPROGRESSEntity.DTDELIVERY):C}={nameof(dtDelivery):P}
+                            and {nameof(TBDISTGROUPPROGRESSEntity.FGDSTATUS):C}<{nameof(completed):P}")
+                .WithParameters(new { dtDelivery, completed }))
+                    .Select(s => new DistProg
+                    {
+                        CdBlock = s.CDBLOCK,
+                        NmShain = s.NMSHAIN,
+                        CdDistGroup = s.CDDISTGROUP,
+                        NmDistGroup = s.NMDISTGROUP,
+                        DtDelivery = s.DTDELIVERY,
+                        DtStart = s.DTSTART,
+                        DtEnd = s.DTEND,
+                        NuRitemcnt = s.NURITEMCNT,
+                        NuOitemcnt = s.NUOITEMCNT,
+                        NuRps = s.NURPS,
+                        NuOps = s.NUOPS,
+                    })
+                    .OrderBy(x => x.CdBlock)
+                    .ThenBy(x => x.CdDistGroup);
+            }
         }
 
-        public static IEnumerable<DistProg> GetCompleteds()
+        public static IEnumerable<DistProg> GetCompleteds(string dtDelivery)
         {
-            return new DistProg[]
+            var completed = Status.Completed;
+            using (var con = DbFactory.CreateConnection())
             {
-                new DistProg
-                {
-                    Tdunitareacode = 1,
-                    CdBlock = "01",
-                    NmShain = "サトウイチロウ",
-                    CdDistGroup = "02001",
-                    NmDistGroup = "仕分グループ1",
-                    DtDelivery = "20231015",
-                    DtStart = new DateTime(2023, 12, 8, 9, 1, 0),
-                    DtEnd = null,
-                    NuRitemcnt = 15,
-                    NuOitemcnt = 100,
-                    NuRps = 300,
-                    NuOps = 5000,
-                }
-            };
+                return con.Find<TBDISTGROUPPROGRESSEntity>(s => s
+                .Where(@$"{nameof(TBDISTGROUPPROGRESSEntity.DTDELIVERY):C}={nameof(dtDelivery):P}
+                            and {nameof(TBDISTGROUPPROGRESSEntity.FGDSTATUS):C}={nameof(completed):P}")
+                .WithParameters(new { dtDelivery, completed }))
+                    .Select(s => new DistProg
+                    {
+                        IdPc = s.IDPC,
+                        CdBlock = s.CDBLOCK,
+                        NmShain = s.NMSHAIN,
+                        CdDistGroup = s.CDDISTGROUP,
+                        NmDistGroup = s.NMDISTGROUP,
+                        DtDelivery = s.DTDELIVERY,
+                        DtStart = s.DTSTART,
+                        DtEnd = s.DTEND,
+                        NuRitemcnt = s.NURITEMCNT,
+                        NuOitemcnt = s.NUOITEMCNT,
+                        NuRps = s.NURPS,
+                        NuOps = s.NUOPS,
+                    })
+                    .OrderBy(x => x.IdPc)
+                    .ThenBy(x => x.CdBlock)
+                    .ThenBy(x => x.CdDistGroup);
+            }
         }
     }
 }

@@ -84,8 +84,8 @@
                     <DataGridTextColumn Header="&#xa;予定" Binding="{Binding NuOitemcnt}" ElementStyle="{StaticResource CenterTextElement}"/>
 
                     <DataGridTextColumn Header="仕分個数&#xa;済" Binding="{Binding NuRps}" HeaderStyle="{StaticResource DoubleRowHeader}"
-                                        ElementStyle="{StaticResource RightTextElement}"/>
-                    <DataGridTextColumn Header="&#xa;予定" Binding="{Binding NuOps}" ElementStyle="{StaticResource RightTextElement}"/>
+                                        ElementStyle="{StaticResource CenterTextElement}"/>
+                    <DataGridTextColumn Header="&#xa;予定" Binding="{Binding NuOps}" ElementStyle="{StaticResource CenterTextElement}"/>
 
                     <DataGridTemplateColumn Header="個数進捗率" Width="*">
                         <DataGridTemplateColumn.CellTemplate>
