@@ -4,6 +4,7 @@ using DbLib;
 using DbLib.DbEntities;
 using DbLib.Defs;
 using SeatThreshold.Models;
+using TakakiLib.Models;
 
 namespace SeatThreshold.Loader
 {
@@ -12,15 +13,16 @@ namespace SeatThreshold.Loader
         public static IEnumerable<ThresholdInfo> Get()
         {
             var sql = "SELECT"
-                      + " max(ID_BLOCK) ID_BLOCK"
-                      + ",TB_BLOCK.CD_KYOTEN"
-                      + ",CD_BLOCK"
-                      + ",max(ST_TDUNIT_TYPE) ST_TDUNIT_TYPE"
-                      + ",max(NU_TDUNIT_CNT) NU_TDUNIT_CNT"
-                      + ",max(NU_THRESHOLD) NU_THRESHOLD"
-                      + " FROM TB_BLOCK"
-                      + " group by TB_BLOCK.CD_KYOTEN, CD_BLOCK"
-                      + " order by TB_BLOCK.CD_KYOTEN, CD_BLOCK";
+                      + " t1.ID_BLOCK ID_BLOCK"
+                      + ",t1.CD_KYOTEN"
+                      + ",t1.CD_BLOCK"
+                      + ",t1.ST_TDUNIT_TYPE ST_TDUNIT_TYPE"
+                      + ",t1.NU_TDUNIT_CNT NU_TDUNIT_CNT"
+                      + ",t1.NU_THRESHOLD NU_THRESHOLD"
+                      + ",t1.DT_TEKIYOKAISHI DT_TEKIYOKAISHI"
+                      + " FROM TB_BLOCK t1"
+                      +$" {CreateTekiyoSql.GetFromLastUpdateJoin("TB_BLOCK", "CD_KYOTEN,CD_BLOCK")}"
+                      + " order by t1.CD_KYOTEN, t1.CD_BLOCK";
 
             using (var con = DbFactory.CreateConnection())
             {
@@ -35,16 +37,15 @@ namespace SeatThreshold.Loader
             }
         }
 
-        // 拠点、ブロック、適用開始日から取得(入力DLG)
-        public static ThresholdInfo? GetFromKey(string cdKyoten, string cdBlock, string dtTekiyoKaishi)
+        // ブロック、適用開始日から取得(入力DLG)
+        public static ThresholdInfo? GetFromKey(string cdBlock, string dtTekiyoKaishi)
         {
             using (var con = DbFactory.CreateConnection())
             {
                 return con.Find<TBBLOCKEntity>(s => s
-                .Where(@$"{nameof(TBBLOCKEntity.CDKYOTEN):C} = {nameof(cdKyoten):P} and
-                            {nameof(TBBLOCKEntity.CDBLOCK):C} = {nameof(cdBlock):P} and
+                .Where(@$"{nameof(TBBLOCKEntity.CDBLOCK):C} = {nameof(cdBlock):P} and
                             {nameof(TBBLOCKEntity.DTTEKIYOKAISHI):C} = {nameof(dtTekiyoKaishi):P}")
-                .WithParameters(new { cdKyoten, cdBlock, dtTekiyoKaishi }))
+                .WithParameters(new { cdBlock, dtTekiyoKaishi }))
                     .Select(q => CreateThresholdInfo(q))
                     .FirstOrDefault();
             }

@@ -16,7 +16,7 @@ namespace LabelDesign
         {
             InitializeComponent();
             Syslog.Init();
-            address.Text = "192.168.10.124";
+            address.Text = "192.168.10.26";
         }
 
         private void Print(IEnumerable<string> datas, string address)
@@ -55,20 +55,20 @@ namespace LabelDesign
         {
             var prm = new LargeDistLabel
             {
-                DtDelivery = "2018/10/15",
+                DtDelivery = "20181015",
                 CdJuchuBin = "001",
                 CdBlock = "6",
                 CdDistGroup = "02001",
                 NmDistGroup = "広島1便(通常)",
-                CdShukkaBatch = "02001",
-                NmShukkaBatch = "広島常温1便",
+                CdShukkaBatch = "02002",
+                NmShukkaBatch = "追加秦野冷凍食パンサミット仕分（つくばＣ",
                 CdHimban = "000022499",
                 CdJan = "4904730002302",
-                NmHinSeishikimei = "ミルクフランス",
-                NuBoxUnit = 12,
-                BoxPs = 1,
-                BaraPs = 2,
-                TotalPs = 14,
+                NmHinSeishikimei = "フジアカシアはちみつマーガリンサンﾄﾞ（レーズン）　リタード後",
+                NuBoxUnit = 1234,
+                BoxPs = 1234,
+                BaraPs = 1234,
+                TotalPs = 1444,
             };
             var data = new LargeDistLabelLib.LabelBuilder().Build(prm);
             Print(data, address.Text);

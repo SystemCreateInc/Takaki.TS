@@ -15,7 +15,7 @@ namespace DistGroup.Models
 {
     internal class DistGroupEntityManager
     {
-        internal static void Regist(DistGroupInfo targetInfo, ShainInfo shainInfo)
+        internal static void Regist(DistGroupInfo targetInfo, ShainInfo shainInfo, IEnumerable<Course> courses)
         {
             using (var con = DbFactory.CreateConnection())
             using (var tr = con.BeginTransaction())
@@ -38,13 +38,13 @@ namespace DistGroup.Models
                 con.Insert(entity, x => x.AttachToTransaction(tr));
 
                 DeleteAllBatch(tr, entity.IDDISTGROUP);
-                InsertBatchs(tr, entity.IDDISTGROUP, targetInfo.Batches);
+                InsertBatchs(tr, entity.IDDISTGROUP, targetInfo.Batches, courses);
 
                 tr.Commit();
             }
         }
 
-        internal static void Update(DistGroupInfo targetInfo, ShainInfo shainInfo)
+        internal static void Update(DistGroupInfo targetInfo, ShainInfo shainInfo, IEnumerable<Course> courses)
         {
             using (var con = DbFactory.CreateConnection())
             using (var tr = con.BeginTransaction())
@@ -67,7 +67,7 @@ namespace DistGroup.Models
                 con.Update(entity, x => x.AttachToTransaction(tr));
 
                 DeleteAllBatch(tr, entity.IDDISTGROUP);
-                InsertBatchs(tr, entity.IDDISTGROUP, targetInfo.Batches);
+                InsertBatchs(tr, entity.IDDISTGROUP, targetInfo.Batches, courses);
 
                 tr.Commit();
             }
@@ -96,7 +96,7 @@ namespace DistGroup.Models
                 .WithParameters(new { idDistGroup }));
         }
 
-        private static void InsertBatchs(System.Data.IDbTransaction tr, long iDDISTGROUP, List<BatchInfo> batches)
+        private static void InsertBatchs(System.Data.IDbTransaction tr, long iDDISTGROUP, List<BatchInfo> batches, IEnumerable<Course> courses)
         {
             var sequence = 1;
             var timeStamp = DateTime.Now;
@@ -127,12 +127,12 @@ namespace DistGroup.Models
 
                 sequence++;
 
-                // バッチ毎にコース登録
-                InsertCourse(tr, iDDISTGROUP, batchInfo.PadBatch, batchInfo.Courses.ToList(), timeStamp);
+                // 全バッチに同一コース登録
+                InsertCourse(tr, iDDISTGROUP, batchInfo.PadBatch, courses, timeStamp);
             }
         }
 
-        private static void InsertCourse(System.Data.IDbTransaction tr, long iDDISTGROUP, string cdShukkaBatch, List<Course> courses, DateTime timeStamp)
+        private static void InsertCourse(System.Data.IDbTransaction tr, long iDDISTGROUP, string cdShukkaBatch, IEnumerable<Course> courses, DateTime timeStamp)
         {
             var sequence = 1;
 

@@ -98,13 +98,6 @@ namespace LargeDist.Models
         public string CdShukkaBatch { get; }
         public string? NmShukkaBatch { get; }
 
-        public bool IsSameGroup(DistItem other )
-        {
-            return other.CdHimban == CdHimban
-                && other.CdJuchuBin == CdJuchuBin
-                && other.CdShukkaBatch == CdShukkaBatch;
-        }
-
         public void RefrectInputPiece()
         {
             LastInputPiece = InputPiece;

@@ -24,10 +24,10 @@ namespace LargeDist.Infranstructures
 
                 tr.Commit();
 
-                if (ar.Length == 0)
+                if (ar.Length != 18)
                 {
                     // デフォルト
-                    ar = Enumerable.Range(0, 18).Select(x => x).Cast<int?>().ToArray();
+                    ar = Enumerable.Range(1, 18).Select(x => x).Cast<int?>().ToArray();
                 }
 
                 return ar;

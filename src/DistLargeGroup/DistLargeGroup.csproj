@@ -9,7 +9,12 @@
     <BaseOutputPath>..\..\bin\</BaseOutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <ApplicationIcon>Settings.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Settings.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" />
@@ -25,6 +30,7 @@
     <ProjectReference Include="..\lib\DbLib\DbLib.csproj" />
     <ProjectReference Include="..\lib\LogLib\LogLib.csproj" />
     <ProjectReference Include="..\lib\ReferenceLogLib\ReferenceLogLib.csproj" />
+    <ProjectReference Include="..\lib\TakakiLib\TakakiLib.csproj" />
     <ProjectReference Include="..\lib\WindowLib\WindowLib.csproj" />
   </ItemGroup>
 

@@ -258,7 +258,7 @@ namespace DistBlock.ViewModels
             {
                 CdKyoten = _distBlock.CdKyoten;
                 CdDistGroup = _distBlock.CdDistGroup;
-                ReferenceLog.LogInfos = LogLoader.Get(_distBlock.CdKyoten, _distBlock.CdDistGroup).ToList();
+                ReferenceLog.LogInfos = LogLoader.Get(_distBlock.CdDistGroup).ToList();
 
                 // 参照日初期値で履歴から検索
                 SetReferenceInfo();
@@ -300,7 +300,7 @@ namespace DistBlock.ViewModels
         private void SetReferenceInfo()
         {
             var tekiyoDate = ReferenceLog.GetStartDateInRange(ReferenceDate.ToString("yyyyMMdd"));
-            var tekiyoData = DistBlockLoader.GetFromKey(_distBlock.CdKyoten, _distBlock.CdDistGroup, tekiyoDate);
+            var tekiyoData = DistBlockLoader.GetFromKey(_distBlock.CdDistGroup, tekiyoDate);
 
             if (tekiyoData is not null)
             {
@@ -334,7 +334,7 @@ namespace DistBlock.ViewModels
                     Blocks = Blocks.Where(x => !x.CdBlock.IsNullOrEmpty()).ToList(),
                 };
 
-                var existCustomer = DistBlockLoader.GetFromKey(targetInfo.CdKyoten, targetInfo.CdDistGroup, targetInfo.Tekiyokaishi);
+                var existCustomer = DistBlockLoader.GetFromKey(targetInfo.CdDistGroup, targetInfo.Tekiyokaishi);
                 var isExist = existCustomer is not null;
 
                 if (!ValidateSummaryDate(isExist))
@@ -352,7 +352,7 @@ namespace DistBlock.ViewModels
                     if (isExist)
                     {
                         MessageDialog.Show(_dialogService,
-                            $"拠点[{targetInfo.CdKyoten}],仕分グループコード[{targetInfo.CdDistGroup}],適用開始日[{targetInfo.Tekiyokaishi}]\n同一組み合わせのデータが登録済みです",
+                            $"仕分グループコード[{targetInfo.CdDistGroup}],適用開始日[{targetInfo.Tekiyokaishi}]\n同一組み合わせのデータが登録済みです",
                             "入力エラー");
                         return false;
                     }
@@ -392,16 +392,11 @@ namespace DistBlock.ViewModels
 
             var targetBlocks = inputBlocks.GroupBy(x => x.PadBlock).Select(x => x.Key);
 
-            // 入力したブロックと同じ既存データを取得
-            var sameBlockDatas = DistBlockLoader.GetSameBlocks(
-                targetBlocks, DtTekiyoKaishi.ToString("yyyyMMdd"), DtTekiyoMuko.ToString("yyyyMMdd"), distBlockId ?? -1);
-
             foreach (var targetBlock in targetBlocks)
             {
                 var targetInputs = inputBlocks.Where(x => x.PadBlock == targetBlock);
-                var targetDatas = sameBlockDatas.Where(x => x.PadBlock == targetBlock);
 
-                // 入力したリスト内で検証
+                // 入力したリスト内でのみ検証
                 if (targetInputs.Count() > 1)
                 {
                     var dupliationAddrMsg = GetDuplicationRange(targetInputs.First(), targetInputs.Skip(1));
@@ -410,25 +405,6 @@ namespace DistBlock.ViewModels
                         MessageDialog.Show(_dialogService, "入力したブロック割当範囲内で重複があります\n\n" +
                             $"ブロック[{targetBlock}]\n" +
                             $"[{dupliationAddrMsg}]", "入力エラー");
-                        return false;
-                    }
-                }
-
-                if (!targetDatas.Any())
-                {
-                    continue;
-                }
-
-                // 既存データで検証
-                foreach (var inputRange in targetInputs)
-                {
-                    var dupliationAddrMsg = GetDuplicationRange(inputRange, targetDatas);
-
-                    if (!dupliationAddrMsg.IsNullOrEmpty())
-                    {
-                        MessageDialog.Show(_dialogService, "他の拠点、仕分グループのブロックと重複があります\n\n" +
-                            $"ブロック[{targetBlock}]\n\n" +
-                            $"{dupliationAddrMsg}", "入力エラー");
                         return false;
                     }
                 }
@@ -524,7 +500,7 @@ namespace DistBlock.ViewModels
         {
             try
             {
-                ReferenceLog.LogInfos = LogLoader.Get(CdKyoten, CdDistGroup.PadLeft(4, '0')).ToList();
+                ReferenceLog.LogInfos = LogLoader.Get(CdDistGroup.PadLeft(4, '0')).ToList();
                 ReferenceLog.ValidateSummaryDate(DtTekiyoKaishi, DtTekiyoMuko, isUpdate);
                 return true;
             }
@@ -537,7 +513,7 @@ namespace DistBlock.ViewModels
 
         private void ReloadTekiyoData()
         {
-            TekiyoDate.ReferenceDate = ReferenceDate.ToString("yyyyMMdd");
+            NameLoader.selectDate = ReferenceDate.ToString("yyyyMMdd");
             NmKyoten = NameLoader.GetKyoten(CdKyoten);
             NmDistGroup = NameLoader.GetDistGroup(CdDistGroup);
 

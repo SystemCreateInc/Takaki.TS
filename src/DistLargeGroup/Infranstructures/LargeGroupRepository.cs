@@ -39,13 +39,13 @@ namespace DistLargeGroup.Infranstructures
             }
         }
 
-        internal static bool IsExist(string CdLargeGroup, string CdKyoten)
+        internal static bool IsExist(string CdLargeGroup)
         {
             using (var con = DbFactory.CreateConnection())
             {
                 var count = con.Count<TBLARGEGROUPEntity>(s => s
-                    .Where($"{nameof(TBLARGEGROUPEntity.CDLARGEGROUP):C} = {nameof(CdLargeGroup):P} and {nameof(TBLARGEGROUPEntity.CDKYOTEN):C} = {nameof(CdKyoten):P}")
-                    .WithParameters(new { CdLargeGroup, CdKyoten }));
+                    .Where($"{nameof(TBLARGEGROUPEntity.CDLARGEGROUP):C} = {nameof(CdLargeGroup):P}")
+                    .WithParameters(new { CdLargeGroup }));
                 return count > 0;
             }
         }

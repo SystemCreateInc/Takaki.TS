@@ -2,24 +2,24 @@
 using DbLib;
 using Dapper;
 using System.Windows.Controls.Primitives;
-using ReferenceLogLib.Models;
+using TakakiLib.Models;
 
 namespace SeatMapping.Models
 {
     public class ComboCreator
     {
-        public static List<Combo> Create(string kyotenCode)
+        public static List<Combo> Create()
         {
             var sql = "SELECT"
                       + " CD_BLOCK "
-                      + ",ST_TDUNIT_TYPE "
+                      + ",max(ST_TDUNIT_TYPE) ST_TDUNIT_TYPE"
                       + " FROM TB_BLOCK "
-                      + $" where CD_KYOTEN = @kyotenCode and {CreateTekiyoSql.GetFromDate()}"
+                      + " group by CD_BLOCK"
                       + " order by CD_BLOCK";
 
             using (var con = DbFactory.CreateConnection())
             {
-                return con.Query(sql, new { kyotenCode, selectDate = DateTime.Now.ToString("yyyyMMdd") })
+                return con.Query(sql, new { selectDate = DateTime.Now.ToString("yyyyMMdd") })
                     .Select((q, idx) => new Combo
                     {
                         Index = idx,

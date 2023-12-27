@@ -4,7 +4,7 @@ using DbLib;
 using DbLib.DbEntities;
 using DistBlock.Models;
 using ImTools;
-using ReferenceLogLib.Models;
+using TakakiLib.Models;
 using System.Windows.Controls.Primitives;
 
 namespace DistBlock.Loader
@@ -38,45 +38,17 @@ namespace DistBlock.Loader
         }
 
         // 拠点、仕分グループ、適用日から取得(入力DLG)
-        public static DistBlockInfo? GetFromKey(string cdKyoten, string cdDistGroup, string dtTekiyoKaishi)
+        public static DistBlockInfo? GetFromKey(string cdDistGroup, string dtTekiyoKaishi)
         {
             using (var con = DbFactory.CreateConnection())
             {
                 return con.Find<TBDISTBLOCKEntity>(s => s
                 .Include<TBDISTBLOCKSEQEntity>(x => x.InnerJoin())
-                .Where(@$"{nameof(TBDISTBLOCKEntity.CDKYOTEN):C} = {nameof(cdKyoten):P} and
-                            {nameof(TBDISTBLOCKEntity.CDDISTGROUP):C} = {nameof(cdDistGroup):P} and
+                .Where(@$"{nameof(TBDISTBLOCKEntity.CDDISTGROUP):C} = {nameof(cdDistGroup):P} and
                             {nameof(TBDISTBLOCKEntity.DTTEKIYOKAISHI):C} = {nameof(dtTekiyoKaishi):P}")
-                .WithParameters(new { cdKyoten, cdDistGroup, dtTekiyoKaishi }))
+                .WithParameters(new { cdDistGroup, dtTekiyoKaishi }))
                     .Select(q => CreateDistBlockInfo(q))
                     .FirstOrDefault();
-            }
-        }
-
-        public static List<SameDistBlock> GetSameBlocks(IEnumerable<string> blocks, string startDate, string endDate, long excludeId)
-        {
-            using (var con = DbFactory.CreateConnection())
-            {
-                return con.Find<TBDISTBLOCKSEQEntity>(s => s
-                        .Include<TBDISTBLOCKEntity>()
-                        .Where(@$"{nameof(TBDISTBLOCKSEQEntity.CDBLOCK):C} in {nameof(blocks):P} and
-                            {nameof(TBDISTBLOCKSEQEntity.CDADDRFROM):C} is not null and
-                            {nameof(TBDISTBLOCKSEQEntity.CDADDRTO):C} is not null and
-                            {nameof(TBDISTBLOCKSEQEntity.IDDISTBLOCK):of TB_DIST_BLOCK_SEQ} <> @excludeId and
-                            {CreateTekiyoSql.GetFromRange()}")
-                .WithParameters(new { blocks, startDate, endDate, excludeId }))
-                    .Select(q => new SameDistBlock
-                    {
-                        DistBlockId = q.IDDISTBLOCK,
-                        CdKyoten = q.TBDISTBLOCK.CDKYOTEN,
-                        CdDistGroup = q.TBDISTBLOCK.CDDISTGROUP,
-                        CdBlock = q.CDBLOCK ?? string.Empty,                        
-                        CdAddrFrom = q.CDADDRFROM!,
-                        CdAddrTo = q.CDADDRTO!,
-
-                        Tekiyokaishi = q.TBDISTBLOCK.DTTEKIYOKAISHI,
-                        TekiyoMuko = q.TBDISTBLOCK.DTTEKIYOMUKO,
-                    }).ToList();
             }
         }
 

@@ -58,12 +58,12 @@ namespace LargeDist.Infranstructures
                 , {nameof(TBDISTEntity.FGLSTATUS):C} = @status
                 , {nameof(TBDISTEntity.CDSHAINLARGE):C} = @person
                 , {nameof(TBDISTEntity.NMSHAINLARGE):C} = @personName
-                , {nameof(TBDISTEntity.DTWORKDTLARGE):C} = @date
+                , {nameof(TBDISTEntity.DTWORKDTLARGE):C} = getdate()
                 , {nameof(TBDISTEntity.UpdatedAt):C} = getdate()
                 where {nameof(TBDISTEntity.IDDIST):C} = @id");
 
             Connection.Execute(sql, new { status, result, id, person = person.Code, 
-                personName = person.Name, date = DateTime.Today.ToString("yyyyMMdd") }, Transaction);
+                personName = person.Name }, Transaction);
         }
     }
 }

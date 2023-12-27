@@ -1111,6 +1111,12 @@ namespace DbLib.DbEntities
         public virtual string? Tdunitaddrcode { get; set; }
 
         /// <summary>
+        /// Represents the column 'NU_MAGICHI'.
+        /// </summary>
+        [Column("NU_MAGICHI")]
+        public virtual int? NUMAGICHI { get; set; }
+
+        /// <summary>
         /// Represents the column 'createdAt'.
         /// </summary>
         [Column("createdAt")]
@@ -4316,6 +4322,12 @@ namespace DbLib.DbEntities
         /// </summary>
         [Column("tdunitaddrcode")]
         public virtual string? Tdunitaddrcode { get; set; }
+
+        /// <summary>
+        /// Represents the column 'NU_MAGICHI'.
+        /// </summary>
+        [Column("NU_MAGICHI")]
+        public virtual int? NUMAGICHI { get; set; }
 
         /// <summary>
         /// Represents the column 'createdAt'.

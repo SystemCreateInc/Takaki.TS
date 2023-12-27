@@ -1,16 +1,10 @@
 ﻿using DistLargeGroup.Infranstructures;
-using DistLargeGroup.Models;
-using LogLib;
-using MahApps.Metro.Controls.Dialogs;
 using Prism.Commands;
 using Prism.Mvvm;
-using Prism.Regions;
 using Prism.Services.Dialogs;
 using ReferenceLogLib;
-using ReferenceLogLib.Models;
-using System.Windows;
+using TakakiLib.Models;
 using WindowLib.Utils;
-using static ImTools.ImMap;
 
 namespace DistLargeGroup.ViewModels
 {
@@ -28,7 +22,7 @@ namespace DistLargeGroup.ViewModels
         private Models.DistLargeGroup? _distLargeGroup;
         private IDialogService _dialogService;
         private bool _isModified;
-        private Shain? _shain;
+        private ShainInfo? _shain;
 
         // 参照日
         private DateTime _referenceDate;
@@ -246,9 +240,9 @@ namespace DistLargeGroup.ViewModels
 
                 ReferenceLog.ValidateSummaryDate(DtTekiyoKaishi, DtTekiyoMuko, log is not null);
 
-                if (IsAdd && LargeGroupRepository.IsExist(CdLargeGroup, CdKyoten))
+                if (IsAdd && LargeGroupRepository.IsExist(CdLargeGroup))
                 {
-                    WindowLib.Utils.MessageDialog.Show(_dialogService, "同じ大仕分グループと拠点コードがすでに登録されているため登録できません", "入力エラー");
+                    WindowLib.Utils.MessageDialog.Show(_dialogService, "同じ大仕分グループがすでに登録されているため登録できません", "入力エラー");
                     return;
                 }
 
@@ -282,7 +276,7 @@ namespace DistLargeGroup.ViewModels
         public bool CanCloseDialog()
         {
             if (_isModified
-                && WindowLib.Utils.MessageDialog.Show(_dialogService, "変更された情報が登録されていません。\n入力画面に戻りますか？", "変更確認", ButtonMask.Yes | ButtonMask.No) != ButtonResult.No)
+                && MessageDialog.Show(_dialogService, "変更された情報が登録されていません。\n一覧画面に戻りますか？", "変更確認", ButtonMask.Yes | ButtonMask.No) != ButtonResult.Yes)
             {
                 return false;
             }
@@ -297,7 +291,7 @@ namespace DistLargeGroup.ViewModels
         public void OnDialogOpened(IDialogParameters parameters)
         {
             _distLargeGroup = parameters.GetValue<Models.DistLargeGroup>("DistLargeGroup");
-            _shain = parameters.GetValue<Shain>("Shain");
+            _shain = parameters.GetValue<ShainInfo>("Shain");
             IsAdd = _distLargeGroup == null;
             InitDialog();
             _isModified = false;
@@ -309,9 +303,9 @@ namespace DistLargeGroup.ViewModels
             ReferenceLog.LogInfos.Clear();
 
             SetupForAdd();
-            if (!_isAdd)
+            if (!_isAdd && _distLargeGroup is not null)
             {
-                ReferenceLog.LogInfos = LargeGroupQueryService.GetLog(_distLargeGroup!.CdKyoten, _distLargeGroup.CdLargeGroup).ToList();
+                ReferenceLog.LogInfos = LargeGroupQueryService.GetLog(_distLargeGroup.CdLargeGroup).ToList();
             }
         }
 
@@ -343,7 +337,8 @@ namespace DistLargeGroup.ViewModels
         {
             try
             {
-                NmKyoten = KyotenQueryService.GetName(CdKyoten, ReferenceDate);
+                NameLoader.selectDate = ReferenceDate.ToString("yyyyMMdd");
+                NmKyoten = NameLoader.GetKyoten(CdKyoten);
             }
             catch (Exception ex)
             {

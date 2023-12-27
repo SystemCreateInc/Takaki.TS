@@ -78,15 +78,6 @@ namespace SeatMapping.ViewModels
             set => SetProperty(ref _canRelease, value);
         }
 
-        private string _dispKyotenCode = string.Empty;
-        public string DispKyotenCode
-        {
-            get => _dispKyotenCode;
-            set => SetProperty(ref _dispKyotenCode, value);
-        }
-
-        private string _kyotenCode = string.Empty;
-
         public MainSeatMappingViewModel(IDialogService dialogService, IRegionManager regionManager)
         {
             _dialogService = dialogService;
@@ -133,14 +124,14 @@ namespace SeatMapping.ViewModels
 
         private void initialize()
         {
-            // 拠点コード or ブロック設定無し　終了
-            if (!SetKyotenCode() || !SetBlockCombo())
+            // ブロック設定無し　終了
+            if (!SetBlockCombo())
             {
                 Application.Current.MainWindow.Close();
                 return;
             }
 
-            BlockCombo = ComboCreator.Create(_kyotenCode);
+            BlockCombo = ComboCreator.Create();
             LoadDatas();
         }
 
@@ -161,35 +152,12 @@ namespace SeatMapping.ViewModels
             }
         }
 
-        private bool SetKyotenCode()
-        {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("common.json", true, true)
-                .Build();
-
-            var kyotenCd = config.GetSection("pc")?["cdkyoten"];
-
-            if (kyotenCd.IsNullOrEmpty())
-            {
-                MessageDialog.Show(_dialogService, "拠点コードが設定されていません\n終了します。", "エラー");
-                return false;
-            }
-
-            _kyotenCode = kyotenCd!;
-
-#if DEBUG
-            DispKyotenCode = $" 拠点コード：{_kyotenCode}";
-#endif
-
-            return true;
-        }
-
         private bool SetBlockCombo()
         {
-            BlockCombo = ComboCreator.Create(_kyotenCode);
+            BlockCombo = ComboCreator.Create();
             if (!BlockCombo.Any())
             {
-                MessageDialog.Show(_dialogService, $"ブロックが設定されていません\n終了します。\n\n拠点コード「{_kyotenCode}」", "エラー");
+                MessageDialog.Show(_dialogService, $"ブロックが設定されていません\n終了します。", "エラー");
                 return false;
             }
 

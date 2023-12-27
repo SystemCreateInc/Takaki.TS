@@ -73,7 +73,7 @@
                   d:ItemsSource="{d:SampleData}">
 
             <DataGrid.Columns>
-                <DataGridTemplateColumn>
+                <DataGridTemplateColumn MinWidth="50">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />

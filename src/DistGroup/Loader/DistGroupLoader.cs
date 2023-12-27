@@ -4,9 +4,7 @@ using DbLib;
 using DbLib.DbEntities;
 using DbLib.Defs;
 using DistGroup.Models;
-using ReferenceLogLib.Models;
-using System.Text.RegularExpressions;
-using System.Windows.Controls.Primitives;
+using TakakiLib.Models;
 using static Dapper.SqlMapper;
 
 namespace DistGroup.Loader
@@ -18,16 +16,16 @@ namespace DistGroup.Loader
             var sql = "SELECT"
                      + " t1.CD_KYOTEN"
                      + ",t1.CD_DIST_GROUP"
-                     + ",max(t1.NM_DIST_GROUP) NM_DIST_GROUP"
-                     + ",max(t1.CD_BIN_SUM) CD_BIN_SUM"
-                     + ",max(t3.CD_LARGE_GROUP) CD_LARGE_GROUP"
-                     + ",max(t3.CD_LARGE_GROUP_NAME) CD_LARGE_GROUP_NAME"
-                     + ",max(t4.NM_KYOTEN) NM_KYOTEN"
+                     + ",t1.NM_DIST_GROUP "
+                     + ",t1.CD_BIN_SUM "
+                     + ",t3.CD_LARGE_GROUP "
+                     + ",t3.CD_LARGE_GROUP_NAME "
+                     + ",t4.NM_KYOTEN NM_KYOTEN"
                      + " FROM TB_DIST_GROUP t1"
-                     + " left join TB_DIST_GROUP_LARGE_GROUP t2 on t2.ID_DIST_GROUP = t2.ID_DIST_GROUP"
+                     + " left join TB_DIST_GROUP_LARGE_GROUP t2 on t2.ID_DIST_GROUP = t1.ID_DIST_GROUP"
                      + " left join TB_LARGE_GROUP t3 on t3.CD_LARGE_GROUP = t2.CD_LARGE_GROUP"
                      + " left join TB_MKYOTEN t4 on t4.CD_KYOTEN = t1.CD_KYOTEN"
-                     + " group by t1.CD_KYOTEN, t1.CD_DIST_GROUP"
+                     +$" {CreateTekiyoSql.GetFromLastUpdateJoin("TB_DIST_GROUP", "CD_KYOTEN,CD_DIST_GROUP")}"
                      + " order by t1.CD_KYOTEN, t1.CD_DIST_GROUP";
 
             using (var con = DbFactory.CreateConnection())
@@ -45,8 +43,8 @@ namespace DistGroup.Loader
             }
         }
 
-        // 拠点、仕分グループコード、適用開始日から取得(入力DLG)
-        public static DistGroupInfo? GetFromKey(string cdKyoten, string cdDistGroup, string dtTekiyoKaishi)
+        // 仕分グループコード、適用開始日から取得(入力DLG)
+        public static DistGroupInfo? GetFromKey(string cdDistGroup, string dtTekiyoKaishi)
         {
             using (var con = DbFactory.CreateConnection())
             {
@@ -54,44 +52,42 @@ namespace DistGroup.Loader
                 .Include<TBDISTGROUPSHUKKABATCHEntity>()
                 .Include<TBDISTGROUPLARGEGROUPEntity>()
                 .Include<TBDISTGROUPCOURSEEntity>()
-                .Where(@$"{nameof(TBDISTGROUPEntity.CDKYOTEN):C} = {nameof(cdKyoten):P} and
-                            {nameof(TBDISTGROUPEntity.CDDISTGROUP):C} = {nameof(cdDistGroup):P} and
+                .Where(@$"{nameof(TBDISTGROUPEntity.CDDISTGROUP):C} = {nameof(cdDistGroup):P} and
                             {nameof(TBDISTGROUPEntity.DTTEKIYOKAISHI):C} = {nameof(dtTekiyoKaishi):P}")
-                .WithParameters(new { cdKyoten, cdDistGroup, dtTekiyoKaishi }))
+                .WithParameters(new { cdDistGroup, dtTekiyoKaishi }))
                     .Select(q => CreateDisgGroupInfos(q))
                     .FirstOrDefault();
             }
         }
 
-        internal static IEnumerable<SameCourseInfo> GetSameBatchCourse(IEnumerable<string> batchs, long idDistGroup, string startDate, string endDate)
+        internal static IEnumerable<DistGroupInfo> GetSameCourse(IEnumerable<string> courses, long idDistGroup, string startDate, string endDate)
         {
-            var sql = "SELECT max(t1.ID_DIST_GROUP) ID_DIST_GROUP"
-                    + ",t1.CD_SHUKKA_BATCH"
-                    + ",STRING_AGG(t2.CD_COURSE, ',') Courses"
-                    + ",max(t3.CD_KYOTEN) CD_KYOTEN"
-                    + ",max(t3.CD_DIST_GROUP) CD_DIST_GROUP"
-                    + ",max(t3.DT_TEKIYOKAISHI) DT_TEKIYOKAISHI"
-                    + ",max(t3.DT_TEKIYOMUKO) DT_TEKIYOMUKO"
-                    + " FROM TB_DIST_GROUP_SHUKKA_BATCH t1"
-                    + " join TB_DIST_GROUP_COURSE t2 on t2.ID_DIST_GROUP = t1.ID_DIST_GROUP and t2.CD_SHUKKA_BATCH = t1.CD_SHUKKA_BATCH"
-                    +$" join TB_DIST_GROUP t3 on t3.ID_DIST_GROUP = t1.ID_DIST_GROUP and t3.ID_DIST_GROUP <> @idDistGroup and {CreateTekiyoSql.GetFromRange()}"
-                    + " where t1.CD_SHUKKA_BATCH in @batchs"
-                    + " group by t1.CD_SHUKKA_BATCH";
-
             using (var con = DbFactory.CreateConnection())
             {
-                return con.Query(sql, new { batchs, idDistGroup, startDate, endDate })
-                        .Select(q => new SameCourseInfo
-                        {
-                            IdDistGroup = q.ID_DIST_GROUP,
-                            CdKyoten = q.CD_KYOTEN,
-                            CdDistGroup = q.CD_DIST_GROUP,
-                            Tekiyokaishi = q.DT_TEKIYOKAISHI,
-                            TekiyoMuko = q.DT_TEKIYOMUKO,
+                var limitCourses = courses
+                    .Select((v, i) => new { v, i })
+                    .GroupBy(x => x.i / 200)
+                    .Select(g => g.Select(x => x.v));
 
-                            CdShukkaBatch = q.CD_SHUKKA_BATCH,
-                            Courses = ((string)q.Courses).Split(","),
-                        });
+                foreach (var splitCourses in limitCourses)
+                {
+                    var sameCourseInfos = con.Find<TBDISTGROUPEntity>(s => s
+                    .Include<TBDISTGROUPSHUKKABATCHEntity>()
+                    .Include<TBDISTGROUPLARGEGROUPEntity>()
+                    .Include<TBDISTGROUPCOURSEEntity>()
+                    .Where(@$"{nameof(TBDISTGROUPEntity.IDDISTGROUP):of TB_DIST_GROUP} <> {nameof(idDistGroup):P} and
+                        {nameof(TBDISTGROUPCOURSEEntity.CDCOURSE):of TB_DIST_GROUP_COURSE} in {nameof(courses):P} and
+                        {CreateTekiyoSql.GetFromRange()}")
+                    .WithParameters(new { idDistGroup, courses = splitCourses, startDate, endDate }))
+                        .Select(q => CreateDisgGroupInfos(q));
+
+                    if (sameCourseInfos.Any())
+                    {
+                        return sameCourseInfos;
+                    }
+                }
+
+                return Enumerable.Empty<DistGroupInfo>();
             }
         }
 
@@ -121,6 +117,12 @@ namespace DistGroup.Loader
                     Sequence = x.NULARGEGROUPSEQ,
                     //NmLargeGroup
                 }).ToList() ?? new List<LargeDist>(),
+
+                Courses = entity.TBDISTGROUPCOURSE?.Select(x => new Course
+                {
+                    CdCourse = x.CDCOURSE,
+                    NuCourseSeq = x.NUCOURSESEQ,
+                }) ?? Enumerable.Empty<Course>(),
 
                 IdDistGroup = entity.IDDISTGROUP,
                 CreatedAt = entity.CreatedAt,

@@ -65,35 +65,37 @@
         </ToolBarTray>
 
         <Grid>
+            <Grid.Resources>
+                <Style TargetType="Label">
+                    <Setter Property="FontSize" Value="20"/>
+                    <Setter Property="Margin" Value="3"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                </Style>
+
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="20"/>
+                    <Setter Property="Margin" Value="3"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </Style>
+
+                <Style TargetType="TextBox">
+                    <Setter Property="VerticalAlignment" Value="Stretch"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    <Setter Property="Margin" Value="3"/>
+                </Style>
+            </Grid.Resources>
+
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
-                <Grid.Resources>
-                    <Style TargetType="Label">
-                        <Setter Property="FontSize" Value="18"/>
-                        <Setter Property="Margin" Value="3"/>
-                        <Setter Property="VerticalContentAlignment" Value="Center"/>
-                    </Style>
-
-                    <Style TargetType="TextBlock">
-                        <Setter Property="FontSize" Value="18"/>
-                        <Setter Property="Margin" Value="3"/>
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                    </Style>
-
-                    <Style TargetType="TextBox">
-                        <Setter Property="VerticalAlignment" Value="Stretch"/>
-                        <Setter Property="VerticalContentAlignment" Value="Center"/>
-                        <Setter Property="Margin" Value="3"/>
-                    </Style>
-                </Grid.Resources>
 
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="5*"/>
-                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="4*"/>
+                    <RowDefinition Height="6*"/>
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0">
@@ -142,8 +144,8 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Content="仕分グループコード"/>
-                        <TextBox Grid.Column="1" Text="{Binding CdDistGroup}" MaxLength="5" IsEnabled="{Binding IsAdd}"/>
-                        <TextBox Grid.Column="2" Text="{Binding NmDistGroup}" MaxLength="40" IsEnabled="{Binding IsAdd}"/>
+                        <TextBox Grid.Column="1" Text="{Binding CdDistGroup, UpdateSourceTrigger=PropertyChanged}" MaxLength="5" IsEnabled="{Binding IsAdd}"/>
+                        <TextBox Grid.Column="2" Text="{Binding NmDistGroup, UpdateSourceTrigger=PropertyChanged}" MaxLength="40" IsEnabled="{Binding IsAdd}"/>
                     </Grid>
 
                     <Grid Grid.Row="3">
@@ -218,7 +220,7 @@
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <Label Grid.Row="0" Content="【対象出荷バッチ】"/>
+                    <Label Grid.Row="0" Content="【対象出荷バッチ】" VerticalContentAlignment="Bottom"/>
                     <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid}" SettingsKey="InputBatchColumns"/>
                     <DataGrid Grid.Row="1" x:Name="dataGrid" ItemsSource="{Binding Batches, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                               AutoGenerateColumns="False" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True" 
@@ -286,18 +288,17 @@
 
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="5*"/>
-                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="2.5*"/>
+                    <RowDefinition Height="7.5*"/>
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="1*"/>
-                        <RowDefinition Height="3*"/>
-                        <RowDefinition Height="4*"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="8*"/>
                     </Grid.RowDefinitions>
 
-                    <Label Grid.Row="0" Content="【履歴表示】" FontSize="18" Margin="3" VerticalContentAlignment="Center"/>
+                    <Label Grid.Row="0" Content="【履歴表示】" Margin="3" VerticalContentAlignment="Center"/>
                     <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid2}" SettingsKey="InputLogColumns"/>
                     <DataGrid Grid.Row="1" x:Name="dataGrid2" ItemsSource="{Binding ReferenceLog.LogInfos}" AutoGenerateColumns="False"
                               IsReadOnly="True" VerticalScrollBarVisibility="Visible" IsSynchronizedWithCurrentItem="True"
@@ -367,32 +368,23 @@
 
                 <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="0.15*"/>
-                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="0.7*"/>
+                        <RowDefinition Height="9.3*"/>
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5.2*"/>
-                            <ColumnDefinition Width="4*"/>
-                            <ColumnDefinition Width="0.8*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Label Grid.Column="1" Content="【コース順】"/>
-                    </Grid>
+                    <Label Grid.Column="0" Content="【コース順】" Margin="30,0,0,0" VerticalAlignment="Bottom" />
 
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5.2*"/>
-                            <ColumnDefinition Width="4*"/>
-                            <ColumnDefinition Width="0.8*"/>
+                            <ColumnDefinition Width="9*"/>
+                            <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
 
                         <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid3}" SettingsKey="InputCourseColumns"/>
-                        <DataGrid Grid.Column="1" x:Name="dataGrid3" ItemsSource="{Binding Courses, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" SelectedIndex="{Binding SelectCourseIndex}"
+                        <DataGrid Grid.Column="0" x:Name="dataGrid3" ItemsSource="{Binding Courses, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" SelectedIndex="{Binding SelectCourseIndex}"
                                   AutoGenerateColumns="False" VerticalScrollBarVisibility="Visible" IsSynchronizedWithCurrentItem="True"
                                   SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="All"
-                                  Style="{StaticResource MaterialDesignDataGrid}" Margin="3" FontSize="18">
+                                  Style="{StaticResource MaterialDesignDataGrid}" Margin="30,3,3,3" FontSize="18">
                             <DataGrid.ColumnHeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="Background" Value="LightGray"/>
@@ -406,7 +398,7 @@
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="順番" Binding="{Binding NuCourseSeq}" Width="1*" IsReadOnly="True"
                                                     ElementStyle="{StaticResource RightTextElement}"/>
-                                <DataGridTextColumn Header="コース" Binding="{Binding CdCourse}" Width="1*"
+                                <DataGridTextColumn Header="コース" Binding="{Binding CdCourse, UpdateSourceTrigger=PropertyChanged}" Width="1*"
                                                     ElementStyle="{StaticResource CenterTextElement}">
                                     <DataGridTextColumn.EditingElementStyle>
                                         <Style TargetType="TextBox">
@@ -417,7 +409,7 @@
                             </DataGrid.Columns>
                         </DataGrid>
 
-                        <Grid Grid.Column="2">
+                        <Grid Grid.Column="1">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="1*"/>
                                 <RowDefinition Height="1*"/>

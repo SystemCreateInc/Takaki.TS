@@ -1,6 +1,7 @@
 ﻿using DbLib.Defs;
 using DbLib.Extensions;
 using Prism.Mvvm;
+using System.Collections.ObjectModel;
 
 namespace DistGroup.Models
 {
@@ -56,6 +57,15 @@ namespace DistGroup.Models
             get => _cdLargeGroupName;
             set => SetProperty(ref _cdLargeGroupName, value);
         }
+
+        // コース順リスト
+        private IEnumerable<Course> _courses = Enumerable.Empty<Course>();
+        public IEnumerable<Course> Courses
+        {
+            get => _courses;
+            set => SetProperty(ref _courses, value);
+        }
+
 
         public long IdDistGroup { get; internal set; }
 

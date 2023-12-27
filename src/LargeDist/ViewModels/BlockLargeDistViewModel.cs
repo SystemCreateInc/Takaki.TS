@@ -207,7 +207,7 @@ namespace LargeDist.ViewModels
             {
                 _dialogService.ShowDialog(nameof(ModifyBoxUnitDialog), new DialogParameters
                 {
-                    { "Param", new ModifyItemDialogParam(slotItem.Item) },
+                    { "Param", new ModifyBoxUnitDialogParam(slotItem.Item.Items.First()) },
                 },
                 rc =>
                 {

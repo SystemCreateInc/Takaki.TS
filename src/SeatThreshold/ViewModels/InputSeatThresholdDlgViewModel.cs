@@ -253,7 +253,7 @@ namespace SeatThreshold.ViewModels
             {
                 CdKyoten = _seatThreshold.CdKyoten;
                 CdBlock = _seatThreshold.CdBlock;
-                ReferenceLog.LogInfos = LogLoader.Get(_seatThreshold.CdKyoten, _seatThreshold.CdBlock).ToList();
+                ReferenceLog.LogInfos = LogLoader.Get(_seatThreshold.CdBlock).ToList();
 
                 SetReferenceInfo();
             }
@@ -269,7 +269,7 @@ namespace SeatThreshold.ViewModels
             {
                 ReferenceDate = DateTime.Today;
                 CdKyoten = string.Empty;
-                CdBlock = "0";
+                CdBlock = string.Empty;
             }
 
             TdUnitType = TdUnitType.TdCeiling;
@@ -281,15 +281,15 @@ namespace SeatThreshold.ViewModels
             CdShain = string.Empty;
             NmShain = string.Empty;
 
-            NuTdunitCnt = "1";
-            NuThreshold = "1";
+            NuTdunitCnt = string.Empty;
+            NuThreshold = string.Empty;
         }        
 
         // 参照日から情報取得
         private void SetReferenceInfo()
         {
             var tekiyoDate = ReferenceLog.GetStartDateInRange(ReferenceDate.ToString("yyyyMMdd"));
-            var data = SeatThresholdLoader.GetFromKey(_seatThreshold.CdKyoten, _seatThreshold.CdBlock, tekiyoDate);
+            var data = SeatThresholdLoader.GetFromKey(_seatThreshold.CdBlock, tekiyoDate);
 
             if (data is not null)
             {
@@ -310,7 +310,7 @@ namespace SeatThreshold.ViewModels
         // 適用名称再取得
         private void ReloadTekiyoName()
         {
-            TekiyoDate.ReferenceDate = ReferenceDate.ToString("yyyyMMdd");
+            NameLoader.selectDate = ReferenceDate.ToString("yyyyMMdd");
             NmKyoten = NameLoader.GetKyoten(CdKyoten);
         }
 
@@ -347,7 +347,7 @@ namespace SeatThreshold.ViewModels
                     TekiyoMuko = DtTekiyoMuko.ToString("yyyyMMdd"),
                 };
 
-                var existData = SeatThresholdLoader.GetFromKey(targetData.CdKyoten, targetData.CdBlock, targetData.Tekiyokaishi);
+                var existData = SeatThresholdLoader.GetFromKey(targetData.CdBlock, targetData.Tekiyokaishi);
                 var isExist = existData is not null;
 
                 if (!ValidateSummaryDate(isExist))
@@ -359,7 +359,7 @@ namespace SeatThreshold.ViewModels
                 {
                     if (isExist)
                     {
-                        MessageDialog.Show(_dialogService, $"同一組み合わせのデータが登録済みです\n拠点[{CdKyoten}],ブロック[{CdBlock}],適用開始日[{DtTekiyoKaishi.ToString("yyyyMMdd")}]\n", "入力エラー");
+                        MessageDialog.Show(_dialogService, $"同一組み合わせのデータが登録済みです\nブロック[{CdBlock}],適用開始日[{DtTekiyoKaishi.ToString("yyyyMMdd")}]\n", "入力エラー");
                         return false;
                     }
 
@@ -400,21 +400,21 @@ namespace SeatThreshold.ViewModels
                 return false;
             }
 
-            if (!int.TryParse(NuTdunitCnt, out int tdUnitCnt))
+            if (!int.TryParse(CdBlock, out int block) || block < 1 || block > 99)
             {
-                MessageDialog.Show(_dialogService, "表示器数を入力してください。", "入力エラー");
+                MessageDialog.Show(_dialogService, "ブロックに1以上、99以下の数値を入力してください", "入力エラー");
                 return false;
             }
 
-            if (!decimal.TryParse(NuThreshold, out var threshold))
+            if (!int.TryParse(NuTdunitCnt, out int tdUnitCnt) || tdUnitCnt < 1)
             {
-                MessageDialog.Show(_dialogService, "しきい値を入力してください。", "入力エラー");
+                MessageDialog.Show(_dialogService, "表示器数に1以上の数値を入力してください。", "入力エラー");
                 return false;
             }
 
-            if (threshold > 9999.9m)
+            if (!decimal.TryParse(NuThreshold, out var threshold) || threshold > 9999.9m || threshold < 1)
             {
-                MessageDialog.Show(_dialogService, "しきい値は9999.9以下で入力してください。", "入力エラー");
+                MessageDialog.Show(_dialogService, "しきい値を1以上、9999.9以下で入力してください。", "入力エラー");
                 return false;
             }
 
@@ -426,7 +426,7 @@ namespace SeatThreshold.ViewModels
         {
             try
             {
-                ReferenceLog.LogInfos = LogLoader.Get(CdKyoten, CdBlock.PadLeft(2, '0')).ToList();
+                ReferenceLog.LogInfos = LogLoader.Get(CdBlock.PadLeft(2, '0')).ToList();
                 ReferenceLog.ValidateSummaryDate(DtTekiyoKaishi, DtTekiyoMuko, isUpdate);
                 return true;
             }

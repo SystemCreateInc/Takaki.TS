@@ -19,6 +19,7 @@ namespace LargeDist.ViewModels
         public DelegateCommand RefreshCommand { get; }
         public DelegateCommand SelectCommand { get; }
         public DelegateCommand ExitCommand { get; }
+        public DelegateCommand EnterComboCommand { get; }
 
         private DateTime _deliveryDate = DateTime.Now + new TimeSpan(1, 0, 0, 0);
         public DateTime DeliveryDate
@@ -48,6 +49,14 @@ namespace LargeDist.ViewModels
                 UpdateCanSelect();
             }
         }
+
+        private string _personCode = string.Empty;
+        public string PersonCode
+        {
+            get => _personCode;
+            set => SetProperty(ref _personCode, value);
+        }
+
 
         private ObservableCollection<LargeDistGroup> _groupList = new ObservableCollection<LargeDistGroup>();
         public ObservableCollection<LargeDistGroup> GroupList
@@ -82,9 +91,10 @@ namespace LargeDist.ViewModels
         {
             _dialogService = dialogService;
             _regionManager = regionManager;
-            RefreshCommand = new DelegateCommand(Refresh);
+            RefreshCommand = new(Refresh);
             SelectCommand = new DelegateCommand(Select).ObservesCanExecute(() => CanSelect);
-            ExitCommand = new DelegateCommand(Exit);
+            ExitCommand = new(Exit);
+            EnterComboCommand = new(EnterCombo);
 
             try
             {
@@ -96,6 +106,17 @@ namespace LargeDist.ViewModels
             }
 
             Refresh();
+        }
+
+        private void EnterCombo()
+        {
+            // 入力テキストが7桁未満なら先頭０を追加して７桁にする
+            if (PersonCode.Length < 7)
+            {
+                PersonCode = PersonCode.PadLeft(7, '0');
+            }
+
+            CurrentPerson = PersonList.FirstOrDefault(x => x.Code == PersonCode);
         }
 
         private void SetupPersonList()

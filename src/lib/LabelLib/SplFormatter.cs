@@ -54,6 +54,8 @@ namespace LabelLib
 
         // Jan文字付
         Thickness_Jan,
+
+        Thickness_JanNoGuide,
     }
 
     public class SplFormatter
@@ -230,6 +232,7 @@ namespace LabelLib
                     _formattedString.Append("D");
                     break;
                 case SatoBarcodeThickness.Thickness_1_3:
+                case SatoBarcodeThickness.Thickness_JanNoGuide:
                     _formattedString.Append("B");
                     break;
                 case SatoBarcodeThickness.Thickness_2_5:

@@ -102,9 +102,9 @@
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="1.5*"/>
+                    <RowDefinition Height="1.5*"/>
+                    <RowDefinition Height="8*"/>
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0">
@@ -141,7 +141,11 @@
                     </Grid.ColumnDefinitions>
 
                     <Label Grid.Column="0" Content="ブロック"/>
-                    <TextBox Grid.Column="1" Text="{Binding CdBlock}" MaxLength="2" IsEnabled="{Binding IsAdd}"/>
+                    <TextBox Grid.Column="1" Text="{Binding CdBlock, UpdateSourceTrigger=PropertyChanged}" MaxLength="2" IsEnabled="{Binding IsAdd}">
+                        <i:Interaction.Behaviors>
+                            <b:NumericTextBoxBehavior/>
+                        </i:Interaction.Behaviors>
+                    </TextBox>
                 </Grid>
 
                 <Grid Grid.Row="3">
@@ -241,12 +245,6 @@
             </Grid>
 
             <Grid Grid.Column="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="5*"/>
-                    <RowDefinition Height="5*"/>
-                </Grid.RowDefinitions>
-
-                <Grid Grid.Row="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*"/>
                         <RowDefinition Height="3*"/>
@@ -319,7 +317,6 @@
                             </DataGridTextColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-                </Grid>
             </Grid>
         </Grid>
     </DockPanel>
