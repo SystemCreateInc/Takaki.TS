@@ -1,49 +1,53 @@
-﻿using DbLib.DbEntities;
+﻿using Dapper.FastCrud;
 using DbLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TakakiLib.Models;
-using Dapper.FastCrud;
+using DbLib.DbEntities;
+using System.Data;
 
 namespace EnvironSetting.Models
 {
     public class TbPcEntityManager
     {
-        internal static void Insert(int idPc, string block)
+        internal static void Regist(int idPc, string block)
         {
             using (var con = DbFactory.CreateConnection())
             {
-                var entity = new TBPCEntity
-                {
-                    IDPC = idPc,
-                    CDBLOCK = block,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now,
-                };
-
-                con.Insert(entity);
-            }
-        }
-
-        internal static void Update(int _idPc, string block)
-        {
-            using (var con = DbFactory.CreateConnection())
-            {
-                var entity = con.Get(new TBPCEntity { IDPC = _idPc });
+                var entity = GetEntity(con, idPc);
 
                 if (entity is null)
                 {
-                    throw new Exception("更新対象のデータが見つかりません");
+                    Insert(con, idPc, block);
                 }
-
-                entity.CDBLOCK = block;
-                entity.UpdatedAt = DateTime.Now;
-
-                con.Update(entity);
+                else
+                {
+                    Update(con, entity, block);
+                }
             }
+        }
+
+        internal static void Insert(IDbConnection con, int idPc, string block)
+        {
+            var entity = new TBPCEntity
+            {
+                IDPC = idPc,
+                CDBLOCK = block,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+            };
+
+            con.Insert(entity);
+        }
+
+        internal static void Update(IDbConnection con, TBPCEntity entity, string block)
+        {
+            entity.CDBLOCK = block;
+            entity.UpdatedAt = DateTime.Now;
+
+            con.Update(entity);
+        }
+
+        private static TBPCEntity? GetEntity(IDbConnection con, int idPc)
+        {
+            return con.Get(new TBPCEntity { IDPC = idPc });
         }
     }
 }

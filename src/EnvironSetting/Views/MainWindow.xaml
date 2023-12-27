@@ -5,7 +5,8 @@
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    prism:ViewModelLocator.AutoWireViewModel="True"
                    Title="{Binding Title}"
-                   Style="{StaticResource MainWindowStyle}" >
+                   Style="{StaticResource MainWindowStyle}"
+                   WindowStyle="None" ResizeMode="NoResize">
     <Grid>
         <ContentControl prism:RegionManager.RegionName="ContentRegion" />
     </Grid>

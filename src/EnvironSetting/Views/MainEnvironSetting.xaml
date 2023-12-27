@@ -3,18 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
-             xmlns:controls="clr-namespace:WindowLib.Views;assembly=WindowLib"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
-
-    <DockPanel>
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5">
+             Width="300" Height="110">
+    
+    <StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="5">
             <Label Content="ブロック ： "/>
             <ComboBox Width="100" SelectedValue="{Binding Block}" ItemsSource="{Binding Blocks}"/>
         </StackPanel>
 
-        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="50">
+        <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" Margin="50,10,10,10">
             <Button Content="登録" Margin="3" Command="{Binding RegistCmd}"/>
             <Button Content="キャンセル" Margin="50,3,3,3" Command="{Binding CancelCmd}"/>
         </StackPanel>
-    </DockPanel>
+    </StackPanel>
 </UserControl>

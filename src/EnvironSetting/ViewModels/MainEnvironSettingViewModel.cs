@@ -45,8 +45,6 @@ namespace EnvironSetting.ViewModels
 
         private int _idPc;
 
-        private bool _isExist { get; set; }
-
         public MainEnvironSettingViewModel(IDialogService dialogService)
         {
             _dialogService = dialogService;
@@ -100,7 +98,6 @@ namespace EnvironSetting.ViewModels
             try
             {
                 var block = PcEnvironLoader.GetBlock(_idPc);
-                _isExist = block is not null;
                 Block = block ?? Blocks.First();
             }
             catch (Exception ex)
@@ -115,14 +112,7 @@ namespace EnvironSetting.ViewModels
 
             try
             {
-                if (_isExist)
-                {
-                    TbPcEntityManager.Update(_idPc, Block);
-                }
-                else
-                {
-                    TbPcEntityManager.Insert(_idPc, Block);
-                }
+                TbPcEntityManager.Regist(_idPc, Block);
 
                 Application.Current.MainWindow.Close();
             }
