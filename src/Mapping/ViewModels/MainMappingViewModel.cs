@@ -425,6 +425,8 @@ namespace Mapping.ViewModels
                         Mapping.Saves();
 
                         Mapping.Export();
+
+                        Mapping.ExecHulft();
                     }
                 }
 

@@ -60,6 +60,14 @@ namespace Mapping.Models
             StBoxType = (int)boxtype;
             NuBoxCnt = 0;
             CdHaiShobin = d.CdHaiShobin;
+
+            CdHaishoBin = d.CdHaishoBin;
+            CdJuchuBin = d.CdJuchuBin;
+            CdGtin14 = d.CdGtin14;
+            Rps = d.Rps;
+            DtTorokuNichiji = d.DtTorokuNichiji;
+            DtKoshinNichiji = d.DtKoshinNichiji;
+            CdHenkosha = d.CdHenkosha;
         }
 
         public long Id = 0;
@@ -97,6 +105,14 @@ namespace Mapping.Models
         public int LargeBox = 0;    // 厚箱
         public int SmallBox = 0;    // 薄箱
         public int BlueBox = 0;    // 青箱
+
+        public string CdHaishoBin = string.Empty;
+        public string CdJuchuBin = string.Empty;
+        public string CdGtin14 = string.Empty;
+        public int Rps = 0;
+        public string DtTorokuNichiji = string.Empty;
+        public string DtKoshinNichiji = string.Empty;
+        public string CdHenkosha = string.Empty;
 
 
         public decimal GetBoxSize()
