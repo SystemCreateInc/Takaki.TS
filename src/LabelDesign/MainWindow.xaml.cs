@@ -73,5 +73,15 @@ namespace LabelDesign
             var data = new LargeDistLabelLib.LabelBuilder().Build(prm);
             Print(data, address.Text);
         }
+
+        private void Cut_Click(object sender, RoutedEventArgs e)
+        {
+            var formatter = new SplFormatter();
+            formatter.Start();
+            formatter.Cut();
+            formatter.End(0);
+            var data = new[] { formatter.GetString() };
+            Print(data, address.Text);
+        }
     }
 }

@@ -6,7 +6,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:Height="500"
+             mc:Ignorable="d" d:Height="500" d:Width="1000"
              Loaded="UserControl_Loaded"
              PreviewKeyDown="UserControl_PreviewKeyDown"
              prism:ViewModelLocator.AutoWireViewModel="True">
@@ -17,10 +17,6 @@
     
     <DockPanel>
         <Grid DockPanel.Dock="Top">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
 
             <ToolBarTray>
                 <ToolBar ClipToBounds="False">
@@ -33,8 +29,8 @@
                         <Style TargetType="materialDesign:PackIcon">
                             <Setter Property="VerticalContentAlignment" Value="Center"/>
                             <Setter Property="Margin" Value="1"/>
-                            <Setter Property="Height" Value="32"/>
-                            <Setter Property="Width" Value="32"/>
+                            <Setter Property="Height" Value="24"/>
+                            <Setter Property="Width" Value="24"/>
                             <Setter Property="VerticalAlignment" Value="Center"/>
                             <Setter Property="HorizontalAlignment" Value="Center"/>
                         </Style>
@@ -86,9 +82,17 @@
                     </Button>
                 </ToolBar>
             </ToolBarTray>
+
+            <Grid Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,10,0">
+                <ProgressBar Height="50" Width="500" Minimum="0" Maximum="{Binding ItemProgress.Total, Mode=OneWay}" Value="{Binding ItemProgress.Completed, Mode=OneWay}" Style="{StaticResource MahApps.Styles.ProgressBar}" />
+                <TextBlock TextAlignment="Center" VerticalAlignment="Center" >
+                    大仕分商品進捗：<Run Text="{Binding ItemProgress.Completed}" d:Text="50"/>/<Run Text="{Binding ItemProgress.Total}" d:Text="100"/>
+                    <Run Text="{Binding ItemProgress.Percent}" d:Text="80"/>%
+                </TextBlock>
+            </Grid>
         </Grid>
 
-        <Grid DockPanel.Dock="Top" Margin="10">
+        <Grid DockPanel.Dock="Top" Margin="10,0,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
@@ -97,13 +101,16 @@
             
             <StackPanel Orientation="Horizontal" >
                 <Label Content="JAN:" VerticalAlignment="Center" />
-                <TextBox Text="{Binding Scancode, UpdateSourceTrigger=PropertyChanged}" Width="300" x:Name="Scancode" Style="{StaticResource MaterialDesignOutlinedTextBox}">
+                <TextBox Text="{Binding Scancode, UpdateSourceTrigger=PropertyChanged}" Width="300" Height="40" x:Name="Scancode" Style="{StaticResource MaterialDesignTextBox}">
                     <TextBox.InputBindings>
                         <KeyBinding Gesture="Enter" Command="{Binding EnterScancodeCommand}" />
                     </TextBox.InputBindings>
                 </TextBox>
             </StackPanel>
-            <TextBlock HorizontalAlignment="Center" FontSize="40" FontWeight="ExtraBlack" Grid.Column="1">
+
+            <TextBlock Text="{Binding Message}" HorizontalAlignment="Center" FontSize="30" Foreground="Red" DockPanel.Dock="Top" d:Text="商品スキャンオーバー" Grid.Column="1" />
+
+            <TextBlock HorizontalAlignment="Center" FontSize="40" FontWeight="ExtraBlack" Grid.Column="2" d:Text="＜大仕分モード＞">
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
                         <Style.Triggers>
@@ -120,18 +127,10 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-
-            <Grid Grid.Column="2">
-                <ProgressBar Height="50" Width="400" Minimum="0" Maximum="{Binding ItemProgress.Total, Mode=OneWay}" Value="{Binding ItemProgress.Completed, Mode=OneWay}" Style="{StaticResource MahApps.Styles.ProgressBar}" />
-                <TextBlock TextAlignment="Center" VerticalAlignment="Center" >
-                    大仕分商品進捗：<Run Text="{Binding ItemProgress.Completed}" d:Text="50"/>/<Run Text="{Binding ItemProgress.Total}" d:Text="100"/>
-                    <Run Text="{Binding ItemProgress.Percent}" d:Text="80"/>%
-                </TextBlock>
-            </Grid>
         </Grid>
 
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="10">
-            <TextBlock Text="{Binding DeliveryDate, StringFormat=納品日:yyyy/MM/dd}" d:Text="納品日:2023/10/15" VerticalAlignment="Center" Margin="3"/>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
+            <TextBlock Text="{Binding DeliveryDate, StringFormat=納品日:yyyy/MM/dd}" d:Text="納品日:2023/10/15" VerticalAlignment="Center" />
             <TextBlock VerticalAlignment="Center" Margin="50,0,0,0">
                 大仕分G:<Run Text="{Binding LargeDistGroup.CdLargeGroup}" d:Text="000"/>　　
                 <Run Text="{Binding LargeDistGroup.NmLargeGroup}" d:Text="大仕分グループ"/>
@@ -144,19 +143,16 @@
             </TextBlock>-->
         </StackPanel>
 
-        <TextBlock Text="{Binding Message}" HorizontalAlignment="Center" FontSize="40" Foreground="Red" DockPanel.Dock="Top" d:Text="商品スキャンオーバー" />
-
         <Grid DockPanel.Dock="Bottom">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
-
             <Grid.Resources>
                 <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
-                    <Setter Property="Margin" Value="50,10,50,10" />
-                    <Setter Property="FontSize" Value="30" />
-                    <Setter Property="Height" Value="60"/>
+                    <Setter Property="Margin" Value="50,0,50,0" />
+                    <Setter Property="FontSize" Value="20" />
+                    <Setter Property="Height" Value="40"/>
                 </Style>
             </Grid.Resources>
 

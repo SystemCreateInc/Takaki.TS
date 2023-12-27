@@ -329,5 +329,18 @@ namespace LabelLib
             _formattedString.Append($"DN{sjisText.Length},{data}");
 
         }
+
+        public void CutCount(int count)
+        {
+            _formattedString.Append(ESC);
+            _formattedString.Append("CT");
+            _formattedString.Append(count);
+        }
+
+        public void Cut()
+        {
+            _formattedString.Append(ESC);
+            _formattedString.Append("NC");
+        }
     }
 }

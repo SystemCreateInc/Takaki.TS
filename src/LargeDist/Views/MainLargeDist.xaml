@@ -92,6 +92,10 @@
                   IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
                   SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="None">
 
+            <DataGrid.InputBindings>
+                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding SelectCommand}" />
+            </DataGrid.InputBindings>
+            
             <DataGrid.Columns>
                 <DataGridTextColumn Header="状況" Binding="{Binding StatusText}"/>
                 <DataGridTextColumn Header="大仕分グループ" Binding="{Binding CdLargeGroup}"/>
