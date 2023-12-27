@@ -1,0 +1,152 @@
+﻿<UserControl x:Class="TakahataDistListPrint.Reports.CustomerReport"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             Width="21.0cm" Height="29.7cm" FontSize="20">
+
+    <UserControl.Resources>
+        <ResourceDictionary Source="/PrintLib;component/Styles/DataGridReportStyle.xaml"/>
+    </UserControl.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1.2cm"/>
+            <RowDefinition Height="0.65cm"/>
+            <RowDefinition Height="0.65cm"/>
+            <RowDefinition Height="0.65cm"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="2"/>
+            </Style>
+        </Grid.Resources>
+
+        <Grid Grid.Row="0" Margin="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2.5*"/>
+                <ColumnDefinition Width="1.5*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Text="得意先別仕分リスト(対象外)" FontSize="30" FontWeight="SemiBold"/>
+            <TextBlock Grid.Column="1" Text="{Binding CreateDate, StringFormat=yyyy/MM/dd HH:mm:ss}"/>
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <TextBlock Text="PAGE :"/>
+                <TextBlock Text="{Binding PageInfo}"/>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <TextBlock Text="納品日 : "/>
+            <TextBlock Text="{Binding DtDelivery}"/>
+        </StackPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="0.8*"/>
+                <ColumnDefinition Width="0.8*"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <TextBlock Text="出荷バッチ : "/>
+                <TextBlock Text="{Binding ShukkaBatchInfo}"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <TextBlock Text="コース : "/>
+                <TextBlock Text="{Binding CdCourse}"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <TextBlock Text="配送順 : "/>
+                <TextBlock Text="{Binding CdRoute}"/>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal">
+            <TextBlock Text="取引先 : "/>
+            <TextBlock Text="{Binding TokuisakiInfo}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="4" Orientation="Vertical">
+            <DataGrid ItemsSource="{Binding Reports, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                      VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled" Height="auto"
+                      FontSize="14" RowHeaderWidth="0" RowHeight="32.00" BorderBrush="Black"
+                      Style="{StaticResource DataGridReportStyle}" Margin="2">
+
+                <DataGrid.Resources>
+                    <Style x:Key="LeftHeader" TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="White"/>
+                        <Setter Property="BorderBrush" Value="Black"/>
+                        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                        <Setter Property="Margin" Value="5,0,0,0"/>
+                    </Style>
+
+                    <Style x:Key="CenterTextElement" TargetType="{x:Type TextBlock}">
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                    </Style>
+
+                    <Style x:Key="CenterLeftTextElement" TargetType="{x:Type TextBlock}">
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Margin" Value="5,0,0,0"/>
+                    </Style>
+
+                    <Style x:Key="RightTextElement" TargetType="{x:Type TextBlock}">
+                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Margin" Value="0,0,5,0"/>
+                    </Style>
+
+                    <Style x:Key="TextWrappingElement" TargetType="{x:Type TextBlock}">
+                        <Setter Property="TextWrapping" Value="Wrap"/>
+                        <Setter Property="FontSize" Value="12"/>
+                        <Setter Property="Margin" Value="5,0,0,0"/>
+                        <Setter Property="HorizontalAlignment" Value="Left"/>
+                        <Setter Property="VerticalAlignment" Value="Top"/>
+                    </Style>
+                </DataGrid.Resources>
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="品番" Width="2.5cm" Binding="{Binding CdHimban}" CanUserSort="False"
+                                        ElementStyle="{StaticResource CenterLeftTextElement}"/>
+                    <DataGridTextColumn Header="JANコード" Width="3.31cm" Binding="{Binding CdGtin13}" CanUserSort="False"
+                                        ElementStyle="{StaticResource CenterLeftTextElement}"/>
+                    <DataGridTextColumn Header="品名" Width="10cm" Binding="{Binding NmHinSeishikimei}" CanUserSort="False"
+                                        ElementStyle="{StaticResource TextWrappingElement}"/>
+
+                    <DataGridTemplateColumn Header="予定数&#xa;箱/バラ 総個数" Width="4cm" CanUserSort="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="0.2*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="0.2*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="0.2*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" Text="{Binding BoxOps}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                    <TextBlock Grid.Column="1" Text="/" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding BaraOps}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                    <TextBlock Grid.Column="3" Text="(" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="4" Text="{Binding NuOps}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                    <TextBlock Grid.Column="5" Text=")" VerticalAlignment="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+    </Grid>
+</UserControl>

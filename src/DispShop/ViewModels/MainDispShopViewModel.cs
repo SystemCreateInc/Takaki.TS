@@ -475,7 +475,7 @@ namespace DispShop.ViewModels
         {
             try
             {
-                CollectionViewHelper.SetCollection(DistItems, DistLoaders.Get(DistGroup.DtDelivery.ToString("yyyyMMdd"), DistGroup.CdDistGroup));
+                CollectionViewHelper.SetCollection(DistItems, DistLoaders.Get(DistGroup.DtDelivery.ToString("yyyyMMdd"), DistGroup.CdDistGroup, DistGroup.CdBlock));
             }
             catch (Exception e)
             {

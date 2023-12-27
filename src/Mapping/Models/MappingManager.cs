@@ -1,4 +1,6 @@
 ﻿using ControlzEx.Standard;
+using CsvHelper;
+using CsvHelper.Configuration;
 using CsvLib.Models;
 using Dapper;
 using Dapper.FastCrud;
@@ -22,6 +24,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using TakakiLib.Models;
+using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using static System.Reflection.Metadata.BlobBuilder;
 
 namespace Mapping.Models
@@ -476,6 +479,12 @@ namespace Mapping.Models
                         {
                             bool over = dist.tdunitaddrcode == "" ? true : false;
 
+                            // オーバーは完了とする
+                            if (over)
+                            {
+                                dist.Rps = dist.Ops;
+                            }
+
                             // dist更新
                             var sql = over 
                                  ? "update TB_DIST set FG_MAPSTATUS=@mapstatus,FG_DSTATUS=@dstatus,NU_LOPS=@ops,NU_DOPS=@ops,NU_DRPS=@ops,updatedAt=@update,DT_WORKDT_DIST=@update where ID_DIST=@id"
@@ -622,16 +631,43 @@ namespace Mapping.Models
         // 出荷実績データ作成
         public void Export()
         {
-            // 作成中
-
-            string tmppath = Path.GetTempFileName();
-
-            string path = GetExportPath();
+            List<CsvDist> csvdatas = new List<CsvDist>();
 
             foreach (var distgroup in distgroups)
             {
-//                CsvManager.Create<Dist>(distgroup.dists, tmppath);
+                foreach (var dist in distgroup.dists)
+                {
+                    csvdatas.Add(new CsvDist(dist));
+                }
             }
+
+            string tmppath = Path.GetTempFileName();
+
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            var config = new CsvConfiguration(CultureInfo.CurrentCulture)
+            {
+                HasHeaderRecord = false,                      // ヘッダー行の有無(default:true)
+                Encoding = Encoding.GetEncoding("Shift_JIS"), // 文字コード指定(default:UTF-8)
+                TrimOptions = TrimOptions.Trim,               // 値のトリムオプション
+                Quote = '"',                                  // 値を囲む文字(default:'"')
+                ShouldQuote = (args) => true,                 // 出力時に値をQuoteで指定した文字で囲むかどうか
+            };
+            using (var writer = new StreamWriter(tmppath, false, Encoding.GetEncoding("Shift_JIS")))
+            using (var csv = new CsvWriter(writer, config))
+            {
+                csv.WriteRecords(csvdatas);
+            }
+
+            var path = GetExportPath();
+
+            File.Copy(tmppath, path, true);
+            Syslog.SLCopy(path);
+        }
+
+        public void ExecHulft()
+        {
+            //
+            // C:\HULFT Family\hulft7\binnt\utlsend - f S2AOT001 - sync
         }
 
 

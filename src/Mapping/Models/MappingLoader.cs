@@ -222,7 +222,14 @@ namespace Mapping.Models
                     CdHimban = x.CDHIMBAN,
                     CdGtin13 = x.CDGTIN13,
                     Ops = x.NULOPS,
-
+                    CdHaishoBin = x.CDHAISHOBIN,
+                    CdJuchuBin = x.CDJUCHUBIN,
+                    CdGtin14 = x.CDGTIN14,
+                    Rps = 0,
+                    DtTorokuNichiji = x.DTTOROKUNICHIJI,
+                    DtKoshinNichiji = x.DTKOSHINNICHIJI,
+                    CdHenkosha = x.CDHENKOSHA,
+    
                 }).ToList();
 
                 return dists;
