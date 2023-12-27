@@ -15,6 +15,13 @@ using Mapping.Views;
 using ControlzEx.Standard;
 using Prism.Regions;
 using ReferenceLogLib.Models;
+using Mapping.Defs;
+using ImTools;
+using ExportLib.Infranstructures;
+using DbLib.Defs;
+using ExportLib.Models;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using System.IO;
 
 namespace Mapping.ViewModels
 {
@@ -24,6 +31,7 @@ namespace Mapping.ViewModels
         public DelegateCommand MapInfo { get; }
         public DelegateCommand Decision { get; }
         public DelegateCommand RackMax { get; }
+        public DelegateCommand PathCommand { get; }
         public DelegateCommand Exit { get; }
         public DelegateCommand DistClear { get; }
 
@@ -104,47 +112,51 @@ namespace Mapping.ViewModels
 
             Run = new DelegateCommand(() =>
             {
-            Syslog.Debug("MainMappingViewModel:Run");
+                Syslog.Debug("MainMappingViewModel:Run");
 
                 // 座席マッピング作成開始
                 try
                 {
-                    // チェック
-                    if (Check() == false)
-                        return;
-
-                    if (MessageDialog.Show(_dialogService, "座席マッピングのシミュレーションを開始します。よろしいですか？", "確認", ButtonMask.OK | ButtonMask.Cancel) != ButtonResult.OK)
-                        return;
-
-                    List<string> seldistgroups = DistGroupInfos.Where(x => x.Select == true)
-                        .Select(x => x.CdDistGroup)
-                        .OrderBy(x => x)
-                        .ToList();
-
-                    Mapping.RackAllocMax = DispRackAllocMax;
-                    Mapping.LoadDatas(DtDelivery, seldistgroups);
-
-                    Mapping.Run();
-
-                    // 画面表示内容を更新
-                    foreach(var p in DistGroupInfos)
+                    using (var busy = new WaitCursor())
                     {
-                        if (p.Select == true)
+                        // チェック
+                        if (Check() == false)
+                            return;
+
+                        if (MessageDialog.Show(_dialogService, "座席マッピングのシミュレーションを開始します。よろしいですか？", "確認", ButtonMask.OK | ButtonMask.Cancel) != ButtonResult.OK)
+                            return;
+
+                        List<string> seldistgroups = DistGroupInfos.Where(x => x.Select == true)
+                            .Select(x => x.CdDistGroup)
+                            .OrderBy(x => x)
+                            .ToList();
+
+                        Mapping.RackAllocMax = DispRackAllocMax;
+                        Mapping.LoadDatas(DtDelivery, seldistgroups);
+
+                        Mapping.Run();
+
+                        // 画面表示内容を更新
+                        foreach (var p in DistGroupInfos)
                         {
-                            p.ShopCnt = Mapping.GetShopCnt(p.CdDistGroup);
-                            p.LocCnt = Mapping.GetLocCnt(p.CdDistGroup);
-                            p.OverShopCnt = Mapping.GetOverCnt(p.CdDistGroup);
-
-                            if(p.ShopCnt!=0)
+                            if (p.Select == true)
                             {
-                                p.MappingStatus = p.OverShopCnt==0 ? (int)DbLib.Defs.Status.Completed : (int)DbLib.Defs.Status.Inprog;
+                                p.ShopCnt = Mapping.GetShopCnt(p.CdDistGroup);
+                                p.LocCnt = Mapping.GetLocCnt(p.CdDistGroup);
+                                p.OverShopCnt = Mapping.GetOverCnt(p.CdDistGroup);
+
+                                if (p.ShopCnt != 0)
+                                {
+                                    p.MStatus = MStatus.Run;
+                                    p.MappingStatus = p.OverShopCnt == 0 ? (int)DbLib.Defs.Status.Completed : (int)DbLib.Defs.Status.Inprog;
+                                }
                             }
+                            p.IsSelectEnabled = false;
                         }
+
+                        CanMapping = false;
+                        CanDecision = true;
                     }
-
-                    CanMapping = false;
-                    CanDecision = true;
-
                     MessageDialog.Show(_dialogService, "座席マッピングのシミュレーションか完了しました。", "確認");
                 }
                 catch (Exception e)
@@ -176,9 +188,6 @@ namespace Mapping.ViewModels
                     { "Mapping", Mapping              },
                 });
 
-                // あふれの場合はウインドウ表示
-//                _regionManager.RequestNavigate("ContentRegion", nameof(Views.LocInfo));
-                //                _regionManager.RequestNavigate("ContentRegion", nameof(Views.OverTokuisaki));
             }).ObservesCanExecute(() => CanDistInfo);
 
             Decision = new DelegateCommand(() =>
@@ -187,13 +196,15 @@ namespace Mapping.ViewModels
 
                 try
                 {
-                    if (CurrentDistGroupInfo != null)
+                    var seldistgroups = DistGroupInfos.FindFirst(x => x.Select == true);
+
+                    if (seldistgroups!=null)
                     {
-                        if (CurrentDistGroupInfo.OverShopCnt != 0)
+                        if (seldistgroups.OverShopCnt != 0)
                         {
                             _regionManager.RequestNavigate("ContentRegion", nameof(Views.OverTokuisaki), new NavigationParameters
                             {
-                                { "currentdistinfo", CurrentDistGroupInfo },
+                                { "currentdistinfo", seldistgroups },
                                 { "Mapping", Mapping              },
                             });
                         }
@@ -242,6 +253,33 @@ namespace Mapping.ViewModels
                     });
 
             });
+
+            PathCommand = new DelegateCommand(() =>
+            {
+                using (var repo = new ExportRepository())
+                {
+                    if (repo.GetInterfaceFile(DataType.PickResult) is InterfaceFile interfaceFile)
+                    {
+                        if (GetSelectedFolder(interfaceFile.FileName) is string path)
+                        {
+                            try
+                            {
+                                var fileName = Path.GetFileName(interfaceFile.FileName);
+
+                                var newInterfaceFile = interfaceFile with { FileName = Path.Combine(path, fileName) };
+                                repo.Save(newInterfaceFile);
+                                repo.Commit();
+                            }
+                            catch (Exception ex)
+                            {
+
+                                MessageDialog.Show(_dialogService, ex.Message, "エラー");
+                            }
+                        }
+                    }
+                }
+            });
+
 
             Exit = new DelegateCommand(() =>
             {
@@ -320,7 +358,17 @@ namespace Mapping.ViewModels
         {
             try
             {
+                foreach (var p in DistGroupInfos)
+                {
+                    p.PropertyChanged -= DisplayPropatyChanged;
+                }
+
                 CollectionViewHelper.SetCollection(DistGroupInfos, DistGroupInfoLoader.Get(DtDelivery));
+
+                foreach (var p in DistGroupInfos)
+                {
+                    p.PropertyChanged += DisplayPropatyChanged;
+                }
             }
             catch (Exception e)
             {
@@ -338,10 +386,10 @@ namespace Mapping.ViewModels
                     return false;
                 }
 
-                var r = DistGroupInfos.Where(x => x.Select == true && x.ShopCnt != 0);
-                if (r == null)
+                var r = DistGroupInfos.Where(x => x.Select == true && x.MStatus == MStatus.Decision);
+                if (r.Count()!=0)
                 {
-                    MessageDialog.Show(_dialogService, "座席マッピング済みの仕分グループが選択されています", "エラー");
+                    MessageDialog.Show(_dialogService, "既に決定済みの仕分グループが選択されています", "エラー");
                     return false;
                 }
             }
@@ -356,35 +404,52 @@ namespace Mapping.ViewModels
 
         private void Save(bool bCancel)
         {
-            if (bCancel != true)
+            try
             {
-                Mapping.Saves();
-            }
-
-            // クリア
-            Mapping = new MappingManager();
-
-            LoadDatas();
-
-            CanMapping = true;
-            CanDecision = false;
-
-            if (bCancel != true)
-            {
+                bool bEndMessage = false;
                 foreach (var p in DistGroupInfos)
                 {
                     if (p.Select == true)
                     {
                         if (Mapping.GetOverCnt(p.CdDistGroup) == 0)
                         {
-                            MessageDialog.Show(_dialogService, "座席が正常に終了しました。", "確認");
+                            bEndMessage = true;
                         }
                     }
                 }
+
+                if (bCancel != true)
+                {
+                    using (var busy = new WaitCursor())
+                    {
+                        Mapping.Saves();
+
+                        Mapping.Export();
+                    }
+                }
+
+                // クリア
+                Mapping = new MappingManager();
+
+                LoadDatas();
+
+                CanMapping = true;
+                CanDecision = false;
+
+                if (bCancel != true)
+                {
+                    if (bEndMessage)
+                        MessageDialog.Show(_dialogService, "座席マッピングが正常に終了しました。", "確認");
+                }
+                else
+                {
+                    MessageDialog.Show(_dialogService, "座席実績をキャンセルしました。", "確認");
+                }
             }
-            else
+            catch (Exception e)
             {
-                MessageDialog.Show(_dialogService, "座席実績をキャンセルしました。", "確認");
+                Syslog.Error($"MainMappingViewModel:Check:{e.Message}");
+                MessageDialog.Show(_dialogService, e.Message, "エラー");
             }
         }
         public bool IsNavigationTarget(NavigationContext navigationContext)
@@ -407,6 +472,45 @@ namespace Mapping.ViewModels
                 Save(Mapping.IsCancel);
             }
 
+        }
+        private string? GetSelectedFolder(string fileName)
+        {
+            using (var cofd = new CommonOpenFileDialog()
+            {
+                Title = "実績データ送信先フォルダー選択",
+                RestoreDirectory = true,
+                IsFolderPicker = true,
+                DefaultDirectory = fileName,
+            })
+            {
+                return cofd.ShowDialog() == CommonFileDialogResult.Ok ? cofd.FileName : null;
+            }
+        }
+
+        // 1行のみチェック可能にする
+        private void DisplayPropatyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (sender == null)
+                return;
+
+            DistGroupInfo currnt = (DistGroupInfo)sender;
+            switch (e.PropertyName)
+            {
+                case "Select":
+                    if (currnt.Select == true)
+                    {
+                        // ほかのチェックを外す
+                        foreach (var p in DistGroupInfos)
+                        {
+                            if (p != currnt)
+                            {
+                                if (currnt.Select == true)
+                                    p.Select = false;
+                            }
+                        }
+                    }
+                    break;
+            }
         }
     }
 }

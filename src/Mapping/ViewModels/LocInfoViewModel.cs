@@ -15,6 +15,10 @@ using Mapping.Views;
 using ControlzEx.Standard;
 using Prism.Events;
 using Prism.Regions;
+using System.Printing;
+using Mapping.Reports;
+using PrintPreviewLib;
+using PrintLib;
 
 namespace Mapping.ViewModels
 {
@@ -36,6 +40,13 @@ namespace Mapping.ViewModels
             get => _nmDistGroup;
             set => SetProperty(ref _nmDistGroup, value);
         }
+        private string _dtDelivery = string.Empty;
+        public string DtDelivery
+        {
+            get => _dtDelivery;
+            set => SetProperty(ref _dtDelivery, value);
+        }
+
 
         private int _tokuisakiCnt = 0;
         public int TokuisakiCnt
@@ -65,7 +76,29 @@ namespace Mapping.ViewModels
             {
                 Syslog.Debug("LocInfoViewModel:OverPrint");
 
-                MessageDialog.Show(_dialogService, "印刷！", "確認");
+                try
+                {
+                    var locs = LocInfos.ToList();
+
+                    if (locs == null || locs.Count == 0)
+                    {
+                        return;
+                    }
+
+                    var viewModel = ReportCreator.GetLocList(locs,CdDistGroup,NmDistGroup,DtDelivery);
+#if DEBUG
+                    var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Landscape);
+                    ppm.PrintPreview("ロケーション一覧一覧", viewModel);
+#else
+                    var ppm = new PrintManager(PageMediaSizeName.ISOA4, PageOrientation.Landscape);
+                    ppm.Print("ロケーション一覧一覧", viewModel);
+#endif
+                }
+                catch (Exception e)
+                {
+                    Syslog.Error($"LocInfoViewModel:OverPrint:{e.Message}");
+                    MessageDialog.Show(_dialogService, e.Message, "エラー");
+                }
             });
 
 
@@ -117,6 +150,7 @@ namespace Mapping.ViewModels
             {
                 CdDistGroup = distgroup.CdDistGroup;
                 NmDistGroup = distgroup.NmDistGroup;
+                DtDelivery = _mapping.DtDelivery;
 
                 if (_mapping!.GetShopCnt(_distgroupinfo!.CdDistGroup) != 0)
                 {

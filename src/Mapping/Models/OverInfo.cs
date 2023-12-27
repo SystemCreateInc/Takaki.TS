@@ -7,6 +7,8 @@ namespace Mapping.Models
     {
         public OverInfo(Dist dist, DistGroup distgroup)
         {
+            DtDelivery = dist.DtDelivery;
+
             CdShukkaBatch = dist.CdShukkaBatch;
             NmShukkaBatch = dist.NmShukkaBatch;
 
@@ -22,6 +24,30 @@ namespace Mapping.Models
             NmHinSeishikimei = dist.NmHinSeishikimei;
             CdGtin13 = dist.CdGtin13;
             Ops = dist.Ops;
+
+            // 箱数取得
+            var p = distgroup.stowages.Find(x => x.CdTokuisaki == CdTokuisaki && x.StBoxType == (int)BoxType.SmallBox);
+            if (p != null)
+            {
+                SmallBox += p.NuBoxCnt;
+            }
+            p = distgroup.stowages.Find(x => x.CdTokuisaki == CdTokuisaki && x.StBoxType == (int)BoxType.LargeBox);
+            if (p != null)
+            {
+                LargeBox += p.NuBoxCnt;
+            }
+            p = distgroup.stowages.Find(x => x.CdTokuisaki == CdTokuisaki && x.StBoxType == (int)BoxType.BlueBox);
+            if (p != null)
+            {
+                BlueBox += p.NuBoxCnt;
+            }
+        }
+
+        private string _dtDelivery = string.Empty;
+        public string DtDelivery
+        {
+            get => _dtDelivery;
+            set => SetProperty(ref _dtDelivery, value);
         }
 
         private string _cdDistGroup = string.Empty;
@@ -98,6 +124,27 @@ namespace Mapping.Models
         {
             get => _cdGtin13;
             set => SetProperty(ref _cdGtin13, value);
+        }
+
+        private int _largebox = 0;
+        public int LargeBox
+        {
+            get => _largebox;
+            set => SetProperty(ref _largebox, value);
+        }
+
+        private int _smallbox = 0;
+        public int SmallBox
+        {
+            get => _smallbox;
+            set => SetProperty(ref _smallbox, value);
+        }
+
+        private int _bluebox = 0;
+        public int BlueBox
+        {
+            get => _bluebox;
+            set => SetProperty(ref _bluebox, value);
         }
 
         private int _ops = 0;

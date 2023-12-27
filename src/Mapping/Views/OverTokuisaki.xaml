@@ -84,8 +84,8 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="仕分Ｇ" Width="Auto" Binding="{Binding CdDistGroup}" />
                 <DataGridTextColumn Header="仕分Ｇ名" Width="Auto" Binding="{Binding NmDistGroup}"/>
-                <DataGridTextColumn Header="出荷バッチ" Width="Auto" Binding="{Binding CdDistGroup}" />
-                <DataGridTextColumn Header="出荷バッチ名" Width="Auto" Binding="{Binding NmDistGroup}" />
+                <DataGridTextColumn Header="出荷バッチ" Width="Auto" Binding="{Binding CdShukkaBatch}" />
+                <DataGridTextColumn Header="出荷バッチ名" Width="Auto" Binding="{Binding NmShukkaBatch}" />
                 <DataGridTextColumn Header="コース" Binding="{Binding CdCourse}"/>
                 <DataGridTextColumn Header="配送順" Binding="{Binding CdRoute}" ElementStyle="{StaticResource RightTextElement}"/>
                 <DataGridTextColumn Header="得意先コード" Width="Auto" Binding="{Binding CdTokuisaki}" />
