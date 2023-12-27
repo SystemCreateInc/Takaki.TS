@@ -7,7 +7,6 @@ using Prism.Regions;
 using Prism.Services.Dialogs;
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Threading;
 using WindowLib.Utils;
 
@@ -22,7 +21,6 @@ namespace DistProg.ViewModels
 
         private readonly IDialogService _dialogService;
         private readonly DispatcherTimer _reloadTimer = new DispatcherTimer(DispatcherPriority.ApplicationIdle, Application.Current.Dispatcher);
-        private readonly DispatcherTimer _keyDownTimer = new DispatcherTimer(DispatcherPriority.ApplicationIdle, Application.Current.Dispatcher);
         private string _dtDelivery = string.Empty;
 
         private DateTime _latestTime;
@@ -112,31 +110,11 @@ namespace DistProg.ViewModels
             _reloadTimer.Tick += (s, e) => LoadDatas();
             _reloadTimer.Interval = new TimeSpan(0, 1, 0);
             _reloadTimer.Start();
-            _keyDownTimer.Tick += (s, e) => CheckDownKey();
-            _keyDownTimer.Start();
         }
 
         private void TimerStop()
         {
             _reloadTimer.Stop();
-            _keyDownTimer.Stop();
-        }
-
-        private void CheckDownKey()
-        {
-            var f6KeyDown = (Keyboard.GetKeyStates(Key.F6) & KeyStates.Down) != 0;
-            if (f6KeyDown)
-            {
-                ShowDistUncompleted.Execute();
-                _keyDownTimer.Stop();
-            }
-
-            var f7KeyDown = (Keyboard.GetKeyStates(Key.F7) & KeyStates.Down) != 0;
-            if (f7KeyDown)
-            {
-                ShowDistCompleted.Execute();
-                _keyDownTimer.Stop();
-            }
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
