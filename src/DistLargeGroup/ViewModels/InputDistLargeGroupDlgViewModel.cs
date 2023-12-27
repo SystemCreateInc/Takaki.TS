@@ -205,7 +205,7 @@ namespace DistLargeGroup.ViewModels
             }
             catch (Exception ex)
             {
-                WindowLib.Utils.MessageDialog.Show(_dialogService, ex.Message, "エラー");
+                MessageDialog.Show(_dialogService, ex.Message, "エラー");
             }
         }
 
@@ -226,15 +226,8 @@ namespace DistLargeGroup.ViewModels
                     id = LargeGroupRepository.FindById(log.Id)?.IdLargeGroup;
                 }
 
-                if (string.IsNullOrEmpty(CdKyoten) || string.IsNullOrEmpty(NmKyoten))
+                if (!ValidateInput())
                 {
-                    WindowLib.Utils.MessageDialog.Show(_dialogService, "拠点コードを入力してください", "入力エラー");
-                    return;
-                }
-
-                if (string.IsNullOrEmpty(CdLargeGroup))
-                {
-                    WindowLib.Utils.MessageDialog.Show(_dialogService, "大仕分グループコードを入力してください", "入力エラー");
                     return;
                 }
 
@@ -242,7 +235,7 @@ namespace DistLargeGroup.ViewModels
 
                 if (IsAdd && LargeGroupRepository.IsExist(CdLargeGroup))
                 {
-                    WindowLib.Utils.MessageDialog.Show(_dialogService, "同じ大仕分グループがすでに登録されているため登録できません", "入力エラー");
+                    MessageDialog.Show(_dialogService, "同じ大仕分グループがすでに登録されているため登録できません", "入力エラー");
                     return;
                 }
 
@@ -264,8 +257,32 @@ namespace DistLargeGroup.ViewModels
             }
             catch (Exception ex)
             {
-                WindowLib.Utils.MessageDialog.Show(_dialogService, ex.Message, "エラー");
+                MessageDialog.Show(_dialogService, ex.Message, "エラー");
             }
+        }
+
+        private bool ValidateInput()
+        {
+            if (string.IsNullOrEmpty(CdKyoten.Trim()))
+            {
+                MessageDialog.Show(_dialogService, "拠点コードを入力してください", "入力エラー");
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(CdLargeGroup.Trim())
+                || string.IsNullOrEmpty(CdLargeGroupName.Trim()))
+            {
+                MessageDialog.Show(_dialogService, "大仕分グループコード、名称を入力してください", "入力エラー");
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(NmKyoten))
+            {
+                MessageDialog.Show(_dialogService, "拠点名称が取得出来ていません", "入力エラー");
+                return false;
+            }
+
+            return true;
         }
 
         private void Clear()
@@ -342,7 +359,7 @@ namespace DistLargeGroup.ViewModels
             }
             catch (Exception ex)
             {
-                WindowLib.Utils.MessageDialog.Show(_dialogService, ex.Message, "エラー");
+                MessageDialog.Show(_dialogService, ex.Message, "エラー");
             }
         }
     }
