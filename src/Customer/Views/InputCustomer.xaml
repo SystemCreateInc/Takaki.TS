@@ -5,7 +5,8 @@
              prism:ViewModelLocator.AutoWireViewModel="True"
              xmlns:utils="clr-namespace:WindowLib.Utils;assembly=WindowLib"
              xmlns:controls="clr-namespace:WindowLib.Views;assembly=WindowLib"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              Loaded="UserControl_Loaded">
     
     <prism:Dialog.WindowStyle>
@@ -131,7 +132,13 @@
 
                         <Label Grid.Column="0" Content="拠点コード" VerticalContentAlignment="Center"/>
                         <TextBox Grid.Column="1" x:Name="CdKyoten" Text="{Binding CdKyoten, UpdateSourceTrigger=PropertyChanged, Delay=300}" IsEnabled="{Binding IsAdd}"
-                                 MaxLength="4"/>
+                                 MaxLength="4">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="LostFocus">
+                                    <i:InvokeCommandAction Command="{Binding EndCodeEdit}" CommandParameter="Kyoten" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
                         <Label Grid.Column="2" Background="Blue"/>
                         <TextBlock Grid.Column="2" Text="{Binding NmKyoten}" Foreground="White"/>
                     </Grid>
@@ -145,7 +152,14 @@
 
                         <Label Grid.Column="0" Content="集約得意先コード"/>
                         <TextBox Grid.Column="1" Text="{Binding CdSumTokuisaki, UpdateSourceTrigger=PropertyChanged, Delay=300}" IsEnabled="{Binding IsAdd}"
-                                 MaxLength="6"/>
+                                 MaxLength="6">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="LostFocus">
+                                    <i:InvokeCommandAction Command="{Binding EndCodeEdit}" CommandParameter="SumTokuisaki" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBox>
+                                 
                         <Label Grid.Column="2" Background="Blue"/>
                         <TextBlock Grid.Column="2" Text="{Binding NmSumTokuisaki}" Foreground="White"/>
                     </Grid>
@@ -213,8 +227,7 @@
                         <DataGrid x:Name="dataGrid" ItemsSource="{Binding ChildCustomers}" AutoGenerateColumns="False"
                                   VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
                                   SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="All" CanUserAddRows="True"
-                                  Style="{StaticResource MaterialDesignDataGrid}" Margin="3" FontSize="18"
-                                  RowEditEnding="dataGrid_RowEditEnding">
+                                  Style="{StaticResource MaterialDesignDataGrid}" Margin="3" FontSize="18">
                             <DataGrid.ColumnHeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="Background" Value="LightGray"/>
@@ -224,6 +237,12 @@
                                     <Setter Property="HorizontalContentAlignment" Value="Center"/>
                                 </Style>
                             </DataGrid.ColumnHeaderStyle>
+
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="RowEditEnding">
+                                    <i:InvokeCommandAction Command="{Binding EndCodeEdit}" CommandParameter="CdTokuisakiChild" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
 
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="子得意先コード" Binding="{Binding CdTokuisakiChild, UpdateSourceTrigger=PropertyChanged, Delay=300}" Width="1*"
