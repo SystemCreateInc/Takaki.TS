@@ -62,7 +62,7 @@ namespace TdDpsLib.Models
                             + " where usageid in (@tdtype1,@tdtype2)"
                             + " order by tdunitzonecode,tdunitseq,tdunitaddrcode,tdunitaddr.tdunitcode";
 
-                return con.Query(sql, new { @tdtype1 = tdtype1, @tdtype2 = tdtype2 })
+                var r =  con.Query(sql, new { @tdtype1 = tdtype1, @tdtype2 = tdtype2 })
                      .Select(q => new TdAddrData
                      {
                          TdUnitCode = q.tdunitcode,
@@ -76,10 +76,24 @@ namespace TdDpsLib.Models
                          TdUsageid = q.usageid,
                          TdUnitSeq = q.tdunitseq,
                          TdUnitZoneCode = q.tdunitzonecode,
+                         TdUnitFront = q.tdunitseq,
 
                          Stno = q.tdunitportcode,
                          TdUnitPortType = (TdControllerType)q.tdunitporttype,
                      }).ToList();
+
+                int maxseq = r.Max(x => x.TdUnitSeq);
+
+                // ＳＥＱ降順設定
+                foreach (var row in r)
+                {
+                    if (row.TdUsageid == Tdunittype)
+                    {
+                        row.TdUnitSeqReverse = maxseq - row.TdUnitSeq;
+                    }
+                }
+
+                return r;
             }
         }
         // エリア表示灯表示器情報取得
