@@ -37,20 +37,21 @@ namespace Customer.Views
             }
         }
 
-        //private void dataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
-        //{
-        //    var child = e.Row.Item as ChildCustomer;
+        private void dataGrid_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        {
+            var child = e.Row.Item as ChildCustomer;
 
-        //    if(child is null)
-        //    {
-        //        return;
-        //    }
+            if (child is null)
+            {
+                return;
+            }
 
-        //    // 得意先名が取得出来ていない場合、編集を完了しない
-        //    if (child.NmTokuisaki.IsNullOrEmpty())
-        //    {
-        //        e.Cancel = true;
-        //    }
-        //}
+            // 得意先名が取得出来ていない場合、編集を完了しない            
+            if (child.NmTokuisaki.IsNullOrEmpty())
+            {
+                // fixme:実施後、行追加が動作しなくなる場合がある
+                e.Cancel = true;
+            }
+        }
     }
 }
