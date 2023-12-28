@@ -323,6 +323,8 @@ namespace DistLargeGroup.ViewModels
             if (!_isAdd && _distLargeGroup is not null)
             {
                 ReferenceLog.LogInfos = LargeGroupQueryService.GetLog(_distLargeGroup.CdLargeGroup).ToList();
+                // 当日で参照
+                Refer();
             }
         }
 
