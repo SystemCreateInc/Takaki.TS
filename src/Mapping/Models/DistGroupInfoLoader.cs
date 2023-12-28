@@ -3,6 +3,9 @@ using Dapper;
 using Dapper.FastCrud;
 using DbLib;
 using DbLib.DbEntities;
+using DbLib.Defs;
+using Mapping.Defs;
+using System.Drawing;
 using System.Runtime.Intrinsics.X86;
 using System.Windows.Controls;
 
@@ -27,11 +30,11 @@ namespace Mapping.Models
                         NmDistGroup = x.NMDISTGROUP,
                     }).ToList();
 
-                if (r.Count()!=0)
+                if (r.Count() != 0)
                 {
-                    // 未処理の１件目に選択チェック
+                    // 未処理の１件目に選択チェックする場合はtrue うを設定
                     bool InitSelect = true;
- 
+
                     foreach (var p in r)
                     {
                         // 各仕分グループ件数取得
@@ -105,6 +108,40 @@ namespace Mapping.Models
                 }
 
                 return r;
+            }
+        }
+        public static List<LocInfo> GetLoc(DistGroupInfo distgroupinfo)
+        {
+            using (var con = DbFactory.CreateConnection())
+            {
+                var sql = "select CD_BLOCK,tdunitaddrcode,CD_SUM_TOKUISAKI,NM_SUM_TOKUISAKI,CD_SUM_COURSE,CD_SUM_ROUTE,CD_BIN_SUM,NU_MAGICHI"
+                        + ",min(CD_TOKUISAKI) mintokuisaki"
+                        + ",max(CD_TOKUISAKI) maxtokuisaki"
+                        + " from TB_DIST"
+                        + " inner join TB_DIST_MAPPING on TB_DIST.ID_DIST = TB_DIST_MAPPING.ID_DIST"
+                        + " where DT_DELIVERY = @DtDelivery and CD_DIST_GROUP = @CdDistGroup"
+                        + " and FG_MAPSTATUS = @MapStatus"
+                        + " group by CD_BLOCK,tdunitaddrcode,CD_SUM_TOKUISAKI,NM_SUM_TOKUISAKI,CD_SUM_COURSE,CD_SUM_ROUTE,CD_BIN_SUM,NU_MAGICHI"
+                        + " order by CD_BLOCK, tdunitaddrcode";
+
+                return con.Query(sql, new
+                {
+                    @DtDelivery = distgroupinfo.DtDelivdt,
+                    @CdDistGroup = distgroupinfo.CdDistGroup,
+                    MapStatus = (int)DbLib.Defs.Status.Completed,
+                })
+                     .Select(q => new LocInfo
+                     {
+                         CdBlock = q.CD_BLOCK,
+                         Tdunitaddrcode = q.tdunitaddrcode,
+                         CdTokuisaki = q.CD_SUM_TOKUISAKI,
+                         NmTokuisaki = q.NM_SUM_TOKUISAKI,
+                         CdCourse = q.CD_SUM_COURSE,
+                         CdRoute = q.CD_SUM_ROUTE.ToString(),
+                         CdBinSum = q.CD_BIN_SUM == (int)BinSumType.Yes ? "●" : "",
+                         CdSumTokuisaki = q.mintokuisaki == q.maxtokuisaki && q.maxtokuisaki == q.CD_SUM_TOKUISAKI ? "" : "●",
+                         Maguchi = q.NU_MAGICHI.ToString(),
+                     }).ToList();
             }
         }
     }

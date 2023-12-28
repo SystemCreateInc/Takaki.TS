@@ -71,15 +71,8 @@
         <controls:GridColumnSetting TargetGrid="{Binding ElementName=gridovertokuisaki}" SettingsKey="MappingColumns"/>
         <DataGrid Margin="3" DockPanel.Dock="Left" 
                         Name="gridovertokuisaki" ItemsSource="{Binding OverInfos, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"                          
-                        CanUserSortColumns="False"
-                        CanUserReorderColumns="False"
-                        AutoGenerateColumns="False"
-                        VerticalScrollBarVisibility="Auto"
-                        HorizontalScrollBarVisibility="Auto"
-                        RowHeaderWidth="0" CanUserAddRows="False"
-                        CanUserResizeRows="False" FrozenColumnCount="0"
-                        SelectionMode="Extended"
-                        Background="White" IsReadOnly="True">
+                  IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
+                  SelectionUnit="FullRow" FrozenColumnCount="0">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="仕分Ｇ" Width="Auto" Binding="{Binding CdDistGroup}" />

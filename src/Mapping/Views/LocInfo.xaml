@@ -69,10 +69,8 @@
         <controls:GridColumnSetting TargetGrid="{Binding ElementName=gridlocinfo}" SettingsKey="MappingColumns"/>
         <DataGrid Margin="3" DockPanel.Dock="Left" 
                       Name="gridlocinfo" ItemsSource="{Binding LocInfos, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"                          
-                      AutoGenerateColumns="False"
-                      CanUserSortColumns="false"
-                      IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                      SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="None">
+                  IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
+                  SelectionUnit="FullRow" FrozenColumnCount="0">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ブロック" Width="Auto" Binding="{Binding CdBlock}" />

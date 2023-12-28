@@ -94,7 +94,7 @@
                 <TextBlock Text="{Binding LargeBox}"/>
                 <TextBlock Text="薄箱 : " Margin="30,0,0,0"/>
                 <TextBlock Text="{Binding SmallBox}"/>
-                <TextBlock Text="薄箱 : " Margin="30,0,0,0"/>
+                <TextBlock Text="青箱 : " Margin="30,0,0,0"/>
                 <TextBlock Text="{Binding BlueBox}"/>
             </StackPanel>
         </Grid>

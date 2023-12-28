@@ -13,13 +13,6 @@ namespace Mapping.Models
             set => SetProperty(ref _select, value);
         }
 
-        private bool _isSelectEnabled = true;
-        public bool IsSelectEnabled
-        {
-            get => _isSelectEnabled;
-            set => SetProperty(ref _isSelectEnabled, value);
-        }
-
         private Defs.MStatus _mstatus = Defs.MStatus.Ready;
         public Defs.MStatus MStatus
         {
