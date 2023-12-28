@@ -3,15 +3,12 @@ using DbLib.Extensions;
 using DistGroup.Loader;
 using DistGroup.Models;
 using LogLib;
-using MaterialDesignThemes.Wpf.Converters;
-using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.IdentityModel.Tokens;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using ReferenceLogLib;
 using System.Collections.ObjectModel;
-using System.Linq;
 using TakakiLib.Models;
 using WindowLib.Utils;
 
@@ -621,9 +618,9 @@ namespace DistGroup.ViewModels
                 idx++;
             }
         }
-        private bool ValidateIndex(int index, int count)
+        private bool ValidateCourseIndex(int idx)
         {
-            if (index < 0 || index > count - 1)
+            if (idx < 0 || idx > Courses.Count - 1)
             {
                 return false;
             }
@@ -633,7 +630,7 @@ namespace DistGroup.ViewModels
 
         private void DeleteCourse()
         {
-            if (!ValidateIndex(SelectCourseIndex, Courses.Count))
+            if (!ValidateCourseIndex(SelectCourseIndex))
             {
                 return;
             }
@@ -643,7 +640,7 @@ namespace DistGroup.ViewModels
 
         private void InsertCourse()
         {
-            if (!ValidateIndex(SelectCourseIndex, Courses.Count))
+            if (!ValidateCourseIndex(SelectCourseIndex))
             {
                 return;
             }
@@ -659,7 +656,7 @@ namespace DistGroup.ViewModels
 
             var newIndex = isUp ? SelectCourseIndex - 1 : SelectCourseIndex + 1;
 
-            if (!ValidateIndex(newIndex, Courses.Count))
+            if (!ValidateCourseIndex(SelectCourseIndex) || !ValidateCourseIndex(newIndex))
             {
                 return;
             }

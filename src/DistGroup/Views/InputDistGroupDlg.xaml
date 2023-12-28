@@ -377,17 +377,13 @@
 
                     <Label Grid.Column="0" Content="【コース順】" Margin="30,0,0,0" VerticalAlignment="Bottom" />
 
-                    <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="9*"/>
-                            <ColumnDefinition Width="1*"/>
-                        </Grid.ColumnDefinitions>
-
+                    <StackPanel Orientation="Horizontal" Grid.Row="1">
                         <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid3}" SettingsKey="InputCourseColumns"/>
-                        <DataGrid Grid.Column="0" x:Name="dataGrid3" ItemsSource="{Binding Courses, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" SelectedIndex="{Binding SelectCourseIndex}"
-                                  AutoGenerateColumns="False" VerticalScrollBarVisibility="Visible" IsSynchronizedWithCurrentItem="True"
+                        <DataGrid x:Name="dataGrid3" ItemsSource="{Binding Courses, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" SelectedIndex="{Binding SelectCourseIndex}"
+                                  AutoGenerateColumns="False" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
                                   SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="All"
-                                  Style="{StaticResource MaterialDesignDataGrid}" Margin="30,3,3,3" FontSize="18">
+                                  Style="{StaticResource MaterialDesignDataGrid}" 
+                                  Margin="30,3,3,3" FontSize="18" >
                             <DataGrid.ColumnHeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="Background" Value="LightGray"/>
@@ -413,20 +409,13 @@
                             </DataGrid.Columns>
                         </DataGrid>
 
-                        <Grid Grid.Column="1">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="1*"/>
-                                <RowDefinition Height="1*"/>
-                                <RowDefinition Height="1*"/>
-                                <RowDefinition Height="1*"/>
-                            </Grid.RowDefinitions>
-
-                            <Button Grid.Row="0" Content="▲" Command="{Binding UpReplace}" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="3"/>
-                            <Button Grid.Row="1" Content="▼" Command="{Binding DownReplace}" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="3"/>
-                            <Button Grid.Row="2" Content="追加" Command="{Binding Add}" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="0" Margin="3"/>
-                            <Button Grid.Row="3" Content="削除" Command="{Binding Delete}" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="0" Margin="3"/>
-                        </Grid>
-                    </Grid>
+                        <StackPanel>                            
+                            <Button Content="▲" Command="{Binding UpReplace}" VerticalAlignment="Center" VerticalContentAlignment="Center" Margin="3,10,3,3"/>
+                            <Button Content="▼" Command="{Binding DownReplace}" VerticalAlignment="Center" VerticalContentAlignment="Center"  Margin="3,10,3,3"/>
+                            <Button Content="追加" Command="{Binding Add}" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="0"  Margin="3,50,3,3"/>
+                            <Button Content="削除" Command="{Binding Delete}" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="0"  Margin="3,10,3,3"/>
+                        </StackPanel>
+                    </StackPanel>
                 </Grid>
             </Grid>
         </Grid>
