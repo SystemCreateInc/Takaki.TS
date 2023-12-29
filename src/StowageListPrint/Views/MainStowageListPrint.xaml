@@ -97,7 +97,7 @@
                   AutoGenerateColumns="False" SelectedItem="{Binding CurrentStowageListPrint, Mode=TwoWay}"
                   IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
                   SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="None"
-                  AlternatingRowBackground="{StaticResource AlternateGridBrush}">
+                  AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}">
 
             <DataGrid.InputBindings>
                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding LeftDoubleClick}"/>

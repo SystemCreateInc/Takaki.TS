@@ -190,5 +190,6 @@
         <Setter Property="Language" Value="ja" />
     </Style>
 
-    <SolidColorBrush x:Key="AlternateGridBrush" Color="LightGray"/>
+    <SolidColorBrush x:Key="AlternateDisplayGridBrush" Color="LightGray"/>
+    <SolidColorBrush x:Key="AlternateReportGridBrush" Color="LightGray"/>
 </ResourceDictionary>

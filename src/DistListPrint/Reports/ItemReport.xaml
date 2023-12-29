@@ -88,7 +88,7 @@
                       VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled" Height="auto"
                       FontSize="14" RowHeaderWidth="0" RowHeight="28.00" BorderBrush="Black"
                       Style="{StaticResource DataGridReportStyle}" Margin="2"
-                      AlternatingRowBackground="{StaticResource AlternateGridBrush}">
+                      AlternatingRowBackground="{StaticResource AlternateReportGridBrush}">
 
                 <DataGrid.Resources>
                     <Style x:Key="LeftHeader" TargetType="DataGridColumnHeader">

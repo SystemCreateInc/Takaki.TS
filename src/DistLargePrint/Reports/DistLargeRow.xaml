@@ -7,7 +7,7 @@
         <Style TargetType="{x:Type UserControl}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsEven, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="true">
-                    <Setter Property="Background" Value="{StaticResource AlternateGridBrush}"/>
+                    <Setter Property="Background" Value="{StaticResource AlternateReportGridBrush}"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>

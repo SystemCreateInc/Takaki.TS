@@ -68,7 +68,8 @@
             <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid}" SettingsKey="DistCompletedColumns"/>
             <DataGrid x:Name="dataGrid" ItemsSource="{Binding DistCompleteds}" AutoGenerateColumns="False"
                       IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                      SelectionUnit="FullRow" FrozenColumnCount="0">
+                      SelectionUnit="FullRow" FrozenColumnCount="0"
+                      AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}">
 
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="エリア" Binding="{Binding IdPc}" ElementStyle="{StaticResource CenterTextElement}"/>
