@@ -74,7 +74,7 @@ namespace LargeDist.Models
             }
         }
 
-        internal void Clear()
+        private void Clear()
         {
             Text1 = "";
             Text2 = "";
