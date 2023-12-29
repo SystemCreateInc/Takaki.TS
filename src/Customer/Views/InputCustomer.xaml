@@ -132,7 +132,7 @@
 
                         <Label Grid.Column="0" Content="拠点コード" VerticalContentAlignment="Center"/>
                         <TextBox Grid.Column="1" x:Name="CdKyoten" Text="{Binding CdKyoten, UpdateSourceTrigger=PropertyChanged, Delay=300}" IsEnabled="{Binding IsAdd}"
-                                 MaxLength="4">
+                                 MaxLength="4" InputMethod.IsInputMethodEnabled="False">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="LostFocus">
                                     <i:InvokeCommandAction Command="{Binding EndCodeEdit}" CommandParameter="Kyoten" />
@@ -152,7 +152,7 @@
 
                         <Label Grid.Column="0" Content="集約得意先コード"/>
                         <TextBox Grid.Column="1" Text="{Binding CdSumTokuisaki, UpdateSourceTrigger=PropertyChanged, Delay=300}" IsEnabled="{Binding IsAdd}"
-                                 MaxLength="6">
+                                 MaxLength="6" InputMethod.IsInputMethodEnabled="False">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="LostFocus">
                                     <i:InvokeCommandAction Command="{Binding EndCodeEdit}" CommandParameter="SumTokuisaki" />
@@ -245,16 +245,17 @@
                             </i:Interaction.Triggers>
 
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="子得意先コード" Binding="{Binding CdTokuisakiChild, UpdateSourceTrigger=PropertyChanged, Delay=300}" Width="1*"
+                                <DataGridTextColumn Header="子得意先コード" Binding="{Binding CdTokuisakiChild, UpdateSourceTrigger=PropertyChanged, Delay=300}" Width="3*"
                                                     ElementStyle="{StaticResource CenterTextElement}">
                                     <DataGridTextColumn.EditingElementStyle>
                                         <Style TargetType="TextBox">
                                             <Setter Property="MaxLength" Value="6"/>
+                                            <Setter Property="InputMethod.IsInputMethodEnabled" Value="False"/>
                                         </Style>
                                     </DataGridTextColumn.EditingElementStyle>
                                 </DataGridTextColumn>
 
-                                <DataGridTextColumn Header="得意先名称" Binding="{Binding NmTokuisaki}" Width="1*" IsReadOnly="True">
+                                <DataGridTextColumn Header="得意先名称" Binding="{Binding NmTokuisaki}" Width="7*" IsReadOnly="True">
                                     <DataGridTextColumn.CellStyle>
                                         <Style TargetType="DataGridCell">
                                             <Setter Property="Background" Value="Blue"/>

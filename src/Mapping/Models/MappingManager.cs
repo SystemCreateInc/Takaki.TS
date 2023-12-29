@@ -11,6 +11,7 @@ using DryIoc;
 using ExportLib.Infranstructures;
 using ExportLib.Models;
 using LogLib;
+using Mapping.Defs;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -83,8 +84,6 @@ namespace Mapping.Models
         public string DtDelivery = string.Empty;
 
         public int RackAllocMax = 10;
-        public bool IsSave = false;
-        public bool IsCancel = false;
 
 
         public MappingManager()
@@ -138,10 +137,13 @@ namespace Mapping.Models
             blocks = MappingLoader.GetBlocks(DtDelivery);
             distgroups = MappingLoader.GetDistGroups(DtDelivery, seldistgroups);
         }
-        public void Run()
+        public void Run(string CdDistGroup)
         {
             foreach (var distgroup in distgroups)
             {
+                if (CdDistGroup != distgroup.CdDistGroup)
+                    continue;
+
                 distgroup.dists = MappingLoader.GetDists(distgroup, DtDelivery);
                 if (distgroup.dists.Count == 0)
                 {
@@ -446,12 +448,15 @@ namespace Mapping.Models
 
         }
 
-        public void Saves()
+        public void Saves(string cdDistGroup)
         {
             List<Dist> AppendStowages = new List<Dist>();
 
             foreach (var distgroup in distgroups)
             {
+                if (distgroup.CdDistGroup != cdDistGroup)
+                    continue;
+
                 // 足りないStBoxTypeを追加
                 foreach (var stowage in distgroup.stowages)
                 {
@@ -475,6 +480,9 @@ namespace Mapping.Models
                     // distmapping新規追加
                     foreach (var distgroup in distgroups)
                     {
+                        if (distgroup.CdDistGroup != cdDistGroup)
+                            continue;
+
                         foreach (var dist in distgroup.dists)
                         {
                             bool over = dist.tdunitaddrcode == "" ? true : false;
@@ -488,7 +496,7 @@ namespace Mapping.Models
                             // dist更新
                             var sql = over 
                                  ? "update TB_DIST set FG_MAPSTATUS=@mapstatus,FG_DSTATUS=@dstatus,NU_LOPS=@ops,NU_DOPS=@ops,NU_DRPS=@ops,updatedAt=@update,DT_WORKDT_DIST=@update where ID_DIST=@id"
-                                 : "update TB_DIST set FG_MAPSTATUS=@mapstatus where ID_DIST=@id";
+                                 : "update TB_DIST set FG_MAPSTATUS=@mapstatus,NU_LOPS=@ops,NU_DOPS=@ops where ID_DIST=@id";
 
                             con.Execute(sql,
                             new
@@ -533,6 +541,9 @@ namespace Mapping.Models
                     DateTime now = DateTime.Now;
                     foreach (var distgroup in distgroups)
                     {
+                        if (distgroup.CdDistGroup != cdDistGroup)
+                            continue;
+
                         foreach (var dist in AppendStowages)
                         {
                             string sql = "INSERT INTO TB_STOWAGE VALUES (@DTDELIVERY,@CDSHUKKABATCH,@CDKYOTEN,@CDHAISHOBIN,@CDCOURSE,@CDROUTE,@CDTOKUISAKI,@CDHENKOSHA,@DTTOROKUNICHIJI,@DTKOSHINNICHIJI,@FGSSTATUS,@STBOXTYPE,@NUOBOXCNT,@NURBOXCNT,@NMHENKOSHA,NULL,NULL,@createdAt,@updatedAt);";
@@ -629,12 +640,15 @@ namespace Mapping.Models
         }
 
         // 出荷実績データ作成
-        public void Export()
+        public void Export(string cdDistGroup)
         {
             List<CsvDist> csvdatas = new List<CsvDist>();
 
             foreach (var distgroup in distgroups)
             {
+                if (distgroup.CdDistGroup != cdDistGroup)
+                    continue;
+
                 foreach (var dist in distgroup.dists)
                 {
                     csvdatas.Add(new CsvDist(dist));
@@ -664,10 +678,20 @@ namespace Mapping.Models
             Syslog.SLCopy(path);
         }
 
-        public void ExecHulft()
+        public void ExecHulft(string cdDistGroup)
         {
             //
             // C:\HULFT Family\hulft7\binnt\utlsend - f S2AOT001 - sync
+
+            foreach (var distgroup in distgroups)
+            {
+                if (distgroup.CdDistGroup != cdDistGroup)
+                    continue;
+
+                // 書き込みフラグＯＦＦ
+                distgroup.IsSave = false;
+                distgroup.IsCancel = false;
+            }
         }
 
 
@@ -688,9 +712,9 @@ namespace Mapping.Models
         {
             DtDelivery = dtdelivery;
             NameLoader.selectDate = dtdelivery;
-            sumtokuisakis = MappingLoader.GetSumTokuisakis(DtDelivery);
-            blocks = MappingLoader.GetBlocks( DtDelivery);
-            distgroups = MappingLoader.GetDistGroups(DtDelivery, seldistgroups);
+            var sumtokuisakis = MappingLoader.GetSumTokuisakis(DtDelivery);
+            var blocks = MappingLoader.GetBlocks( DtDelivery);
+            var distgroups = MappingLoader.GetDistGroups(DtDelivery, seldistgroups);
 
             // 該当データを抽出
             foreach (var distgroup in distgroups)

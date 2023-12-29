@@ -13,6 +13,7 @@ using TakakiLib.Models;
 using System.Windows.Documents;
 using LogLib;
 using System.Windows;
+using Mapping.Defs;
 
 namespace Mapping.Models
 {

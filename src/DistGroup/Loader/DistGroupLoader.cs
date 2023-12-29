@@ -22,7 +22,7 @@ namespace DistGroup.Loader
                      + ",t3.CD_LARGE_GROUP_NAME "
                      + ",t4.NM_KYOTEN NM_KYOTEN"
                      + " FROM TB_DIST_GROUP t1"
-                     + " left join TB_DIST_GROUP_LARGE_GROUP t2 on t2.ID_DIST_GROUP = t1.ID_DIST_GROUP"
+                     + " left join TB_DIST_GROUP_LARGE_GROUP t2 on t2.ID_DIST_GROUP = t1.ID_DIST_GROUP and t2.NU_LARGE_GROUP_SEQ = 1"
                      + " left join TB_LARGE_GROUP t3 on t3.CD_LARGE_GROUP = t2.CD_LARGE_GROUP"
                      + " left join TB_MKYOTEN t4 on t4.CD_KYOTEN = t1.CD_KYOTEN"
                      +$" {CreateTekiyoSql.GetFromLastUpdateJoin("TB_DIST_GROUP", "CD_KYOTEN,CD_DIST_GROUP")}"

@@ -20,14 +20,24 @@ namespace WindowLib.Utils
 
                 // 移動先のコントロール取得
                 UIElement? NewFocus = Keyboard.FocusedElement as UIElement;
-                if (NewFocus?.GetType()?.Equals(typeof(TextBox)) == true)
-                {
-                    TextBox? textBox = (TextBox)NewFocus;
 
-                    if (selectAll)
-                        textBox.SelectAll();
-                    else
-                        textBox.SelectionStart = textBox.Text.Length;   // カーソルを最後に移動
+                if(NewFocus is not null)
+                {
+                    var focusType = NewFocus.GetType();
+                    if (focusType.Equals(typeof(TextBox)) == true)
+                    {
+                        TextBox? textBox = (TextBox)NewFocus;
+
+                        if (selectAll)
+                            textBox.SelectAll();
+                        else
+                            textBox.SelectionStart = textBox.Text.Length;   // カーソルを最後に移動
+                    }
+                    else if (focusType.Equals(typeof(DataGridCell)))
+                    {
+                        // Grid 改行抑止
+                        e.Handled = true;
+                    }
                 }
             }
         }

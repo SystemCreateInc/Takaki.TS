@@ -105,10 +105,10 @@ namespace LargeDist.Models
         {
             bool shift = false;
 
-            for (int i = 0; i < Items.Length; ++i)
+            for (int i = 0; i < CustomOrderItems.Length; ++i)
             {
-                var item = Items[i];
-                var next = i < Items.Length - 1 ? Items[i + 1] : null;
+                var item = CustomOrderItems[i];
+                var next = i < CustomOrderItems.Length - 1 ? CustomOrderItems[i + 1] : null;
 
                 if (!shift && item.IsSelected)
                 {

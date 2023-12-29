@@ -46,6 +46,7 @@ namespace LargeDistLabelLib
             fmtr.String(250, 200, SatoFont.X22, string.Format("({0, 3})", data.TotalPs));
 
             fmtr.Barcode(60, 230, SatoBarcodeType.BAR_JAN13, SatoBarcodeThickness.Thickness_JanNoGuide, 3, 40, data.CdJan);
+            fmtr.CutCount(0);
             fmtr.End(1);
             return new[] { fmtr.GetString() };
         }

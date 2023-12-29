@@ -57,8 +57,6 @@ namespace Mapping.ViewModels
                 Syslog.Debug("OverTokuisakiViewModel:OverPrint");
                 try
                 {
-
-
                     var overs = OverInfos.ToList();
 
                     if (overs == null || overs.Count == 0)
@@ -76,7 +74,13 @@ namespace Mapping.ViewModels
 #endif
 
                     if (_mapping != null)
-                        _mapping.IsSave = true;
+                    {
+                        var distgroup = _mapping!.distgroups.Where(x => x.CdDistGroup == _distgroupinfo!.CdDistGroup).FirstOrDefault();
+                        if (distgroup != null)
+                        {
+                            distgroup.IsSave = true;
+                        }
+                    }
 
                     regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
                 }
@@ -97,7 +101,13 @@ namespace Mapping.ViewModels
                     return;
 
                 if (_mapping != null)
-                    _mapping.IsCancel = true;
+                {
+                    var distgroup = _mapping!.distgroups.Where(x => x.CdDistGroup == _distgroupinfo!.CdDistGroup).FirstOrDefault();
+                    if (distgroup != null)
+                    {
+                        distgroup.IsSave = true;
+                    }
+                }
 
                 regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
             });

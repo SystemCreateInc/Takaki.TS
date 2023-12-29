@@ -387,10 +387,15 @@ namespace SeatThreshold.ViewModels
 
         private bool ValidateInput()
         {
-            if(CdKyoten.IsNullOrEmpty() ||
-                CdBlock.IsNullOrEmpty())
+            if(CdKyoten.Trim().IsNullOrEmpty())
             {
-                MessageDialog.Show(_dialogService, "拠点コード、ブロックを入力してください。", "入力エラー");
+                MessageDialog.Show(_dialogService, "拠点コードを入力してください。", "入力エラー");
+                return false;
+            }
+
+            if(CdBlock.Trim().IsNullOrEmpty())
+            {
+                MessageDialog.Show(_dialogService, "ブロックを入力してください。", "入力エラー");
                 return false;
             }
 

@@ -165,6 +165,7 @@ namespace Picking.Models
         public int InSeq { get; set; }
         public int Zone { get; set; }
         public int TdUnitSeq { get; set; }
+        public int TdUnitSeqReverse { get; set; }
         public bool bLight { get; set; } = false;
     }
     public class TdColor

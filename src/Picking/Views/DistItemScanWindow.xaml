@@ -10,7 +10,7 @@
              xmlns:utils="clr-namespace:WindowLib.Utils;assembly=WindowLib"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              Loaded="UserControl_Loaded">
-
+    
     <prism:Dialog.WindowStyle>
         <Style TargetType="Window" BasedOn="{StaticResource DialogWindow}"/>
     </prism:Dialog.WindowStyle>
@@ -20,7 +20,7 @@
             <utils:EnumToBooleanConverter x:Key="Enum"/>
         </ResourceDictionary>
     </UserControl.Resources>
-
+    
     <DockPanel DockPanel.Dock="Top">
         <DockPanel.Resources>
             <Style TargetType="TextBox">

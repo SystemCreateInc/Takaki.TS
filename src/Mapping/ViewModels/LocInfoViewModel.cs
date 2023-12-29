@@ -19,6 +19,7 @@ using System.Printing;
 using Mapping.Reports;
 using PrintPreviewLib;
 using PrintLib;
+using DbLib.Defs;
 
 namespace Mapping.ViewModels
 {
@@ -145,55 +146,65 @@ namespace Mapping.ViewModels
         {
             TokuisakiCnt = 0;
             List<Models.LocInfo> locs = new List<Models.LocInfo>();
+            List<Models.LocInfo> tmps = new List<Models.LocInfo>();
+
             var distgroup = _mapping!.distgroups.Where(x => x.CdDistGroup == _distgroupinfo!.CdDistGroup).FirstOrDefault();
             if (distgroup != null)
             {
+                tmps = DistGroupInfoLoader.GetLoc(_distgroupinfo);
+
+                foreach (var blockseq in distgroup.DistBlockSeqs)
+                {
+                    var block = _mapping!.blocks.Find(x => x.CdBlock == blockseq.CdBlock);
+                    if (block != null)
+                    {
+                        foreach (var addr in block.addrs)
+                        {
+                            var loc = new Models.LocInfo(block.CdBlock, addr.TdUnitAddrCode);
+                            locs.Add(loc);
+                        }
+                    }
+                }
+
                 CdDistGroup = distgroup.CdDistGroup;
                 NmDistGroup = distgroup.NmDistGroup;
                 DtDelivery = _mapping.DtDelivery;
 
                 if (_mapping!.GetShopCnt(_distgroupinfo!.CdDistGroup) != 0)
                 {
-                    // マッピングした情報をもとに表示する
-                    foreach (var p in distgroup.mappings)
+                    foreach (var loc in locs)
                     {
-                        // ロケーションのみ設定
-                        if (p.CdBlock != "")
+                        var p = distgroup.mappings.Find(x => x.CdBlock == loc.CdBlock && x.tdunitaddrcode == loc.Tdunitaddrcode);
+                        if (p != null)
                         {
-                            locs.Add(new Models.LocInfo(p));
+                            loc.CdCourse = p.CdSumCourse;
+                            loc.CdRoute = p.CdSumRoute.ToString();
+                            loc.CdTokuisaki = p.CdSumTokuisaki;
+                            loc.NmTokuisaki = p.NmSumTokuisaki;
+                            loc.CdBinSum = p.CdBinSum == (int)BinSumType.Yes ? "●" : "";
+                            loc.CdSumTokuisaki = p.CdTokuisaki != p.CdSumTokuisaki ? "●" : "";
+                            loc.Maguchi = p.Maguchi.ToString();
                             TokuisakiCnt++;
-
-                            // 足りないアドレスを追加
-                            if(1<p.Maguchi)
-                            {
-                                var block = _mapping!.blocks.Find(x => x.CdBlock == p.CdBlock);
-                                if (block != null)
-                                {
-                                    for (int i = 0; i < block.addrs.Count(); i++)
-                                    {
-                                        if (block.addrs[i].TdUnitAddrCode == p.tdunitaddrcode)
-                                        {
-                                            for(int j=1;j<p.Maguchi;j++ )
-                                            {
-                                                int idx = i + j;
-                                                if (idx <  block.addrs.Count())
-                                                {
-                                                    var addr = block.addrs[idx];
-                                                    var loc = new Models.LocInfo(block.CdBlock, addr.TdUnitAddrCode);
-                                                    locs.Add(loc);
-                                                }
-                                            }
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
                         }
                     }
                 }
                 else
                 {
-                    // マッピング済みなのでデータを読み込み
+                    foreach (var loc in locs)
+                    {
+                        var p = tmps.Find(x => x.CdBlock == loc.CdBlock && x.Tdunitaddrcode == loc.Tdunitaddrcode);
+                        if (p != null)
+                        {
+                            loc.CdCourse = p.CdCourse;
+                            loc.CdRoute = p.CdRoute;
+                            loc.CdTokuisaki = p.CdTokuisaki;
+                            loc.NmTokuisaki = p.NmTokuisaki;
+                            loc.CdBinSum = p.CdBinSum;
+                            loc.CdSumTokuisaki = p.CdSumTokuisaki;
+                            loc.Maguchi = p.Maguchi;
+                            TokuisakiCnt++;
+                        }
+                    }
                 }
             }
 

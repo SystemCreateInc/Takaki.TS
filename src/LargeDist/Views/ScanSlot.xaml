@@ -79,7 +79,7 @@
             <Border Grid.Row="2" >
                 <Viewbox HorizontalAlignment="Right">
                     <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center">
-                        <Run Text="{Binding Item.TotalPieceCount, RelativeSource={RelativeSource AncestorType=UserControl}}" d:Text="123" />
+                        <Run Text="{Binding Item.TotalPieceCount, RelativeSource={RelativeSource AncestorType=UserControl}}" d:Text="123"/>
                         <Run Style="{StaticResource LabelRun}">個</Run>
                     </TextBlock>
                 </Viewbox>

@@ -16,6 +16,7 @@
     </UserControl.Resources>
 
     <DockPanel>
+
         <Grid DockPanel.Dock="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="6*"/>
@@ -112,28 +113,40 @@
         <DataGrid Margin="3" DockPanel.Dock="Left" 
                         Name="griddistgroupmapping" ItemsSource="{Binding DistGroupInfos, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"                          
                         SelectedItem="{Binding CurrentDistGroupInfo, Mode=TwoWay}"
-                      AutoGenerateColumns="False"
-                      IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                      SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="None">
+                  IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
+                  SelectionUnit="FullRow" FrozenColumnCount="0">
+
+            <DataGrid.Resources>
+                <!-- データグリッドText中央 -->
+                <Style x:Key="LeftTextElement" TargetType="{x:Type TextBlock}">
+                    <Setter Property="HorizontalAlignment" Value="Left"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                </Style>
+            </DataGrid.Resources>
 
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="選択" Width="Auto" SortMemberPath="Logic" IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <CheckBox IsChecked="{Binding Select, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsHitTestVisible="{Binding IsSelectEnabled}" Content="{Binding MStatus_name}"/>
+                                <CheckBox IsChecked="{Binding Select, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Center">
+                                     <CheckBox.LayoutTransform>
+                                        <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                    </CheckBox.LayoutTransform>
+                                </CheckBox>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTextColumn Header="仕分Ｇ" Width="Auto" Binding="{Binding CdDistGroup}" />
-                <DataGridTextColumn Header="仕分Ｇ名" Width="Auto" Binding="{Binding NmDistGroup}" />
+                <DataGridTextColumn Header="状態" Width="Auto" Binding="{Binding MStatus_name}" ElementStyle="{StaticResource LeftTextElement}"/>
+                <DataGridTextColumn Header="仕分Ｇ" Width="Auto" Binding="{Binding CdDistGroup}" ElementStyle="{StaticResource LeftTextElement}"/>
+                <DataGridTextColumn Header="仕分Ｇ名" Width="Auto" Binding="{Binding NmDistGroup}" ElementStyle="{StaticResource LeftTextElement}"/>
                 <DataGridTextColumn Header="得意先数" Width="Auto" Binding="{Binding ShopCnt}" ElementStyle="{StaticResource RightTextElement}"/>
                 <DataGridTextColumn Header="座席数" Width="Auto" Binding="{Binding LocCnt}"  ElementStyle="{StaticResource RightTextElement}"/>
                 <DataGridTextColumn Header="あふれ得意先数" Width="Auto" Binding="{Binding OverShopCnt}"  ElementStyle="{StaticResource RightTextElement}" />
-                <DataGridTextColumn Header="大仕分" Width="Auto" Binding="{Binding NmLStatus}"  ElementStyle="{StaticResource RightTextElement}" />
-                <DataGridTextColumn Header="得意先仕分" Width="Auto" Binding="{Binding NmDStatus}"  ElementStyle="{StaticResource RightTextElement}" />
+                <DataGridTextColumn Header="大仕分" Width="Auto" Binding="{Binding NmLStatus}"  ElementStyle="{StaticResource CenterTextElement}" />
+                <DataGridTextColumn Header="得意先仕分" Width="Auto" Binding="{Binding NmDStatus}"  ElementStyle="{StaticResource CenterTextElement}" />
 
             </DataGrid.Columns>
         </DataGrid>

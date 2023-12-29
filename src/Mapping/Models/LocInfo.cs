@@ -10,6 +10,9 @@ namespace Mapping.Models
 {
     public class LocInfo : BindableBase
     {
+        public LocInfo()
+        {
+        }
         public LocInfo(string cdblock,string tdunitaddrcode)
         {
             CdBlock = cdblock;

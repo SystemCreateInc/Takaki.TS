@@ -3,15 +3,12 @@ using DbLib.Extensions;
 using DistGroup.Loader;
 using DistGroup.Models;
 using LogLib;
-using MaterialDesignThemes.Wpf.Converters;
-using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.IdentityModel.Tokens;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using ReferenceLogLib;
 using System.Collections.ObjectModel;
-using System.Linq;
 using TakakiLib.Models;
 using WindowLib.Utils;
 
@@ -163,6 +160,9 @@ namespace DistGroup.ViewModels
             set => SetProperty(ref _batches, value);
         }
 
+        // 入力有りバッチ
+        private IEnumerable<BatchInfo> _inputedBatchs => Batches.Where(x => !x.CdShukkaBatch.Trim().IsNullOrEmpty());
+
         private int _selectBatchIndex;
         public int SelectBatchIndex
         {
@@ -178,7 +178,7 @@ namespace DistGroup.ViewModels
             set => SetProperty(ref _courses, value);
         }
         // 入力有りコース
-        private IEnumerable<Course> _inputedCourses => Courses.Where(x => !x.CdCourse.IsNullOrEmpty());
+        private IEnumerable<Course> _inputedCourses => Courses.Where(x => !x.CdCourse.Trim().IsNullOrEmpty());
 
         private int _selectCourseIndex;
         public int SelectCourseIndex
@@ -420,7 +420,7 @@ namespace DistGroup.ViewModels
                     CdDistGroup = CdDistGroup.PadLeft(5, '0'),
                     NmDistGroup = NmDistGroup,
                     CdBinSum = BinSumType,
-                    Batches = Batches.Where(x => !x.CdShukkaBatch.IsNullOrEmpty()).ToList(),
+                    Batches = _inputedBatchs.ToList(),
 
                     Tekiyokaishi = DtTekiyoKaishi.ToString("yyyyMMdd"),
                     TekiyoMuko = DtTekiyoMuko.ToString("yyyyMMdd"),
@@ -473,10 +473,16 @@ namespace DistGroup.ViewModels
 
         private bool ValidateInput()
         {
-            if (CdKyoten.IsNullOrEmpty() ||
-                CdDistGroup.IsNullOrEmpty())
+            if (CdKyoten.Trim().IsNullOrEmpty())
             {
-                MessageDialog.Show(_dialogService, "拠点コード、仕分グループコードを入力してください。", "入力エラー");
+                MessageDialog.Show(_dialogService, "拠点コードを入力してください。", "入力エラー");
+                return false;
+            }
+
+            if (CdDistGroup.Trim().IsNullOrEmpty()||
+                NmDistGroup.IsNullOrEmpty())
+            {
+                MessageDialog.Show(_dialogService, "仕分グループコード、名称を入力してください。", "入力エラー");
                 return false;
             }
 
@@ -486,39 +492,31 @@ namespace DistGroup.ViewModels
                 return false;
             }
 
-            if (NmDistGroup.IsNullOrEmpty())
+            if (BinSumType == BinSumType.No && Batches.Count > 1)
             {
-                MessageDialog.Show(_dialogService, "仕分グループ名称を入力してください", "入力エラー");
+                MessageDialog.Show(_dialogService, "配送便集計を「する」に変更。\nまたは出荷バッチの入力行を1行のみにして下さい。", "入力エラー");
                 return false;
             }
 
-            if (!Batches.Any(x => !x.CdShukkaBatch.IsNullOrEmpty()))
+            if (!_inputedBatchs.Any())
             {
                 MessageDialog.Show(_dialogService, "対象出荷バッチを入力してください", "入力エラー");
                 return false;
             }
 
-            if (BinSumType == BinSumType.No && Batches.Count > 1)
-            {
-                MessageDialog.Show(_dialogService, "配送便集計をするに変更。\nまたは出荷バッチの入力行を1行のみにして下さい。", "入力エラー");
-                return false;
-            }
-
-            var validBatches = Batches.Where(x => !x.CdShukkaBatch.IsNullOrEmpty());
-
-            if (validBatches.Any(x => x.NmShukkaBatch.IsNullOrEmpty() || x.NmLargeGroup.IsNullOrEmpty()))
-            {
-                MessageDialog.Show(_dialogService, "対象出荷バッチ内に、名称が取得出来ていない項目があります", "入力エラー");
-                return false;
-            }
-
-            if (validBatches.Any(x => !x.CdShukkaBatch.IsNullOrEmpty() && x.CdLargeGroup.IsNullOrEmpty()))
+            if (_inputedBatchs.Any(x => x.CdLargeGroup.Trim().IsNullOrEmpty()))
             {
                 MessageDialog.Show(_dialogService, "対象出荷バッチ内に、大仕分けコードが入力されていない項目があります", "入力エラー");
                 return false;
             }
 
-            if(validBatches.GroupBy(x => x.CdShukkaBatch).Any(x => x.Count() > 1))
+            if (_inputedBatchs.Any(x => x.NmShukkaBatch.IsNullOrEmpty() || x.NmLargeGroup.IsNullOrEmpty()))
+            {
+                MessageDialog.Show(_dialogService, "対象出荷バッチ内に、名称が取得出来ていない項目があります", "入力エラー");
+                return false;
+            }
+
+            if(_inputedBatchs.GroupBy(x => x.CdShukkaBatch).Any(x => x.Count() > 1))
             {
                 MessageDialog.Show(_dialogService, "対象出荷バッチが重複しています", "入力エラー");
                 return false;
@@ -527,6 +525,12 @@ namespace DistGroup.ViewModels
             if (!_inputedCourses.Any())
             {
                 MessageDialog.Show(_dialogService, $"コースを追加してください", "入力エラー");
+                return false;
+            }
+
+            if (_inputedCourses.Count() > 999)
+            {
+                MessageDialog.Show(_dialogService, $"コース", "入力エラー");
                 return false;
             }
 
@@ -614,9 +618,9 @@ namespace DistGroup.ViewModels
                 idx++;
             }
         }
-        private bool ValidateIndex(int index, int count)
+        private bool ValidateCourseIndex(int idx)
         {
-            if (index < 0 || index > count - 1)
+            if (idx < 0 || idx > Courses.Count - 1)
             {
                 return false;
             }
@@ -626,7 +630,7 @@ namespace DistGroup.ViewModels
 
         private void DeleteCourse()
         {
-            if (!ValidateIndex(SelectCourseIndex, Courses.Count))
+            if (!ValidateCourseIndex(SelectCourseIndex))
             {
                 return;
             }
@@ -636,7 +640,7 @@ namespace DistGroup.ViewModels
 
         private void InsertCourse()
         {
-            if (!ValidateIndex(SelectCourseIndex, Courses.Count))
+            if (!ValidateCourseIndex(SelectCourseIndex))
             {
                 return;
             }
@@ -652,7 +656,7 @@ namespace DistGroup.ViewModels
 
             var newIndex = isUp ? SelectCourseIndex - 1 : SelectCourseIndex + 1;
 
-            if (!ValidateIndex(newIndex, Courses.Count))
+            if (!ValidateCourseIndex(SelectCourseIndex) || !ValidateCourseIndex(newIndex))
             {
                 return;
             }

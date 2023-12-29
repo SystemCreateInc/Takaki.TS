@@ -1,4 +1,5 @@
-﻿using LargeDistLabelLib;
+﻿using LabelLib;
+using LargeDistLabelLib;
 using Microsoft.Extensions.Configuration;
 using Prism.Events;
 using Prism.Services.Dialogs;
@@ -47,8 +48,17 @@ namespace LargeDist.Models
             var client = new PrinterClient(PrinterAddress, source.Token);
             int count = 0;
             var labelBuilder = new LabelBuilder();
+            var formatter = new SplFormatter();
+            formatter.Start();
+            formatter.Cut();
+            formatter.End(0);
 
-            foreach (var label in _labels.SelectMany(x => labelBuilder.Build(x)))
+            var labels = _labels
+                .SelectMany(x => labelBuilder.Build(x))
+                .Append(formatter.GetString())
+                .ToArray();
+
+            foreach (var label in labels)
             {
                 ++count;
                 _eventAggregator.GetEvent<ProgressDialogEvent>()
@@ -65,6 +75,10 @@ namespace LargeDist.Models
                     try
                     {
                         client.Print(label);
+                        break;
+                    }
+                    catch (OperationCanceledException) 
+                    {
                         break;
                     }
                     catch (Exception ex)

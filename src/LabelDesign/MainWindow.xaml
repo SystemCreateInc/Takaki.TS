@@ -22,6 +22,7 @@
             <GroupBox Header="PC">
                 <StackPanel Orientation="Vertical">
                     <Button Content="大仕分ラベル"  Name="LargeDist" Click="LargeDist_Click" Grid.Column="0"/>
+                    <Button Content="カット"  Name="Cut" Click="Cut_Click" Grid.Column="0"/>
                 </StackPanel>
             </GroupBox>
         </StackPanel>

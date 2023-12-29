@@ -22,6 +22,10 @@ using DbLib.Defs;
 using ExportLib.Models;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.IO;
+using System.Diagnostics.Eventing.Reader;
+using Dapper.FastCrud;
+using ZXing;
+using MS.WindowsAPICodePack.Internal;
 
 namespace Mapping.ViewModels
 {
@@ -66,7 +70,17 @@ namespace Mapping.ViewModels
             set
             {
                 SetProperty(ref _currentDistGroupInfo, value);
-                CanDistInfo = value == null ? false : true;
+            }
+        }
+        private DistGroupInfo? _selectedDistGroupInfo;
+
+        public DistGroupInfo? SelectedDistGroupInfo
+        {
+            get => _selectedDistGroupInfo;
+            set
+            {
+                SetProperty(ref _selectedDistGroupInfo, value);
+                RefreshButtonOverlay();
             }
         }
         private bool _canDistInfo = false;
@@ -117,30 +131,23 @@ namespace Mapping.ViewModels
                 // 座席マッピング作成開始
                 try
                 {
+                    // チェック
+                    if (Check() == false)
+                        return;
+
+                    if (MessageDialog.Show(_dialogService, $"仕分グループ:{SelectedDistGroupInfo?.CdDistGroup} {SelectedDistGroupInfo?.NmDistGroup}\n\n座席マッピングのシミュレーションを開始します。よろしいですか？", "確認", ButtonMask.OK | ButtonMask.Cancel) != ButtonResult.OK)
+                        return;
+
                     using (var busy = new WaitCursor())
                     {
-                        // チェック
-                        if (Check() == false)
-                            return;
-
-                        if (MessageDialog.Show(_dialogService, "座席マッピングのシミュレーションを開始します。よろしいですか？", "確認", ButtonMask.OK | ButtonMask.Cancel) != ButtonResult.OK)
-                            return;
-
-                        List<string> seldistgroups = DistGroupInfos.Where(x => x.Select == true)
-                            .Select(x => x.CdDistGroup)
-                            .OrderBy(x => x)
-                            .ToList();
-
-                        Mapping.RackAllocMax = DispRackAllocMax;
-                        Mapping.LoadDatas(DtDelivery, seldistgroups);
-
-                        Mapping.Run();
-
                         // 画面表示内容を更新
                         foreach (var p in DistGroupInfos)
                         {
                             if (p.Select == true)
                             {
+                                // Mapping開始
+                                Mapping.Run(p.CdDistGroup);
+
                                 p.ShopCnt = Mapping.GetShopCnt(p.CdDistGroup);
                                 p.LocCnt = Mapping.GetLocCnt(p.CdDistGroup);
                                 p.OverShopCnt = Mapping.GetOverCnt(p.CdDistGroup);
@@ -150,14 +157,13 @@ namespace Mapping.ViewModels
                                     p.MStatus = MStatus.Run;
                                     p.MappingStatus = p.OverShopCnt == 0 ? (int)DbLib.Defs.Status.Completed : (int)DbLib.Defs.Status.Inprog;
                                 }
+                                break;
                             }
-                            p.IsSelectEnabled = false;
                         }
 
-                        CanMapping = false;
-                        CanDecision = true;
+                        RefreshButtonOverlay();
                     }
-                    MessageDialog.Show(_dialogService, "座席マッピングのシミュレーションか完了しました。", "確認");
+                    MessageDialog.Show(_dialogService, $"仕分グループ:{SelectedDistGroupInfo?.CdDistGroup} {SelectedDistGroupInfo?.NmDistGroup}\n\n座席マッピングのシミュレーションか完了しました。", "確認");
                 }
                 catch (Exception e)
                 {
@@ -170,21 +176,12 @@ namespace Mapping.ViewModels
             {
                 Syslog.Debug("MainMappingViewModel:MapInfo");
 
-                if (CurrentDistGroupInfo == null)
+                if (SelectedDistGroupInfo == null)
                     return;
-
-                if (CurrentDistGroupInfo.MappingStatus == (int)DbLib.Defs.Status.Ready)
-                {
-                    if (CurrentDistGroupInfo.ShopCnt!=0)
-                        MessageDialog.Show(_dialogService, "座席マッピング済みの仕分けグループです。", "確認");
-                    else
-                        MessageDialog.Show(_dialogService, "座席マッピングを実行していない仕分けグループです。", "確認");
-                    return;
-                }
 
                 _regionManager.RequestNavigate("ContentRegion", nameof(Views.LocInfo), new NavigationParameters
                 {
-                    { "currentdistinfo", CurrentDistGroupInfo },
+                    { "currentdistinfo", SelectedDistGroupInfo },
                     { "Mapping", Mapping              },
                 });
 
@@ -196,15 +193,13 @@ namespace Mapping.ViewModels
 
                 try
                 {
-                    var seldistgroups = DistGroupInfos.FindFirst(x => x.Select == true);
-
-                    if (seldistgroups!=null)
+                    if (SelectedDistGroupInfo != null)
                     {
-                        if (seldistgroups.OverShopCnt != 0)
+                        if (SelectedDistGroupInfo.OverShopCnt != 0)
                         {
                             _regionManager.RequestNavigate("ContentRegion", nameof(Views.OverTokuisaki), new NavigationParameters
                             {
-                                { "currentdistinfo", seldistgroups },
+                                { "currentdistinfo", SelectedDistGroupInfo },
                                 { "Mapping", Mapping              },
                             });
                         }
@@ -292,23 +287,29 @@ namespace Mapping.ViewModels
                 Syslog.Debug("MainMappingViewModel:Clear");
                 try
                 {
+                    if (SelectedDistGroupInfo == null)
+                    {
+                        MessageDialog.Show(_dialogService, "初期化する仕分けバッチを選択して下さい", "エラー");
+                        return;
+                    }
+
+                    if(SelectedDistGroupInfo.MStatus!=MStatus.Ready)
+                    {
+                        if (MessageDialog.Show(_dialogService, "決定済みの仕分けバッチのみ初期化できます。", "確認", ButtonMask.OK | ButtonMask.Cancel) != ButtonResult.OK)
+                            return;
+                    }
+
                     List<string> seldistgroups = DistGroupInfos.Where(x => x.Select == true)
                         .Select(x => x.CdDistGroup)
                         .OrderBy(x => x)
                         .ToList();
-
-                    if (seldistgroups.Count == 0)
-                    {
-                        MessageDialog.Show(_dialogService, "初期化する仕分けバッチを選択して下さい", "確認");
-                        return;
-                    }
 
                     if (MessageDialog.Show(_dialogService, "選択した仕分グループを初期化します。よろしいですか？", "確認", ButtonMask.OK | ButtonMask.Cancel) != ButtonResult.OK)
                         return;
 
                     Mapping.ClearDatas(DtDelivery, seldistgroups);
 
-                    LoadDatas();
+                    LoadDatas(SelectedDistGroupInfo.CdDistGroup);
 
                     MessageDialog.Show(_dialogService, "初期化しました", "確認");
 
@@ -323,6 +324,9 @@ namespace Mapping.ViewModels
 
             _idleTimer.Tick += (s, e) => CheckShifted();
             _idleTimer.Start();
+
+            // 閉じるボタン応答
+            System.Windows.Application.Current.MainWindow.Closing += Closing;
 
             // 納品日選択
             _dialogService.ShowDialog(nameof(DeliveryDateDialog),
@@ -342,6 +346,16 @@ namespace Mapping.ViewModels
         }
         private void Closing(object? sender, CancelEventArgs e)
         {
+            if (DistGroupInfos.Where(x => x.MStatus == MStatus.Run).Count() != 0)
+            {
+                if (MessageDialog.Show(_dialogService, "決定していない仕分バッチがありますが、終了してよろしいですか？", "確認", ButtonMask.OK | ButtonMask.Cancel) != ButtonResult.OK)
+                { 
+                    e.Cancel = true;
+                    return;
+                }
+            }
+
+
             _idleTimer.Tick -= (s, e) => CheckShifted();
             _idleTimer.Stop();
         }
@@ -354,21 +368,57 @@ namespace Mapping.ViewModels
             CanShifted = shifted;
         }
 
-        private void LoadDatas()
+        private void LoadDatas(string cdDistGroup = "")
         {
             try
             {
-                foreach (var p in DistGroupInfos)
+                if (cdDistGroup=="")
                 {
-                    p.PropertyChanged -= DisplayPropatyChanged;
+                    var seldistgroup = DistGroupInfos.Where(x=>x.Select==true).Select(x=>x.CdDistGroup).FirstOrDefault();
+
+                    foreach (var p in DistGroupInfos)
+                    {
+                        p.PropertyChanged -= DisplayPropatyChanged;
+                    }
+
+                    CollectionViewHelper.SetCollection(DistGroupInfos, DistGroupInfoLoader.Get(DtDelivery));
+
+                    foreach (var p in DistGroupInfos)
+                    {
+                        p.PropertyChanged += DisplayPropatyChanged;
+                    }
+
+                    List<string> seldistgroups = DistGroupInfos
+                        .Select(x => x.CdDistGroup)
+                        .OrderBy(x => x)
+                        .ToList();
+
+                    Mapping.RackAllocMax = DispRackAllocMax;
+                    Mapping.LoadDatas(DtDelivery, seldistgroups);
+                }
+                else
+                {
+                    ObservableCollection<DistGroupInfo> tmps = new ObservableCollection<DistGroupInfo>();
+                    CollectionViewHelper.SetCollection(tmps, DistGroupInfoLoader.Get(DtDelivery));
+
+                    if (SelectedDistGroupInfo != null)
+                    {
+                        var p = tmps.FindFirst(x => x.CdDistGroup == SelectedDistGroupInfo.CdDistGroup);
+
+                        // 該当配分グループのみ置き換え
+                        if (SelectedDistGroupInfo != null && p != null)
+                        {
+                            SelectedDistGroupInfo.OverShopCnt = p.OverShopCnt;
+                            SelectedDistGroupInfo.ShopCnt = p.ShopCnt;
+                            SelectedDistGroupInfo.MStatus = p.ShopCnt == 0 ? Defs.MStatus.Ready : Defs.MStatus.Decision;
+                            SelectedDistGroupInfo.LocCnt = p.LocCnt;
+                            SelectedDistGroupInfo.LStatus = p.LStatus;
+                            SelectedDistGroupInfo.DStatus = p.DStatus;
+                        }
+                    }
                 }
 
-                CollectionViewHelper.SetCollection(DistGroupInfos, DistGroupInfoLoader.Get(DtDelivery));
-
-                foreach (var p in DistGroupInfos)
-                {
-                    p.PropertyChanged += DisplayPropatyChanged;
-                }
+                SelectedDistGroupInfo = DistGroupInfos.FindFirst(x => x.Select == true);
             }
             catch (Exception e)
             {
@@ -380,7 +430,7 @@ namespace Mapping.ViewModels
         {
             try
             {
-                if (DistGroupInfos.Where(x => x.Select == true) == null)
+                if (SelectedDistGroupInfo == null)
                 {
                     MessageDialog.Show(_dialogService, "座席マッピングする仕分グループを選択して下さい", "エラー");
                     return false;
@@ -406,37 +456,28 @@ namespace Mapping.ViewModels
         {
             try
             {
+                if (SelectedDistGroupInfo == null)
+                    return;
+
                 bool bEndMessage = false;
-                foreach (var p in DistGroupInfos)
+                if (Mapping.GetOverCnt(SelectedDistGroupInfo.CdDistGroup) == 0)
                 {
-                    if (p.Select == true)
-                    {
-                        if (Mapping.GetOverCnt(p.CdDistGroup) == 0)
-                        {
-                            bEndMessage = true;
-                        }
-                    }
+                    bEndMessage = true;
                 }
 
                 if (bCancel != true)
                 {
                     using (var busy = new WaitCursor())
                     {
-                        Mapping.Saves();
+                        Mapping.Saves(SelectedDistGroupInfo.CdDistGroup);
 
-                        Mapping.Export();
+                        Mapping.Export(SelectedDistGroupInfo.CdDistGroup);
 
-                        Mapping.ExecHulft();
+                        Mapping.ExecHulft(SelectedDistGroupInfo.CdDistGroup);
                     }
                 }
 
-                // クリア
-                Mapping = new MappingManager();
-
-                LoadDatas();
-
-                CanMapping = true;
-                CanDecision = false;
+                LoadDatas(SelectedDistGroupInfo.CdDistGroup);
 
                 if (bCancel != true)
                 {
@@ -469,11 +510,13 @@ namespace Mapping.ViewModels
         {
             Syslog.Info($"MainMappingViewModel:OnNavigatedTo");
 
-            if (Mapping.IsSave==true || Mapping.IsCancel == true)
+            foreach (var distgroup in Mapping.distgroups)
             {
-                Save(Mapping.IsCancel);
+                if (distgroup.IsSave == true || distgroup.IsCancel == true)
+                {
+                    Save(distgroup.IsCancel);
+                }
             }
-
         }
         private string? GetSelectedFolder(string fileName)
         {
@@ -486,6 +529,21 @@ namespace Mapping.ViewModels
             })
             {
                 return cofd.ShowDialog() == CommonFileDialogResult.Ok ? cofd.FileName : null;
+            }
+        }
+        private void RefreshButtonOverlay()
+        {
+            if (SelectedDistGroupInfo == null)
+            {
+                CanMapping=false;
+                CanDecision = false;
+                CanDistInfo = false;
+            }
+            else
+            {
+                CanMapping = SelectedDistGroupInfo.MStatus == MStatus.Ready ? true : false;
+                CanDecision = SelectedDistGroupInfo.MStatus == MStatus.Run ? true : false;
+                CanDistInfo = SelectedDistGroupInfo.MStatus != MStatus.Ready ? true : false;
             }
         }
 
@@ -511,6 +569,8 @@ namespace Mapping.ViewModels
                             }
                         }
                     }
+
+                    SelectedDistGroupInfo = DistGroupInfos.FindFirst(x => x.Select == true);
                     break;
             }
         }

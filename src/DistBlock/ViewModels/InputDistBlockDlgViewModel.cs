@@ -141,6 +141,8 @@ namespace DistBlock.ViewModels
             set => SetProperty(ref _blocks, value);
         }
 
+        private IEnumerable<Block> _inputedBlocks => Blocks.Where(x => !x.CdBlock.Trim().IsNullOrEmpty());
+
         private int _selectBlockIndex;
         public int SelectBlockIndex
         {
@@ -325,24 +327,24 @@ namespace DistBlock.ViewModels
                     return false;
                 }
 
+                if (!IsDuplicationAddr())
+                {
+                    return false;
+                }
+
                 var targetInfo = new DistBlockInfo
                 {
                     CdKyoten = CdKyoten,
                     CdDistGroup = CdDistGroup.PadLeft(4, '0'),
                     Tekiyokaishi = DtTekiyoKaishi.ToString("yyyyMMdd"),
                     TekiyoMuko = DtTekiyoMuko.ToString("yyyyMMdd"),
-                    Blocks = Blocks.Where(x => !x.CdBlock.IsNullOrEmpty()).ToList(),
+                    Blocks = _inputedBlocks.ToList(),
                 };
 
                 var existCustomer = DistBlockLoader.GetFromKey(targetInfo.CdDistGroup, targetInfo.Tekiyokaishi);
                 var isExist = existCustomer is not null;
 
                 if (!ValidateSummaryDate(isExist))
-                {
-                    return false;
-                }
-
-                if (!IsDuplicationAddr(existCustomer?.DistBlockId))
                 {
                     return false;
                 }
@@ -379,9 +381,9 @@ namespace DistBlock.ViewModels
             }
         }
 
-        private bool IsDuplicationAddr(long? distBlockId)
+        private bool IsDuplicationAddr()
         {
-            var inputBlocks = Blocks.Where(x => !x.CdBlock.IsNullOrEmpty())
+            var inputBlocks = _inputedBlocks
                 .Select((x, idx) => new SameDistBlock
                 {
 
@@ -448,51 +450,57 @@ namespace DistBlock.ViewModels
 
         private bool ValidateInput()
         {
-            bool isValid = true;
-
-            if (CdKyoten.IsNullOrEmpty() ||
-                CdDistGroup.IsNullOrEmpty())
+            if (CdKyoten.Trim().IsNullOrEmpty())
             {
-                MessageDialog.Show(_dialogService, "拠点コード、仕分グループコード、名称を入力してください。", "入力エラー");
+                MessageDialog.Show(_dialogService, "拠点コードを入力してください。", "入力エラー");
                 return false;
             }
 
-            if (NmKyoten.IsNullOrEmpty() ||
-                NmDistGroup.IsNullOrEmpty())
+            if (CdDistGroup.Trim().IsNullOrEmpty())
             {
-                MessageDialog.Show(_dialogService, "拠点名称、仕分グループ名称が取得出来ていません。", "入力エラー");
+                MessageDialog.Show(_dialogService, "仕分グループコードを入力してください。", "入力エラー");
                 return false;
             }
 
-            var ValidBlocks = Blocks.Where(x => !x.CdBlock.IsNullOrEmpty());
+            if (NmKyoten.IsNullOrEmpty())
+            {
+                MessageDialog.Show(_dialogService, "拠点名称が取得出来ていません。", "入力エラー");
+                return false;
+            }
 
-            if (!ValidBlocks.Any())
+            if (NmDistGroup.IsNullOrEmpty())
+            {
+                MessageDialog.Show(_dialogService, "仕分グループ名称が取得出来ていません。", "入力エラー");
+                return false;
+            }
+
+            if (!_inputedBlocks.Any())
             {
                 MessageDialog.Show(_dialogService, "ブロック割当順を追加して下さい", "入力エラー");
                 return false;
             }
 
-            if (ValidBlocks.Count() > 10)
+            if (_inputedBlocks.Count() > 10)
             {
                 MessageDialog.Show(_dialogService, "ブロック割当順は10件まで登録可能です", "入力エラー");
                 return false;
             }
 
-            var noExistBlocks = ValidBlocks.Where(x => !x.IsExistTbBlock);
+            var noExistBlocks = _inputedBlocks.Where(x => !x.IsExistTbBlock);
             if (noExistBlocks.Any())
             {
-                MessageDialog.Show(_dialogService, $"座席しきい値情報に未登録のブロックがあります\nブロック[{string.Join(",", noExistBlocks)}]", "入力エラー");
+                MessageDialog.Show(_dialogService, $"座席しきい値情報に未登録のブロックがあります\nブロック[{string.Join(",", noExistBlocks.Select(x => x.CdBlock))}]", "入力エラー");
                 return false;
             }
 
-            var notValidRangeBlocks = ValidBlocks.Where(x => !x.IsVaridRange).Select(x => $"ブロック[{x.CdBlock}] 開始-終了[{x.CdAddrFrom}-{x.CdAddrTo}]");
+            var notValidRangeBlocks = _inputedBlocks.Where(x => !x.IsVaridRange).Select(x => $"ブロック[{x.CdBlock}] 開始-終了[{x.CdAddrFrom}-{x.CdAddrTo}]");
             if (notValidRangeBlocks.Any())
             {
                 MessageDialog.Show(_dialogService, $"無効な開始、終了アドレスがあります。\n{string.Join("\n", notValidRangeBlocks)}", "入力エラー");
                 return false;
             }
 
-            return isValid;
+            return true;
         }
 
         // 適用期間チェック

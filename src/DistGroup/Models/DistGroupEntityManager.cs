@@ -39,6 +39,7 @@ namespace DistGroup.Models
 
                 DeleteAllBatch(tr, entity.IDDISTGROUP);
                 InsertBatchs(tr, entity.IDDISTGROUP, targetInfo.Batches, courses);
+                InsertCourse(tr, entity.IDDISTGROUP, targetInfo.Batches.First().CdShukkaBatch, courses);
 
                 tr.Commit();
             }
@@ -68,6 +69,7 @@ namespace DistGroup.Models
 
                 DeleteAllBatch(tr, entity.IDDISTGROUP);
                 InsertBatchs(tr, entity.IDDISTGROUP, targetInfo.Batches, courses);
+                InsertCourse(tr, entity.IDDISTGROUP, targetInfo.Batches.First().CdShukkaBatch,　courses);
 
                 tr.Commit();
             }
@@ -126,13 +128,10 @@ namespace DistGroup.Models
                 tr.Connection!.Insert(lDistEntity, x => x.AttachToTransaction(tr));
 
                 sequence++;
-
-                // 全バッチに同一コース登録
-                InsertCourse(tr, iDDISTGROUP, batchInfo.PadBatch, courses, timeStamp);
             }
         }
 
-        private static void InsertCourse(System.Data.IDbTransaction tr, long iDDISTGROUP, string cdShukkaBatch, IEnumerable<Course> courses, DateTime timeStamp)
+        private static void InsertCourse(IDbTransaction tr, long iDDISTGROUP, string cdShukkaBatch, IEnumerable<Course> courses)
         {
             var sequence = 1;
 
@@ -144,8 +143,8 @@ namespace DistGroup.Models
                     CDSHUKKABATCH = cdShukkaBatch,
                     CDCOURSE = course.PadCourse,
                     NUCOURSESEQ = sequence,
-                    CreatedAt = timeStamp,
-                    UpdatedAt= timeStamp,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt= DateTime.Now,
                 };
 
                 tr.Connection!.Insert(entity, x => x.AttachToTransaction(tr));
