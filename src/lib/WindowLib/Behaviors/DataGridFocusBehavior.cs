@@ -1,4 +1,5 @@
-﻿using Microsoft.Xaml.Behaviors;
+﻿using ControlzEx.Standard;
+using Microsoft.Xaml.Behaviors;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -77,6 +78,10 @@ namespace WindowLib.Behaviors
                DependencyPropertyChangedEventArgs e)
         {
             var bh = (DataGridFocusBehavior)d;
+            if (bh.AssociatedObject == null)
+            {
+                return;
+            }
 
             if (e.NewValue!= e.OldValue)
             {
@@ -89,6 +94,10 @@ namespace WindowLib.Behaviors
                DependencyPropertyChangedEventArgs e)
         {
             var bh = (DataGridFocusBehavior)d;
+            if (bh.AssociatedObject == null)
+            {
+                return;
+            }
 
             if (e.NewValue != e.OldValue)
             {
