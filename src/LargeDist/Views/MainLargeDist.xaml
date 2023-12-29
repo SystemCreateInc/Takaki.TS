@@ -90,7 +90,7 @@
                   SelectedItem="{Binding SelectedItem}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                  SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="None">
+                  SelectionUnit="FullRow" FrozenColumnCount="0" >
 
             <DataGrid.InputBindings>
                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding SelectCommand}" />

@@ -102,7 +102,7 @@
                                         ElementStyle="{StaticResource CenterTextElement}"/>
                     <DataGridTextColumn Header="&#xa;予定" Binding="{Binding NuOps}" ElementStyle="{StaticResource CenterTextElement}"/>
 
-                    <DataGridTemplateColumn Header="個数進捗率" Width="*">
+                    <DataGridTemplateColumn Header="個数進捗率" Width="*" MinWidth="200">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>

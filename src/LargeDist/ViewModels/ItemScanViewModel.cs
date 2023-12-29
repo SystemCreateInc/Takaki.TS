@@ -314,6 +314,7 @@ namespace LargeDist.ViewModels
                 if (_requestGridSetup)
                 {
                     _logger.Debug("Request Grid Setup");
+                    _requestGridSetup = false;
                     SetupGrid();
                 }
 

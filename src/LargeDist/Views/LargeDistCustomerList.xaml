@@ -112,7 +112,7 @@
         <DataGrid x:Name="dataGrid" ItemsSource="{Binding Items}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                  SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="None">
+                  SelectionUnit="FullRow" FrozenColumnCount="0" >
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="棚番" Binding="{Binding Address}"/>
