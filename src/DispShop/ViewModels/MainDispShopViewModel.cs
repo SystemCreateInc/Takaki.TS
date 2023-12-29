@@ -30,6 +30,7 @@ using SelDistGroupLib.Services.Auth;
 using System.Windows.Shapes;
 using SelDistGroupLib.Models;
 using System.Windows.Media.Media3D;
+using System.Runtime.Intrinsics.X86;
 
 namespace DispShop.ViewModels
 {
@@ -400,31 +401,34 @@ namespace DispShop.ViewModels
 
                 string tddsplay = "";
                 int ledColor = (int)TdLedColor.Red;
-                switch (LightType)
+                if (p.CdKyoten != "")
                 {
-                    case 0:
-                        tddsplay = string.Format("{0,3}{1,3}", p.CdSumCource, p.CdSumRoute);
-                        ledColor = (int)TdLedColor.Red;
-                        break;
-                    case 1:
-                        tddsplay = string.Format("{0,6}", p.CdSumTokuisaki);
-                        ledColor = (int)TdLedColor.Yellow;
-                        break;
-                    case 2:
-                        tddsplay = string.Format("{0,6}", p.BoxCnt % 1000000);
-                        ledColor = (int)TdLedColor.Green;
-                        break;
-                    case 3:
-                        tddsplay = string.Format("{0,6}", p.Ops % 1000000);
-                        ledColor = (int)TdLedColor.White;
-                        break;
+                    switch (LightType)
+                    {
+                        case 0:
+                            tddsplay = string.Format("{0,3}{1,3}", p.CdSumCource, p.CdSumRoute);
+                            ledColor = (int)TdLedColor.Red;
+                            break;
+                        case 1:
+                            tddsplay = string.Format("{0,6}", p.CdSumTokuisaki);
+                            ledColor = (int)TdLedColor.Yellow;
+                            break;
+                        case 2:
+                            tddsplay = string.Format("{0,6}", p.BoxCnt.Substring(p.BoxCnt.Length - 6, 6));
+                            ledColor = (int)TdLedColor.Green;
+                            break;
+                        case 3:
+                            tddsplay = string.Format("{0,6}", p.Ops % 1000000);
+                            ledColor = (int)TdLedColor.White;
+                            break;
+                    }
+
+                    bool ledBlink = true;
+
+                    Syslog.Info($"DpsLightOn: addr:{p.TdUnitAddrCode} ledColor:{ledColor} ledBlink:{ledBlink} display:{tddsplay}");
+
+                    TdUnitManager.TdUnitLight(p.TdUnitAddrCode, TdDps, bOn, ledBlink, ledColor, tddsplay, false);
                 }
-
-                bool ledBlink = true;
-
-                Syslog.Info($"DpsLightOn: addr:{p.TdUnitAddrCode} ledColor:{ledColor} ledBlink:{ledBlink} display:{tddsplay}");
-
-                TdUnitManager.TdUnitLight(p.TdUnitAddrCode, TdDps, bOn, ledBlink, ledColor, tddsplay, false);
             }
         }
 

@@ -17,7 +17,19 @@ namespace DispShop.Models
         {
             using (var con = DbFactory.CreateConnection())
             {
-                var sql = @"select "
+                var sql = @"select tdunitaddrcode from tb_block"
+                            + " inner join tdunitaddr on usageid = tb_block.ST_TDUNIT_TYPE"
+                            + " where CD_BLOCK = @cdblock";
+                var locs = con.Query(sql, new
+                {
+                    @cdblock = cd_block,
+                })
+                     .Select(q => new Dist
+                     {
+                         TdUnitAddrCode = q.tdunitaddrcode,
+                     }).ToList();
+
+                sql = @"select "
                     + " TB_DIST_MAPPING.tdunitaddrcode,"
                     + " TB_DIST.DT_DELIVERY,"
                     + " TB_DIST.CD_KYOTEN,"
@@ -60,7 +72,7 @@ namespace DispShop.Models
                          CdSumTokuisaki = q.CD_SUM_TOKUISAKI,
                          NmSumTokuisaki = q.NM_SUM_TOKUISAKI,
                          CdSumCource = q.CD_SUM_COURSE,
-                         CdSumRoute = q.CD_SUM_ROUTE,
+                         CdSumRoute = q.CD_SUM_ROUTE.ToString(),
                          Ops = q.ops,
                          Rps = q.rps,
                      }).ToList();
@@ -88,6 +100,7 @@ namespace DispShop.Models
                 })
                      .Select(q => new Dist
                      {
+                         TdUnitAddrCode = q.tdunitaddrcode,
                          DtDelivery = q.DT_DELIVERY,
                          CdKyoten = q.CD_KYOTEN,
                          CdDistGroup = q.CD_DIST_GROUP,
@@ -99,21 +112,36 @@ namespace DispShop.Models
                          Box3 = q.box3 ?? 0,
                      }).ToList();
 
-                foreach (var dist in dists)
+                foreach (var loc in locs)
                 {
-                    var stowage = stowages.Find(x => x.CdKyoten == dist.CdKyoten
-                                            && x.CdDistGroup == dist.CdDistGroup
-                                            && x.CdSumTokuisaki == dist.CdSumTokuisaki);
-                    if (stowage!=null)
+                    var dist = dists.Find(x => x.TdUnitAddrCode == loc.TdUnitAddrCode);
+                    if (dist != null)
                     {
-                        dist.Box0 = stowage.Box0;
-                        dist.Box1 = stowage.Box1;
-                        dist.Box2 = stowage.Box2;
-                        dist.Box3 = stowage.Box3;
+                        loc.DtDelivery = dist.DtDelivery;
+                        loc.CdKyoten = dist.CdKyoten;
+                        loc.CdDistGroup = dist.CdDistGroup;
+                        loc.CdSumTokuisaki = dist.CdSumTokuisaki;
+                        loc.NmSumTokuisaki = dist.NmSumTokuisaki;
+                        loc.CdSumCource = dist.CdSumCource;
+                        loc.CdSumRoute = dist.CdSumRoute;
+                        loc.Ops = dist.Ops;
+                        loc.Rps = dist.Rps;
+
+                        var stowage = stowages.Find(x => x.CdKyoten == dist.CdKyoten
+                                                && x.CdDistGroup == dist.CdDistGroup
+                                                && x.CdSumTokuisaki == dist.CdSumTokuisaki);
+                        if (stowage != null)
+                        {
+                            loc.Box0 = stowage.Box0;
+                            loc.Box1 = stowage.Box1;
+                            loc.Box2 = stowage.Box2;
+                            loc.Box3 = stowage.Box3;
+                        }
                     }
+
                 }
 
-                return dists;
+                return locs;
 
             }
         }
