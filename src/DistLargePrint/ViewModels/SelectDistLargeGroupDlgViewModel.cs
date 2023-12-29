@@ -16,11 +16,15 @@ namespace DistLargePrint.ViewModels
         public event Action<IDialogResult>? RequestClose;
 
 
-        private int _largeDistGroupIndex;
-        public int LargeDistGroupIndex
+        private Combo? _largeDistGroupItem;
+        public Combo? LargeDistGroupItem
         {
-            get => _largeDistGroupIndex;
-            set => SetProperty(ref _largeDistGroupIndex, value);
+            get => _largeDistGroupItem;
+            set
+            {
+                SetProperty(ref _largeDistGroupItem, value);
+                CanOK = _largeDistGroupItem != null;
+            }
         }
 
         private List<Combo> _largeDistGroupCombo = new List<Combo>();
@@ -48,6 +52,14 @@ namespace DistLargePrint.ViewModels
             set => SetProperty(ref _errorMessage, value);
         }
 
+        private bool _canOK = false;
+        public bool CanOK
+        {
+            get => _canOK;
+            set => SetProperty(ref _canOK, value);
+        }
+
+
         public SelectDistLargeGroupDlgViewModel()
         {
             OK = new DelegateCommand(() =>
@@ -55,10 +67,10 @@ namespace DistLargePrint.ViewModels
                 Syslog.Debug("SelectDistLargeGroupDlgViewModel:OK");
                 RequestClose?.Invoke(new DialogResult(ButtonResult.OK, new DialogParameters
                 {
-                    { "CdLargeGroup", LargeDistGroupCombo[LargeDistGroupIndex].Name },
+                    { "CdLargeGroup", LargeDistGroupItem?.Name },
                     { "DtDelivery", DeliveryDate.ToString("yyyyMMdd") },
                 }));
-            });
+            }).ObservesCanExecute(() => CanOK);
 
             Cancel = new DelegateCommand(() =>
             {
@@ -85,9 +97,9 @@ namespace DistLargePrint.ViewModels
         {
             try
             {
-                LargeDistGroupIndex = -1;
+                var oldSelectedItem = LargeDistGroupItem;
                 LargeDistGroupCombo = ComboCreator.Create(DeliveryDate.ToString("yyyyMMdd"));
-                LargeDistGroupIndex = 0;
+                LargeDistGroupItem = LargeDistGroupCombo.FirstOrDefault(x => oldSelectedItem == null || x.Name == oldSelectedItem.Name);
             }
             catch (Exception e)
             {
