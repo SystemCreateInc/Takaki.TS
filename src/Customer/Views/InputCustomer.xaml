@@ -5,6 +5,7 @@
              prism:ViewModelLocator.AutoWireViewModel="True"
              xmlns:utils="clr-namespace:WindowLib.Utils;assembly=WindowLib"
              xmlns:controls="clr-namespace:WindowLib.Views;assembly=WindowLib"
+             xmlns:b="clr-namespace:WindowLib.Behaviors;assembly=WindowLib"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              Loaded="UserControl_Loaded">
@@ -238,6 +239,10 @@
                                 </Style>
                             </DataGrid.ColumnHeaderStyle>
 
+                            <i:Interaction.Behaviors>
+                                <b:DataGridFocusBehavior Column="{Binding GridFocusColumnIndex,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" Row="{Binding GridFocusRowIndex,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}" />
+                            </i:Interaction.Behaviors>
+                            
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="RowEditEnding">
                                     <i:InvokeCommandAction Command="{Binding EndCodeEdit}" CommandParameter="CdTokuisakiChild" />

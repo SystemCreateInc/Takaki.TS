@@ -27,12 +27,14 @@ namespace LargeDist.Models
         {
             foreach (var item in Items)
             {
-                item.Clear();
+                item.Item = null;
             }
         }
 
         public void SetItems(IEnumerable<LargeDistItem> items)
         {
+            Clear();
+
             // 先頭に合計用のフィールドを追加する
             var totalItems = items
                 .SelectMany(x => x.Items)

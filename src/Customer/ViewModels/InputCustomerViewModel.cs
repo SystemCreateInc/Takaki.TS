@@ -144,6 +144,20 @@ namespace Customer.ViewModels
             set => SetProperty(ref _childCustomer, value);
         }
 
+        private int _gridFocusColumnIndex;
+        public int GridFocusColumnIndex
+        {
+            get => _gridFocusColumnIndex;
+            set => SetProperty(ref _gridFocusColumnIndex, value);
+        }
+
+        private int _gridFocusRowIndex;
+        public int GridFocusRowIndex
+        {
+            get => _gridFocusRowIndex;
+            set => SetProperty(ref _gridFocusRowIndex, value);
+        }
+
         public IEnumerable<ChildCustomer> NotEmptyChildCustomers => ChildCustomers.Where(x => !x.CdTokuisakiChild.Trim().IsNullOrEmpty()).ToArray();
 
         private SumCustomer _currentCustomer = new SumCustomer();
@@ -432,10 +446,21 @@ namespace Customer.ViewModels
             }
 
             // 得意先名取得不可
-            if (NmSumTokuisaki.IsNullOrEmpty()
-                || NotEmptyChildCustomers.Any(x => x.NmTokuisaki.IsNullOrEmpty()))
+            if (NmSumTokuisaki.IsNullOrEmpty())
             {
-                MessageDialog.Show(_dialogService, "得意先名が取得出来ていない得意先コードがあります", "入力エラー");
+                MessageDialog.Show(_dialogService, "集約得意先コードの得意先名が取得出きません", "入力エラー");
+                return false;
+            }
+
+            if (NotEmptyChildCustomers.Any(x => x.NmTokuisaki.IsNullOrEmpty()))
+            {
+                GridFocusColumnIndex = 0;
+                GridFocusRowIndex = -1;
+                GridFocusRowIndex = NotEmptyChildCustomers
+                    .Select((value, idx) => (value, idx))
+                    .First(x => x.value.NmTokuisaki.IsNullOrEmpty()).idx;
+
+                MessageDialog.Show(_dialogService, "得意先名が取得出来ていない子得意先コードがあります", "入力エラー");
                 return false;
             }
 
@@ -458,7 +483,6 @@ namespace Customer.ViewModels
             }
         }
 
-        // 
         private bool IsDuplicationCustomer(long? sumTokuisakiId)
         {
             if(NotEmptyChildCustomers.Any(x => x.CdTokuisakiChild == CdSumTokuisaki))

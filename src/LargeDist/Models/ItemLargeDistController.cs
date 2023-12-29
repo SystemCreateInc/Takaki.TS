@@ -30,6 +30,7 @@ namespace LargeDist.Models
             chart.SetItems(CurrentItem
                 .Items
                 .GroupBy(x => x.CdBlock, (key, value) => new LargeDistItem(_group, value))
+                .OrderBy(x => x.CdBlock)
                 .ToArray());
         }
 

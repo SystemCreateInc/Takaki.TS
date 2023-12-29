@@ -96,13 +96,15 @@
         <DataGrid x:Name="dataGrid" ItemsSource="{Binding StowageListPrints}" CurrentItem="{Binding CurrentStowageListPrint, Mode=TwoWay}"
                   AutoGenerateColumns="False" SelectedItem="{Binding CurrentStowageListPrint, Mode=TwoWay}"
                   IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                  SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="None">
+                  SelectionUnit="FullRow" FrozenColumnCount="0"
+                  AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}">
 
             <DataGrid.InputBindings>
                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding LeftDoubleClick}"/>
             </DataGrid.InputBindings>
 
             <DataGrid.Columns>
+                <DataGridTextColumn Header="ブロック" Binding="{Binding CdBlock}"/>
                 <DataGridTextColumn Header="表示器" Binding="{Binding Tdunitcode}"/>
                 <DataGridTextColumn Header="出荷バッチ" Binding="{Binding CdShukkaBatch}"/>
                 <DataGridTextColumn Header="コース" Binding="{Binding CdCourse}"/>

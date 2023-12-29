@@ -157,7 +157,7 @@
             </Grid.Resources>
 
             <Button Content="ブロック別大仕分開始(F5)" Command="{Binding BlockLargeDistCommand}" />
-            <Button Content="商品別別大仕分開始(F8)" Grid.Column="1" Command="{Binding ItemLargeDistCommand}" />
+            <Button Content="商品別大仕分開始(F8)" Grid.Column="1" Command="{Binding ItemLargeDistCommand}" />
         </Grid>
 
         <Grid>
