@@ -104,6 +104,7 @@
             </DataGrid.InputBindings>
 
             <DataGrid.Columns>
+                <DataGridTextColumn Header="ブロック" Binding="{Binding CdBlock}"/>
                 <DataGridTextColumn Header="表示器" Binding="{Binding Tdunitcode}"/>
                 <DataGridTextColumn Header="出荷バッチ" Binding="{Binding CdShukkaBatch}"/>
                 <DataGridTextColumn Header="コース" Binding="{Binding CdCourse}"/>
