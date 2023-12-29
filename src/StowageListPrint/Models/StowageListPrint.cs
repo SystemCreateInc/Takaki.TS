@@ -13,6 +13,14 @@ namespace StowageListPrint.Models
             set => SetProperty(ref _idStowages, value);
         }
 
+        private string _cdBlock = string.Empty;
+        public string CdBlock
+        {
+            get => _cdBlock;
+            set => SetProperty(ref _cdBlock, value);
+        }
+
+
         private string _tdunitcode = string.Empty;
         public string Tdunitcode
         {
