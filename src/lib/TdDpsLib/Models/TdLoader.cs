@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Windows;
 using TdDpsLib.Defs;
 
@@ -90,6 +91,8 @@ namespace TdDpsLib.Models
                     if (row.TdUsageid == Tdunittype)
                     {
                         row.TdUnitSeqReverse = maxseq - row.TdUnitSeq;
+
+                        Syslog.Info($"LoadTdAddrs:addr={row.TdUnitAddrCode} zone={row.TdUnitZoneCode} seq={row.TdUnitSeq} seqreverse={row.TdUnitSeqReverse} Front{row.TdUnitFront}");
                     }
                 }
 
