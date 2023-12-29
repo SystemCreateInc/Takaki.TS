@@ -71,7 +71,7 @@ namespace WorkReport.ViewModels
                 {
                     var list = WorkReportLoader.Get(StartDate.ToString("yyyyMMdd"), EndDate.AddDays(1).ToString("yyyyMMdd"));
                     var vms = ReportCreator.Create(StartDate, EndDate, list);
-                    var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Portrait);
+                    var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Landscape);
                     ppm.PrintPreview("作業報告書", vms);
                 }
                 catch (Exception e)

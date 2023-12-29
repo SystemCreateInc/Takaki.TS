@@ -104,8 +104,8 @@ namespace DistLargePrint.ViewModels
             {
                 Syslog.Debug("MainDistLargePrintViewModel:Print");
                 var vms = DistLargeReportCreator.Create(CdLargeGroup, DispDtDelivery, DistLargePrints);
-                var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Portrait);
-                ppm.PrintPreview("部品在庫一覧", vms);
+                var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Landscape);
+                ppm.PrintPreview("大仕分リスト", vms);
             });
 
             Exit = new DelegateCommand(() =>

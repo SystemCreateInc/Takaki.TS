@@ -1,29 +1,91 @@
 ﻿<UserControl x:Class="DistLargePrint.Reports.DistLargeRow"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             FontSize="14">
 
-    <Grid Height="0.8cm">
+    <Grid Height="0.5cm">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="4cm"/>
-            <ColumnDefinition Width="2cm"/>
-            <ColumnDefinition Width="2cm"/>
-            <ColumnDefinition Width="2cm"/>
-            <ColumnDefinition Width="2cm"/>
-            <ColumnDefinition Width="2cm"/>
-            <ColumnDefinition Width="2cm"/>
-            <ColumnDefinition Width="2cm"/>
-            <ColumnDefinition Width="5cm"/>
-            <ColumnDefinition Width="5cm"/>
+            <ColumnDefinition Width="3cm"/>
+            <ColumnDefinition Width="2.5cm"/>
+            <ColumnDefinition Width="3.5cm"/>
+            <ColumnDefinition Width="3.5cm"/>
+            <ColumnDefinition Width="3.5cm"/>
+            <ColumnDefinition Width="6cm"/>
+            <ColumnDefinition Width="6cm"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="1" Text="{Binding CdBlock}" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Column="2" Text="{Binding DispOps}" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Column="3" Text="{Binding NuLops}" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Column="4" Text="{Binding DispRemainingPs}" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Column="5" Text="{Binding TotalRemainingPs}" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Column="6" Text="{Binding DispRps}" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Column="7" Text="{Binding NuLrps}" HorizontalAlignment="Center"/>
-        <TextBlock Grid.Column="8" Text="{Binding DtWorkdtLarge, StringFormat=yyyy/MM/dd HH:mm:ss}"/>
-        <TextBlock Grid.Column="9" Text="{Binding NMShainLarge}"/>
+        <Border Grid.Column="0" BorderBrush="Black" BorderThickness="0.5,0,0,0"/>
+
+        <Border Grid.Column="1" BorderBrush="Black" BorderThickness="0.5,0.5,0,0">
+            <TextBlock Text="{Binding CdBlock}" HorizontalAlignment="Center"/>
+        </Border>
+
+        <Border Grid.Column="2" BorderBrush="Black" BorderThickness="0.5,0.5,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="0.2*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="0.2*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="0.2*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="{Binding BoxOps}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="1" Text="/" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="2" Text="{Binding BaraOps}" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text="(" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="4" Text="{Binding NuLops}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="5" Text=")" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <Border Grid.Column="3" BorderBrush="Black" BorderThickness="0.5,0.5,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="0.2*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="0.2*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="0.2*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="{Binding BoxRemainingPs}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="1" Text="/" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="2" Text="{Binding BaraRemainingPs}" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text="(" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="4" Text="{Binding TotalRemainingPs}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="5" Text=")" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <Border Grid.Column="4" BorderBrush="Black" BorderThickness="0.5,0.5,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="0.2*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="0.2*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="0.2*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="{Binding BoxRps}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="1" Text="/" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="2" Text="{Binding BaraRps}" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text="(" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="4" Text="{Binding NuLrps}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <TextBlock Grid.Column="5" Text=")" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <Border Grid.Column="5" BorderBrush="Black" BorderThickness="0.5,0.5,0,0">
+            <TextBlock Text="{Binding DtWorkdtLarge, StringFormat=yyyy/MM/dd HH:mm:ss}" Margin="3,0,0,0"/>
+        </Border>
+
+        <Border Grid.Column="6" BorderBrush="Black" BorderThickness="0.5,0.5,0.5,0">
+            <TextBlock Text="{Binding NMShainLarge}" Margin="3,0,0,0"/>
+        </Border>
     </Grid>
 </UserControl>

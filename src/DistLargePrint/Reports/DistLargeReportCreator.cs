@@ -19,7 +19,7 @@
                     if (index == 0)
                     {
                         // ヘッダーが最後に来る場合、改ページする
-                        if (pageRowCount >= 19)
+                        if (pageRowCount >= 29)
                         {
                             pageGroups.Add(new List<Group>());
                             pageRowCount = 0;
@@ -30,7 +30,7 @@
                     }
 
                     // ページ行数が超えた場合、改ページする
-                    if (pageRowCount >= 20)
+                    if (pageRowCount >= 30)
                     {
                         pageGroups.Add(new List<Group>());
                         pageGroups.Last().Add(CreateHeader(record));
