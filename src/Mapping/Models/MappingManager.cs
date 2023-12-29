@@ -496,7 +496,7 @@ namespace Mapping.Models
                             // dist更新
                             var sql = over 
                                  ? "update TB_DIST set FG_MAPSTATUS=@mapstatus,FG_DSTATUS=@dstatus,NU_LOPS=@ops,NU_DOPS=@ops,NU_DRPS=@ops,updatedAt=@update,DT_WORKDT_DIST=@update where ID_DIST=@id"
-                                 : "update TB_DIST set FG_MAPSTATUS=@mapstatus where ID_DIST=@id";
+                                 : "update TB_DIST set FG_MAPSTATUS=@mapstatus,NU_LOPS=@ops,NU_DOPS=@ops where ID_DIST=@id";
 
                             con.Execute(sql,
                             new
@@ -712,9 +712,9 @@ namespace Mapping.Models
         {
             DtDelivery = dtdelivery;
             NameLoader.selectDate = dtdelivery;
-            sumtokuisakis = MappingLoader.GetSumTokuisakis(DtDelivery);
-            blocks = MappingLoader.GetBlocks( DtDelivery);
-            distgroups = MappingLoader.GetDistGroups(DtDelivery, seldistgroups);
+            var sumtokuisakis = MappingLoader.GetSumTokuisakis(DtDelivery);
+            var blocks = MappingLoader.GetBlocks( DtDelivery);
+            var distgroups = MappingLoader.GetDistGroups(DtDelivery, seldistgroups);
 
             // 該当データを抽出
             foreach (var distgroup in distgroups)
