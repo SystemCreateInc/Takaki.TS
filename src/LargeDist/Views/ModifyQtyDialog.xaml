@@ -85,7 +85,7 @@
             <TextBox Text="{Binding Box,UpdateSourceTrigger=PropertyChanged, Delay=100}" Width="100" HorizontalContentAlignment="Right" x:Name="Piece" >
                 <i:Interaction.Behaviors>
                     <b:NumericTextBoxBehavior/>
-                    <b:SelectTextAtGotFocusBehavior/>
+                    <b:SelectTextOnGotFocusTextBoxBehavior/>
                 </i:Interaction.Behaviors>
             </TextBox>
             <Label Content="箱"/>
@@ -93,7 +93,7 @@
             <TextBox Text="{Binding Piece, UpdateSourceTrigger=PropertyChanged, Delay=100}" Width="100" HorizontalContentAlignment="Right" >
                 <i:Interaction.Behaviors>
                     <b:NumericTextBoxBehavior/>
-                    <b:SelectTextAtGotFocusBehavior/>
+                    <b:SelectTextOnGotFocusTextBoxBehavior/>
                 </i:Interaction.Behaviors>
             </TextBox>
             <Label Content="個"/>

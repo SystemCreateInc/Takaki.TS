@@ -9,7 +9,7 @@ using System.Windows.Controls;
 
 namespace WindowLib.Behaviors
 {
-    public class SelectTextAtGotFocusBehavior : Behavior<TextBox>
+    public class SelectTextOnGotFocusTextBoxBehavior : Behavior<TextBox>
     {
         protected override void OnAttached()
         {

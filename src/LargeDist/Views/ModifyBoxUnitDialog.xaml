@@ -45,7 +45,7 @@
             <TextBox Text="{Binding Value,UpdateSourceTrigger=PropertyChanged, Delay=100}" Width="100" HorizontalContentAlignment="Right" x:Name="Value" >
                 <i:Interaction.Behaviors>
                     <b:NumericTextBoxBehavior/>
-                    <b:SelectTextAtGotFocusBehavior/>
+                    <b:SelectTextOnGotFocusTextBoxBehavior/>
                 </i:Interaction.Behaviors>
             </TextBox>
         </StackPanel>
