@@ -1,7 +1,16 @@
-﻿namespace WorkReport.Reports
+﻿using Prism.Mvvm;
+
+namespace WorkReport.Reports
 {
-    public class Detail
+    public class Detail : BindableBase
     {
+        private bool _isEven = false;
+        public bool IsEven
+        {
+            get => _isEven;
+            set => SetProperty(ref _isEven, value);
+        }
+
         public string NmSyain { get; set; } = string.Empty;
         public int NmWorktime { get; set; }
         public TimeSpan DispNmWorktime => new TimeSpan(0, 0, NmWorktime);

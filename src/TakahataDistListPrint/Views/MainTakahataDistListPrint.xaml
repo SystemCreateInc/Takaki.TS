@@ -82,7 +82,8 @@
         <DataGrid x:Name="dataGrid" ItemsSource="{Binding TakahataDistListPrints}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                  SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="None">
+                  SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="None"
+                  AlternatingRowBackground="{StaticResource AlternateGridBrush}">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="出荷バッチ" Binding="{Binding CdShukkaBatch}"/>

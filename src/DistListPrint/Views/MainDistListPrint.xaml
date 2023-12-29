@@ -101,7 +101,8 @@
         <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid}" SettingsKey="DistListPrintColumns"/>
         <DataGrid x:Name="dataGrid" ItemsSource="{Binding DistListPrints}" AutoGenerateColumns="False"
                   IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                  SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="None">
+                  SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="None"
+                  AlternatingRowBackground="{StaticResource AlternateGridBrush}">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="出荷バッチ" Binding="{Binding CdShukkaBatch}"/>

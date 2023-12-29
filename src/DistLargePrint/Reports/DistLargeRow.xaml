@@ -1,7 +1,17 @@
 ﻿<UserControl x:Class="DistLargePrint.Reports.DistLargeRow"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             FontSize="14">
+             FontSize="14" Width="28cm" HorizontalAlignment="Left">
+
+    <UserControl.Style>
+        <Style TargetType="{x:Type UserControl}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsEven, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Value="true">
+                    <Setter Property="Background" Value="{StaticResource AlternateGridBrush}"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Style>
 
     <Grid Height="0.5cm">
         <Grid.ColumnDefinitions>

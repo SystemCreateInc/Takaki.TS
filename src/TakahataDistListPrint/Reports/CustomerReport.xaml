@@ -78,7 +78,8 @@
             <DataGrid ItemsSource="{Binding Reports, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                       VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled" Height="auto"
                       FontSize="14" RowHeaderWidth="0" RowHeight="32.00" BorderBrush="Black"
-                      Style="{StaticResource DataGridReportStyle}" Margin="2">
+                      Style="{StaticResource DataGridReportStyle}" Margin="2"
+                      AlternatingRowBackground="{StaticResource AlternateGridBrush}">
 
                 <DataGrid.Resources>
                     <Style x:Key="LeftHeader" TargetType="DataGridColumnHeader">

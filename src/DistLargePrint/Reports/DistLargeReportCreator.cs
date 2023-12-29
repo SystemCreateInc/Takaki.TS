@@ -38,6 +38,7 @@
 
                     pageGroups.Last().Last().Details.Add(new Detail
                     {
+                        IsEven = detail.IsEven,
                         CdBlock = detail.CdBlock,
                         BoxOps = detail.BoxOps,
                         BaraOps = detail.BaraOps,
@@ -83,8 +84,9 @@
                     NmHinSeishikimei = x.Key.NmHinSeishikimei ?? string.Empty,
                     NuBoxunit = x.Key.NuBoxunit,
                     TotalPs = x.Sum(x => x.NuLops),
-                    Details = x.Select(xx => new Detail
+                    Details = x.Select((xx, index) => new Detail
                     {
+                        IsEven = index % 2 == 0,
                         CdBlock = xx.CdBlock ?? string.Empty,
                         BoxOps = xx.NuBoxunit == 0 ? 0 : xx.NuLops / xx.NuBoxunit,
                         BaraOps = xx.NuBoxunit == 0 ? 0 : xx.NuLops % xx.NuBoxunit,
@@ -111,7 +113,7 @@
                 NuBoxunit = record.NuBoxunit,
                 TotalPs = record.TotalPs,
                 TotalBoxPs = record.NuBoxunit == 0 ? 0 : record.TotalPs / record.NuBoxunit,
-                TotalBaraPs = record.NuBoxunit == 0 ? 0 :record.TotalPs % record.NuBoxunit,
+                TotalBaraPs = record.NuBoxunit == 0 ? 0 : record.TotalPs % record.NuBoxunit,
             };
         }
     }
