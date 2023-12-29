@@ -65,7 +65,7 @@
         <DataGrid x:Name="dataGrid" ItemsSource="{Binding WorkReports}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                  SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="None"
+                  SelectionUnit="FullRow" FrozenColumnCount="0"
                   AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}">
 
             <DataGrid.Columns>

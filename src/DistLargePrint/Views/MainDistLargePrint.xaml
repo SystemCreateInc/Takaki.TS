@@ -94,8 +94,20 @@
         <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid}" SettingsKey="DistLargePrintColumns"/>
         <DataGrid x:Name="dataGrid" ItemsSource="{Binding DistLargePrints}" AutoGenerateColumns="False"
                   IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                  SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="None"
+                  SelectionUnit="FullRow" FrozenColumnCount="0"
                   AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}">
+
+            <DataGrid.Resources>
+                <Style x:Key="DoubleRowStartHeader" TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                    <Setter Property="BorderThickness" Value="1,0,0,0"/>
+                    <Setter Property="Margin" Value="0,5,0,5"/>
+                </Style>
+
+                <Style x:Key="DoubleRowHeader" TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                    <Setter Property="BorderThickness" Value="0,0,0,0"/>
+                    <Setter Property="Margin" Value="0,5,0,5"/>
+                </Style>
+            </DataGrid.Resources>
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="品番" Binding="{Binding CdHimban}"/>
@@ -106,21 +118,25 @@
 
                 <DataGridTextColumn Header="予定数&#xa;箱" Binding="{Binding BoxOps}" HeaderStyle="{StaticResource DoubleRowHeader}"
                                     ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="&#xa;バラ" Binding="{Binding BaraOps}" ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="&#xa;総個数" Binding="{Binding NuLops}" ElementStyle="{StaticResource RightTextElement}"/>
-
-                <DataGridTextColumn Header="大仕分残数&#xa;箱" Binding="{Binding BoxRemainingPs}" HeaderStyle="{StaticResource DoubleRowHeader}"
+                <DataGridTextColumn Header="&#xa;バラ" Binding="{Binding BaraOps}" HeaderStyle="{StaticResource DoubleRowHeader}"
                                     ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="&#xa;バラ" Binding="{Binding BaraRemainingPs}" ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="&#xa;総個数" Binding="{Binding TotalRemainingPs}" ElementStyle="{StaticResource RightTextElement}"/>
-
-                <DataGridTextColumn Header="大仕分済&#xa;箱" Binding="{Binding BoxRps}" HeaderStyle="{StaticResource DoubleRowHeader}"
+                <DataGridTextColumn Header="&#xa;総個数" Binding="{Binding NuLops}" HeaderStyle="{StaticResource DoubleRowHeader}"
                                     ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="&#xa;バラ" Binding="{Binding BaraRps}" ElementStyle="{StaticResource RightTextElement}"/>
+
+                <DataGridTextColumn Header="大仕分残数&#xa;箱" Binding="{Binding BoxRemainingPs}" HeaderStyle="{StaticResource DoubleRowStartHeader}"
+                                    ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="&#xa;バラ" Binding="{Binding BaraRemainingPs}" HeaderStyle="{StaticResource DoubleRowHeader}"
+                                    ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="&#xa;総個数" Binding="{Binding TotalRemainingPs}" HeaderStyle="{StaticResource DoubleRowHeader}"
+                                    ElementStyle="{StaticResource RightTextElement}"/>
+
+                <DataGridTextColumn Header="大仕分済&#xa;箱" Binding="{Binding BoxRps}" HeaderStyle="{StaticResource DoubleRowStartHeader}"
+                                    ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="&#xa;バラ" Binding="{Binding BaraRps}" HeaderStyle="{StaticResource DoubleRowHeader}"
+                                    ElementStyle="{StaticResource RightTextElement}"/>
                 <DataGridTextColumn Header="&#xa;総個数" Binding="{Binding NuLrps}" ElementStyle="{StaticResource RightTextElement}"/>
 
-                <DataGridTextColumn Header="作業日時" Binding="{Binding DtWorkdtLarge, StringFormat=yyyy/MM/dd HH:mm:ss}"
-                                    HeaderStyle="{StaticResource DoubleRowHeader}"/>
+                <DataGridTextColumn Header="作業日時" Binding="{Binding DtWorkdtLarge, StringFormat=yyyy/MM/dd HH:mm:ss}"/>
                 <DataGridTextColumn Header="担当者名称" Binding="{Binding NMShainLarge}"/>
             </DataGrid.Columns>
         </DataGrid>

@@ -71,6 +71,13 @@
                       SelectionUnit="FullRow" FrozenColumnCount="0"
                       AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}">
 
+                <DataGrid.Resources>
+                    <Style x:Key="DoubleRowHeader" TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                        <Setter Property="BorderThickness" Value="0,0,0,0"/>
+                        <Setter Property="Margin" Value="0,5,0,5"/>
+                    </Style>
+                </DataGrid.Resources>
+
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="エリア" Binding="{Binding IdPc}" ElementStyle="{StaticResource CenterTextElement}"/>
                     <DataGridTextColumn Header="ブロック" Binding="{Binding CdBlock}" ElementStyle="{StaticResource CenterTextElement}"/>

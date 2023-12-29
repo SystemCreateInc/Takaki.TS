@@ -84,6 +84,18 @@
                       SelectionUnit="FullRow" FrozenColumnCount="0"
                       AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}">
 
+                <DataGrid.Resources>
+                    <Style x:Key="DoubleRowStartHeader" TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                        <Setter Property="BorderThickness" Value="1,0,0,0"/>
+                        <Setter Property="Margin" Value="0,5,0,5"/>
+                    </Style>
+
+                    <Style x:Key="DoubleRowHeader" TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                        <Setter Property="BorderThickness" Value="0,0,0,0"/>
+                        <Setter Property="Margin" Value="0,5,0,5"/>
+                    </Style>
+                </DataGrid.Resources>
+
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="エリア" Binding="{Binding IdPc}" ElementStyle="{StaticResource CenterTextElement}"/>
                     <DataGridTextColumn Header="ブロック" Binding="{Binding CdBlock}" ElementStyle="{StaticResource CenterTextElement}"/>
@@ -97,9 +109,10 @@
 
                     <DataGridTextColumn Header="アイテム数&#xa;済" Binding="{Binding NuRitemcnt}" HeaderStyle="{StaticResource DoubleRowHeader}"
                                         ElementStyle="{StaticResource CenterTextElement}"/>
-                    <DataGridTextColumn Header="&#xa;予定" Binding="{Binding NuOitemcnt}" ElementStyle="{StaticResource CenterTextElement}"/>
+                    <DataGridTextColumn Header="&#xa;予定" Binding="{Binding NuOitemcnt}" HeaderStyle="{StaticResource DoubleRowHeader}"
+                                        ElementStyle="{StaticResource CenterTextElement}"/>
 
-                    <DataGridTextColumn Header="仕分個数&#xa;済" Binding="{Binding NuRps}" HeaderStyle="{StaticResource DoubleRowHeader}"
+                    <DataGridTextColumn Header="仕分個数&#xa;済" Binding="{Binding NuRps}" HeaderStyle="{StaticResource DoubleRowStartHeader}"
                                         ElementStyle="{StaticResource CenterTextElement}"/>
                     <DataGridTextColumn Header="&#xa;予定" Binding="{Binding NuOps}" ElementStyle="{StaticResource CenterTextElement}"/>
 
