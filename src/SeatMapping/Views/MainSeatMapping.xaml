@@ -58,7 +58,7 @@
             </ToolBarTray>
         </Grid>
 
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">            
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
             <Label Content="ブロック ： "/>
             <ComboBox Width="100" SelectedIndex="{Binding BlockIndex}" ItemsSource="{Binding BlockCombo}" DisplayMemberPath="Name"/>
         </StackPanel>
@@ -67,7 +67,8 @@
         <DataGrid x:Name="dataGrid" ItemsSource="{Binding SeatMappings}" CurrentItem="{Binding CurrentSeatMapping, Mode=TwoWay}" AutoGenerateColumns="False"
                   SelectedItem="{Binding CurrentSeatMapping, Mode=TwoWay}"
                   IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                  SelectionUnit="FullRow" FrozenColumnCount="0">
+                  SelectionUnit="FullRow" FrozenColumnCount="0"
+                  AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="棚No." Binding="{Binding Tdunitaddrcode}"/>
