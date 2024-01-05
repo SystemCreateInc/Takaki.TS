@@ -120,7 +120,7 @@ namespace LargeDist.ViewModels
             _dialogService = dialogService;
             RefreshCommand = new DelegateCommand(Refresh);
             ItemListCommand = new DelegateCommand(ItemList);
-            CancelModeCommand = new DelegateCommand(CancelMode).ObservesCanExecute(() => IsEmptyItem);
+            CancelModeCommand = new DelegateCommand(ToggleCancelMode).ObservesCanExecute(() => IsEmptyItem);
             DeleteItemCommand = new DelegateCommand(DeleteItem);
             ScanOrderCommand = new DelegateCommand(ScanOrder).ObservesCanExecute(() => IsEmptyItem);
             BackCommand = new DelegateCommand(Back);
@@ -185,6 +185,7 @@ namespace LargeDist.ViewModels
             },
             rc =>
             {
+                ToggleCancelMode();
                 Refresh();
             });
         }
@@ -280,7 +281,7 @@ namespace LargeDist.ViewModels
             Refresh();
         }
 
-        private void CancelMode()
+        private void ToggleCancelMode()
         {
             IsCancelMode = !IsCancelMode;
             _logger.Debug($"Cancel Mode {IsCancelMode}");
