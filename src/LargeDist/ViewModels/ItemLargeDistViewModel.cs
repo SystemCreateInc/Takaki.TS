@@ -237,7 +237,7 @@ namespace LargeDist.ViewModels
 
         private void MovePrev()
         {
-            _itemLargeDistController!.MoveNext();
+            _itemLargeDistController!.MovePrev();
             UpdateDisplayInfo();
         }
 
