@@ -23,7 +23,7 @@ namespace WorkReport.ViewModels
 
         private readonly IDialogService _dialogService;
 
-        private DateTime _startDate = DateTime.Today;
+        private DateTime _startDate = DateTime.Today.AddDays(1);
         public DateTime StartDate
         {
             get => _startDate;
@@ -34,7 +34,7 @@ namespace WorkReport.ViewModels
             }
         }
 
-        private DateTime _endDate = DateTime.Today;
+        private DateTime _endDate = DateTime.Today.AddDays(1);
         public DateTime EndDate
         {
             get => _endDate;
