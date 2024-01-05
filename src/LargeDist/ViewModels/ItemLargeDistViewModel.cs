@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace LargeDist.ViewModels
 {
@@ -94,8 +96,23 @@ namespace LargeDist.ViewModels
         private bool _isPrintLabel = true;
         public bool IsPrintLabel
         {
-            get => _isPrintLabel;
-            set => SetProperty(ref _isPrintLabel, value);
+            get => _largeDistState.IsPrintLabel;
+            set
+            {
+                SetProperty(ref _isPrintLabel, value);
+                _largeDistState.IsPrintLabel = value;
+            }
+        }
+
+        private bool _isNoPrintLabel;
+        public bool IsNoPrintLabel
+        {
+            get => !_largeDistState.IsPrintLabel;
+            set
+            {
+                SetProperty(ref _isNoPrintLabel, value);
+                IsPrintLabel = !value;
+            }
         }
 
         private string _message = string.Empty;
@@ -112,6 +129,13 @@ namespace LargeDist.ViewModels
             set => SetProperty(ref _isSelectedItem, value);
         }
 
+        private bool _canShifted = true;
+        public bool CanShifted
+        {
+            get => _canShifted;
+            set => SetProperty(ref _canShifted, value);
+        }
+
         private ItemChartController _chart = new ItemChartController();
         public ItemChartController Chart
         {
@@ -120,8 +144,11 @@ namespace LargeDist.ViewModels
         }
 
 
+        private readonly IDialogService _dialogService;
+        private readonly DispatcherTimer _idleTimer = new DispatcherTimer(DispatcherPriority.ApplicationIdle, System.Windows.Application.Current.Dispatcher);
+        private readonly IEventAggregator _eventAggregator;
+        private readonly LargeDistState _largeDistState;
         private IRegionNavigationService? _regionNavigationService;
-        private IDialogService _dialogService;
         private DateTime _deliveryDate;
         private ScanGridController? _parentGridContoller;
         private LargeDistGroup? _largeDistGroup;
@@ -129,21 +156,32 @@ namespace LargeDist.ViewModels
         private ItemLargeDistController? _itemLargeDistController;
         private Person _person = new("", "");
         private bool _initialized = false;
-        private IEventAggregator _eventAggregator;
 
-        public ItemLargeDistViewModel(IDialogService dialogService, IEventAggregator eventAggregator)
+        public ItemLargeDistViewModel(IDialogService dialogService, IEventAggregator eventAggregator, LargeDistState largeDistState)
         {
             _dialogService = dialogService;
             _eventAggregator = eventAggregator;
+            _largeDistState = largeDistState;
             ItemListCommand = new DelegateCommand(ItemList);
             ItemDescCommand = new DelegateCommand(ItemDesc).ObservesCanExecute(() => IsSelectedItem);
             ModifyQtyCommand = new DelegateCommand(ModifyQty).ObservesCanExecute(() => IsSelectedItem);
             ModifyBoxUnitCommand = new DelegateCommand(ModifyBoxUnit);
-            CancelCommand = new DelegateCommand(Cancel);
+            CancelCommand = new DelegateCommand(Cancel).ObservesCanExecute(() => CanShifted);
             MovePrevCommand = new DelegateCommand(MovePrev);
             MoveNextCommand = new DelegateCommand(MoveNext);
             CompleteCommand = new DelegateCommand(Complete);
             RowPushCommand = new DelegateCommand<object>(RowPush);
+
+            _idleTimer.Tick += (s, e) => CheckShifted();
+            _idleTimer.Start();
+        }
+
+        private void CheckShifted()
+        {
+            bool shifted = (Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down) != 0
+                || (Keyboard.GetKeyStates(Key.RightShift) & KeyStates.Down) != 0;
+
+            CanShifted = shifted;
         }
 
         private void RowPush(object obj)

@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows.Input;
+using System.Windows.Threading;
 using WindowLib.Utils;
 
 namespace LargeDist.ViewModels
@@ -73,8 +75,23 @@ namespace LargeDist.ViewModels
         private bool _isPrintLabel = true;
         public bool IsPrintLabel
         {
-            get => _isPrintLabel;
-            set => SetProperty(ref _isPrintLabel, value);
+            get => _largeDistState.IsPrintLabel;
+            set
+            {
+                SetProperty(ref _isPrintLabel, value);
+                _largeDistState.IsPrintLabel = value;
+            }
+        }
+
+        private bool _isNoPrintLabel;
+        public bool IsNoPrintLabel
+        {
+            get => !_largeDistState.IsPrintLabel;
+            set
+            {
+                SetProperty(ref _isNoPrintLabel, value);
+                IsPrintLabel = !value;
+            }
         }
 
         private string _message = string.Empty;
@@ -101,33 +118,54 @@ namespace LargeDist.ViewModels
             set => SetProperty(ref _isSelectedItem, value);
         }
 
+        private bool _canShifted = true;
+        public bool CanShifted
+        {
+            get => _canShifted;
+            set => SetProperty(ref _canShifted, value);
+        }
+
         public bool KeepAlive { get; set; } = true;
 
+        private readonly IDialogService _dialogService;
+        private readonly ScopeLogger _logger = new ScopeLogger(nameof(ItemScanViewModel));
+        private readonly DispatcherTimer _idleTimer = new DispatcherTimer(DispatcherPriority.ApplicationIdle, System.Windows.Application.Current.Dispatcher);
+        private readonly IEventAggregator _eventAggregator;
+        private readonly LargeDistState _largeDistState;
         private IRegionNavigationService? _regionNavigationService;
-        private IDialogService _dialogService;
         private DateTime _deliveryDate;
         private ScanGridController? _parentGridContoller;
         private LargeDistGroup? _largeDistGroup;
-        private ScopeLogger _logger = new ScopeLogger(nameof(ItemScanViewModel));
         private BlockLargeDistController? _blockLargeDistController;
         private Person _person = new("", "");
         private bool _initialized = false;
-        private IEventAggregator _eventAggregator;
 
-        public BlockLargeDistViewModel(IDialogService dialogService, IEventAggregator eventAggregator)
+        public BlockLargeDistViewModel(IDialogService dialogService, IEventAggregator eventAggregator, LargeDistState largeDistState)
         {
             _dialogService = dialogService;
             _eventAggregator = eventAggregator;
+            _largeDistState = largeDistState;
             ItemListCommand = new DelegateCommand(ItemList);
             ItemDescCommand = new DelegateCommand(ItemDesc).ObservesCanExecute(() => IsSelectedItem);
             ModifyQtyCommand = new DelegateCommand(ModifyQty).ObservesCanExecute(() => IsSelectedItem);
             ModifyBoxUnitCommand = new DelegateCommand(ModifyBoxUnit).ObservesCanExecute(() => IsSelectedItem);
             StopItemCommand = new DelegateCommand(StopItem).ObservesCanExecute(() => IsSelectedItem);
-            CancelCommand = new DelegateCommand(Cancel);
+            CancelCommand = new DelegateCommand(Cancel).ObservesCanExecute(() => CanShifted);
             MovePrevCommand = new DelegateCommand(MovePrev);
             MoveNextCommand = new DelegateCommand(MoveNext);
             CompleteCommand = new DelegateCommand(Complete);
             SlotPushCommand = new DelegateCommand<object>(SlotPush);
+
+            _idleTimer.Tick += (s, e) => CheckShifted();
+            _idleTimer.Start();
+        }
+
+        private void CheckShifted()
+        {
+            bool shifted = (Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down) != 0
+                || (Keyboard.GetKeyStates(Key.RightShift) & KeyStates.Down) != 0;
+
+            CanShifted = shifted;
         }
 
         private void SlotPush(object obj)

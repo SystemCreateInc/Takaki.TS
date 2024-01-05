@@ -12,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace LargeDist.ViewModels
 {
@@ -106,9 +108,9 @@ namespace LargeDist.ViewModels
 
         public bool KeepAlive { get; set; } = true;
 
+        private readonly IDialogService _dialogService;
+        private readonly ScopeLogger _logger = new ScopeLogger(nameof(ItemScanViewModel));
         private IRegionNavigationService? _regionNavigationService;
-        private IDialogService _dialogService;
-        private ScopeLogger _logger = new ScopeLogger(nameof(ItemScanViewModel));
         private bool _initialized;
         private bool _requestClearItem;
         private bool _requestGridSetup;
