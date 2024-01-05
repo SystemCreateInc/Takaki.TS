@@ -153,6 +153,8 @@ namespace DistLargeGroup.ViewModels
             set => SetProperty(ref _referenceLog, value);
         }
 
+        public DateTime? _lastReferenceDate;
+
         private bool _isAdd;
         public bool IsAdd
         {
@@ -172,7 +174,7 @@ namespace DistLargeGroup.ViewModels
             ClearCommand = new DelegateCommand(Clear);
             RegistCommand = new DelegateCommand(Regist);
             BackCommand = new DelegateCommand(Back);
-            ReferCommand = new DelegateCommand(Refer);
+            ReferCommand = new DelegateCommand(() => Refer(false));
             ReleaseCommand = new DelegateCommand(Release);
             _dialogService = dialogService;
         }
@@ -182,7 +184,7 @@ namespace DistLargeGroup.ViewModels
             IsDateRelease = true;
         }
 
-        private void Refer()
+        private void Refer(bool isInit)
         {
 
             try
@@ -191,8 +193,21 @@ namespace DistLargeGroup.ViewModels
                 if (log is null)
                 {
                     Clear();
+
+                    if (!isInit)
+                    {
+                        MessageDialog.Show(_dialogService, "参照する履歴はありません", "該当適用期間無し");
+                        if (_lastReferenceDate is not null)
+                        {
+                            ReferenceDate = _lastReferenceDate.GetValueOrDefault();
+                            Refer(true);
+                        }
+                    }
+                        
                     return;
                 }
+
+                _lastReferenceDate = ReferenceDate;
 
                 var largeDistGroup = LargeGroupRepository.FindById(log.Id);
                 if (largeDistGroup is null)
@@ -332,7 +347,7 @@ namespace DistLargeGroup.ViewModels
             {
                 ReferenceLog.LogInfos = LargeGroupQueryService.GetLog(_distLargeGroup.CdLargeGroup).ToList();
                 // 当日で参照
-                Refer();
+                Refer(true);
             }
         }
 

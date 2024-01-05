@@ -5,12 +5,10 @@ using LogLib;
 using Microsoft.IdentityModel.Tokens;
 using Prism.Commands;
 using Prism.Mvvm;
-using Prism.Regions;
 using Prism.Services.Dialogs;
 using ReferenceLogLib;
 using SeatThreshold.Loader;
 using SeatThreshold.Models;
-using System.Collections.ObjectModel;
 using TakakiLib.Models;
 using WindowLib.Utils;
 
@@ -190,6 +188,8 @@ namespace SeatThreshold.ViewModels
 
         public ReferenceLog ReferenceLog { get; set; } = new ReferenceLog();
 
+        public DateTime? _lastReferenceDate;
+
         private bool _isChange = false;
 
         private readonly IDialogService _dialogService;
@@ -228,7 +228,7 @@ namespace SeatThreshold.ViewModels
 
                 Syslog.Debug("InputSeatThresholdDlgViewModel:Refer");
                 ClearInfo(IsAdd);
-                SetReferenceInfo();
+                SetReferenceInfo(false);
             });
 
             Release = new DelegateCommand(() =>
@@ -263,7 +263,7 @@ namespace SeatThreshold.ViewModels
                 CdBlock = _seatThreshold.CdBlock;
                 ReferenceLog.LogInfos = LogLoader.Get(_seatThreshold.CdBlock).ToList();
 
-                SetReferenceInfo();
+                SetReferenceInfo(true);
             }
             else
             {
@@ -296,7 +296,7 @@ namespace SeatThreshold.ViewModels
         }        
 
         // 参照日から情報取得
-        private void SetReferenceInfo()
+        private void SetReferenceInfo(bool isInit)
         {
             var tekiyoDate = ReferenceLog.GetStartDateInRange(ReferenceDate.ToString("yyyyMMdd"));
             var data = SeatThresholdLoader.GetFromKey(_seatThreshold.CdBlock, tekiyoDate);
@@ -313,6 +313,17 @@ namespace SeatThreshold.ViewModels
                 NmShain = _shainInfo.HenkoshaName;
                 DtTekiyoKaishi = DateTime.Parse(data.Tekiyokaishi.GetDate());
                 DtTekiyoMuko = DateTime.Parse(data.TekiyoMuko.GetDate());
+
+                _lastReferenceDate = ReferenceDate;
+            }
+            else if (!isInit)
+            {
+                MessageDialog.Show(_dialogService, "参照する履歴はありません", "該当適用期間無し");
+                if (_lastReferenceDate is not null)
+                {
+                    ReferenceDate = _lastReferenceDate.GetValueOrDefault();
+                    SetReferenceInfo(true);
+                }
             }
             _isChange = false;
         }

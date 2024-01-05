@@ -191,6 +191,8 @@ namespace Customer.ViewModels
 
         public ReferenceLog ReferenceLog { get; set; } = new ReferenceLog();
 
+        public DateTime? _lastReferenceDate;
+
         public string Title => "集約得意先情報入力";
 
         public InputCustomerViewModel(IDialogService dialogService, IRegionManager regionManager)
@@ -227,7 +229,7 @@ namespace Customer.ViewModels
 
                 Syslog.Debug("InputCustomerViewModel:Refer");
                 ClearInfo(IsAdd);
-                SetReferenceCustomer();
+                SetReferenceCustomer(false);
             });
 
             Release = new DelegateCommand(() =>
@@ -303,7 +305,7 @@ namespace Customer.ViewModels
         }
 
         // 参照
-        private void SetReferenceCustomer()
+        private void SetReferenceCustomer(bool isInit)
         {
             var tekiyoDate = ReferenceLog.GetStartDateInRange(ReferenceDate.ToString("yyyyMMdd"));
             var customer = CustomerLoader.GetFromKey(_currentCustomer.CdSumTokuisaki, tekiyoDate);
@@ -318,6 +320,17 @@ namespace Customer.ViewModels
                 DtTekiyoMuko = DateTime.Parse(customer.TekiyoMuko.GetDate());
 
                 ChildCustomers = new ObservableCollection<ChildCustomer>(customer.ChildCustomers);
+
+                _lastReferenceDate = ReferenceDate;
+            }
+            else if (!isInit)
+            {
+                MessageDialog.Show(_dialogService, "参照する履歴はありません", "該当適用期間無し");
+                if (_lastReferenceDate is not null)
+                {
+                    ReferenceDate = _lastReferenceDate.GetValueOrDefault();
+                    SetReferenceCustomer(true);
+                }                
             }
             _isChange = false;
         }
@@ -338,7 +351,7 @@ namespace Customer.ViewModels
                 ReferenceLog.LogInfos = LogLoader.Get(_currentCustomer.CdSumTokuisaki).ToList();
 
                 // 参照日初期値で履歴から検索
-                SetReferenceCustomer();
+                SetReferenceCustomer(true);
             }
             else
             {

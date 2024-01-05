@@ -220,6 +220,8 @@ namespace DistGroup.ViewModels
 
         public ReferenceLog ReferenceLog { get; set; } = new ReferenceLog();
 
+        public DateTime? _lastReferenceDate;
+
         private bool _isChange = false;
 
         private readonly IDialogService _dialogService;
@@ -259,7 +261,7 @@ namespace DistGroup.ViewModels
 
                 Syslog.Debug("InputDistGroupViewModelDlg:Refer");
                 ClearInfo(IsAdd);
-                SetReferenceInfo();
+                SetReferenceInfo(false);
                 Batches.CollectionChanged += Batches_CollectionChanged;
                 Courses.CollectionChanged += Courses_CollectionChanged;
             });
@@ -321,7 +323,7 @@ namespace DistGroup.ViewModels
                 NmDistGroup = _distGroup.NmDistGroup;
                 ReferenceLog.LogInfos = LogLoader.Get(_distGroup.CdDistGroup).ToList();
 
-                SetReferenceInfo();
+                SetReferenceInfo(true);
             }
             else
             {
@@ -356,7 +358,7 @@ namespace DistGroup.ViewModels
         }
 
         // 参照日から情報取得
-        private void SetReferenceInfo()
+        private void SetReferenceInfo(bool isInit)
         {
             var tekiyoDate = ReferenceLog.GetStartDateInRange(ReferenceDate.ToString("yyyyMMdd"));
             var data = DistGroupLoader.GetFromKey(_distGroup.CdDistGroup, tekiyoDate);
@@ -373,6 +375,18 @@ namespace DistGroup.ViewModels
                 NmShain = _shainInfo.HenkoshaName;
                 DtTekiyoKaishi = DateTime.Parse(data.Tekiyokaishi.GetDate());
                 DtTekiyoMuko = DateTime.Parse(data.TekiyoMuko.GetDate());
+
+                _lastReferenceDate = ReferenceDate;
+            }
+            else if (!isInit)
+            {
+                MessageDialog.Show(_dialogService, "参照する履歴はありません", "該当適用期間無し");
+                if (_lastReferenceDate is not null)
+                {
+                    ReferenceDate = _lastReferenceDate.GetValueOrDefault();
+                    SetReferenceInfo(true);
+                }
+
             }
             _isChange = false;
         }
