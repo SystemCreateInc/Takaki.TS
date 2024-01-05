@@ -1,15 +1,27 @@
-﻿using Picking.Models;
+﻿using ImTools;
+using Microsoft.IdentityModel.Tokens;
+using Picking.Models;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Windows;
 using WindowLib.Utils;
 
 namespace Picking.ViewModels
 {
     public class ShainDlgViewModel : BindableBase, IDialogAware
     {
+        public DelegateCommand EnterShainCommand1 { get; }
+        public DelegateCommand EnterShainCommand2 { get; }
+        public DelegateCommand EnterShainCommand3 { get; }
+        public DelegateCommand EnterShainCommand4 { get; }
+        public DelegateCommand EnterShainCommand5 { get; }
+
         private string _title = "作業担当色設定";
         public string Title
         {
@@ -161,6 +173,36 @@ namespace Picking.ViewModels
             get => _enableshain5;
             set => SetProperty(ref _enableshain5, value);
         }
+        private string _cdShain1 = string.Empty;
+        public string CdShain1
+        {
+            get => _cdShain1;
+            set => SetProperty(ref _cdShain1, value);
+        }
+        private string _cdShain2 = string.Empty;
+        public string CdShain2
+        {
+            get => _cdShain2;
+            set => SetProperty(ref _cdShain2, value);
+        }
+        private string _cdShain3 = string.Empty;
+        public string CdShain3
+        {
+            get => _cdShain3;
+            set => SetProperty(ref _cdShain3, value);
+        }
+        private string _cdShain4 = string.Empty;
+        public string CdShain4
+        {
+            get => _cdShain4;
+            set => SetProperty(ref _cdShain4, value);
+        }
+        private string _cdShain5 = string.Empty;
+        public string CdShain5
+        {
+            get => _cdShain5;
+            set => SetProperty(ref _cdShain5, value);
+        }
 
         private readonly IDialogService _dialogService;
 
@@ -170,6 +212,28 @@ namespace Picking.ViewModels
 
             Save = new DelegateCommand(() =>
             {
+                // チェック
+                if (Shain1==null)
+                {
+                    Shain1 = new Shain();
+                }
+                if (Shain2 == null)
+                {
+                    Shain2 = new Shain();
+                }
+                if (Shain3 == null)
+                {
+                    Shain3 = new Shain();
+                }
+                if (Shain4 == null)
+                {
+                    Shain4 = new Shain();
+                }
+                if (Shain5 == null)
+                {
+                    Shain5 = new Shain();
+                }
+
                 try
                 {
                     var result = new DialogResult(ButtonResult.OK);
@@ -193,6 +257,13 @@ namespace Picking.ViewModels
             {
                 RequestClose?.Invoke(new DialogResult(ButtonResult.Cancel));
             });
+
+            EnterShainCommand1 = new(EnterShain1);
+            EnterShainCommand2 = new(EnterShain2);
+            EnterShainCommand3 = new(EnterShain3);
+            EnterShainCommand4 = new(EnterShain4);
+            EnterShainCommand5 = new(EnterShain5);
+
         }
 
         public bool CanCloseDialog()
@@ -236,7 +307,83 @@ namespace Picking.ViewModels
         }
         Shain GetShainCombo(string cd_shain)
         {
-            return ShainCombo.Find(x => x.CdShain == cd_shain)?? new Shain();
+            return ShainCombo.Find(x => x.CdShain == cd_shain) ?? new Shain();
+        }
+        private void EnterShain1()
+        {
+            EnterShain(1);
+        }
+        private void EnterShain2()
+        {
+            EnterShain(2);
+        }
+        private void EnterShain3()
+        {
+            EnterShain(3);
+        }
+        private void EnterShain4()
+        {
+            EnterShain(4);
+        }
+        private void EnterShain5()
+        {
+            EnterShain(5);
+        }
+        private void EnterShain(int syainidx)
+        {
+            var cdshain = CdShain1;
+            switch(syainidx)
+            {
+                case 1: cdshain = CdShain1; break;
+                case 2: cdshain = CdShain2; break;
+                case 3: cdshain = CdShain3; break;
+                case 4: cdshain = CdShain4; break;
+                case 5: cdshain = CdShain5; break;
+            }
+
+
+            // 入力テキストが7桁未満なら先頭０を追加して７桁にする
+            if (cdshain.Length < 7)
+            {
+                cdshain = cdshain.PadLeft(7, '0');
+            }
+
+            var tmp = GetShainCombo(cdshain);
+            if (tmp != null)
+            {
+                switch (syainidx)
+                {
+                    case 1:
+                        CdShain1 = cdshain;
+                        Shain1 = tmp;
+                        break;
+                    case 2:
+                        CdShain2 = cdshain;
+                        Shain2 = tmp;
+                        break;
+                    case 3:
+                        CdShain3 = cdshain;
+                        Shain3 = tmp;
+                        break;
+                    case 4:
+                        CdShain4 = cdshain;
+                        Shain4 = tmp;
+                        break;
+                    case 5:
+                        CdShain5 = cdshain;
+                        Shain5 = tmp;
+                        break;
+                }
+            }
+
+            var direction = Keyboard.Modifiers == ModifierKeys.Shift ? FocusNavigationDirection.Previous : FocusNavigationDirection.Next;
+            UIElement? elementWithFocus = Keyboard.FocusedElement as UIElement;
+            if (elementWithFocus != null)
+            {
+                // カーソル移動
+                elementWithFocus.MoveFocus(new TraversalRequest(direction));
+
+            }
         }
     }
 }

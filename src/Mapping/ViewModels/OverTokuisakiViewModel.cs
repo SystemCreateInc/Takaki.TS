@@ -57,28 +57,36 @@ namespace Mapping.ViewModels
                 Syslog.Debug("OverTokuisakiViewModel:OverPrint");
                 try
                 {
-                    var overs = OverInfos.ToList();
-
-                    if (overs == null || overs.Count == 0)
+                    using (var busy = new WaitCursor())
                     {
-                        return;
-                    }
+                        var overs = OverInfos.ToList();
 
-                    var viewModel = ReportCreator.GetOverList(overs);
-#if DEBUG
+                        if (overs == null || overs.Count == 0)
+                        {
+                            return;
+                        }
+
+                        var viewModel = ReportCreator.GetOverList(overs);
+
+                        var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Landscape);
+                        ppm.PrintPreview("あふれ一覧", viewModel);
+
+                        // 実際に印刷していないのでｷｬﾝｾﾙ
+                        if (ppm.IsPrinted == false)
+                            return;
+
+#if false
                     var ppm = new PrintManager(PageMediaSizeName.ISOA4, PageOrientation.Landscape);
-                    ppm.Print("ロケーション一覧", viewModel);
-#else
-                    var ppm = new PrintManager(PageMediaSizeName.ISOA4, PageOrientation.Landscape);
-                    ppm.Print("ロケーション一覧", viewModel);
+                    ppm.Print("あふれ一覧", viewModel);
 #endif
 
-                    if (_mapping != null)
-                    {
-                        var distgroup = _mapping!.distgroups.Where(x => x.CdDistGroup == _distgroupinfo!.CdDistGroup).FirstOrDefault();
-                        if (distgroup != null)
+                        if (_mapping != null)
                         {
-                            distgroup.IsSave = true;
+                            var distgroup = _mapping!.distgroups.Where(x => x.CdDistGroup == _distgroupinfo!.CdDistGroup).FirstOrDefault();
+                            if (distgroup != null)
+                            {
+                                distgroup.IsSave = true;
+                            }
                         }
                     }
 
@@ -105,7 +113,7 @@ namespace Mapping.ViewModels
                     var distgroup = _mapping!.distgroups.Where(x => x.CdDistGroup == _distgroupinfo!.CdDistGroup).FirstOrDefault();
                     if (distgroup != null)
                     {
-                        distgroup.IsSave = true;
+                        distgroup.IsCancel = true;
                     }
                 }
 

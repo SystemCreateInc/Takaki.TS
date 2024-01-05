@@ -9,6 +9,8 @@ namespace PrintPreviewLib
     public class PrintPreviewManager
     {
         public PrintManager PrintManager { get; set; }
+        // ƒvƒŠƒ“ƒ^‚©‚çˆóü‚µ‚½ê‡‚ÉTrue 
+        public bool? IsPrinted { get; set; } = false;
 
         public PrintPreviewManager(PageMediaSizeName name, PageOrientation orientation)
         {
@@ -28,6 +30,7 @@ namespace PrintPreviewLib
                 viewer.Title = docTitle;
                 Mouse.OverrideCursor = null;
                 window.ShowDialog();
+                IsPrinted = viewer.IsPrinted;
             }
 
             return true;

@@ -14,6 +14,7 @@ namespace PrintPreviewLib
         public PrintTicket? PrintTicket { get; set; }
         public PrintQueue? PrintQueue { get; set; }
         public string? Title { get; set; }
+        public bool IsPrinted { get; set; } = false;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -21,7 +22,7 @@ namespace PrintPreviewLib
         {
             // 印刷実行を通知
             NotifyPropertyChanged();
-            PrintDialogHelper.Show(Title!, (FixedDocument)Document, PrintQueue!, PrintTicket!);
+            IsPrinted = PrintDialogHelper.Show(Title!, (FixedDocument)Document, PrintQueue!, PrintTicket!);
         }
         protected void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {

@@ -105,7 +105,8 @@
         <DataGrid DockPanel.Dock="Top" x:Name="distinfogrid" ItemsSource="{Binding DisplayDistInfoDatas}" CurrentItem="{Binding CurrentDistInfo, Mode=TwoWay}"
                   SelectedItem="{Binding CurrentDistInfo, Mode=TwoWay}"
                   CanUserAddRows="False" SelectionMode="Single"
-                  AutoGenerateColumns="False" IsReadOnly="True">
+                  AutoGenerateColumns="False" IsReadOnly="True"
+                  AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="状態" Width="Auto" Binding="{Binding DStatus_name}" IsReadOnly="True"/>
