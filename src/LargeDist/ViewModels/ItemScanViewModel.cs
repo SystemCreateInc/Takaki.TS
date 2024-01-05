@@ -84,14 +84,14 @@ namespace LargeDist.ViewModels
             set => SetProperty(ref _isCancelMode, value);
         }
 
-        private bool _canLargeDist;
+        private bool _isScannedItem;
         public bool IsScannedItem
         {
-            get => _canLargeDist;
+            get => _isScannedItem;
             set
             {
-                SetProperty(ref _canLargeDist, value);
-                IsEmptyItem = !_canLargeDist;
+                SetProperty(ref _isScannedItem, value);
+                IsEmptyItem = !_isScannedItem;
             }
         }
 
@@ -204,7 +204,7 @@ namespace LargeDist.ViewModels
             }
 
             ScanGrid.PushItem(item);
-            IsScannedItem = true;
+            Refresh();
         }
 
         private LargeDistItem? SelectItem(IEnumerable<LargeDistItem> items)
@@ -275,7 +275,7 @@ namespace LargeDist.ViewModels
         {
             _logger.Debug("Delete Item");
             ScanGrid.DeleteSelectedItem();
-            IsScannedItem = ScanGrid.HasScanItem;
+            Refresh();
         }
 
         private void CancelMode()
@@ -297,6 +297,7 @@ namespace LargeDist.ViewModels
         private void Refresh()
         {
             ItemProgress = LargeDistQueryService.GetProgress(LargeDistGroup!);
+            IsScannedItem = ScanGrid.HasScanItem;
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
@@ -307,7 +308,6 @@ namespace LargeDist.ViewModels
                 {
                     _logger.Debug("Request Clear Item");
                     _requestClearItem = false;
-                    Refresh();
                     ScanGrid.Clear();
                 }
 
@@ -318,6 +318,7 @@ namespace LargeDist.ViewModels
                     SetupGrid();
                 }
 
+                Refresh();
                 return;
             }
 
@@ -326,10 +327,9 @@ namespace LargeDist.ViewModels
             DeliveryDate = param.DeliveryDate;
             LargeDistGroup = param.LargeDistGroup;
             Person = param.Person;
-            Refresh();
             SetupGrid();
+            Refresh();
             _initialized = true;
-            IsScannedItem = false;
             _logger.Debug("Initialized");
         }
 
