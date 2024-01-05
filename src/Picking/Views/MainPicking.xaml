@@ -220,7 +220,8 @@
                   CanUserAddRows="False" SelectionMode="Single" CanUserSortColumns="false"
                   Margin="20,0,30,0"
                       FontSize="40"
-                  AutoGenerateColumns="False" IsReadOnly="True" VerticalScrollBarVisibility="Hidden">
+                  AutoGenerateColumns="False" IsReadOnly="True" VerticalScrollBarVisibility="Hidden"
+                  AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="色" Width="Auto" Binding="{Binding DistColor_Func_name}" IsReadOnly="True">
                         <DataGridTextColumn.CellStyle>

@@ -68,6 +68,9 @@ namespace Picking.Services
                     var p = GetDistGroupProgress(con, tr, distgroup);
                     if (p==null)
                     {
+                        return;
+// マッピング作成する様に変更
+#if false
                         // 新規追加
                         p = new TBDISTGROUPPROGRESSEntity
                         {
@@ -91,6 +94,7 @@ namespace Picking.Services
                             UpdatedAt = DateTime.Now,
                         };
                         con.Insert(p, x => x.AttachToTransaction(tr));
+#endif
                     }
                     else
                     {
@@ -147,7 +151,7 @@ namespace Picking.Services
 
                     // 同じ納品日のＰＣは全て未処理へ戻す
                     var sql = "update TB_DIST_GROUP_PROGRESS set FG_WORKING = @status"
-                            + " where DT_DELIVERY = @dtdelivery and CD_KYOTEN = @cdkyoten and ID_PC = @idpc and CD_DIST_GROUP<>''";
+                            + " where DT_DELIVERY = @dtdelivery and CD_KYOTEN = @cdkyoten and CD_BLOCK = @cdblock and CD_DIST_GROUP<>''";
 
                     con.Execute(sql,
                     new
@@ -155,7 +159,7 @@ namespace Picking.Services
                         status = (int)Status.Ready,
                         dtdelivery = distgroup.DtDelivery.ToString("yyyyMMdd"),
                         cdkyoten = distgroup.CdKyoten,
-                        idpc = distgroup.IdPc,
+                        cdblock = distgroup.CdBlock,
                     }, tr);
 
                     tr.Commit();
