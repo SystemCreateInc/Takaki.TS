@@ -40,6 +40,7 @@ namespace WorkReport.Reports
 
                     pageGroups.Last().Last().Details.Add(new Detail
                     {
+                        IsEven = detail.IsEven,
                         NmSyain = detail.NmSyain,
                         NmWorktime = detail.NmWorktime,
                         NmItemcnt = detail.NmItemcnt,
@@ -82,8 +83,9 @@ namespace WorkReport.Reports
                     CdBlock = s.Key.CdBlock,
                     DtEnd = s.Max(x => x.DtEnd),
                     NmIdle = s.Max(x => x.NmIdle),
-                    Details = s.Select(ss => new Detail
+                    Details = s.Select((ss, index) => new Detail
                     {
+                        IsEven = index % 2 == 0,
                         NmSyain = ss.NmSyain,
                         NmWorktime = ss.NmWorktime,
                         NmItemcnt = ss.NmItemcnt,

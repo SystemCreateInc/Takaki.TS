@@ -1,0 +1,2 @@
+コマンド,xhoファイル,保存先,バージョン
+bt-w70,updatebt.zip,updatebt.zip,1.01

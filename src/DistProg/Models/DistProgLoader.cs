@@ -28,7 +28,8 @@ namespace DistProg.Models
                 + "left join("
                     + "select * from(select ID_PC, CD_BLOCK, NM_SHAIN, CD_DIST_GROUP, NM_DIST_GROUP, DT_DELIVERY, DT_START, DT_END, NU_RITEMCNT, NU_OITEMCNT, NU_RPS, NU_OPS, row_number() over(partition by ID_PC order by updatedAt desc) no "
                     + "from TB_DIST_GROUP_PROGRESS) t1 where no = 1) v1 "
-                + "on TB_PC.ID_PC = v1.ID_PC";
+                + "on TB_PC.ID_PC = v1.ID_PC "
+                + "where TB_PC.ID_PC<>0";
 
             using (var con = DbFactory.CreateConnection())
             {

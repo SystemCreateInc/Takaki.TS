@@ -8,9 +8,9 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="0.8cm"/>
+            <RowDefinition Height="0.5cm"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="0.8cm"/>
+            <RowDefinition Height="0.5cm"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
@@ -22,11 +22,41 @@
                 <ColumnDefinition Width="3cm"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Text="{Binding CdHimban}"/>
-            <TextBlock Grid.Column="1" Text="{Binding CdJan}"/>
-            <TextBlock Grid.Column="2" Text="{Binding NmHinSeishikimei}"/>
-            <TextBlock Grid.Column="3" Text="{Binding NuBoxunit}" HorizontalAlignment="Center"/>
-            <TextBlock Grid.Column="4" Text="{Binding DispTotalPs}"/>
+            <Grid.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="14"/>
+                </Style>
+            </Grid.Resources>
+
+            <Border Grid.Column="0" BorderBrush="Black" BorderThickness="0.5,0.5,0,0">
+                <TextBlock Text="{Binding CdHimban}" Margin="3,0,0,0"/>
+            </Border>
+
+            <Border Grid.Column="1" BorderBrush="Black" BorderThickness="0.5,0.5,0,0">
+                <TextBlock Text="{Binding CdJan}" Margin="3,0,0,0"/>
+            </Border>
+
+            <Border Grid.Column="2" BorderBrush="Black" BorderThickness="0.5,0.5,0,0">
+                <TextBlock Text="{Binding NmHinSeishikimei}" Margin="3,0,0,0"/>
+            </Border>
+
+            <Border Grid.Column="3" BorderBrush="Black" BorderThickness="0.5,0.5,0,0">
+                <TextBlock Text="{Binding NuBoxunit}" HorizontalAlignment="Center"/>
+            </Border>
+
+            <Border Grid.Column="4" BorderBrush="Black" BorderThickness="0.5,0.5,0.5,0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="0.2*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="{Binding TotalBoxPs}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    <TextBlock Grid.Column="1" Text="/" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="2" Text="{Binding TotalBaraPs}" VerticalAlignment="Center"/>
+                </Grid>
+            </Border>
         </Grid>
 
         <ItemsControl Grid.Row="1" ItemsSource="{Binding Details}">
@@ -36,5 +66,7 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+
+        <Border Grid.Row="2" BorderBrush="Black" BorderThickness="0,0.5,0,0" Width="28cm" HorizontalAlignment="Left"/>
     </Grid>
 </UserControl>

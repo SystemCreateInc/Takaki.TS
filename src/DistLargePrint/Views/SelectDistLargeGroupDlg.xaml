@@ -15,7 +15,7 @@
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5">
             <TextBlock Text="大仕分グループ" Width="150" VerticalAlignment="Center" Margin="3"/>
             <TextBlock Text=":" VerticalAlignment="Center" Margin="3"/>
-            <ComboBox x:Name="LargeDistGroupCombo" SelectedIndex="{Binding LargeDistGroupIndex}" ItemsSource="{Binding LargeDistGroupCombo}"
+            <ComboBox x:Name="LargeDistGroupCombo" SelectedItem="{Binding LargeDistGroupItem}" ItemsSource="{Binding LargeDistGroupCombo}"
                       DisplayMemberPath="Name" Width="150" Margin="3"/>
         </StackPanel>
 

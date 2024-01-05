@@ -54,6 +54,14 @@ namespace TdDpsLib.Models
         public int TdUnitSeqReverse { get; set; }
         public int TdUnitZoneCode { get; set; } = 0;           // ゾーン範囲
         public int TdUnitFront { get; set; }                    // STARTBOX 0:前 1:後
+        public int GetTdUnitSeq(int zoneorderin)
+        {
+            if(zoneorderin == (int)ZoneOrder.Asc)
+            {
+                return TdUnitSeq;
+            }
+            return TdUnitSeqReverse;
+        }
 
         public string Physics                       // 分岐-物理
         {

@@ -45,6 +45,7 @@
             <TextBox Text="{Binding Value,UpdateSourceTrigger=PropertyChanged, Delay=100}" Width="100" HorizontalContentAlignment="Right" x:Name="Value" >
                 <i:Interaction.Behaviors>
                     <b:NumericTextBoxBehavior/>
+                    <b:SelectTextOnGotFocusTextBoxBehavior/>
                 </i:Interaction.Behaviors>
             </TextBox>
         </StackPanel>
@@ -57,7 +58,7 @@
             </StackPanel.Resources>
 
             <Button Command="{Binding OKCommand}" Content="OK" Margin="0,0,30,0"/>
-            <Button Command="{Binding CancelCommand}" Content="キャンセル" />
+            <Button Command="{Binding CancelCommand}" Content="キャンセル" IsCancel="True" />
         </StackPanel>
     </StackPanel>
 </UserControl>

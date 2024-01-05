@@ -44,8 +44,8 @@ namespace DispShop.Models
             get => _cd_sum_course;
             set => SetProperty(ref _cd_sum_course, value);
         }
-        private int _cd_sum_route = 0;
-        public int CdSumRoute
+        private string _cd_sum_route =  string.Empty;
+        public string CdSumRoute
         {
             get => _cd_sum_route;
             set => SetProperty(ref _cd_sum_route, value);
@@ -70,8 +70,23 @@ namespace DispShop.Models
         public int Ops
         {
             get => _ops;
-            set => SetProperty(ref _ops, value);
+            set
+            {
+                SetProperty(ref _ops, value);
+                if (CdKyoten != "")
+                    DispOps = string.Format("{0}", value);
+                else
+                    DispOps = "";
+            }
         }
+
+        private string _dispops = string.Empty;
+        public string DispOps
+        {
+            get => _dispops;
+            set => SetProperty(ref _dispops, value);
+        }
+
         private int _rps = 0;
         public int Rps
         {
@@ -107,9 +122,11 @@ namespace DispShop.Models
             get => _box3;
             set => SetProperty(ref _box3, value);
         }
-        public int BoxCnt
+        public string BoxCnt
         {
-            get { return Box0 + Box1 + Box2 + Box3; }
+            get { 
+                return CdKyoten=="" ? "" : string.Format("{0:#}",Box0 + Box1 + Box2 + Box3);
+            }
         }
     }
 }

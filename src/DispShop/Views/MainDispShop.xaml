@@ -110,7 +110,7 @@
                 <DataGridTextColumn Header="得意先ｺｰﾄﾞ" Binding="{Binding CdSumTokuisaki}"/>
                 <DataGridTextColumn Header="得意先名称" Binding="{Binding NmSumTokuisaki}"/>
                 <DataGridTextColumn Header="番重数" Binding="{Binding BoxCnt}"  ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="総数" Binding="{Binding Ops}"  ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="総数" Binding="{Binding DispOps}"  ElementStyle="{StaticResource RightTextElement}"/>
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>

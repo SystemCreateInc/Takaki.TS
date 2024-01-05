@@ -1,4 +1,4 @@
-net stop "ScStowage"
+net stop "ScStowageSvr"
 
 net stop "ScHandySvr"
 net stop "Scbackend"

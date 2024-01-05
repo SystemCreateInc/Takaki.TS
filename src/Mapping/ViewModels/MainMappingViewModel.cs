@@ -157,6 +157,7 @@ namespace Mapping.ViewModels
                                     p.MStatus = MStatus.Run;
                                     p.MappingStatus = p.OverShopCnt == 0 ? (int)DbLib.Defs.Status.Completed : (int)DbLib.Defs.Status.Inprog;
                                 }
+                                break;
                             }
                         }
 

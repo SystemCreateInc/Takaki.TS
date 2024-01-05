@@ -252,7 +252,7 @@ namespace Picking.ViewModels
                 _regionManager.RequestNavigate("ContentRegion", nameof(Views.DistDetailWindow), new NavigationParameters
                 {
                     {
-                        "currentdistnfo", ItemToInfo(CurrentDistItemSeq!)
+                        "currentdistinfo", ItemToInfo(CurrentDistItemSeq!)
                     },
                 });
 

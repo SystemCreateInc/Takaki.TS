@@ -167,6 +167,14 @@ namespace Picking.Models
         public int TdUnitSeq { get; set; }
         public int TdUnitSeqReverse { get; set; }
         public bool bLight { get; set; } = false;
+        public int GetTdUnitSeq(int zoneorderin)
+        {
+            if (zoneorderin == (int)ZoneOrder.Asc)
+            {
+                return TdUnitSeq;
+            }
+            return TdUnitSeqReverse;
+        }
     }
     public class TdColor
     {

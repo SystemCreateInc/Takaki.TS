@@ -618,34 +618,19 @@ namespace Picking.Models
                 int zoneorderin = ZoneOrderIn[z];
 
                 int topseq = 0, mintdunitseq = 0;
-                if (zoneorderin == (int)ZoneOrder.Asc)
-                {
-                    // ゾーン先頭のＳＥＱを取得
-                    var topaddr = tddps.TdAddrs!
-                        .Where(x => x.TdUnitZoneCode == z && x.IsUnitNormal() == true)
-                        .OrderBy(x => x.TdUnitSeq).FirstOrDefault();
-                    topseq = topaddr != null ? topaddr.TdUnitSeq : 0;
 
-                    // 点灯してる最小ＳＥＱを取得
-                    var addr = tddps.TdAddrs!
-                        .Where(x => x.TdUnitZoneCode == z && x.GetLightButton() != -1 && x.IsUnitNormal() == true)
-                        .OrderBy(x => x.TdUnitSeq).FirstOrDefault();
-                    mintdunitseq = addr != null ? addr.TdUnitSeq - (int)StartBoxMode.SpaceCnt : 99999;
-                }
-                else
-                {
-                    // ゾーン先頭のＳＥＱを取得
-                    var topaddr = tddps.TdAddrs!
-                        .Where(x => x.TdUnitZoneCode == z && x.IsUnitNormal() == true)
-                        .OrderBy(x => x.TdUnitSeqReverse).FirstOrDefault();
-                    topseq = topaddr != null ? topaddr.TdUnitSeqReverse : 0;
+                // ゾーン先頭のＳＥＱを取得
+                var topaddr = tddps.TdAddrs!
+                    .Where(x => x.TdUnitZoneCode == z && x.IsUnitNormal() == true)
+                    .OrderBy(x => x.GetTdUnitSeq(zoneorderin)).FirstOrDefault();
+                topseq = topaddr != null ? topaddr.GetTdUnitSeq(zoneorderin) : 0;
 
-                    // 点灯してる最小ＳＥＱを取得
-                    var addr = tddps.TdAddrs!
-                        .Where(x => x.TdUnitZoneCode == z && x.GetLightButton() != -1 && x.IsUnitNormal() == true)
-                        .OrderBy(x => x.TdUnitSeqReverse).FirstOrDefault();
-                    mintdunitseq = addr != null ? addr.TdUnitSeqReverse - (int)StartBoxMode.SpaceCnt : 99999;
-                }
+                // 点灯してる最小ＳＥＱを取得
+                var addr = tddps.TdAddrs!
+                    .Where(x => x.TdUnitZoneCode == z && x.GetLightButton() != -1 && x.IsUnitNormal() == true)
+                    .OrderBy(x => x.GetTdUnitSeq(zoneorderin)).FirstOrDefault();
+                mintdunitseq = addr != null ? addr.GetTdUnitSeq(zoneorderin) - (int)StartBoxMode.SpaceCnt : 99999;
+
                 Syslog.Info($"TdUnitLightChaseStartBox:topseq={topseq} mintdunitseq={mintdunitseq} zone={zone}");
 
                 // 侵入順序取得
@@ -749,61 +734,24 @@ namespace Picking.Models
                 return false;
 
             // 該当ゾーンで点灯している最小のDistSeqを取得
-#if true
             int zoneorderin = ZoneOrderIn[zone];
 
             int mintdunitseq = 0;
             // 点灯してる最小ＳＥＱを取得
-            if (zoneorderin == (int)ZoneOrder.Asc)
-            {
                 var addr = tddps.TdAddrs!
                 .Where(x => x.TdUnitZoneCode == zone && x.GetLightButton() != -1 && x.IsUnitNormal() == true)
-                .OrderBy(x => x.TdUnitSeq).FirstOrDefault();
-                mintdunitseq = addr != null ? addr.TdUnitSeq - (int)StartBoxMode.SpaceCnt : 99999;
-            }
-            else
-            {
-                var addr = tddps.TdAddrs!
-                .Where(x => x.TdUnitZoneCode == zone && x.GetLightButton() != -1 && x.IsUnitNormal() == true)
-                .OrderBy(x => x.TdUnitSeqReverse).FirstOrDefault();
-                mintdunitseq = addr != null ? addr.TdUnitSeqReverse - (int)StartBoxMode.SpaceCnt : 99999;
-            }
+                .OrderBy(x => x.GetTdUnitSeq(zoneorderin)).FirstOrDefault();
+                mintdunitseq = addr != null ? addr.GetTdUnitSeq(zoneorderin) - (int)StartBoxMode.SpaceCnt : 99999;
 
             Syslog.Info($"TdUnitChaseFirstLight:mintdunitseq={mintdunitseq} zone={zone}");
-#else
-            var colors = distcolorinfo.DistColors!.Where(x => x.DistSeq[zone] != 0 && x.DistSeq[zone] < distseq)
-                .OrderBy(x => x.DistSeq).ToList();
 
-            int mintdunitseq = 99999;
-            foreach (var distcolor in colors)
-            {
-                int min = distcolor.Tdunitdisplay
-                  .Where(x => x.Status == (int)DbLib.Defs.Status.Ready && x.bLight == true && x.Zone == zone)
-                  .Min(x => x.TdUnitSeq);
-
-                if (mintdunitseq == 99999)
-                    mintdunitseq = min;
-                else
-                {
-                    if (min < mintdunitseq)
-                    {
-                        mintdunitseq = min;
-                    }
-                }
-            }
-#endif
             // 最小のアドレスの１つ前まで点灯させる
             var distcolors = distcolorinfo.DistColors!.Where(x => x.DistColor_code == color).ToList();
             foreach (var distcolor in distcolors)
             {
                 var querys =
-                   (zoneorderin == (int)ZoneOrder.Asc)
-                    ? distcolor.Tdunitdisplay
-                     .Where(x => x.Status == (int)DbLib.Defs.Status.Ready && x.bLight == false && x.Zone == zone && x.TdUnitSeq < mintdunitseq)
-                     .GroupBy(x => x.Tdunitaddrcode)
-                     .Select(x => x.First())
-                     : distcolor.Tdunitdisplay
-                     .Where(x => x.Status == (int)DbLib.Defs.Status.Ready && x.bLight == false && x.Zone == zone && x.TdUnitSeqReverse < mintdunitseq)
+                    distcolor.Tdunitdisplay
+                     .Where(x => x.Status == (int)DbLib.Defs.Status.Ready && x.bLight == false && x.Zone == zone && x.GetTdUnitSeq(zoneorderin) < mintdunitseq)
                      .GroupBy(x => x.Tdunitaddrcode)
                      .Select(x => x.First());
 
@@ -852,16 +800,13 @@ namespace Picking.Models
             foreach (var col in colors)
             {
                 // 点灯してる最小ＳＥＱを取得
-                var addr = (zoneorderin == (int)ZoneOrder.Asc) 
-                    ? tddps.TdAddrs!
+                var addr =
+                    tddps.TdAddrs!
                      .Where(x => x.TdUnitZoneCode == zone && x.GetLightButton() == col && x.IsUnitNormal() == true)
-                        .OrderBy(x => x.TdUnitSeq).FirstOrDefault()
-                    : tddps.TdAddrs!
-                     .Where(x => x.TdUnitZoneCode == zone && x.GetLightButton() == col && x.IsUnitNormal() == true)
-                        .OrderBy(x => x.TdUnitSeqReverse).FirstOrDefault();
+                        .OrderBy(x => x.GetTdUnitSeq(zoneorderin)).FirstOrDefault();
                 if (addr != null)
                 {
-                    int seq = addr.TdUnitSeq - (int)StartBoxMode.SpaceCnt;
+                    int seq = addr.GetTdUnitSeq(zoneorderin) - (int)StartBoxMode.SpaceCnt;
 
                     if (seq < mintdunitseq)
                     {
@@ -878,15 +823,10 @@ namespace Picking.Models
 
             foreach (var distcolor in distcolors)
             {
-                var querys = (zoneorderin == (int)ZoneOrder.Asc) 
-                    ? distcolor.Tdunitdisplay
-                        .Where(x => x.Status == (int)DbLib.Defs.Status.Ready && x.bLight == false && x.Zone == zone && x.TdUnitSeq < mintdunitseq)
+                var querys = distcolor.Tdunitdisplay
+                        .Where(x => x.Status == (int)DbLib.Defs.Status.Ready && x.bLight == false && x.Zone == zone && x.GetTdUnitSeq(zoneorderin) < mintdunitseq)
                         .GroupBy(x => x.Tdunitaddrcode)
-                        .Select(x => x.First())
-                     : distcolor.Tdunitdisplay
-                         .Where(x => x.Status == (int)DbLib.Defs.Status.Ready && x.bLight == false && x.Zone == zone && x.TdUnitSeqReverse < mintdunitseq)
-                         .GroupBy(x => x.Tdunitaddrcode)
-                         .Select(x => x.First());
+                        .Select(x => x.First());
 
                 // 点灯
                 foreach (var query in querys)
@@ -898,16 +838,8 @@ namespace Picking.Models
                     {
                         TdUnitLight(query.Tdunitaddrcode, tddps, true, true, distcolor.DistColor_code, query.TdDisplay, true);
                         query.bLight = true;
-                        if (zoneorderin == (int)ZoneOrder.Asc)
-                        {
-                            if (query.TdUnitSeq < mintdunitseq)
-                                mintdunitseq = query.TdUnitSeq - (int)StartBoxMode.SpaceCnt;
-                        }
-                        else
-                        {
-                            if (query.TdUnitSeqReverse < mintdunitseq)
-                                mintdunitseq = query.TdUnitSeqReverse - (int)StartBoxMode.SpaceCnt;
-                        }
+                        if (query.GetTdUnitSeq(zoneorderin) < mintdunitseq)
+                            mintdunitseq = query.GetTdUnitSeq(zoneorderin) - (int)StartBoxMode.SpaceCnt;
                     }
                 }
             }

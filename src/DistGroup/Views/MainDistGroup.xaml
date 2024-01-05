@@ -67,7 +67,8 @@
         <DataGrid x:Name="dataGrid" ItemsSource="{Binding DistGroups}" CurrentItem="{Binding CurrentDistGroup, Mode=TwoWay}" AutoGenerateColumns="False"
                   SelectedItem="{Binding CurrentDistGroup, Mode=TwoWay}"
                   IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                  SelectionUnit="FullRow" FrozenColumnCount="0">
+                  SelectionUnit="FullRow" FrozenColumnCount="0"
+                  AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}">
 
             <DataGrid.InputBindings>
                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding LeftDoubleClick}"/>

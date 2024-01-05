@@ -9,7 +9,6 @@
         public int TotalPs { get; set; }
         public int TotalBoxPs { get; set; }
         public int TotalBaraPs { get; set; }
-        public string DispTotalPs => $"{TotalBoxPs}/{TotalBaraPs}";
         public List<Detail> Details { get; set; } = new List<Detail>();
     }
 }

@@ -25,7 +25,16 @@ namespace StowageListPrint.Models
                 .Where(@$"{nameof(TBSTOWAGEEntity.DTDELIVERY):C}={nameof(dtDelivery):P}
                         and {nameof(TBSTOWAGEMAPPINGEntity.CDDISTGROUP):of TB_STOWAGE_MAPPING}={nameof(cdDistGroup):P} {whereSql}")
                 .WithParameters(prm))
-                    .GroupBy(x => new { x.TBSTOWAGEMAPPING?.FirstOrDefault()?.Tdunitaddrcode, x.CDSHUKKABATCH, x.CDCOURSE, x.CDROUTE, x.CDTOKUISAKI, x.TBSTOWAGEMAPPING?.FirstOrDefault()?.NMTOKUISAKI })
+                    .GroupBy(x => new 
+                    { 
+                        x.TBSTOWAGEMAPPING?.FirstOrDefault()?.CDBLOCK,
+                        x.TBSTOWAGEMAPPING?.FirstOrDefault()?.Tdunitaddrcode, 
+                        x.CDSHUKKABATCH, 
+                        x.CDCOURSE, 
+                        x.CDROUTE, 
+                        x.CDTOKUISAKI, 
+                        x.TBSTOWAGEMAPPING?.FirstOrDefault()?.NMTOKUISAKI 
+                    })
                     .Select(x =>
                     {
                         // 数量は実績数があれば実績を優先し、数量が0の場合は予定数を表示する
@@ -41,6 +50,7 @@ namespace StowageListPrint.Models
                         var stowageListPrint = new StowageListPrint
                         {
                             IdStowages = x.Select(xx => xx.IDSTOWAGE).ToList(),
+                            CdBlock = x.Key.CDBLOCK ?? string.Empty,
                             Tdunitcode = x.Key.Tdunitaddrcode ?? string.Empty,
                             CdShukkaBatch = x.Key.CDSHUKKABATCH,
                             CdCourse = x.Key.CDCOURSE,

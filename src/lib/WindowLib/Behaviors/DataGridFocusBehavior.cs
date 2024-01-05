@@ -1,4 +1,5 @@
-﻿using Microsoft.Xaml.Behaviors;
+﻿using ControlzEx.Standard;
+using Microsoft.Xaml.Behaviors;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,13 +14,10 @@ namespace WindowLib.Behaviors
         public static readonly DependencyProperty RowProperty = DependencyProperty.Register(
             "Row", typeof(int), typeof(DataGridFocusBehavior), new UIPropertyMetadata(-1, OnFocusedRowPropertyChanged));
 
-        public static DataGrid? Grid;
-
         protected override void OnAttached()
         {
             base.OnAttached();
             AssociatedObject.PreparingCellForEdit += PreparingCellForEdit;
-            Grid = AssociatedObject;
         }
         protected override void OnDetaching()
         {
@@ -30,7 +28,7 @@ namespace WindowLib.Behaviors
         //  編集時に内部のコンボボックスにフォーカスを合わせる
         private void PreparingCellForEdit(object? sender, DataGridPreparingCellForEditEventArgs e)
         {
-            Grid?.Dispatcher.InvokeAsync(() =>
+            AssociatedObject.Dispatcher.InvokeAsync(() =>
             {
                 e.EditingElement.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
 
@@ -61,51 +59,49 @@ namespace WindowLib.Behaviors
             set { SetValue(RowProperty, value); }
         }
 
-        public static int _column=-1;
-        public static int _row = -1;
 
-
-        public static void MoveCell(int rowIndex, int columnIndex)
+        public void MoveCell(int rowIndex, int columnIndex)
         {
-            if (rowIndex == -1 || columnIndex == -1 || Grid?.Items.Count == 0)
+            if (rowIndex == -1 || columnIndex == -1 || AssociatedObject.Items.Count == 0)
                 return;
 
-            if (Grid != null)
-            {
-                Grid.UpdateLayout();
-                Grid.Focus();
-                Grid.SelectedIndex = rowIndex;
-                Grid.CurrentCell =
-                    new DataGridCellInfo(Grid.Items[rowIndex], Grid.Columns[columnIndex]);
-                Grid.BeginEdit();
-            }
-
-            //UIElement NewFocus = Keyboard.FocusedElement as UIElement;
-            //Keyboard.Focus(NewFocus);
+            AssociatedObject.UpdateLayout();
+            AssociatedObject.Focus();
+            AssociatedObject.SelectedIndex = rowIndex;
+            AssociatedObject.CurrentCell =
+                new DataGridCellInfo(AssociatedObject.Items[rowIndex], AssociatedObject.Columns[columnIndex]);
+            AssociatedObject.BeginEdit();
         }
 
         private static void OnFocusedColumnPropertyChanged(
                DependencyObject d,
                DependencyPropertyChangedEventArgs e)
         {
-            _column = (int)e.NewValue;
+            var bh = (DataGridFocusBehavior)d;
+            if (bh.AssociatedObject == null)
+            {
+                return;
+            }
+
             if (e.NewValue!= e.OldValue)
             {
-                // 遅延実行(フォーカスが移動しないため)
-                if(Grid != null)
-                Grid.Dispatcher.InvokeAsync(() => MoveCell(_row, _column));
+                bh.MoveCell(bh.Row, bh.Column);
             }
         }
+
         private static void OnFocusedRowPropertyChanged(
                DependencyObject d,
                DependencyPropertyChangedEventArgs e)
         {
-            _row = (int)e.NewValue;
+            var bh = (DataGridFocusBehavior)d;
+            if (bh.AssociatedObject == null)
+            {
+                return;
+            }
+
             if (e.NewValue != e.OldValue)
             {
-                // 遅延実行(フォーカスが移動しないため)
-                if (Grid != null)
-                    Grid.Dispatcher.InvokeAsync(() => MoveCell(_row, _column));
+                bh.MoveCell(bh.Row, bh.Column);
             }
         }
     }
