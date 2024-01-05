@@ -118,10 +118,10 @@ namespace StowageSvr
                     IsLastCustomer = targetStowages.Any(),
                     // 空リスト時にパースエラーとなる為、ダミーId追加
                     StowageIds = targetStowages.Any() ? targetStowages.Select(x => x.Id) : new List<long> { 9999 },
-                    LargeBoxPs = targetStowages.FirstOrDefault(x => x.StBoxType == DbLib.Defs.BoxType.LargeBox)?.OrderBoxCount ?? 0,
-                    SmallBoxPs = targetStowages.FirstOrDefault(x => x.StBoxType == DbLib.Defs.BoxType.SmallBox)?.OrderBoxCount ?? 0,
-                    OtherPs = targetStowages.FirstOrDefault(x => x.StBoxType == DbLib.Defs.BoxType.EtcBox)?.OrderBoxCount ?? 0,
-                    BlueBoxPs = targetStowages.FirstOrDefault(x => x.StBoxType == DbLib.Defs.BoxType.BlueBox)?.OrderBoxCount ?? 0,
+                    LargeBoxPs = targetStowages.FirstOrDefault(x => x.StBoxType == DbLib.Defs.BoxType.LargeBox)?.GetBoxCount() ?? 0,
+                    SmallBoxPs = targetStowages.FirstOrDefault(x => x.StBoxType == DbLib.Defs.BoxType.SmallBox)?.GetBoxCount() ?? 0,
+                    OtherPs = targetStowages.FirstOrDefault(x => x.StBoxType == DbLib.Defs.BoxType.EtcBox)?.GetBoxCount() ?? 0,
+                    BlueBoxPs = targetStowages.FirstOrDefault(x => x.StBoxType == DbLib.Defs.BoxType.BlueBox)?.GetBoxCount() ?? 0,
                 };
             }
         }
