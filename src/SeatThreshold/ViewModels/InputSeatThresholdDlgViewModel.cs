@@ -172,6 +172,13 @@ namespace SeatThreshold.ViewModels
             set => SetProperty(ref _isAdd, value);
         }
 
+        private bool _isEdit = false;
+        public bool IsEdit
+        {
+            get => _isEdit;
+            set => SetProperty(ref _isEdit, value);
+        }
+
         private bool _isDateRelease = false;
         public bool IsDateRelease
         {
@@ -242,6 +249,7 @@ namespace SeatThreshold.ViewModels
             _seatThreshold = parameters.GetValue<ThresholdInfo>("SeatThreshold");
             _shainInfo = parameters.GetValue<ShainInfo>("ShainInfo");
             IsAdd = _seatThreshold.CdKyoten.IsNullOrEmpty();
+            IsEdit = !IsAdd;
             InitDialog();
         }
 
@@ -283,6 +291,8 @@ namespace SeatThreshold.ViewModels
 
             NuTdunitCnt = string.Empty;
             NuThreshold = string.Empty;
+
+            _isChange = false;
         }        
 
         // 参照日から情報取得

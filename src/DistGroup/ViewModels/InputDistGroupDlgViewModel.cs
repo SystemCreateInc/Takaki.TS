@@ -202,6 +202,13 @@ namespace DistGroup.ViewModels
             set => SetProperty(ref _isAdd, value);
         }
 
+        private bool _isEdit = false;
+        public bool IsEdit
+        {
+            get => _isEdit;
+            set => SetProperty(ref _isEdit, value);
+        }
+
         private bool _isDateRelease = false;
         public bool IsDateRelease
         {
@@ -299,6 +306,7 @@ namespace DistGroup.ViewModels
             _distGroup = parameters.GetValue<Models.DistGroupInfo>("DistGroup");
             _shainInfo = parameters.GetValue<ShainInfo>("ShainInfo");
             IsAdd = _distGroup.CdDistGroup.IsNullOrEmpty();
+            IsEdit = !IsAdd;
             InitDialog();
         }
 

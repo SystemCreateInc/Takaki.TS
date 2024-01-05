@@ -160,6 +160,13 @@ namespace DistLargeGroup.ViewModels
             set => SetProperty(ref _isAdd, value);
         }
 
+        private bool _isEdit = false;
+        public bool IsEdit
+        {
+            get => _isEdit;
+            set => SetProperty(ref _isEdit, value);
+        }
+
         public InputDistLargeGroupDlgViewModel(IDialogService dialogService)
         {
             ClearCommand = new DelegateCommand(Clear);
@@ -310,6 +317,7 @@ namespace DistLargeGroup.ViewModels
             _distLargeGroup = parameters.GetValue<Models.DistLargeGroup>("DistLargeGroup");
             _shain = parameters.GetValue<ShainInfo>("Shain");
             IsAdd = _distLargeGroup == null;
+            IsEdit = !IsAdd;
             InitDialog();
             _isModified = false;
         }

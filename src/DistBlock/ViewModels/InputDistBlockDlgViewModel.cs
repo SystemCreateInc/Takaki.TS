@@ -164,6 +164,13 @@ namespace DistBlock.ViewModels
             set => SetProperty(ref _isAdd, value);
         }
 
+        private bool _isEdit = false;
+        public bool IsEdit
+        {
+            get => _isEdit;
+            set => SetProperty(ref _isEdit, value);
+        }
+
         private bool _canAddBlockRows = true;
         public bool CanAddBlockRows
         {
@@ -249,6 +256,7 @@ namespace DistBlock.ViewModels
             _distBlock = parameters.GetValue<DistBlockInfo>("DistBlock");
             _shainInfo = parameters.GetValue<ShainInfo>("ShainInfo");
             IsAdd = _distBlock.CdDistGroup.IsNullOrEmpty();
+            IsEdit = !IsAdd;
             InitDialog();
         }
 

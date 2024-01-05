@@ -176,6 +176,13 @@ namespace Customer.ViewModels
             set => SetProperty(ref _isAdd, value);
         }
 
+        private bool _isEdit = false;
+        public bool IsEdit
+        {
+            get => _isEdit;
+            set => SetProperty(ref _isEdit, value);
+        }
+
         private ShainInfo _shainInfo = new ShainInfo();
 
         private bool _isChange = false;
@@ -243,6 +250,7 @@ namespace Customer.ViewModels
             _shainInfo = parameters.GetValue<ShainInfo>("ShainInfo");
 
             IsAdd = _currentCustomer is null;
+            IsEdit = !IsAdd;
             InitDisplay();
 
             ChildCustomers.CollectionChanged += ChildCustomers_CollectionChanged;
