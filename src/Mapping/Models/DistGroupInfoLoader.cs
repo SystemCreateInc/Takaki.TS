@@ -110,8 +110,11 @@ namespace Mapping.Models
                 return r;
             }
         }
-        public static List<LocInfo> GetLoc(DistGroupInfo distgroupinfo)
+        public static List<LocInfo> GetLoc(DistGroupInfo? distgroupinfo)
         {
+            if (distgroupinfo == null)
+                return new List<LocInfo>();
+
             using (var con = DbFactory.CreateConnection())
             {
                 var sql = "select CD_BLOCK,tdunitaddrcode,CD_SUM_TOKUISAKI,NM_SUM_TOKUISAKI,CD_SUM_COURSE,CD_SUM_ROUTE,CD_BIN_SUM,NU_MAGICHI"

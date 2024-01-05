@@ -483,6 +483,51 @@ namespace Mapping.Models
                         if (distgroup.CdDistGroup != cdDistGroup)
                             continue;
 
+                        var sql = "delete from TB_DIST_GROUP_PROGRESS"
+                            + " where DT_DELIVERY=@dtdelivery"
+                            + " and CD_KYOTEN=@cdkyoten"
+                            + " and CD_DIST_GROUP=@cddistgroup;";
+                        con.Query<long>(sql,
+                            new
+                            {
+                                dtdelivery = DtDelivery,
+                                cdkyoten = distgroup.CdKyoten,
+                                cddistgroup = distgroup.CdDistGroup,
+                            }, tr);
+
+                        // 商品数、総数取得
+                        var blocks = distgroup.dists.Where(x => x.tdunitaddrcode != "").Select(x => x.CdBlock).Distinct().ToList();
+
+                        foreach (var block in blocks)
+                        {
+                            int itemcnt = distgroup.dists.Where(x => x.CdBlock == block).Select(x => x.CdHimban).Distinct().Count();
+                            int pscnt = distgroup.dists.Where(x => x.CdBlock == block).Select(x => x.Ops).Sum();
+
+                            // 新規追加
+                            TBDISTGROUPPROGRESSEntity distgorupprogress = new TBDISTGROUPPROGRESSEntity
+                            {
+                                DTDELIVERY = DtDelivery,
+                                CDKYOTEN = distgroup.CdKyoten,
+                                NMKYOTEN = "",
+                                CDDISTGROUP = distgroup.CdDistGroup,
+                                NMDISTGROUP = distgroup.NmDistGroup,
+                                IDPC = null,
+                                CDBLOCK = block,
+                                DTSTART = null,
+                                CDSHAIN = null,
+                                NMSHAIN = null,
+                                NUOITEMCNT = itemcnt,
+                                NURITEMCNT = 0,
+                                NUOPS = pscnt,
+                                NURPS = 0,
+                                FGDSTATUS = 0,
+                                FGWORKING = 0,
+                                CreatedAt = DateTime.Now,
+                                UpdatedAt = DateTime.Now,
+                            };
+                            con.Insert(distgorupprogress, x => x.AttachToTransaction(tr));
+                        }
+
                         foreach (var dist in distgroup.dists)
                         {
                             bool over = dist.tdunitaddrcode == "" ? true : false;
@@ -494,7 +539,7 @@ namespace Mapping.Models
                             }
 
                             // dist更新
-                            var sql = over 
+                            sql = over 
                                  ? "update TB_DIST set FG_MAPSTATUS=@mapstatus,FG_DSTATUS=@dstatus,NU_LOPS=@ops,NU_DOPS=@ops,NU_DRPS=@ops,updatedAt=@update,DT_WORKDT_DIST=@update where ID_DIST=@id"
                                  : "update TB_DIST set FG_MAPSTATUS=@mapstatus,NU_LOPS=@ops,NU_DOPS=@ops where ID_DIST=@id";
 
@@ -731,9 +776,21 @@ namespace Mapping.Models
                     // distmapping新規追加
                     foreach (var distgroup in distgroups)
                     {
+                        var sql = "delete from TB_DIST_GROUP_PROGRESS"
+                            + " where DT_DELIVERY=@dtdelivery"
+                            + " and CD_KYOTEN=@cdkyoten"
+                            + " and CD_DIST_GROUP=@cddistgroup;";
+                        con.Query<long>(sql,
+                            new
+                            {
+                                dtdelivery = dtdelivery,
+                                cdkyoten = distgroup.CdKyoten,
+                                cddistgroup = distgroup.CdDistGroup,
+                            }, tr);
+
                         foreach (var dist in distgroup.dists)
                         {
-                            var sql = "update TB_DIST set "
+                            sql = "update TB_DIST set "
                                 + "NU_LOPS=NU_OPS"
                                 + ",NU_LRPS=0"
                                 + ",NU_DOPS=NU_OPS"
@@ -763,7 +820,7 @@ namespace Mapping.Models
 
                         foreach (var dist in distgroup.stowages)
                         {
-                            var sql = "update TB_STOWAGE set "
+                            sql = "update TB_STOWAGE set "
                                 + "NU_RBOXCNT=0"
                                 + ",FG_SSTATUS=0"
                                 + ",DT_WORKDT_STOWAGE=null"
