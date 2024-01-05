@@ -67,10 +67,15 @@ namespace Mapping.ViewModels
                         }
 
                         var viewModel = ReportCreator.GetOverList(overs);
-#if DEBUG
-                        var ppm = new PrintManager(PageMediaSizeName.ISOA4, PageOrientation.Landscape);
-                        ppm.Print("あふれ一覧", viewModel);
-#else
+
+                        var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Landscape);
+                        ppm.PrintPreview("あふれ一覧", viewModel);
+
+                        // 実際に印刷していないのでｷｬﾝｾﾙ
+                        if (ppm.IsPrinted == false)
+                            return;
+
+#if false
                     var ppm = new PrintManager(PageMediaSizeName.ISOA4, PageOrientation.Landscape);
                     ppm.Print("あふれ一覧", viewModel);
 #endif
