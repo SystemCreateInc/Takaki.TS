@@ -643,7 +643,7 @@ namespace Picking.Models
         {
             get
             {
-                return string.Format("{0:3}箱 {1:3}個 ({2:000#})"
+                return string.Format("{0:3}箱 {1:3}個 ({2:4})"
                     , Display_Ops_Cs
                     , Display_Ops_Ps
                     , Ops
@@ -654,7 +654,7 @@ namespace Picking.Models
         {
             get
             {
-                return string.Format("{0:3}箱 {1:3}個 ({2:000#})"
+                return string.Format("{0:3}箱 {1:3}個 ({2:4})"
                     , Display_Dops_Cs
                     , Display_Dops_Ps
                     , Dops
@@ -666,7 +666,7 @@ namespace Picking.Models
         {
             get
             {
-                return string.Format("{0:3}箱 {1:3}個 ({2:000#})"
+                return string.Format("{0:3}箱 {1:3}個 ({2:4})"
                     , Display_Drps_Cs
                     , Display_Drps_Ps
                     , Drps

@@ -66,9 +66,13 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Column="0" Grid.Row="0" Width="40" Text="{Binding ColorBtnName1}" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Margin="3"/>
-            <ComboBox x:Name="CdShainText" Grid.Column="1" Grid.Row="0" SelectedItem="{Binding Shain1}" ItemsSource="{Binding ShainCombo}" IsEnabled="{Binding EnableShain1}" Margin="3" 
-                          IsEditable="True" TextSearch.TextPath="CdShain" b:ComboBoxBehavior.MaxLength="7">
-                
+
+            <ComboBox x:Name="CdShainText" Grid.Column="1" Grid.Row="0" ItemsSource="{Binding ShainCombo}" SelectedValue="{Binding Shain1}" IsEnabled="{Binding EnableShain1}" Margin="3" 
+                          IsEditable="True" TextSearch.TextPath="CdShain" b:ComboBoxBehavior.MaxLength="7" Text="{Binding CdShain1}" >
+                <ComboBox.InputBindings>
+                    <KeyBinding Key="Return" Command="{Binding EnterShainCommand1}" />
+                </ComboBox.InputBindings>
+
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -82,8 +86,11 @@
             <TextBlock Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left"  Text="{Binding Shain1.NmShain}" VerticalAlignment="Center" Margin="20 0 0 0" />
 
             <TextBlock Grid.Column="0" Grid.Row="1" Width="40" Text="{Binding ColorBtnName2}" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Margin="3"/>
-            <ComboBox Grid.Column="1" Grid.Row="1" SelectedItem="{Binding Shain2}" ItemsSource="{Binding ShainCombo}" IsEnabled="{Binding EnableShain2}" Margin="3" 
-                          IsEditable="True" TextSearch.TextPath="CdShain" b:ComboBoxBehavior.MaxLength="7">
+            <ComboBox Grid.Column="1" Grid.Row="1" SelectedValue="{Binding Shain2}" ItemsSource="{Binding ShainCombo}" IsEnabled="{Binding EnableShain2}" Margin="3" 
+                          IsEditable="True" TextSearch.TextPath="CdShain" b:ComboBoxBehavior.MaxLength="7"  Text="{Binding CdShain2}">
+                <ComboBox.InputBindings>
+                    <KeyBinding Key="Return" Command="{Binding EnterShainCommand2}" />
+                </ComboBox.InputBindings>
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -97,8 +104,12 @@
             <TextBlock Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left"  Text="{Binding Shain2.NmShain}" VerticalAlignment="Center" Margin="20 0 0 0" />
 
             <TextBlock Grid.Column="0" Grid.Row="2" Width="40" Text="{Binding ColorBtnName3}" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Margin="3"/>
-            <ComboBox Grid.Column="1" Grid.Row="2" SelectedItem="{Binding Shain3}" ItemsSource="{Binding ShainCombo}" IsEnabled="{Binding EnableShain3}" Margin="3" 
-                          IsEditable="True" TextSearch.TextPath="CdShain" b:ComboBoxBehavior.MaxLength="7">
+            <ComboBox Grid.Column="1" Grid.Row="2" SelectedValue="{Binding Shain3}" ItemsSource="{Binding ShainCombo}" IsEnabled="{Binding EnableShain3}" Margin="3" 
+                          IsEditable="True" TextSearch.TextPath="CdShain" b:ComboBoxBehavior.MaxLength="7" Text="{Binding CdShain3}">
+                <ComboBox.InputBindings>
+                    <KeyBinding Key="Return" Command="{Binding EnterShainCommand3}" />
+                </ComboBox.InputBindings>
+
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -112,8 +123,11 @@
             <TextBlock Grid.Column="2" Grid.Row="2" HorizontalAlignment="Left"  Text="{Binding Shain3.NmShain}" VerticalAlignment="Center" Margin="20 0 0 0" />
 
             <TextBlock Grid.Column="0" Grid.Row="3" Width="40" Text="{Binding ColorBtnName4}" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Margin="3"/>
-            <ComboBox Grid.Column="1" Grid.Row="3" SelectedItem="{Binding Shain4}" ItemsSource="{Binding ShainCombo}" IsEnabled="{Binding EnableShain4}" Margin="3" 
-                          IsEditable="True" TextSearch.TextPath="CdShain" b:ComboBoxBehavior.MaxLength="7" >
+            <ComboBox Grid.Column="1" Grid.Row="3" SelectedValue="{Binding Shain4}" ItemsSource="{Binding ShainCombo}" IsEnabled="{Binding EnableShain4}" Margin="3" 
+                          IsEditable="True" TextSearch.TextPath="CdShain" b:ComboBoxBehavior.MaxLength="7"  Text="{Binding CdShain4}">
+                <ComboBox.InputBindings>
+                    <KeyBinding Key="Return" Command="{Binding EnterShainCommand4}" />
+                </ComboBox.InputBindings>
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -127,8 +141,11 @@
             <TextBlock Grid.Column="2" Grid.Row="3" HorizontalAlignment="Left"  Text="{Binding Shain4.NmShain}" VerticalAlignment="Center" Margin="20 0 0 0" />
 
             <TextBlock Grid.Column="0" Grid.Row="4" Width="40" Text="{Binding ColorBtnName5}" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Margin="3"/>
-            <ComboBox Grid.Column="1" Grid.Row="4" SelectedItem="{Binding Shain5}" ItemsSource="{Binding ShainCombo}" IsEnabled="{Binding EnableShain5}" Margin="3" 
-                          IsEditable="True" TextSearch.TextPath="CdShain" b:ComboBoxBehavior.MaxLength="7">
+            <ComboBox Grid.Column="1" Grid.Row="4" SelectedValue="{Binding Shain5}" ItemsSource="{Binding ShainCombo}" IsEnabled="{Binding EnableShain5}" Margin="3" 
+                          IsEditable="True" TextSearch.TextPath="CdShain" b:ComboBoxBehavior.MaxLength="7" Text="{Binding CdShain5}">
+                <ComboBox.InputBindings>
+                    <KeyBinding Key="Return" Command="{Binding EnterShainCommand5}" />
+                </ComboBox.InputBindings>
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
