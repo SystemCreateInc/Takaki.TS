@@ -70,6 +70,7 @@ namespace Picking.ViewModels
             {
                 SetProperty(ref _currentdistitemseq, value);
                 CanDistItem = value == null || value.GetUniqueItemKey == "" ? false : true;
+                CanDistItemDetail = value == null || value.GetUniqueItemKey == "" ? false : true;
             }
         }
 
@@ -84,6 +85,13 @@ namespace Picking.ViewModels
 
                 SetProperty(ref _candistitem, value);
             }
+        }
+
+        private bool _candistitemdetail = false;
+        public bool CanDistItemDetail
+        {
+            get => _candistitemdetail;
+            set => SetProperty(ref _candistitemdetail, value);
         }
 
         private bool _isCheck = false;
@@ -249,14 +257,18 @@ namespace Picking.ViewModels
             {
                 Syslog.Info("【明細】DistItemScanWindowModel:OnShowDetailInfo");
 
-                _regionManager.RequestNavigate("ContentRegion", nameof(Views.DistDetailWindow), new NavigationParameters
-                {
+                _regionManager.RequestNavigate("ContentRegion"
+                    , nameof(Views.DistDetailWindow)
+                    , new NavigationParameters
                     {
-                        "currentdistinfo", ItemToInfo(CurrentDistItemSeq!)
-                    },
-                });
+                        { "currentdistinfo", ItemToInfo(CurrentDistItemSeq!) },
+                        { "Color", Color},
+                        { "ItemSeq", CurrentDistItemSeq},
+                        { "CanInfo", CanInfo },
+                    }
+                );
 
-            }, () => CanDistItem).ObservesProperty(() => CanDistItem);
+            }, () => CanDistItemDetail).ObservesProperty(() => CanDistItemDetail);
 
             OnChangeQty = new DelegateCommand(() =>
             {
