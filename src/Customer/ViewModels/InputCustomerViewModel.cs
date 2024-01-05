@@ -33,7 +33,7 @@ namespace Customer.ViewModels
             get => _referenceDate;
             set
             {
-                SetProperty(ref _referenceDate, value);                
+                SetProperty(ref _referenceDate, value);
                 ReloadTekiyoName();
             }
         }
@@ -232,7 +232,7 @@ namespace Customer.ViewModels
             EndCodeEdit = new DelegateCommand<string>(inputName => ValidateGetName(inputName));
         }
 
-		public void OnDialogClosed()
+        public void OnDialogClosed()
         {
             ChildCustomers.CollectionChanged -= ChildCustomers_CollectionChanged;
         }
@@ -268,6 +268,7 @@ namespace Customer.ViewModels
 
                 case "CdTokuisakiChild":
                     errorTextName = NotEmptyChildCustomers.Any(x => x.NmTokuisaki.IsNullOrEmpty()) ? "子得意先" : null;
+                    SetEmptyCustomerNameFocus();
                     break;
 
                 default:
@@ -307,7 +308,7 @@ namespace Customer.ViewModels
                 NmShain = _shainInfo.HenkoshaName;
                 DtTekiyoKaishi = DateTime.Parse(customer.Tekiyokaishi.GetDate());
                 DtTekiyoMuko = DateTime.Parse(customer.TekiyoMuko.GetDate());
-                
+
                 ChildCustomers = new ObservableCollection<ChildCustomer>(customer.ChildCustomers);
             }
             _isChange = false;
@@ -454,17 +455,27 @@ namespace Customer.ViewModels
 
             if (NotEmptyChildCustomers.Any(x => x.NmTokuisaki.IsNullOrEmpty()))
             {
-                GridFocusColumnIndex = 0;
-                GridFocusRowIndex = -1;
-                GridFocusRowIndex = NotEmptyChildCustomers
-                    .Select((value, idx) => (value, idx))
-                    .First(x => x.value.NmTokuisaki.IsNullOrEmpty()).idx;
+                SetEmptyCustomerNameFocus();
 
                 MessageDialog.Show(_dialogService, "得意先名が取得出来ていない子得意先コードがあります", "入力エラー");
                 return false;
             }
 
             return isValid;
+        }
+
+        private void SetEmptyCustomerNameFocus()
+        {
+            if (!NotEmptyChildCustomers.Any(x => !x.CdTokuisakiChild.Trim().IsNullOrEmpty() && x.NmTokuisaki.IsNullOrEmpty()))
+            {
+                return;
+            }
+
+            GridFocusColumnIndex = 0;
+            GridFocusRowIndex = -1;
+            GridFocusRowIndex = NotEmptyChildCustomers
+                .Select((value, idx) => (value, idx))
+                .First(x => x.value.NmTokuisaki.IsNullOrEmpty()).idx;
         }
 
         // 適用期間チェック
@@ -485,26 +496,26 @@ namespace Customer.ViewModels
 
         private bool IsDuplicationCustomer(long? sumTokuisakiId)
         {
-            if(NotEmptyChildCustomers.Any(x => x.CdTokuisakiChild == CdSumTokuisaki))
+            if (NotEmptyChildCustomers.Any(x => x.CdTokuisakiChild == CdSumTokuisaki))
             {
                 MessageDialog.Show(_dialogService, $"親得意先と子得意先に同一の得意先が存在します", "入力エラー");
                 return false;
             }
 
-            if(NotEmptyChildCustomers.GroupBy(x => x.CdTokuisakiChild).Any(x => x.Count() > 1))
+            if (NotEmptyChildCustomers.GroupBy(x => x.CdTokuisakiChild).Any(x => x.Count() > 1))
             {
                 MessageDialog.Show(_dialogService, $"子得意先に同一の得意先が存在します", "入力エラー");
                 return false;
             }
 
             // 親と同一得意先　更新時：自ID以外
-            var sameCustomer = CustomerLoader.GetSameCustomer(new List<string> { CdSumTokuisaki }, 
+            var sameCustomer = CustomerLoader.GetSameCustomer(new List<string> { CdSumTokuisaki },
                 DtTekiyoKaishi.ToString("yyyyMMdd"), DtTekiyoMuko.ToString("yyyyMMdd"),
                 sumTokuisakiId);
 
             if (sameCustomer is not null)
             {
-                MessageDialog.Show(_dialogService, 
+                MessageDialog.Show(_dialogService,
                     $"親得意先が、他の集約得意先に登録されています\n\n" + GetSameCustomerMessage(sameCustomer), "入力エラー");
                 return false;
             }
@@ -520,9 +531,9 @@ namespace Customer.ViewModels
                     .First(x => NotEmptyChildCustomers.Any(y => y.CdTokuisakiChild == x.CdTokuisakiChild));
 
                 MessageDialog.Show(_dialogService,
-                    $"子得意先が、他の集約得意先に登録されています\n\n" 
+                    $"子得意先が、他の集約得意先に登録されています\n\n"
                     + $"{GetSameCustomerMessage(sameCustomer)}\n"
-                    + $"重複得意先[{ duplicatedChildCustomer.CdTokuisakiChild}]", "入力エラー");
+                    + $"重複得意先[{duplicatedChildCustomer.CdTokuisakiChild}]", "入力エラー");
                 return false;
             }
 

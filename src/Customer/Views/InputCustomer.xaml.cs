@@ -36,21 +36,5 @@ namespace Customer.Views
                 ReferenceDate.Focus();
             }
         }
-
-		private void dataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-            var items = dataGrid.ItemsSource.Cast<ChildCustomer>();
-
-			var emptyNameChild = items.FirstOrDefault(x => !x.CdTokuisakiChild.Trim().IsNullOrEmpty() && x.NmTokuisaki.IsNullOrEmpty());
-
-			if (emptyNameChild == null)
-			{
-				return;
-            }
-
-            // 名称空欄の子得意先へカーソル移動
-            dataGrid.CurrentCell = new DataGridCellInfo(emptyNameChild, dataGrid.Columns[0]);
-            dataGrid.BeginEdit();
-        }
 	}
 }

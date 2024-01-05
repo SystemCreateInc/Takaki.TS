@@ -228,8 +228,7 @@
                         <DataGrid x:Name="dataGrid" ItemsSource="{Binding ChildCustomers}" AutoGenerateColumns="False"
                                   VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
                                   SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="All" CanUserAddRows="True"
-                                  Style="{StaticResource MaterialDesignDataGrid}" Margin="3" FontSize="18"
-                                  SelectionChanged="dataGrid_SelectionChanged">
+                                  Style="{StaticResource MaterialDesignDataGrid}" Margin="3" FontSize="18">
                             
                             <DataGrid.ColumnHeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
