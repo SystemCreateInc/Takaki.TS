@@ -72,7 +72,8 @@
         <DataGrid Margin="3" DockPanel.Dock="Left" 
                         Name="gridovertokuisaki" ItemsSource="{Binding OverInfos, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"                          
                   IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                  SelectionUnit="FullRow" FrozenColumnCount="0">
+                  SelectionUnit="FullRow" FrozenColumnCount="0"
+                  AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="仕分Ｇ" Width="Auto" Binding="{Binding CdDistGroup}" />

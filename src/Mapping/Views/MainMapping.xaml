@@ -114,7 +114,8 @@
                         Name="griddistgroupmapping" ItemsSource="{Binding DistGroupInfos, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"                          
                         SelectedItem="{Binding CurrentDistGroupInfo, Mode=TwoWay}"
                   IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                  SelectionUnit="FullRow" FrozenColumnCount="0">
+                  SelectionUnit="FullRow" FrozenColumnCount="0"
+                  AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}">
 
             <DataGrid.Resources>
                 <!-- データグリッドText中央 -->

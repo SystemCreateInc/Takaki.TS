@@ -143,8 +143,9 @@
                   SelectedItem="{Binding CurrentDistItemSeq, Mode=TwoWay}"
                   SelectedIndex="{Binding SelectItemIdx, Mode=TwoWay}"
                   CanUserAddRows="False" SelectionMode="Single" Focusable="False" CanUserSortColumns="false"
-                  AutoGenerateColumns="False" IsReadOnly="True">
-            
+                  AutoGenerateColumns="False" IsReadOnly="True"
+                  AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}">
+
             <DataGrid.Columns>
                 <DataGridTextColumn Header="No" Width="Auto" Binding="{Binding InSeq}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="品番" Width="Auto" Binding="{Binding CdHimban}" IsReadOnly="True"/>

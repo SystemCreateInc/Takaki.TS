@@ -70,7 +70,8 @@
         <DataGrid Margin="3" DockPanel.Dock="Left" 
                       Name="gridlocinfo" ItemsSource="{Binding LocInfos, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"                          
                   IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                  SelectionUnit="FullRow" FrozenColumnCount="0">
+                  SelectionUnit="FullRow" FrozenColumnCount="0"
+                  AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ブロック" Width="Auto" Binding="{Binding CdBlock}" />

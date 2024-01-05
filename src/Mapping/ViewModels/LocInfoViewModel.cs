@@ -87,10 +87,10 @@ namespace Mapping.ViewModels
                     }
 
                     var viewModel = ReportCreator.GetLocList(locs,CdDistGroup,NmDistGroup,DtDelivery);
-#if DEBUG
                     var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Landscape);
                     ppm.PrintPreview("ロケーション一覧一覧", viewModel);
-#else
+
+#if false
                     var ppm = new PrintManager(PageMediaSizeName.ISOA4, PageOrientation.Landscape);
                     ppm.Print("ロケーション一覧一覧", viewModel);
 #endif

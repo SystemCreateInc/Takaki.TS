@@ -229,6 +229,7 @@
                                   VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
                                   SelectionUnit="FullRow" FrozenColumnCount="0" GridLinesVisibility="All" CanUserAddRows="True"
                                   Style="{StaticResource MaterialDesignDataGrid}" Margin="3" FontSize="18">
+                            
                             <DataGrid.ColumnHeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="Background" Value="LightGray"/>
