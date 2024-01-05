@@ -1,4 +1,5 @@
-﻿using TakahataDistListPrint.Models;
+﻿using DbLib.Extensions;
+using TakahataDistListPrint.Models;
 
 namespace TakahataDistListPrint.Reports
 {
@@ -8,7 +9,7 @@ namespace TakahataDistListPrint.Reports
         public static IEnumerable<CustomerReportViewModel> CreateCustomerReport(IEnumerable<long> ids, string dtDelivery)
         {
             var viewModels = new List<CustomerReportViewModel>();
-            var records = TakahataDistListPrintLoader.GetReports(ids);
+            var records = TakahataDistListPrintLoader.GetReports(dtDelivery, ids);
             var groups = records.GroupBy(x => new { x.CdShukkaBatch, x.CdCourse, x.CdRoute, x.CdTokuisaki });
 
             foreach (var group in groups)
@@ -29,7 +30,7 @@ namespace TakahataDistListPrint.Reports
                     {
                         Page = idx + 1,
                         PageMax = maxPage + 1,
-                        DtDelivery = dtDelivery,
+                        DtDelivery = dtDelivery.GetDate(),
                         CdShukkaBatch = pageGroups.FirstOrDefault()?.FirstOrDefault()?.v.CdShukkaBatch ?? string.Empty,
                         NmShukkaBatch = pageGroups.Max(x => x.Max(xx => xx.v.NmShukkaBatch)) ?? string.Empty,
                         CdCourse = pageGroups.FirstOrDefault()?.FirstOrDefault()?.v.CdCourse ?? string.Empty,
@@ -48,7 +49,7 @@ namespace TakahataDistListPrint.Reports
         public static IEnumerable<ItemReportViewModel> CreateItemReport(IEnumerable<long> ids, string dtDelivery)
         {
             var viewModels = new List<ItemReportViewModel>();
-            var records = TakahataDistListPrintLoader.GetReports(ids);
+            var records = TakahataDistListPrintLoader.GetReports(dtDelivery, ids);
             var groups = records.GroupBy(x => new { x.CdHimban, x.CdGtin13, x.NmHinSeishikimei, x.NuBoxunit });
 
             foreach (var group in groups)
@@ -69,7 +70,7 @@ namespace TakahataDistListPrint.Reports
                     {
                         Page = idx + 1,
                         PageMax = pageMax + 1,
-                        DtDelivery = dtDelivery,
+                        DtDelivery = dtDelivery.GetDate(),
                         CdHimban = pageGroups.Max(x => x.Max(xx => xx.v.CdHimban)) ?? string.Empty,
                         CdGtin13 = pageGroups.Max(x => x.Max(xx => xx.v.CdGtin13)) ?? string.Empty,
                         NmHinSeishikimei = pageGroups.Max(x => x.Max(xx => xx.v.NmHinSeishikimei)) ?? string.Empty,

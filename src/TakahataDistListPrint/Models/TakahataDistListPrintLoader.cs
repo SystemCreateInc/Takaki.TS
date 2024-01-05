@@ -1,6 +1,5 @@
-﻿using Dapper.FastCrud;
+﻿using Dapper;
 using DbLib;
-using DbLib.DbEntities;
 using DbLib.Defs;
 using SearchBoxLib;
 
@@ -17,72 +16,119 @@ namespace TakahataDistListPrint.Models
 
                 // 座席マッピングステータスが0のものが対象
                 var mapStatus = Status.Ready;
-                prm.Add("mapStatus", mapStatus);
+                prm.Add("mapStatus", (int)mapStatus);
                 prm.Add("dtDelivery", dtDelivery);
+
+                // 名称は各マスターの適用日範囲内のupdatedAtの最新の一行を取得する
+                var sql = "select "
+                    + "ID_DIST, "
+                    + "CD_SHUKKA_BATCH, "
+                    + "CD_COURSE, "
+                    + "CD_ROUTE, "
+                    + "TB_DIST.CD_TOKUISAKI, "
+                    + "v1.NM_TOKUISAKI, "
+                    + "TB_DIST.CD_HIMBAN, "
+                    + "CD_GTIN13, "
+                    + "v2.NM_HIN_SEISHIKIMEI, "
+                    + "NU_BOXUNIT, "
+                    + "NU_OPS, "
+                    + "NU_DRPS "
+                    + "from TB_DIST "
+                    + "left join (select * from "
+                        + "(select CD_TOKUISAKI, NM_TOKUISAKI, row_number() over(partition by CD_TOKUISAKI order by updatedAt desc) no "
+                        + "from TB_MTOKUISAKI where TB_MTOKUISAKI.DT_TEKIYOKAISHI <= @dtDelivery and @dtDelivery < TB_MTOKUISAKI.DT_TEKIYOMUKO) t1 "
+                        + "where no = 1) v1 on TB_DIST.CD_TOKUISAKI = v1.CD_TOKUISAKI "
+                    + "left join (select * from "
+                        + "(select CD_HIMBAN, NM_HIN_SEISHIKIMEI, row_number() over(partition by CD_HIMBAN order by updatedAt desc) no "
+                        + "from TB_MHIMMOKU where TB_MHIMMOKU.DT_TEKIYOKAISHI <= @dtDelivery and @dtDelivery < TB_MHIMMOKU.DT_TEKIYOMUKO) t2 "
+                        + "where no = 1) v2 on TB_DIST.CD_HIMBAN = v2.CD_HIMBAN "
+                    + $"where TB_DIST.FG_MAPSTATUS = @mapStatus and TB_DIST.DT_DELIVERY = @dtDelivery ";
 
                 var whereSql = searchQueryParam?.GetSearchWhere();
                 whereSql = !string.IsNullOrEmpty(whereSql) ? "and " + whereSql : " and 1=1";
+                sql += whereSql;
 
-                return con.Find<TBDISTEntity>(s => s
-                .Include<TBDISTMAPPINGEntity>(j => j.InnerJoin())
-                .Where(@$"{nameof(TBDISTEntity.FGMAPSTATUS):C}={nameof(mapStatus):P}
-                    and {nameof(TBDISTEntity.DTDELIVERY):C}={nameof(dtDelivery):P} {whereSql}")
-                .WithParameters(prm))
-                    .Select(x => new TakahataDistListPrint
+                return con.Query(sql, prm)
+                    .Select(q => new TakahataDistListPrint
                     {
-                        IdDist = x.IDDIST,
-                        CdShukkaBatch = x.CDSHUKKABATCH,
-                        CdCourse = x.CDCOURSE,
-                        CdRoute = x.CDROUTE,
-                        CdTokuisaki = x.CDTOKUISAKI,
-                        NmTokuisaki = x.TBDISTMAPPING?.FirstOrDefault()?.NMTOKUISAKI ?? string.Empty,
-                        CdHimban = x.CDHIMBAN,
-                        CdGtin13 = x.CDGTIN13,
-                        NmHinSeishikimei = x.TBDISTMAPPING?.FirstOrDefault()?.NMHINSEISHIKIMEI ?? string.Empty,
-                        NuBoxunit = x.NUBOXUNIT,
-                        BoxOps = x.NUBOXUNIT == 0 ? 0 : x.NUOPS / x.NUBOXUNIT,
-                        BaraOps = x.NUBOXUNIT == 0 ? 0 : x.NUOPS % x.NUBOXUNIT,
-                        NuOps = x.NUOPS,
-                        BoxRps = x.NUBOXUNIT == 0 ? 0 : x.NUDRPS / x.NUBOXUNIT,
-                        BaraRps = x.NUBOXUNIT == 0 ? 0 : x.NUDRPS % x.NUBOXUNIT,
-                        NuDrps = x.NUDRPS,
-                        BoxRemainingPs = x.NUBOXUNIT == 0 ? 0 : (x.NUOPS - x.NUDRPS) / x.NUBOXUNIT,
-                        BaraRemainingPs = x.NUBOXUNIT == 0 ? (x.NUOPS - x.NUDRPS) : (x.NUOPS - x.NUDRPS) % x.NUBOXUNIT,
-                        TotalRemainingPs = x.NUOPS - x.NUDRPS,
+                        IdDist = q.ID_DIST,
+                        CdShukkaBatch = q.CD_SHUKKA_BATCH,
+                        CdCourse = q.CD_COURSE,
+                        CdRoute = q.CD_ROUTE,
+                        CdTokuisaki = q.CD_TOKUISAKI,
+                        NmTokuisaki = q.NM_TOKUISAKI,
+                        CdHimban = q.CD_HIMBAN,
+                        CdGtin13 = q.CD_GTIN13,
+                        NmHinSeishikimei = q.NM_HIN_SEISHIKIMEI,
+                        NuBoxunit = q.NU_BOXUNIT,
+                        BoxOps = q.NU_BOXUNIT == 0 ? 0 : q.NU_OPS / q.NU_BOXUNIT,
+                        BaraOps = q.NU_BOXUNIT == 0 ? 0 : q.NU_OPS % q.NU_BOXUNIT,
+                        NuOps = q.NU_OPS,
+                        BoxRps = q.NU_BOXUNIT == 0 ? 0 : q.NU_DRPS / q.NU_BOXUNIT,
+                        BaraRps = q.NU_BOXUNIT == 0 ? 0 : q.NU_DRPS % q.NU_BOXUNIT,
+                        NuDrps = q.NU_DRPS,
+                        BoxRemainingPs = q.NU_BOXUNIT == 0 ? 0 : (q.NU_OPS - q.NU_DRPS) / q.NU_BOXUNIT,
+                        BaraRemainingPs = q.NU_BOXUNIT == 0 ? (q.NU_OPS - q.NU_DRPS) : (q.NU_OPS - q.NU_DRPS) % q.NU_BOXUNIT,
+                        TotalRemainingPs = q.NU_OPS - q.NU_DRPS,
                     });
             }
         }
 
-        public static IEnumerable<TakahataDistListPrint> GetReports(IEnumerable<long> distIds)
+        public static IEnumerable<TakahataDistListPrint> GetReports(string dtDelivery, IEnumerable<long> distIds)
         {
             using (var con = DbFactory.CreateConnection())
             {
-                return con.Find<TBDISTEntity>(s => s
-                .Include<TBDISTMAPPINGEntity>(j => j.InnerJoin())
-                .Where(@$"{nameof(TBDISTEntity.IDDIST):of TB_DIST} in {nameof(distIds):P}")
-                .WithParameters(new { distIds }))
-                    .Select(x => new TakahataDistListPrint
+                var sql = "select "
+                    + "ID_DIST, "
+                    + "TB_DIST.CD_SHUKKA_BATCH, "
+                    + "v3.NM_SHUKKA_BATCH, "
+                    + "CD_COURSE, "
+                    + "CD_ROUTE, "
+                    + "TB_DIST.CD_TOKUISAKI, "
+                    + "v1.NM_TOKUISAKI, "
+                    + "TB_DIST.CD_HIMBAN, "
+                    + "CD_GTIN13, "
+                    + "v2.NM_HIN_SEISHIKIMEI, "
+                    + "NU_BOXUNIT, "
+                    + "NU_OPS, "
+                    + "NU_DRPS "
+                    + "from TB_DIST "
+                    + "left join (select * from "
+                        + "(select CD_TOKUISAKI, NM_TOKUISAKI, row_number() over(partition by CD_TOKUISAKI order by updatedAt desc) no "
+                        + "from TB_MTOKUISAKI where TB_MTOKUISAKI.DT_TEKIYOKAISHI <= @dtDelivery and @dtDelivery < TB_MTOKUISAKI.DT_TEKIYOMUKO) t1 "
+                        + "where no = 1) v1 on TB_DIST.CD_TOKUISAKI = v1.CD_TOKUISAKI "
+                    + "left join (select * from "
+                        + "(select CD_HIMBAN, NM_HIN_SEISHIKIMEI, row_number() over(partition by CD_HIMBAN order by updatedAt desc) no "
+                        + "from TB_MHIMMOKU where TB_MHIMMOKU.DT_TEKIYOKAISHI <= @dtDelivery and @dtDelivery < TB_MHIMMOKU.DT_TEKIYOMUKO) t2 "
+                        + "where no = 1) v2 on TB_DIST.CD_HIMBAN = v2.CD_HIMBAN "
+                    + "left join(select* from (select CD_SHUKKA_BATCH, NM_SHUKKA_BATCH, row_number() over(partition by CD_SHUKKA_BATCH order by updatedAt desc) no "
+                        + "from TB_MSHUKKA_BATCH where TB_MSHUKKA_BATCH.DT_TEKIYOKAISHI <= @dtDelivery and @dtDelivery < TB_MSHUKKA_BATCH.DT_TEKIYOMUKO) t3 "
+                        + "where no = 1) v3 on TB_DIST.CD_SHUKKA_BATCH = v3.CD_SHUKKA_BATCH "
+                    + $"where TB_DIST.ID_DIST in @distIds ";
+
+                return con.Query(sql, new { distIds, dtDelivery })
+                    .Select(q => new TakahataDistListPrint
                     {
-                        IdDist = x.IDDIST,
-                        CdShukkaBatch = x.CDSHUKKABATCH,
-                        NmShukkaBatch = x.TBDISTMAPPING?.FirstOrDefault()?.NMSHUKKABATCH ?? string.Empty,
-                        CdCourse = x.CDCOURSE,
-                        CdRoute = x.CDROUTE,
-                        CdTokuisaki = x.CDTOKUISAKI,
-                        NmTokuisaki = x.TBDISTMAPPING?.FirstOrDefault()?.NMTOKUISAKI ?? string.Empty,
-                        CdHimban = x.CDHIMBAN,
-                        CdGtin13 = x.CDGTIN13,
-                        NmHinSeishikimei = x.TBDISTMAPPING?.FirstOrDefault()?.NMHINSEISHIKIMEI ?? string.Empty,
-                        NuBoxunit = x.NUBOXUNIT,
-                        BoxOps = x.NUBOXUNIT == 0 ? 0 : x.NUOPS / x.NUBOXUNIT,
-                        BaraOps = x.NUBOXUNIT == 0 ? 0 : x.NUOPS % x.NUBOXUNIT,
-                        NuOps = x.NUOPS,
-                        BoxRps = x.NUBOXUNIT == 0 ? 0 : x.NUDRPS / x.NUBOXUNIT,
-                        BaraRps = x.NUBOXUNIT == 0 ? 0 : x.NUDRPS % x.NUBOXUNIT,
-                        NuDrps = x.NUDRPS,
-                        BoxRemainingPs = x.NUBOXUNIT == 0 ? 0 : (x.NUOPS - x.NUDRPS) / x.NUBOXUNIT,
-                        BaraRemainingPs = x.NUBOXUNIT == 0 ? (x.NUOPS - x.NUDRPS) : (x.NUOPS - x.NUDRPS) % x.NUBOXUNIT,
-                        TotalRemainingPs = x.NUOPS - x.NUDRPS,
+                        IdDist = q.ID_DIST,
+                        CdShukkaBatch = q.CD_SHUKKA_BATCH,
+                        NmShukkaBatch = q.NM_SHUKKA_BATCH,
+                        CdCourse = q.CD_COURSE,
+                        CdRoute = q.CD_ROUTE,
+                        CdTokuisaki = q.CD_TOKUISAKI,
+                        NmTokuisaki = q.NM_TOKUISAKI,
+                        CdHimban = q.CD_HIMBAN,
+                        CdGtin13 = q.CD_GTIN13,
+                        NmHinSeishikimei = q.NM_HIN_SEISHIKIMEI,
+                        NuBoxunit = q.NU_BOXUNIT,
+                        BoxOps = q.NU_BOXUNIT == 0 ? 0 : q.NU_OPS / q.NU_BOXUNIT,
+                        BaraOps = q.NU_BOXUNIT == 0 ? 0 : q.NU_OPS % q.NU_BOXUNIT,
+                        NuOps = q.NU_OPS,
+                        BoxRps = q.NU_BOXUNIT == 0 ? 0 : q.NU_DRPS / q.NU_BOXUNIT,
+                        BaraRps = q.NU_BOXUNIT == 0 ? 0 : q.NU_DRPS % q.NU_BOXUNIT,
+                        NuDrps = q.NU_DRPS,
+                        BoxRemainingPs = q.NU_BOXUNIT == 0 ? 0 : (q.NU_OPS - q.NU_DRPS) / q.NU_BOXUNIT,
+                        BaraRemainingPs = q.NU_BOXUNIT == 0 ? (q.NU_OPS - q.NU_DRPS) : (q.NU_OPS - q.NU_DRPS) % q.NU_BOXUNIT,
+                        TotalRemainingPs = q.NU_OPS - q.NU_DRPS,
                     });
             }
         }

@@ -89,7 +89,7 @@ namespace TakahataDistListPrint.ViewModels
 
                 try
                 {
-                    var vms = ReportCreator.CreateCustomerReport(TakahataDistListPrints.Select(x => x.IdDist), DispDtDelivery);
+                    var vms = ReportCreator.CreateCustomerReport(TakahataDistListPrints.Select(x => x.IdDist), DtDelivery);
                     var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Portrait);
                     ppm.PrintPreview("得意先別仕分リスト(対象外)", vms);
                 }
@@ -106,7 +106,7 @@ namespace TakahataDistListPrint.ViewModels
 
                 try
                 {
-                    var vms = ReportCreator.CreateItemReport(TakahataDistListPrints.Select(x => x.IdDist), DispDtDelivery);
+                    var vms = ReportCreator.CreateItemReport(TakahataDistListPrints.Select(x => x.IdDist), DtDelivery);
                     var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Portrait);
                     ppm.PrintPreview("商品別仕分リスト(対象外)", vms);
                 }
@@ -162,10 +162,10 @@ namespace TakahataDistListPrint.ViewModels
                 new () { ContentName = "出荷バッチ", TableName = Sql.Format<TBDISTEntity>($"{nameof(TBDISTEntity):T}.{nameof(TBDISTEntity.CDSHUKKABATCH):C}") },
                 new () { ContentName = "コース", TableName = Sql.Format<TBDISTEntity>($"{nameof(TBDISTEntity):T}.{nameof(TBDISTEntity.CDCOURSE):C}") },
                 new () { ContentName = "得意先コード", TableName = Sql.Format<TBDISTEntity>($"{nameof(TBDISTEntity):T}.{nameof(TBDISTEntity.CDTOKUISAKI):C}") },
-                new () { ContentName = "得意先名", TableName = Sql.Format<TBDISTMAPPINGEntity>($"{nameof(TBDISTMAPPINGEntity):T}.{nameof(TBDISTMAPPINGEntity.NMTOKUISAKI):C}") },
+                new () { ContentName = "得意先名", TableName = "v1.NM_TOKUISAKI" },
                 new () { ContentName = "品番", TableName = Sql.Format<TBDISTEntity>($"{nameof(TBDISTEntity):T}.{nameof(TBDISTEntity.CDHIMBAN):C}") },
                 new () { ContentName = "JANコード", TableName = Sql.Format<TBDISTEntity>($"{nameof(TBDISTEntity):T}.{nameof(TBDISTEntity.CDGTIN13):C}") },
-                new () { ContentName = "品名", TableName = Sql.Format<TBDISTMAPPINGEntity>($"{nameof(TBDISTMAPPINGEntity):T}.{nameof(TBDISTMAPPINGEntity.NMHINSEISHIKIMEI):C}") },
+                new () { ContentName = "品名", TableName = "v2.NM_HIN_SEISHIKIMEI"},
             };
         }
     }
