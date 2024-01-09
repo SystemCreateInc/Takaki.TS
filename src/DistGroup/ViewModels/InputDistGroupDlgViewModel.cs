@@ -453,7 +453,7 @@ namespace DistGroup.ViewModels
                     // 登録時：コード一致時点でエラーとする
                     if (DistGroupLoader.GetFromCode(targetData.CdDistGroup) is not null)
                     {
-                        MessageDialog.Show(_dialogService, "登録済みの仕分コードです"
+                        MessageDialog.Show(_dialogService, "登録済みの仕分グループコードです"
                             , "入力エラー");
                         return false;
                     }
