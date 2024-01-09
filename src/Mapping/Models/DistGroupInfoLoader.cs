@@ -39,7 +39,8 @@ namespace Mapping.Models
                     {
                         // 各仕分グループ件数取得
                         var sql = "select CD_DIST_GROUP"
-                            + ", count(distinct case when tdunitaddrcode='' then null else CD_BLOCK+tdunitaddrcode end) shopcnt"
+                            //+ ", count(distinct case when tdunitaddrcode='' then null else CD_BLOCK+tdunitaddrcode end) shopcnt"
+                            + ", count(distinct case when tdunitaddrcode='' then null else CD_TOKUISAKI end) shopcnt"
                             + ",count(distinct case when FG_MAPSTATUS = 1 then CD_TOKUISAKI else null end) overshopcnt"
                             + " from TB_DIST"
                             + " inner join TB_DIST_MAPPING on TB_DIST_MAPPING.ID_DIST = TB_DIST.ID_DIST"

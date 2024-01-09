@@ -98,7 +98,8 @@ namespace Mapping.Models
 
             if (distgroup != null)
             {
-                cnt = distgroup.mappings.Where(x => x.tdunitaddrcode != "").Select(x => x.tdunitaddrcode).Count();
+//                cnt = distgroup.mappings.Where(x => x.tdunitaddrcode != "").Select(x => x.tdunitaddrcode).Count();
+                cnt = distgroup.mappings.Where(x => x.CdTokuisaki != "").Select(x => x.CdTokuisaki).Count();
             }
             return cnt;
         }
@@ -622,7 +623,7 @@ namespace Mapping.Models
                                     NMSHUKKABATCH = dist.NmShukkaBatch,
                                     NMKYOTEN = dist.NmKyoten,
                                     NMTOKUISAKI = dist.NmTokuisaki,
-                                    CDSUMTOKUISAKI = dist.NmHinSeishikimei,
+                                    CDSUMTOKUISAKI = dist.CdSumTokuisaki,
                                     NMSUMTOKUISAKI = dist.NmSumTokuisaki,
                                     CDSUMCOURSE = dist.CdSumCourse,
                                     CDSUMROUTE = (short)dist.CdSumRoute,
@@ -630,7 +631,7 @@ namespace Mapping.Models
                                     CDBLOCK = dist.CdBlock,
                                     CDDISTGROUP = distgroup.CdDistGroup,
                                     NMDISTGROUP = distgroup.NmDistGroup,
-                                    Tdunitaddrcode = dist.NmHinSeishikimei,
+                                    Tdunitaddrcode = dist.tdunitaddrcode,
                                     NUMAGICHI = dist.Maguchi,
 
                                     CreatedAt = DateTime.Now,
