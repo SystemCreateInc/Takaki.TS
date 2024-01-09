@@ -12,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace LargeDist.ViewModels
 {
@@ -84,14 +86,14 @@ namespace LargeDist.ViewModels
             set => SetProperty(ref _isCancelMode, value);
         }
 
-        private bool _canLargeDist;
+        private bool _isScannedItem;
         public bool IsScannedItem
         {
-            get => _canLargeDist;
+            get => _isScannedItem;
             set
             {
-                SetProperty(ref _canLargeDist, value);
-                IsEmptyItem = !_canLargeDist;
+                SetProperty(ref _isScannedItem, value);
+                IsEmptyItem = !_isScannedItem;
             }
         }
 
@@ -106,9 +108,9 @@ namespace LargeDist.ViewModels
 
         public bool KeepAlive { get; set; } = true;
 
+        private readonly IDialogService _dialogService;
+        private readonly ScopeLogger _logger = new ScopeLogger(nameof(ItemScanViewModel));
         private IRegionNavigationService? _regionNavigationService;
-        private IDialogService _dialogService;
-        private ScopeLogger _logger = new ScopeLogger(nameof(ItemScanViewModel));
         private bool _initialized;
         private bool _requestClearItem;
         private bool _requestGridSetup;
@@ -118,7 +120,7 @@ namespace LargeDist.ViewModels
             _dialogService = dialogService;
             RefreshCommand = new DelegateCommand(Refresh);
             ItemListCommand = new DelegateCommand(ItemList);
-            CancelModeCommand = new DelegateCommand(CancelMode).ObservesCanExecute(() => IsEmptyItem);
+            CancelModeCommand = new DelegateCommand(ToggleCancelMode).ObservesCanExecute(() => IsEmptyItem);
             DeleteItemCommand = new DelegateCommand(DeleteItem);
             ScanOrderCommand = new DelegateCommand(ScanOrder).ObservesCanExecute(() => IsEmptyItem);
             BackCommand = new DelegateCommand(Back);
@@ -183,6 +185,7 @@ namespace LargeDist.ViewModels
             },
             rc =>
             {
+                ToggleCancelMode();
                 Refresh();
             });
         }
@@ -204,7 +207,7 @@ namespace LargeDist.ViewModels
             }
 
             ScanGrid.PushItem(item);
-            IsScannedItem = true;
+            Refresh();
         }
 
         private LargeDistItem? SelectItem(IEnumerable<LargeDistItem> items)
@@ -275,10 +278,10 @@ namespace LargeDist.ViewModels
         {
             _logger.Debug("Delete Item");
             ScanGrid.DeleteSelectedItem();
-            IsScannedItem = ScanGrid.HasScanItem;
+            Refresh();
         }
 
-        private void CancelMode()
+        private void ToggleCancelMode()
         {
             IsCancelMode = !IsCancelMode;
             _logger.Debug($"Cancel Mode {IsCancelMode}");
@@ -297,6 +300,7 @@ namespace LargeDist.ViewModels
         private void Refresh()
         {
             ItemProgress = LargeDistQueryService.GetProgress(LargeDistGroup!);
+            IsScannedItem = ScanGrid.HasScanItem;
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
@@ -307,7 +311,6 @@ namespace LargeDist.ViewModels
                 {
                     _logger.Debug("Request Clear Item");
                     _requestClearItem = false;
-                    Refresh();
                     ScanGrid.Clear();
                 }
 
@@ -318,6 +321,7 @@ namespace LargeDist.ViewModels
                     SetupGrid();
                 }
 
+                Refresh();
                 return;
             }
 
@@ -326,10 +330,9 @@ namespace LargeDist.ViewModels
             DeliveryDate = param.DeliveryDate;
             LargeDistGroup = param.LargeDistGroup;
             Person = param.Person;
-            Refresh();
             SetupGrid();
+            Refresh();
             _initialized = true;
-            IsScannedItem = false;
             _logger.Debug("Initialized");
         }
 

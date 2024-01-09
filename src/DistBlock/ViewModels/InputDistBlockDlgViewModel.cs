@@ -164,6 +164,13 @@ namespace DistBlock.ViewModels
             set => SetProperty(ref _isAdd, value);
         }
 
+        private bool _isEdit = false;
+        public bool IsEdit
+        {
+            get => _isEdit;
+            set => SetProperty(ref _isEdit, value);
+        }
+
         private bool _canAddBlockRows = true;
         public bool CanAddBlockRows
         {
@@ -177,6 +184,8 @@ namespace DistBlock.ViewModels
         private const int MAX_BLOCK_COUNT = 10;
 
         public ReferenceLog ReferenceLog { get; set; } = new ReferenceLog();
+
+        public DateTime? _lastReferenceDate;
 
         private readonly IDialogService _dialogService;
 
@@ -215,7 +224,7 @@ namespace DistBlock.ViewModels
 
                 Syslog.Debug("InputDistBlockDlgViewModel:Refer");
                 ClearInfo(false);
-                SetReferenceInfo();
+                SetReferenceInfo(false);
                 Blocks.CollectionChanged += Blocks_CollectionChanged;
             });
 
@@ -249,6 +258,7 @@ namespace DistBlock.ViewModels
             _distBlock = parameters.GetValue<DistBlockInfo>("DistBlock");
             _shainInfo = parameters.GetValue<ShainInfo>("ShainInfo");
             IsAdd = _distBlock.CdDistGroup.IsNullOrEmpty();
+            IsEdit = !IsAdd;
             InitDialog();
         }
 
@@ -263,7 +273,7 @@ namespace DistBlock.ViewModels
                 ReferenceLog.LogInfos = LogLoader.Get(_distBlock.CdDistGroup).ToList();
 
                 // 参照日初期値で履歴から検索
-                SetReferenceInfo();
+                SetReferenceInfo(true);
                 CanAddBlockRows = Blocks.Count < MAX_BLOCK_COUNT;
             }
             else
@@ -299,7 +309,7 @@ namespace DistBlock.ViewModels
         }
 
         // 参照
-        private void SetReferenceInfo()
+        private void SetReferenceInfo(bool isInit)
         {
             var tekiyoDate = ReferenceLog.GetStartDateInRange(ReferenceDate.ToString("yyyyMMdd"));
             var tekiyoData = DistBlockLoader.GetFromKey(_distBlock.CdDistGroup, tekiyoDate);
@@ -314,7 +324,19 @@ namespace DistBlock.ViewModels
                 DtTekiyoMuko = DateTime.Parse(tekiyoData.TekiyoMuko.GetDate());
 
                 Blocks = new ObservableCollection<Block>(tekiyoData.Blocks);
+                _lastReferenceDate = ReferenceDate;
             }
+            else if (!isInit)
+            {
+                MessageDialog.Show(_dialogService, "参照する履歴はありません", "該当適用期間無し");
+                if (_lastReferenceDate is not null)
+                {
+                    ReferenceDate = _lastReferenceDate.GetValueOrDefault();
+                    SetReferenceInfo(true);
+                }
+
+            }
+
             _isChange = false;
         }
 

@@ -54,6 +54,12 @@ namespace StowageSvr.Models
             UpdatedAt = entity.UpdatedAt;
         }
 
+        // 完了前は予定数、完了後は実績数
+        public int GetBoxCount()
+        {
+            return FgSStatus == Status.Completed ? ResultBoxCount : OrderBoxCount;
+        }
+
         public void Update(int boxCount)
         {
             ResultBoxCount = boxCount;

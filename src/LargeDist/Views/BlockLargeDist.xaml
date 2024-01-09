@@ -89,7 +89,7 @@
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
             <TextBlock>ラベル発行：</TextBlock>
             <RadioButton IsChecked="{Binding IsPrintLabel}" >有り</RadioButton>
-            <RadioButton Margin="100,0,0,0">無し</RadioButton>
+            <RadioButton IsChecked="{Binding IsNoPrintLabel}" Margin="100,0,0,0">無し</RadioButton>
         </StackPanel>
 
         <Grid DockPanel.Dock="Top" Margin="10,0,0,0">

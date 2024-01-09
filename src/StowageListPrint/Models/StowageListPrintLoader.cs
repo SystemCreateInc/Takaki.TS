@@ -25,15 +25,15 @@ namespace StowageListPrint.Models
                 .Where(@$"{nameof(TBSTOWAGEEntity.DTDELIVERY):C}={nameof(dtDelivery):P}
                         and {nameof(TBSTOWAGEMAPPINGEntity.CDDISTGROUP):of TB_STOWAGE_MAPPING}={nameof(cdDistGroup):P} {whereSql}")
                 .WithParameters(prm))
-                    .GroupBy(x => new 
-                    { 
+                    .GroupBy(x => new
+                    {
                         x.TBSTOWAGEMAPPING?.FirstOrDefault()?.CDBLOCK,
-                        x.TBSTOWAGEMAPPING?.FirstOrDefault()?.Tdunitaddrcode, 
-                        x.CDSHUKKABATCH, 
-                        x.CDCOURSE, 
-                        x.CDROUTE, 
-                        x.CDTOKUISAKI, 
-                        x.TBSTOWAGEMAPPING?.FirstOrDefault()?.NMTOKUISAKI 
+                        x.TBSTOWAGEMAPPING?.FirstOrDefault()?.Tdunitaddrcode,
+                        x.CDSHUKKABATCH,
+                        x.CDCOURSE,
+                        x.CDROUTE,
+                        x.CDTOKUISAKI,
+                        x.TBSTOWAGEMAPPING?.FirstOrDefault()?.NMTOKUISAKI
                     })
                     .Select(x =>
                     {
@@ -73,7 +73,13 @@ namespace StowageListPrint.Models
                         };
 
                         return stowageListPrint;
-                    });
+                    })
+                    .OrderBy(x => x.CdBlock)
+                    .ThenBy(x => x.Tdunitcode)
+                    .ThenBy(x => x.CdShukkaBatch)
+                    .ThenBy(x => x.CdCourse)
+                    .ThenBy(x => x.CdRoute)
+                    .ThenBy(x => x.CdTokuisaki);
             }
         }
     }
