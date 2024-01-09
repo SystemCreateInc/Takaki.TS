@@ -80,7 +80,7 @@ namespace DistProg.ViewModels
         {
             try
             {
-                CollectionViewHelper.SetCollection(DistProgs, DistProgLoader.Get());
+                CollectionViewHelper.SetCollection(DistProgs, DistProgLoader.Get(_dtDelivery));
                 LatestTime = DateTime.Now;
             }
             catch (Exception e)

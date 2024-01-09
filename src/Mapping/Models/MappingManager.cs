@@ -463,11 +463,14 @@ namespace Mapping.Models
                 {
                     foreach (BoxType boxtype in Enum.GetValues(typeof(BoxType)))
                     {
-                        var p = distgroup.stowages.Find(x => x.CdTokuisaki == stowage.CdSumTokuisaki && x.StBoxType == (int)boxtype);
+                        var p = distgroup.stowages.Find(x => x.CdTokuisaki == stowage.CdTokuisaki && x.StBoxType == (int)boxtype);
                         if (p == null)
                         {
-                            // 追加
-                            AppendStowages.Add(new Dist(stowage, boxtype));
+                            if(AppendStowages.Find(x => x.CdShukkaBatch == stowage.CdShukkaBatch && x.CdKyoten == stowage.CdKyoten && x.CdTokuisaki == stowage.CdTokuisaki && x.StBoxType == (int)boxtype)==null)
+                            {
+                                // 追加
+                                AppendStowages.Add(new Dist(stowage, boxtype));
+                            }
                         }
                     }
                 }
