@@ -106,7 +106,7 @@
                     <Label Grid.Column="0" Content="参照日"/>
                     <StackPanel Orientation="Horizontal" Grid.Column="1">
                         <DatePicker SelectedDate="{Binding ReferenceDate}" Language="ja" Width="200" x:Name="ReferenceDate" IsEnabled="{Binding IsEdit}"/>
-                        <Button Grid.Column="2" Content="参照" Command="{Binding ReferCommand}" Margin="3" IsEnabled="{Binding IsEdit}"
+                        <Button Grid.Column="2" Content="参照" Command="{Binding ReferCommand}" Margin="3" IsEnabled="{Binding IsEdit}" Focusable="False"
                                 Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=Height}" Width="80"/>
                     </StackPanel>
                 </Grid>
