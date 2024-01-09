@@ -387,7 +387,6 @@ namespace DistGroup.ViewModels
                     ReferenceDate = _lastReferenceDate.GetValueOrDefault();
                     SetReferenceInfo(true);
                 }
-
             }
             _isChange = false;
         }
@@ -449,6 +448,17 @@ namespace DistGroup.ViewModels
                     TekiyoMuko = DtTekiyoMuko.ToString("yyyyMMdd"),
                 };
 
+                if (IsAdd)
+                {
+                    // 登録時：コード一致時点でエラーとする
+                    if (DistGroupLoader.GetFromCode(targetData.CdDistGroup) is not null)
+                    {
+                        MessageDialog.Show(_dialogService, "登録済みの仕分コードです"
+                            , "入力エラー");
+                        return false;
+                    }
+                }
+
                 var existData = DistGroupLoader.GetFromKey(targetData.CdDistGroup, targetData.Tekiyokaishi);
                 var isExist = existData is not null;
 
@@ -464,14 +474,6 @@ namespace DistGroup.ViewModels
 
                 if (IsAdd)
                 {
-                    if (isExist)
-                    {
-                        MessageDialog.Show(_dialogService, "同一組み合わせのデータが登録済みです" +
-                            $"\n仕分グループ[{CdDistGroup}],適用開始日[{DtTekiyoKaishi.ToString("yyyyMMdd")}]\n"
-                            , "入力エラー");
-                        return false;
-                    }
-
                     DistGroupEntityManager.Regist(targetData, _shainInfo, _inputedCourses);
                 }
                 else if (isExist)
@@ -502,7 +504,7 @@ namespace DistGroup.ViewModels
                 return false;
             }
 
-            if (CdDistGroup.Trim().IsNullOrEmpty()||
+            if (CdDistGroup.Trim().IsNullOrEmpty() ||
                 NmDistGroup.IsNullOrEmpty())
             {
                 MessageDialog.Show(_dialogService, "仕分グループコード、名称を入力してください。", "入力エラー");
@@ -539,7 +541,7 @@ namespace DistGroup.ViewModels
                 return false;
             }
 
-            if(_inputedBatchs.GroupBy(x => x.CdShukkaBatch).Any(x => x.Count() > 1))
+            if (_inputedBatchs.GroupBy(x => x.CdShukkaBatch).Any(x => x.Count() > 1))
             {
                 MessageDialog.Show(_dialogService, "対象出荷バッチが重複しています", "入力エラー");
                 return false;
@@ -575,7 +577,7 @@ namespace DistGroup.ViewModels
             var sameBatchDists = DistGroupLoader.GetSameBatchDists(_inputedBatchs.Select(x => x.PadBatch), idDistGroup ?? -1,
                 DtTekiyoKaishi.ToString("yyyyMMdd"), DtTekiyoMuko.ToString("yyyyMMdd"));
 
-            foreach(var batchDist in sameBatchDists)
+            foreach (var batchDist in sameBatchDists)
             {
                 var sameCourses = batchDist.Courses.Select(x => x.PadCourse).Intersect(Courses.Select(x => x.PadCourse));
 
