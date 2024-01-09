@@ -68,7 +68,7 @@
             </StackPanel>
         </Grid>
 
-        <controls:GridColumnSetting TargetGrid="{Binding ElementName=gridovertokuisaki}" SettingsKey="MappingColumns"/>
+        <controls:GridColumnSetting TargetGrid="{Binding ElementName=gridovertokuisaki}" SettingsKey="MappingOverInfoColumns"/>
         <DataGrid Margin="3" DockPanel.Dock="Left" 
                         Name="gridovertokuisaki" ItemsSource="{Binding OverInfos, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"                          
                   IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"

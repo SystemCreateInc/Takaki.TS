@@ -165,6 +165,10 @@ namespace Mapping.Models
                     }
                 }
 
+                distgroup.IsSave = false;
+                distgroup.IsCancel = false;
+
+
                 // 集計得意先のコース、配順を設定
                 SetSumTokuisakiCourse(distgroup.dists);
 

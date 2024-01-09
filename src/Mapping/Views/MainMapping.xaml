@@ -109,7 +109,7 @@
             </StackPanel>
         </Grid>
 
-        <controls:GridColumnSetting TargetGrid="{Binding ElementName=griddistgroupmapping}" SettingsKey="MappingColumns"/>
+        <controls:GridColumnSetting TargetGrid="{Binding ElementName=griddistgroupmapping}" SettingsKey="MappingDistGroupColumns"/>
         <DataGrid Margin="3" DockPanel.Dock="Left" 
                         Name="griddistgroupmapping" ItemsSource="{Binding DistGroupInfos, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"                          
                         SelectedItem="{Binding CurrentDistGroupInfo, Mode=TwoWay}"

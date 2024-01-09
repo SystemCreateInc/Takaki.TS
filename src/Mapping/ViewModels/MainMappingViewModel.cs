@@ -515,6 +515,8 @@ namespace Mapping.ViewModels
                 if (distgroup.IsSave == true || distgroup.IsCancel == true)
                 {
                     Save(distgroup.IsCancel);
+                    distgroup.IsSave = false;
+                    distgroup.IsCancel = false;
                 }
             }
         }
