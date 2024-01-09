@@ -72,7 +72,7 @@ namespace LargeDist.Models
 
         // 商品停止フラグ
         public bool IsStopped { get; set; }
-        public bool IsCompleted => RemainPiece == 0;
+        public bool IsCompleted { get; set; }
 
         public long Id { get; }
         public string DtDelivery { get; }

@@ -55,6 +55,7 @@ namespace LargeDist.Models
                         if (!item.IsStopped)
                         {
                             repo.Save(item, person);
+                            item.IsCompleted = true;
                         }
                         else
                         {
