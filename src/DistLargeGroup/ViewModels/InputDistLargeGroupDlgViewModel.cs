@@ -366,6 +366,8 @@ namespace DistLargeGroup.ViewModels
                 CdLargeGroupName = string.Empty;
             }
 
+            CdLargeGroupName = string.Empty;
+
             DtTekiyoKaishi = DateTime.Now;
             DtTekiyoMuko = new DateTime(2999, 12, 31);
             DtTorokuNichiji = null;
