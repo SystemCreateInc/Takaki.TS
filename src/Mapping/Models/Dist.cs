@@ -117,7 +117,9 @@ namespace Mapping.Models
 
         public decimal GetBoxSize()
         {
-            return (decimal)LargeBox + (decimal)((decimal)SmallBox / 2);
+            // Large,Small合わせて０の場合は１を設定
+            decimal ans =  (decimal)LargeBox + (decimal)((decimal)SmallBox / 2);
+            return ans == 0 ? 1 : ans;
         }
         public int GetMaguchi(decimal NuThreshold)
         {
