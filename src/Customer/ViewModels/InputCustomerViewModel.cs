@@ -195,6 +195,9 @@ namespace Customer.ViewModels
 
         public string Title => "集約得意先情報入力";
 
+        // ダイアログ終了後に名称取得エラーを出さない為
+        private bool _isClosing = false;
+
         public InputCustomerViewModel(IDialogService dialogService, IRegionManager regionManager)
         {
             _dialogService = dialogService;
@@ -244,6 +247,7 @@ namespace Customer.ViewModels
         public void OnDialogClosed()
         {
             ChildCustomers.CollectionChanged -= ChildCustomers_CollectionChanged;
+            _isClosing = true;
         }
 
         public void OnDialogOpened(IDialogParameters parameters)
@@ -285,7 +289,7 @@ namespace Customer.ViewModels
                     return;
             }
 
-            if (!errorTextName.IsNullOrEmpty())
+            if (!errorTextName.IsNullOrEmpty() && !_isClosing)
             {
                 MessageDialog.Show(_dialogService, $"{errorTextName}名称が取得できませんでした", "入力エラー");
             }
