@@ -60,6 +60,22 @@ namespace DistGroup.Loader
             }
         }
 
+        // 仕分グループコードで取得(
+        public static DistGroupInfo? GetFromCode(string cdDistGroup)
+        {
+            using (var con = DbFactory.CreateConnection())
+            {
+                return con.Find<TBDISTGROUPEntity>(s => s
+                .Include<TBDISTGROUPSHUKKABATCHEntity>()
+                .Include<TBDISTGROUPLARGEGROUPEntity>()
+                .Include<TBDISTGROUPCOURSEEntity>()
+                .Where($"{nameof(TBDISTGROUPEntity.CDDISTGROUP):C} = {nameof(cdDistGroup):P}")
+                .WithParameters(new { cdDistGroup }))
+                    .Select(q => CreateDisgGroupInfos(q))
+                    .FirstOrDefault();
+            }
+        }
+
         internal static IEnumerable<DistGroupInfo> GetSameBatchDists(IEnumerable<string> batchs, long idDistGroup, string startDate, string endDate)
         {
             var sameBatchCourses = new List<DistGroupInfo>();
