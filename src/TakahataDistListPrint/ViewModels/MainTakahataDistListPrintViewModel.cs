@@ -31,6 +31,8 @@ namespace TakahataDistListPrint.ViewModels
         private readonly IDialogService _dialogService;
         private SearchBoxService _searchBoxService = new SearchBoxService();
 
+        private const int _chunkSize = 100;
+
         private PackIconKind _searchIcon = PackIconKind.Search;
         public PackIconKind SearchIcon
         {
@@ -89,9 +91,17 @@ namespace TakahataDistListPrint.ViewModels
 
                 try
                 {
-                    var vms = ReportCreator.CreateCustomerReport(TakahataDistListPrints.Select(x => x.IdDist), DtDelivery);
+                    var vms = ReportCreator.CreateCustomerReport(TakahataDistListPrints.Select(x => x.IdDist), DtDelivery, _chunkSize);
                     var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Portrait);
-                    ppm.PrintPreview("得意先別仕分リスト(対象外)", vms);
+
+                    // 印刷単位毎にプレビューを表示し、処理を軽くする
+                    var printUnitVms = vms.Select((v, i) => new { v, i })
+                        .GroupBy(x => x.i / _chunkSize).Select(s => s.Select(x => x.v));
+
+                    foreach (var printVms in printUnitVms)
+                    {
+                        ppm.PrintPreview("得意先別仕分リスト(対象外)", printVms);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -106,9 +116,17 @@ namespace TakahataDistListPrint.ViewModels
 
                 try
                 {
-                    var vms = ReportCreator.CreateItemReport(TakahataDistListPrints.Select(x => x.IdDist), DtDelivery);
+                    var vms = ReportCreator.CreateItemReport(TakahataDistListPrints.Select(x => x.IdDist), DtDelivery, _chunkSize);
                     var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Portrait);
-                    ppm.PrintPreview("商品別仕分リスト(対象外)", vms);
+
+                    // 印刷単位毎にプレビューを表示し、処理を軽くする
+                    var printUnitVms = vms.Select((v, i) => new { v, i })
+                        .GroupBy(x => x.i / _chunkSize).Select(s => s.Select(x => x.v));
+
+                    foreach (var printVms in printUnitVms)
+                    {
+                        ppm.PrintPreview("商品別仕分リスト(対象外)", printVms);
+                    }
                 }
                 catch (Exception e)
                 {

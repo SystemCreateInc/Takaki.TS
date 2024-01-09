@@ -70,7 +70,7 @@ namespace TakahataDistListPrint.Models
                         BoxRemainingPs = q.NU_BOXUNIT == 0 ? 0 : (q.NU_OPS - q.NU_DRPS) / q.NU_BOXUNIT,
                         BaraRemainingPs = q.NU_BOXUNIT == 0 ? (q.NU_OPS - q.NU_DRPS) : (q.NU_OPS - q.NU_DRPS) % q.NU_BOXUNIT,
                         TotalRemainingPs = q.NU_OPS - q.NU_DRPS,
-                    });
+                    }).OrderBy(x => x.CdShukkaBatch).ThenBy(x => x.CdCourse).ThenBy(x => x.CdRoute).ThenBy(x => x.CdTokuisaki).ThenBy(x => x.CdHimban);
             }
         }
 

@@ -1,6 +1,4 @@
 ﻿using DistListPrint.Models;
-using System.Windows.Media.TextFormatting;
-using System.Xaml;
 
 namespace DistListPrint.Reports
 {
@@ -8,11 +6,27 @@ namespace DistListPrint.Reports
     {
         // 得意先別仕分リスト作成
         public static IEnumerable<CustomerReportViewModel> CreateCustomerReport(IEnumerable<long> ids,
-            SearchConditionType searchConditionType, string cdDistGroup, string nmDistGroup, string dtDelivery)
+            SearchConditionType searchConditionType, string cdDistGroup, string nmDistGroup, string dtDelivery, int chunkSize)
         {
             var viewModels = new List<CustomerReportViewModel>();
-            var records = DistListPrintLoader.GetReports(ids);
-            var groups = records.GroupBy(x => new { x.CdShukkaBatch, x.CdCourse, x.CdRoute, x.CdTokuisaki });
+
+            // パラメーターエラーを回避するために印刷単位毎に再読み込み
+            var groupIdss = ids
+                .Select((v, i) => new { v, i })
+                .GroupBy(x => x.i / chunkSize)
+                .Select(g => g.Select(x => x.v));
+
+            var records = new List<Models.DistListPrint>();
+            foreach (var groupIds in groupIdss)
+            {
+                records.AddRange(DistListPrintLoader.GetReports(groupIds));
+            }
+
+            // 出荷バッチ、コース、配送順、取引先でグループ化
+            // 出荷バッチ、コース、配送順、取引先、品番でソート
+            var groups = records
+                .GroupBy(x => new { x.CdShukkaBatch, x.CdCourse, x.CdRoute, x.CdTokuisaki })
+                .OrderBy(x => x.Key.CdShukkaBatch).ThenBy(x => x.Key.CdCourse).ThenBy(x => x.Key.CdRoute).ThenBy(x => x.Key.CdTokuisaki).ThenBy(x => x.Select(xx => xx.CdHimban));
 
             foreach (var group in groups)
             {
@@ -52,11 +66,29 @@ namespace DistListPrint.Reports
 
         // 商品別仕分リスト作成
         public static IEnumerable<ItemReportViewModel> CreateItemReport(IEnumerable<long> ids,
-            SearchConditionType searchConditionType, string cdDistGroup, string nmDistGroup, string dtDelivery)
+            SearchConditionType searchConditionType, string cdDistGroup, string nmDistGroup, string dtDelivery, int chunkSize)
         {
             var viewModels = new List<ItemReportViewModel>();
-            var records = DistListPrintLoader.GetReports(ids);
-            var groups = records.GroupBy(x => new { x.CdHimban, x.CdGtin13, x.NmHinSeishikimei, x.NuBoxunit });
+
+            // パラメーターエラーを回避するために印刷単位毎に再読み込み
+            var groupIdss = ids
+                .Select((v, i) => new { v, i })
+                .GroupBy(x => x.i / chunkSize)
+                .Select(g => g.Select(x => x.v));
+
+            var records = new List<Models.DistListPrint>();
+            foreach (var groupIds in groupIdss)
+            {
+                records.AddRange(DistListPrintLoader.GetReports(groupIds));
+            }
+
+            // 品番、Jan、品名、入数でグループ化
+            // 品番、Jan、品名、入数、出荷バッチ、コース、配送順、得意先でソート
+            var groups = records
+                .GroupBy(x => new { x.CdHimban, x.CdGtin13, x.NmHinSeishikimei, x.NuBoxunit })
+                .OrderBy(x => x.Key.CdHimban).ThenBy(x => x.Key.CdGtin13).ThenBy(x => x.Key.NmHinSeishikimei).ThenBy(x => x.Key.NuBoxunit)
+                .ThenBy(x => x.Select(x => x.CdShukkaBatch)).ThenBy(x => x.Select(x => x.CdCourse)).ThenBy(x => x.Select(x => x.CdRoute))
+                .ThenBy(x => x.Select(x => x.CdTokuisaki));
 
             foreach (var group in groups)
             {
