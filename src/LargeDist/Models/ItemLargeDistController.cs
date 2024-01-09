@@ -8,10 +8,10 @@ namespace LargeDist.Models
 {
     public class ItemLargeDistController
     {
-        private LargeDistGroup _group;
-        private ScanGridController _rootGridController;
+        private readonly LargeDistGroup _group;
+        private readonly ScanGridController _rootGridController;
+        private readonly ScopeLogger _logger = new (nameof(BlockLargeDistController));
         private int _currentItemIndex;
-        private ScopeLogger _logger = new ScopeLogger(nameof(BlockLargeDistController));
 
         private LargeDistProcessingUnit[] Items { get; set; }
 

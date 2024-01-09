@@ -101,7 +101,7 @@ namespace LargeDist.ViewModels
             set => SetProperty(ref _message, value);
         }
 
-        private ScanGridController _scanGrid = new ScanGridController
+        private ScanGridController _scanGrid = new()
         {
             DisableHeading = true,
         };
@@ -128,8 +128,8 @@ namespace LargeDist.ViewModels
         public bool KeepAlive { get; set; } = true;
 
         private readonly IDialogService _dialogService;
-        private readonly ScopeLogger _logger = new ScopeLogger(nameof(ItemScanViewModel));
-        private readonly DispatcherTimer _idleTimer = new DispatcherTimer(DispatcherPriority.ApplicationIdle, System.Windows.Application.Current.Dispatcher);
+        private readonly ScopeLogger _logger = new (nameof(ItemScanViewModel));
+        private readonly DispatcherTimer _idleTimer = new (DispatcherPriority.ApplicationIdle, System.Windows.Application.Current.Dispatcher);
         private readonly IEventAggregator _eventAggregator;
         private readonly LargeDistState _largeDistState;
         private IRegionNavigationService? _regionNavigationService;
