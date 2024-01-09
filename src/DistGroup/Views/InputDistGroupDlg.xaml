@@ -157,9 +157,9 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Content="配送便集計"/>
-                        <RadioButton Grid.Column="1" Content="しない" Margin="3" FontSize="18" IsEnabled="{Binding IsAdd}"
+                        <RadioButton Grid.Column="1" Content="しない" Margin="3" FontSize="18"
                                      IsChecked="{Binding BinSumType, Mode=TwoWay, Converter={StaticResource Enum}, ConverterParameter=No}"/>
-                        <RadioButton Grid.Column="2" Content="する" Margin="3" FontSize="18" IsEnabled="{Binding IsAdd}"
+                        <RadioButton Grid.Column="2" Content="する" Margin="3" FontSize="18"
                                      IsChecked="{Binding BinSumType, Mode=TwoWay, Converter={StaticResource Enum}, ConverterParameter=Yes}"/>
                     </Grid>
 

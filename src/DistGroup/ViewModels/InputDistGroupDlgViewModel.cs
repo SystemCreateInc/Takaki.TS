@@ -343,6 +343,7 @@ namespace DistGroup.ViewModels
                 CdDistGroup = string.Empty;
             }
 
+            NmDistGroup = string.Empty;
             BinSumType = BinSumType.No;
             Batches = new ObservableCollection<BatchInfo> { new BatchInfo() };
             Courses.Clear();
@@ -516,7 +517,7 @@ namespace DistGroup.ViewModels
 
             if (BinSumType == BinSumType.No && Batches.Count > 1)
             {
-                MessageDialog.Show(_dialogService, "配送便集計を「する」に変更。\nまたは出荷バッチの入力行を1行のみにして下さい。", "入力エラー");
+                MessageDialog.Show(_dialogService, "配送便集計をしない場合は、出荷バッチは１バッチだけにして下さい。", "入力エラー");
                 return false;
             }
 
