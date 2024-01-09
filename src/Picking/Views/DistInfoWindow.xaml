@@ -21,6 +21,13 @@
     </UserControl.Resources>
 
     <DockPanel DockPanel.Dock="Top">
+        <DockPanel.Resources>
+            <Style TargetType="ScrollBar">
+                <Setter Property="MinWidth" Value="90"/>
+                <Setter Property="MinHeight" Value="50" />
+            </Style>
+        </DockPanel.Resources>
+
         <StackPanel DockPanel.Dock="Top">
             <Grid>
                 <Grid.RowDefinitions>
