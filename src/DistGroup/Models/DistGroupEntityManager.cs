@@ -57,6 +57,7 @@ namespace DistGroup.Models
                     throw new Exception("更新対象のデータが見つかりません");
                 }
 
+                entity.NMDISTGROUP = targetInfo.NmDistGroup;
                 entity.CDBINSUM = (short)targetInfo.CdBinSum;
 
                 entity.DTTEKIYOKAISHI = targetInfo.Tekiyokaishi;
