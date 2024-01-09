@@ -11,6 +11,7 @@ using SelDistGroupLib.Models;
 using SelDistGroupLib.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,7 +49,7 @@ namespace Picking.ViewModels
             set
             {
                 SetProperty(ref _currentDistDetail, value);
-                CanDistDetail = value == null ? false : true;
+                CanDistDetail = value == null || CanInfo==true ? false : true;
             }
         }
 
@@ -62,6 +63,25 @@ namespace Picking.ViewModels
 
 
         private DistInfo _base_distinfo = new();
+
+        private int _color = 0;
+        public int Color
+        {
+            get => _color;
+            set => SetProperty(ref _color, value);
+        }
+        private DistItemSeq? _itemseq = null;
+        public DistItemSeq? ItemSeq
+        {
+            get => _itemseq;
+            set => SetProperty(ref _itemseq, value);
+        }
+        private bool _canInfo = false;
+        public bool CanInfo
+        {
+            get => _canInfo;
+            set => SetProperty(ref _canInfo, value);
+        }
 
 
         private readonly IDialogService _dialogService;
@@ -150,6 +170,9 @@ namespace Picking.ViewModels
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
             _base_distinfo = navigationContext.Parameters.GetValue<DistInfo>("currentdistinfo");
+            Color = navigationContext.Parameters.GetValue<int>("Color");
+            ItemSeq = navigationContext.Parameters.GetValue<DistItemSeq>("ItemSeq");
+            CanInfo = navigationContext.Parameters.GetValue<bool>("CanInfo");
 
             DisplayDistDetailDatas = new List<DistDetail>();
             RefreshInfo();
@@ -160,7 +183,7 @@ namespace Picking.ViewModels
         {
             try
             {
-                if (_base_distinfo != null)
+                if (CanInfo == false)
                 {
                     // 状況からの一覧
                     DisplayDistDetailDatas = DistColorManager.LoadInfoDetails(_distgroup!, _base_distinfo);
@@ -175,18 +198,20 @@ namespace Picking.ViewModels
                 }
                 else
                 {
-#if false
-                    // ゾーン明細からの一覧
-                    DisplayDistDetailDatas = DistColorManager.LoadDetails(ref _base_distzone);
-                    if (DisplayDistDetailDatas == null)
+                    // 配分明細からの一覧
+                    if (ItemSeq != null)
                     {
-                        DisplayDistDetailDatas = new List<DistDetail>();
+                        DisplayDistDetailDatas = ItemSeq.Details;
+
+                        if (DisplayDistDetailDatas == null)
+                        {
+                            DisplayDistDetailDatas = new List<DistDetail>();
+                        }
+                        else
+                        {
+                            HeaderMsgText = string.Format($"品番:{_base_distinfo.CdHimban} {_base_distinfo.CdGtin13} {_base_distinfo.NmHinSeishikimei} 箱入数:{_base_distinfo.NuBoxUnit}");
+                        }
                     }
-                    else
-                    {
-                        HeaderMsgText = string.Format($"ｿﾞｰﾝ:{_base_distzone.Zoneno} 作業No:{_base_distzone.Workno}\n店舗:{_base_distzone.CD_TOKUISAKI} {_base_distzone.NM_TOKUISAKI} 梱包箱No:{_base_distzone.Packno}");
-                    }
-#endif
                 }
             }
             catch (Exception e)

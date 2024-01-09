@@ -115,7 +115,7 @@
                     <Style TargetType="TextBlock">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsCancelMode}" Value="True">
-                                <Setter Property="Text" Value="＜取り消しモード＞" />
+                                <Setter Property="Text" Value="＜取消しモード＞" />
                                 <Setter Property="Foreground" Value="Wheat"/>
                                 <Setter Property="Background" Value="Red"/>
                             </DataTrigger>

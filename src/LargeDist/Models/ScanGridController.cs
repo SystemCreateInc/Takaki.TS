@@ -32,6 +32,7 @@ namespace LargeDist.Models
                     x.Item!.ScanOrder = x.ScanOrder;
                     return x.Item;
                 })
+                .OrderBy(x => x.ScanOrder)
                 .ToArray();
 
         public ScanSlotItem? SelectedItem => Items.FirstOrDefault(x => x.IsSelected);

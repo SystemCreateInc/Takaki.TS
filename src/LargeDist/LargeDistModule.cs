@@ -1,4 +1,5 @@
-﻿using LargeDist.Views;
+﻿using LargeDist.Models;
+using LargeDist.Views;
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Regions;
@@ -33,6 +34,7 @@ namespace LargeDist
             containerRegistry.RegisterForNavigation<CancelDistDialog>();
             containerRegistry.RegisterForNavigation<SelectItemDialog>();
             containerRegistry.RegisterForNavigation<ScanOrderConfig>();
+            containerRegistry.RegisterSingleton<LargeDistState>();
         }
     }
 }
