@@ -15,7 +15,7 @@ namespace LargeDist.Infranstructures
 {
     public class LargeDistQueryService
     {
-        public static ItemProgress GetProgress(LargeDistGroup group)
+        public static ItemProgress GetProgress(DateTime dtDelivery, LargeDistGroup group)
         {
             var sql = @"select count(*) total, count(case when diff = 0 then 1 else null end) completed
                 from 
@@ -23,12 +23,12 @@ namespace LargeDist.Infranstructures
                 select t1.CD_HIMBAN, sum(t1.NU_LOPS) - sum(t1.NU_LRPS) diff
                 from TB_DIST t1
                 inner join TB_DIST_MAPPING t2 on t1.ID_DIST = t2.ID_DIST
-                where t2.CD_LARGE_GROUP=@group
+                where t1.DT_DELIVERY=@dtDelivery and t2.CD_LARGE_GROUP=@group
                 group by t1.CD_HIMBAN
                 ) tt1";
 
             using var con = DbFactory.CreateConnection();
-            var entity = con.Query(sql, new { group = group.CdLargeGroup })
+            var entity = con.Query(sql, new { group = group.CdLargeGroup, dtDelivery })
                 .First();
             return new ItemProgress
             {

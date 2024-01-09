@@ -314,7 +314,7 @@ namespace LargeDist.ViewModels
 
         private void Refresh()
         {
-            ItemProgress = LargeDistQueryService.GetProgress(LargeDistGroup!);
+            ItemProgress = LargeDistQueryService.GetProgress(DeliveryDate, LargeDistGroup!);
             IsScannedItem = ScanGrid.HasScanItem;
         }
 
