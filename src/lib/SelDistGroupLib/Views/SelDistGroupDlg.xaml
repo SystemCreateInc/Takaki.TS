@@ -44,7 +44,8 @@
             <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="20,5,5,5" >
                 <TextBlock Grid.Column="0" Text="納品日:" VerticalAlignment="Center" TextAlignment="Center" 
                            Width="110" Margin="3"/>
-                <DatePicker Grid.Column="1" SelectedDate="{Binding DtDelivery}" PreviewKeyDown="DatePicker_PreviewKeyDown" Language="ja"/>
+                <DatePicker Grid.Column="1" SelectedDate="{Binding DtDelivery}" PreviewKeyDown="DatePicker_PreviewKeyDown" Language="ja"
+                            DateValidationError="DatePicker_DateValidationError"/>
             </StackPanel>
 
             <TextBlock Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>

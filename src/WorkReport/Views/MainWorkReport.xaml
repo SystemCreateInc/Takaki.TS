@@ -56,9 +56,11 @@
 
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
             <Label Content="納品日範囲 ： " VerticalAlignment="Center" Margin="3"/>
-            <DatePicker Language="ja" SelectedDate="{Binding StartDate}" Width="120" Margin="3"/>
+            <DatePicker Language="ja" SelectedDate="{Binding StartDate}" Width="120" Margin="3"
+                        DateValidationError="DatePicker_DateValidationError"/>
             <TextBlock Text="～" VerticalAlignment="Center" Margin="3"/>
-            <DatePicker Language="ja" SelectedDate="{Binding EndDate}" Width="120" Margin="3"/>
+            <DatePicker Language="ja" SelectedDate="{Binding EndDate}" Width="120" Margin="3"
+                        DateValidationError="DatePicker_DateValidationError"/>
         </StackPanel>
 
         <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid}" SettingsKey="WorkReportColumns"/>

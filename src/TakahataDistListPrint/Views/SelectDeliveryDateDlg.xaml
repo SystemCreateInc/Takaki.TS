@@ -13,7 +13,8 @@
 
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="納品日：" VerticalAlignment="Center"/>
-            <DatePicker x:Name="Date" SelectedDate="{Binding Date}" Language="ja" Width="200" />
+            <DatePicker x:Name="Date" SelectedDate="{Binding Date}" Language="ja" Width="200"
+                        DateValidationError="Date_DateValidationError"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
