@@ -36,13 +36,13 @@ namespace DistProg.Views
                 {
                     date = DateTime.ParseExact(text, "yyyyMMdd", System.Globalization.DateTimeFormatInfo.InvariantInfo, System.Globalization.DateTimeStyles.None);
                 }
-
-                datePicker.SelectedDate = date;
             }
             catch (Exception er)
             {
                 Syslog.Error($"Date_DateValidationError:{er.Message}");
             }
+
+            datePicker.SelectedDate = date;
         }
     }
 }
