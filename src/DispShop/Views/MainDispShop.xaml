@@ -101,7 +101,8 @@
         <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid}" SettingsKey="DispShopColumns"/>
         <DataGrid x:Name="dataGrid" ItemsSource="{Binding DistItems}" AutoGenerateColumns="False"
                   IsReadOnly="True" VerticalScrollBarVisibility="Auto" IsSynchronizedWithCurrentItem="True"
-                  SelectionUnit="FullRow" FrozenColumnCount="0">
+                  SelectionUnit="FullRow" FrozenColumnCount="0"
+                  AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="表示器No" Binding="{Binding TdUnitAddrCode}"/>

@@ -414,7 +414,7 @@ namespace DispShop.ViewModels
                             ledColor = (int)TdLedColor.Yellow;
                             break;
                         case 2:
-                            tddsplay = string.Format("{0,6}", p.BoxCnt.Substring(p.BoxCnt.Length - 6, 6));
+                            tddsplay = string.Format("{0,3}{1,3}", p.Box2 % 1000, p.Box1 % 1000);
                             ledColor = (int)TdLedColor.Green;
                             break;
                         case 3:
