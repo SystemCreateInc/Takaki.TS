@@ -60,34 +60,31 @@ namespace DistGroup.Loader
             }
         }
 
-        internal static IEnumerable<DistGroupInfo> GetSameCourse(IEnumerable<string> courses, long idDistGroup, string startDate, string endDate)
+        internal static IEnumerable<DistGroupInfo> GetSameBatchDists(IEnumerable<string> batchs, long idDistGroup, string startDate, string endDate)
         {
+            var sameBatchCourses = new List<DistGroupInfo>();
+
             using (var con = DbFactory.CreateConnection())
             {
-                var limitCourses = courses
+                var limitBatchs = batchs
                     .Select((v, i) => new { v, i })
                     .GroupBy(x => x.i / 200)
                     .Select(g => g.Select(x => x.v));
 
-                foreach (var splitCourses in limitCourses)
+                foreach (var splitBatchs in limitBatchs)
                 {
-                    var sameCourseInfos = con.Find<TBDISTGROUPEntity>(s => s
+                    sameBatchCourses.AddRange(con.Find<TBDISTGROUPEntity>(s => s
                     .Include<TBDISTGROUPSHUKKABATCHEntity>()
                     .Include<TBDISTGROUPLARGEGROUPEntity>()
                     .Include<TBDISTGROUPCOURSEEntity>()
                     .Where(@$"{nameof(TBDISTGROUPEntity.IDDISTGROUP):of TB_DIST_GROUP} <> {nameof(idDistGroup):P} and
-                        {nameof(TBDISTGROUPCOURSEEntity.CDCOURSE):of TB_DIST_GROUP_COURSE} in {nameof(courses):P} and
+                        {nameof(TBDISTGROUPSHUKKABATCHEntity.CDSHUKKABATCH):of TB_DIST_GROUP_SHUKKA_BATCH} in {nameof(batchs):P} and
                         {CreateTekiyoSql.GetFromRange()}")
-                    .WithParameters(new { idDistGroup, courses = splitCourses, startDate, endDate }))
-                        .Select(q => CreateDisgGroupInfos(q));
-
-                    if (sameCourseInfos.Any())
-                    {
-                        return sameCourseInfos;
-                    }
+                    .WithParameters(new { idDistGroup, batchs = splitBatchs, startDate, endDate }))
+                        .Select(q => CreateDisgGroupInfos(q)).ToList());
                 }
 
-                return Enumerable.Empty<DistGroupInfo>();
+                return sameBatchCourses;
             }
         }
 
@@ -118,7 +115,9 @@ namespace DistGroup.Loader
                     //NmLargeGroup
                 }).ToList() ?? new List<LargeDist>(),
 
-                Courses = entity.TBDISTGROUPCOURSE?.Select(x => new Course
+                // 1件目バッチのコースを取得(全バッチ同一コース)
+                Courses = entity.TBDISTGROUPCOURSE?
+                .Where(x => x.CDSHUKKABATCH == entity.TBDISTGROUPSHUKKABATCH?.FirstOrDefault()?.CDSHUKKABATCH).Select(x => new Course
                 {
                     CdCourse = x.CDCOURSE,
                     NuCourseSeq = x.NUCOURSESEQ,

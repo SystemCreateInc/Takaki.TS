@@ -571,29 +571,24 @@ namespace DistGroup.ViewModels
                 return false;
             }
 
-            // 他仕分グループの重複コース
-            var sameCourseDistGroups = DistGroupLoader.GetSameCourse(_inputedCourses.Select(x => x.PadCourse), idDistGroup ?? -1,
+            // 他仕分グループの同一バッチ
+            var sameBatchDists = DistGroupLoader.GetSameBatchDists(_inputedBatchs.Select(x => x.PadBatch), idDistGroup ?? -1,
                 DtTekiyoKaishi.ToString("yyyyMMdd"), DtTekiyoMuko.ToString("yyyyMMdd"));
 
-            // 1件目の仕分グループ情報を表示
-            var sameCourseDist = sameCourseDistGroups.FirstOrDefault();
-
-            if (sameCourseDist != null)
+            foreach(var batchDist in sameBatchDists)
             {
-                var distInfo = new DistGroupInfo
-                {
-                    CdKyoten = sameCourseDist.CdKyoten,
-                    CdDistGroup = sameCourseDist.CdDistGroup,
-                    Tekiyokaishi = sameCourseDist.Tekiyokaishi,
-                    TekiyoMuko = sameCourseDist.TekiyoMuko,
-                };
+                var sameCourses = batchDist.Courses.Select(x => x.PadCourse).Intersect(Courses.Select(x => x.PadCourse));
 
-                MessageDialog.Show(_dialogService,
-                $"他の仕分グループに登録されたコースが入力されています"
-                + $"\n\n{GetSameDistMessage(distInfo)}"
-                + $"\n\nコース[{string.Join(",", sameCourseDist.Courses.Select(x => x.CdCourse))}]", "入力エラー");
-                return false;
-            }            
+                if (sameCourses.Any())
+                {
+                    MessageDialog.Show(_dialogService,
+                    $"他の仕分グループに登録されたコースが入力されています"
+                    + $"\n\n{GetSameDistMessage(batchDist)}"
+                    + $"\n\nバッチ[{string.Join(",", batchDist.Batches.Select(x => x.PadBatch))}]"
+                    + $"\nコース[{string.Join(",", sameCourses)}]", "入力エラー");
+                    return false;
+                }
+            }
 
             return true;
         }

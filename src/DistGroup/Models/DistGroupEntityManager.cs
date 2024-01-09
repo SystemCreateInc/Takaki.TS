@@ -1,15 +1,8 @@
 ﻿using Dapper.FastCrud;
-using DbLib.DbEntities;
 using DbLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TakakiLib.Models;
+using DbLib.DbEntities;
 using System.Data;
-using Microsoft.Extensions.FileSystemGlobbing;
-using DbLib.Defs;
+using TakakiLib.Models;
 
 namespace DistGroup.Models
 {
@@ -39,7 +32,6 @@ namespace DistGroup.Models
 
                 DeleteAllBatch(tr, entity.IDDISTGROUP);
                 InsertBatchs(tr, entity.IDDISTGROUP, targetInfo.Batches, courses);
-                InsertCourse(tr, entity.IDDISTGROUP, targetInfo.Batches.First().CdShukkaBatch, courses);
 
                 tr.Commit();
             }
@@ -70,7 +62,6 @@ namespace DistGroup.Models
 
                 DeleteAllBatch(tr, entity.IDDISTGROUP);
                 InsertBatchs(tr, entity.IDDISTGROUP, targetInfo.Batches, courses);
-                InsertCourse(tr, entity.IDDISTGROUP, targetInfo.Batches.First().CdShukkaBatch,　courses);
 
                 tr.Commit();
             }
@@ -122,13 +113,14 @@ namespace DistGroup.Models
                     IDDISTGROUP = iDDISTGROUP,
                     CDLARGEGROUP = batchInfo.PadLarge,
                     NULARGEGROUPSEQ = sequence,
-                    CreatedAt= timeStamp,
-                    UpdatedAt= timeStamp,
+                    CreatedAt = timeStamp,
+                    UpdatedAt = timeStamp,
                 };
 
                 tr.Connection!.Insert(lDistEntity, x => x.AttachToTransaction(tr));
-
                 sequence++;
+                // バッチ毎に同一コースを登録
+                InsertCourse(tr, iDDISTGROUP, batchInfo.PadBatch, courses);
             }
         }
 
@@ -136,7 +128,7 @@ namespace DistGroup.Models
         {
             var sequence = 1;
 
-            foreach(var course in courses)
+            foreach (var course in courses)
             {
                 var entity = new TBDISTGROUPCOURSEEntity
                 {
@@ -145,7 +137,7 @@ namespace DistGroup.Models
                     CDCOURSE = course.PadCourse,
                     NUCOURSESEQ = sequence,
                     CreatedAt = DateTime.Now,
-                    UpdatedAt= DateTime.Now,
+                    UpdatedAt = DateTime.Now,
                 };
 
                 tr.Connection!.Insert(entity, x => x.AttachToTransaction(tr));
