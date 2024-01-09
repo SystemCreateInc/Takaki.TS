@@ -13,7 +13,7 @@ namespace DistProg.ViewModels
         public string Title => "納品日選択";
         public event Action<IDialogResult>? RequestClose;
 
-        private DateTime _date = DateTime.Today.AddDays(1);
+        private DateTime _date;
         public DateTime Date
         {
             get => _date;
@@ -46,6 +46,7 @@ namespace DistProg.ViewModels
 
         public void OnDialogOpened(IDialogParameters parameters)
         {
+            Date = DateTime.Today.AddDays(1);
         }
     }
 }

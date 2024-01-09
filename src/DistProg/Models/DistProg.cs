@@ -129,6 +129,6 @@ namespace DistProg.Models
         }
 
         // 個数進捗率
-        public decimal? NuProg => NuRps == null || NuOps == null ? null : (decimal)NuRps / (decimal)NuOps;
+        public decimal? NuProg => NuRps == null || NuOps == null || NuOps == 0 ? null : (decimal)NuRps / (decimal)NuOps;
     }
 }
