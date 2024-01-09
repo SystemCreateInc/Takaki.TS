@@ -23,14 +23,14 @@ namespace DistGroup.Loader
                      + ",t4.NM_KYOTEN NM_KYOTEN"
                      + " FROM TB_DIST_GROUP t1"
                      + " left join TB_DIST_GROUP_LARGE_GROUP t2 on t2.ID_DIST_GROUP = t1.ID_DIST_GROUP and t2.NU_LARGE_GROUP_SEQ = 1"
-                     + " left join TB_LARGE_GROUP t3 on t3.CD_LARGE_GROUP = t2.CD_LARGE_GROUP"
-                     + " left join TB_MKYOTEN t4 on t4.CD_KYOTEN = t1.CD_KYOTEN"
+                     +$" left join TB_LARGE_GROUP t3 on t3.CD_LARGE_GROUP = t2.CD_LARGE_GROUP and {CreateTekiyoSql.GetFromDate("t3.")}"
+                     +$" left join TB_MKYOTEN t4 on t4.CD_KYOTEN = t1.CD_KYOTEN and {CreateTekiyoSql.GetFromDate("t4.")}"
                      +$" {CreateTekiyoSql.GetFromLastUpdateJoin("TB_DIST_GROUP", "CD_KYOTEN,CD_DIST_GROUP")}"
                      + " order by t1.CD_KYOTEN, t1.CD_DIST_GROUP";
 
             using (var con = DbFactory.CreateConnection())
             {
-                return con.Query(sql).Select(q => new DistGroupInfo
+                return con.Query(sql, new { selectDate = DateTime.Now.ToString("yyyyMMdd") }).Select(q => new DistGroupInfo
                 {
                     CdDistGroup = q.CD_DIST_GROUP,
                     NmDistGroup = q.NM_DIST_GROUP,
