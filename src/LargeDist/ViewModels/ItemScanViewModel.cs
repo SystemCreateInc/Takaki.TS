@@ -206,6 +206,7 @@ namespace LargeDist.ViewModels
                 return;
             }
 
+            LargeLockRepository.Lock(_largeDistGroup!.CdLargeGroup, item);
             ScanGrid.PushItem(item);
             Refresh();
         }
@@ -277,8 +278,22 @@ namespace LargeDist.ViewModels
         private void DeleteItem()
         {
             _logger.Debug("Delete Item");
-            ScanGrid.DeleteSelectedItem();
-            Refresh();
+
+            if (ScanGrid.SelectedItem?.Item == null)
+            {
+                return;
+            }
+
+            try
+            {
+                LargeLockRepository.Unlock(_largeDistGroup!.CdLargeGroup, ScanGrid.SelectedItem.Item);
+                ScanGrid.DeleteSelectedItem();
+                Refresh();
+            }
+            catch (Exception ex)
+            {
+                WindowLib.Utils.MessageDialog.Show(_dialogService, ex.Message, "エラー");
+            }
         }
 
         private void ToggleCancelMode()
@@ -309,15 +324,12 @@ namespace LargeDist.ViewModels
             {
                 if (_requestClearItem)
                 {
-                    _logger.Debug("Request Clear Item");
-                    _requestClearItem = false;
-                    ScanGrid.Clear();
+                    ClearItem();
                 }
 
                 if (_requestGridSetup)
                 {
                     _logger.Debug("Request Grid Setup");
-                    _requestGridSetup = false;
                     SetupGrid();
                 }
 
@@ -334,6 +346,21 @@ namespace LargeDist.ViewModels
             Refresh();
             _initialized = true;
             _logger.Debug("Initialized");
+        }
+
+        private void ClearItem()
+        {
+            _logger.Debug("Request Clear Item");
+            try
+            {
+                LargeLockRepository.UnlockAll();
+                ScanGrid.Clear();
+                _requestClearItem = false;
+            }
+            catch (Exception ex)
+            {
+                WindowLib.Utils.MessageDialog.Show(_dialogService, ex.Message, "エラー");
+            }
         }
 
         public bool IsNavigationTarget(NavigationContext navigationContext)
@@ -361,6 +388,7 @@ namespace LargeDist.ViewModels
             }
 
             ScanGrid.SetNextHeadSlot();
+            _requestGridSetup = false;
         }
     }
 }

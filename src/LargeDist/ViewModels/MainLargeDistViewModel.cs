@@ -98,6 +98,7 @@ namespace LargeDist.ViewModels
 
             try
             {
+                LargeLockRepository.UnlockAll();
                 SetupPersonList();
             }
             catch (Exception ex)
