@@ -405,6 +405,15 @@ namespace Customer.ViewModels
                     ChildCustomers = NotEmptyChildCustomers,
                 };
 
+                if (IsAdd)
+                {
+                    if (CustomerLoader.GetFromCode(targetCustomer.CdSumTokuisaki) is not null)
+                    {
+                        MessageDialog.Show(_dialogService, $"登録済みの集約得意先です", "入力エラー");
+                        return false;
+                    }
+                }
+
                 var existCustomer = CustomerLoader.GetFromKey(targetCustomer.CdSumTokuisaki, targetCustomer.Tekiyokaishi);
                 var isExist = existCustomer is not null;
 
@@ -422,7 +431,7 @@ namespace Customer.ViewModels
                 {
                     if (isExist)
                     {
-                        MessageDialog.Show(_dialogService, $"集約得意先[{CdSumTokuisaki}],適用開始日[{DtTekiyoKaishi}]\n同一組み合わせのデータが登録済みです", "入力エラー");
+                        MessageDialog.Show(_dialogService, $"集約得意先[{CdSumTokuisaki}]が同じデータが登録済みです", "入力エラー");
                         return false;
                     }
 
