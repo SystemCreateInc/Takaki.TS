@@ -8,10 +8,10 @@ namespace LargeDist.Models
 {
     public class ItemLargeDistController
     {
-        private LargeDistGroup _group;
-        private ScanGridController _rootGridController;
+        private readonly LargeDistGroup _group;
+        private readonly ScanGridController _rootGridController;
+        private readonly ScopeLogger _logger = new (nameof(BlockLargeDistController));
         private int _currentItemIndex;
-        private ScopeLogger _logger = new ScopeLogger(nameof(BlockLargeDistController));
 
         private LargeDistProcessingUnit[] Items { get; set; }
 
@@ -29,6 +29,7 @@ namespace LargeDist.Models
         {
             chart.SetItems(CurrentItem
                 .Items
+                .Where(x => !x.IsCompleted)
                 .GroupBy(x => x.CdBlock, (key, value) => new LargeDistItem(_group, value))
                 .OrderBy(x => x.CdBlock)
                 .ToArray());
@@ -46,18 +47,40 @@ namespace LargeDist.Models
 
         public void MoveNext()
         {
-            if (++_currentItemIndex >= Items.Length)
+            int indexCache = _currentItemIndex;
+
+            do
             {
-                _currentItemIndex = 0;
+                if (++_currentItemIndex >= Items.Length)
+                {
+                    _currentItemIndex = 0;
+                }
+
+                if (!CurrentItem.IsCompleted)
+                {
+                    break;
+                }
             }
+            while (_currentItemIndex != indexCache);
         }
 
         public void MovePrev()
         {
-            if (--_currentItemIndex < 0)
+            int indexCache = _currentItemIndex;
+
+            do
             {
-                _currentItemIndex = Items.Length - 1;
+                if (--_currentItemIndex < 0)
+                {
+                    _currentItemIndex = Items.Length - 1;
+                }
+
+                if (!CurrentItem.IsCompleted)
+                {
+                    break;
+                }
             }
+            while (_currentItemIndex != indexCache);
         }
 
         public void SaveCurrentItem(Person person)

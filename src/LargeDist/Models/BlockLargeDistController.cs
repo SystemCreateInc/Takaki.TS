@@ -8,11 +8,11 @@ namespace LargeDist.Models
 {
     public class BlockLargeDistController
     {
-        private LargeDistGroup _group;
-        private ScanGridController _rootGridController;
-        private LargeDistProcessingUnit[] _items;
+        private readonly LargeDistGroup _group;
+        private readonly ScanGridController _rootGridController;
+        private readonly LargeDistProcessingUnit[] _items;
+        private readonly ScopeLogger _logger = new (nameof(BlockLargeDistController));
         private int _currentItemIndex;
-        private ScopeLogger _logger = new ScopeLogger(nameof(BlockLargeDistController));
 
         public LargeDistProcessingUnit CurrentItem => _items[_currentItemIndex];
 
@@ -26,7 +26,7 @@ namespace LargeDist.Models
 
         public void SetupGridController(ScanGridController gridController)
         {
-            foreach (var items in CurrentItem.Items.GroupBy(x => x.GridPosition))
+            foreach (var items in CurrentItem.Items.Where(x => !x.IsCompleted).GroupBy(x => x.GridPosition))
             {
                 gridController.SetAt(items.Key, new LargeDistItem(_group, items));
             }
@@ -56,18 +56,40 @@ namespace LargeDist.Models
 
         public void MoveNext()
         {
-            if (++_currentItemIndex >= _items.Length)
+            int indexCache = _currentItemIndex;
+
+            do
             {
-                _currentItemIndex = 0;
+                if (++_currentItemIndex >= _items.Length)
+                {
+                    _currentItemIndex = 0;
+                }
+
+                if (!CurrentItem.IsCompleted)
+                {
+                    break;
+                }
             }
+            while (_currentItemIndex != indexCache);
         }
 
         public void MovePrev()
         {
-            if (--_currentItemIndex < 0)
+            int indexCache = _currentItemIndex;
+
+            do
             {
-                _currentItemIndex = _items.Length - 1;
+                if (--_currentItemIndex < 0)
+                {
+                    _currentItemIndex = _items.Length - 1;
+                }
+
+                if (!CurrentItem.IsCompleted)
+                {
+                    break;
+                }
             }
+            while (_currentItemIndex != indexCache);
         }
 
         public void SaveCurrentItem(Person person)

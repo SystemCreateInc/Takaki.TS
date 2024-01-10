@@ -29,7 +29,9 @@ namespace WorkReport.Models
                         NmDistcnt = x.NMDISTCNT,
                         NmCheckcnt = x.NMCHECKCNT,
                         NmChecktime = x.NMCHECKTIME,
-                    });
+                    })
+                    .OrderBy(x => x.DtDelivery)
+                    .ThenBy(x => x.DtStart);
             }
         }
     }
