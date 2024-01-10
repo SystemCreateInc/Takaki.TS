@@ -142,6 +142,8 @@ namespace Mapping.ViewModels
 
             try
             {
+                // 画面のソート順をデフォルトへ戻すため一旦クリア
+                OverInfos = new ObservableCollection<Models.OverInfo>();
                 CollectionViewHelper.SetCollection(OverInfos, LoadDatas());
             }
             catch (Exception e)
