@@ -120,7 +120,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Content="参照日"/>
-                        <DatePicker x:Name="ReferenceDate" Grid.Column="1" SelectedDate="{Binding ReferenceDate}" IsEnabled="{Binding IsEdit}"/>
+                        <DatePicker x:Name="ReferenceDate" Grid.Column="1" SelectedDate="{Binding ReferenceDate}"/>
                         <Button Grid.Column="2" Content="参照" Command="{Binding Refer}" Margin="3" IsEnabled="{Binding IsEdit}"
                                 Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=Height}" Width="80"/>
                     </Grid>
