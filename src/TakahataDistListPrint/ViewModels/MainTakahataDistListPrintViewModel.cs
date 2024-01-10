@@ -97,7 +97,7 @@ namespace TakahataDistListPrint.ViewModels
                     var message = isChunk ? "プレビューは表示しません。" : "プレビューを表示します。";
 
                     if (MessageDialog.Show(_dialogService, $"{vms.Count()}頁印刷します。よろしいですか？{message}",
-                        "印刷確認", ButtonMask.Yes | ButtonMask.No) != ButtonResult.Yes)
+                        "印刷確認", ButtonMask.Yes | ButtonMask.No, MessageBoxImage.Question) != ButtonResult.Yes)
                     {
                         return;
                     }
@@ -130,7 +130,7 @@ namespace TakahataDistListPrint.ViewModels
                     var message = isChunk ? "プレビューは表示しません。" : "プレビューを表示します。";
 
                     if (MessageDialog.Show(_dialogService, $"{vms.Count()}頁印刷します。よろしいですか？{message}",
-                        "印刷確認", ButtonMask.Yes | ButtonMask.No) != ButtonResult.Yes)
+                        "印刷確認", ButtonMask.Yes | ButtonMask.No, MessageBoxImage.Question) != ButtonResult.Yes)
                     {
                         return;
                     }
