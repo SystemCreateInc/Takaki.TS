@@ -20,6 +20,7 @@ using Mapping.Reports;
 using PrintPreviewLib;
 using PrintLib;
 using DbLib.Defs;
+using ReferenceLogLib.Models;
 
 namespace Mapping.ViewModels
 {
@@ -132,6 +133,8 @@ namespace Mapping.ViewModels
 
             try
             {
+                // 画面のソート順をデフォルトへ戻すため一旦クリア
+                LocInfos = new ObservableCollection<Models.LocInfo>();
                 CollectionViewHelper.SetCollection(LocInfos, LoadDatas());
             }
             catch (Exception e)
