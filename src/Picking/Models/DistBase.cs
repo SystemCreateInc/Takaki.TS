@@ -488,6 +488,46 @@ namespace Picking.Models
             set => SetProperty(ref _displayleftshop_cnt, value);
         }
 
+        // 左通路店舗数
+        private int _right_ps_cnt;
+        public int Right_ps_cnt
+        {
+            get => _right_ps_cnt;
+            set
+            {
+                SetProperty(ref _right_ps_cnt, value);
+
+                DisplayRightPs_cnt = QtyFieldSpace(value);
+            }
+        }
+
+        // 右通路店舗数
+        private string _displayrightps_cnt = "";
+        public string DisplayRightPs_cnt
+        {
+            get => _displayrightps_cnt;
+            set => SetProperty(ref _displayrightps_cnt, value);
+        }
+
+        private int _left_ps_cnt;
+        public int Left_ps_cnt
+        {
+            get => _left_ps_cnt;
+            set
+            {
+                SetProperty(ref _left_ps_cnt, value);
+
+                DisplayLeftPs_cnt = QtyFieldSpace(value);
+            }
+        }
+
+        private string _displayleftps_cnt = "";
+        public string DisplayLeftPs_cnt
+        {
+            get => _displayleftps_cnt;
+            set => SetProperty(ref _displayleftps_cnt, value);
+        }
+
 
         // 総商品数
         private int _order_item_cnt;
@@ -643,7 +683,7 @@ namespace Picking.Models
         {
             get
             {
-                return string.Format("{0:3}箱 {1:3}個 ({2:###0})"
+                return string.Format("{0}箱 {1}個 ({2:###0})"
                     , Display_Ops_Cs
                     , Display_Ops_Ps
                     , Ops
@@ -654,7 +694,7 @@ namespace Picking.Models
         {
             get
             {
-                return string.Format("{0:3}箱 {1:3}個 ({2:###0})"
+                return string.Format("{0}箱 {1}個 ({2:###0})"
                     , Display_Dops_Cs
                     , Display_Dops_Ps
                     , Dops
@@ -666,7 +706,7 @@ namespace Picking.Models
         {
             get
             {
-                return string.Format("{0:3}箱 {1:3}個 ({2:###0})"
+                return string.Format("{0}箱 {1}個 ({2:###0})"
                     , Display_Drps_Cs
                     , Display_Drps_Ps
                     , Drps
@@ -675,10 +715,10 @@ namespace Picking.Models
         }
         public virtual string QtyFieldSpace(int ps)
         {
-            if (CdHimban=="")
+            if (CdHimban == "")
                 return string.Empty;
             else
-                return ps.ToString();
+                return string.Format("{0, 4}", ps);
         }
 
         public void Clear()
@@ -709,6 +749,8 @@ namespace Picking.Models
             Remain_item_cnt = 0;
             Left_shop_cnt = 0;
             Right_shop_cnt = 0;
+            Left_ps_cnt = 0;
+            Right_ps_cnt = 0;
             _isModified = false;
             TdUnitPushTm = null;
         }

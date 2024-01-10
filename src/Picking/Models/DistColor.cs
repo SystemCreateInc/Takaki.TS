@@ -40,6 +40,9 @@ namespace Picking.Models
                     case (int)Defs.DistWorkMode.Check:
                         DistWorkMode_name = "検";
                         break;
+                    case (int)Defs.DistWorkMode.Extraction:
+                        DistWorkMode_name = "抜";
+                        break;
                 }
             }
         }

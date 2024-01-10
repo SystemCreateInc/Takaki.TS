@@ -288,7 +288,7 @@
                         </Viewbox>
                     </Button>
 
-                    <Button Grid.Row="2" Command="{Binding OnRemove}" Focusable="False" Margin="3" Height="100">
+                    <Button Grid.Row="2" Command="{Binding OnExtraction}" Focusable="False" Margin="3" Height="100"  Background="{Binding ExtractionColor}">
                         <Viewbox>
                             <TextBlock Text="　抜取り　" />
                         </Viewbox>

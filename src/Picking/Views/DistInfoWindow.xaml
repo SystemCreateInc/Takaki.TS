@@ -126,12 +126,12 @@
                 <DataGridTextColumn Header="予定総個数" Width="Auto" Binding="{Binding Ops}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="予定箱" Width="Auto" Binding="{Binding Display_Dops_Cs}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="予定ﾊﾞﾗ" Width="Auto" Binding="{Binding Display_Dops_Ps}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="通路左" Width="Auto" Binding="{Binding DisplayLeftPs_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="通路右" Width="Auto" Binding="{Binding DisplayRightPs_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="残箱" Width="Auto" Binding="{Binding Display_Ddps_Cs}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="残ﾊﾞﾗ" Width="Auto" Binding="{Binding Display_Ddps_Ps}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="店舗残数" Width="Auto" Binding="{Binding DisplayRemainShop_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="店舗総数" Width="Auto" Binding="{Binding DisplayOrderShop_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="通路左" Width="Auto" Binding="{Binding DisplayLeftShop_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="通路右" Width="Auto" Binding="{Binding DisplayRightShop_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>

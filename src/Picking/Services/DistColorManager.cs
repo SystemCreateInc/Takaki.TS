@@ -42,6 +42,8 @@ namespace Picking.Services
                         + ",count(distinct case when TB_DIST.FG_DSTATUS >= @dstatus then TB_DIST.CD_TOKUISAKI else null end) result_shop_cnt"
                         + ",count(distinct case when tdunitzonecode = 1 then CD_TOKUISAKI else null end) leftshopcnt"
                         + ",count(distinct case when tdunitzonecode = 2 then CD_TOKUISAKI else null end) rightshopcnt"
+                        + ",sum(case when tdunitzonecode = 1 then NU_OPS-NU_DRPS else 0 end) leftpscnt"
+                        + ",sum(case when tdunitzonecode = 2 then NU_OPS-NU_DRPS else 0 end) rightpscnt"
                         + " from TB_DIST"
                         + " inner join TB_DIST_MAPPING on TB_DIST_MAPPING.ID_DIST=TB_DIST.ID_DIST"
                         + " inner join tdunitaddr on TB_DIST_MAPPING.tdunitaddrcode = tdunitaddr.tdunitaddrcode and tdunitaddr.usageid=@tdunittype"
@@ -82,6 +84,8 @@ namespace Picking.Services
                          Remain_shop_cnt = q.order_shop_cnt ?? 0 - q.result_shop_cnt ?? 0,
                          Left_shop_cnt = q.leftshopcnt ?? 0,
                          Right_shop_cnt = q.rightshopcnt ?? 0,
+                         Left_ps_cnt = q.leftpscnt ?? 0,
+                         Right_ps_cnt = q.rightpscnt ?? 0,
                      }).ToList();
             }
         }
@@ -228,6 +232,8 @@ namespace Picking.Services
                 + ",count(distinct case when TB_DIST.FG_DSTATUS >= @dstatus then TB_DIST.CD_TOKUISAKI else null end) result_shop_cnt"
                 + ",count(distinct case when tdunitzonecode = 1 then CD_TOKUISAKI else null end) leftshopcnt"
                 + ",count(distinct case when tdunitzonecode = 2 then CD_TOKUISAKI else null end) rightshopcnt"
+                + ",sum(case when tdunitzonecode = 1 then NU_OPS-NU_DRPS else 0 end) leftpscnt"
+                + ",sum(case when tdunitzonecode = 2 then NU_OPS-NU_DRPS else 0 end) rightpscnt"
                 + " from TB_DIST"
                 + " left join TB_DIST_MAPPING on TB_DIST_MAPPING.ID_DIST=TB_DIST.ID_DIST"
                 + " inner join tdunitaddr on TB_DIST_MAPPING.tdunitaddrcode = tdunitaddr.tdunitaddrcode and tdunitaddr.usageid=@tdunittype"
@@ -238,12 +244,12 @@ namespace Picking.Services
                 + str
                 + " order by TB_DIST.CD_HIMBAN";
         }
-        public static List<DistItemSeq>? GetItems(DistGroup distgroup, string scancode, bool bCheck)
+        public static List<DistItemSeq>? GetItems(DistGroup distgroup, string scancode, bool bCheck, bool bExtraction)
         {
             //　スキャンコード読み込み
             using (var con = DbFactory.CreateConnection())
             {
-                string having = bCheck == true ? "0<sum(NU_DRPS)" : "sum(NU_OPS)<>sum(NU_DRPS)";
+                string having = (bCheck == true || bExtraction == true) ? "0<sum(NU_DRPS)" : "sum(NU_OPS)<>sum(NU_DRPS)";
 
                 var sql = GetItemSqls(having,true);
 
@@ -283,6 +289,8 @@ namespace Picking.Services
                          Remain_shop_cnt = q.order_shop_cnt ?? 0 - q.result_shop_cnt ?? 0,
                          Left_shop_cnt = q.leftshopcnt ?? 0,
                          Right_shop_cnt = q.rightshopcnt ?? 0,
+                         Left_ps_cnt = q.leftpscnt ?? 0,
+                         Right_ps_cnt = q.rightpscnt ?? 0,
                      }).ToList();
 
                 if (r.Count==0)
@@ -336,9 +344,12 @@ namespace Picking.Services
                         }
                         else
                         {
-                            if (bCheck)
+                            if (bCheck || bExtraction)
                             {
-                                throw new Exception($"まだ仕分けしていないので検品出来ません。\n品番:{rr[0].CdHimban}\n品名:{rr[0].NmHinSeishikimei}");
+                                if (bCheck)
+                                    throw new Exception($"まだ仕分けしていないので検品出来ません。\n品番:{rr[0].CdHimban}\n品名:{rr[0].NmHinSeishikimei}");
+                                else
+                                    throw new Exception($"まだ仕分けしていないので抜き取り出来ません。\n品番:{rr[0].CdHimban}\n品名:{rr[0].NmHinSeishikimei}");
                             }
                             else
                             {
@@ -375,38 +386,6 @@ namespace Picking.Services
                             {
                                 foreach (var d in itemseq.Details)
                                 {
-#if false
-                                    var dist = GetDist(con, tr, d.IdDist);
-                                    if (dist != null)
-                                    {
-                                        int order = d.Ops;
-                                        if (d.DStatus == (int)DbLib.Defs.Status.Completed)
-                                        {
-                                            dist.NUDRPS = d.Drps;
-                                            dist.FGDSTATUS = d.Ops == d.Drps ? (short)DbLib.Defs.Status.Completed : (short)DbLib.Defs.Status.Inprog;
-                                        }
-                                        else
-                                        {
-                                            dist.FGDSTATUS = (short)DbLib.Defs.Status.Inprog;
-                                        }
-                                        dist.UpdatedAt = DateTime.Now;
-
-                                        var sql = "update dist set NU_DRPS=@drps,FGDSTATUS=@status,updatedAt=@updt where ID_DIST=@iddist";
-
-                                        con.Execute(sql,
-                                        new
-                                        {
-                                            status = dist.FGDSTATUS,
-                                            drps = dist.NUDRPS,
-                                            iddist = dist.IDDIST,
-                                            updt = DateTime.Now,
-                                        }, tr);
-
-                                        // 大仕分けで更新する可能性があるので全項目更新は止める
-                                        //con.Update(dist, s => s.AttachToTransaction(tr));
-                                    }
-#else
-
                                     int status = d.Ops == d.Drps ? (short)DbLib.Defs.Status.Completed : (short)DbLib.Defs.Status.Inprog;
 
                                     var sql = "update TB_DIST set NU_DRPS=@drps,FG_DSTATUS=@status,CD_SHAIN_DIST=@cdshain,NM_SHAIN_DIST=@nmshain,DT_WORKDT_DIST=@dtwork,updatedAt=@updt where ID_DIST=@iddist";
@@ -422,7 +401,24 @@ namespace Picking.Services
                                         dtwork = DateTime.Now,
                                         updt = DateTime.Now,
                                     }, tr);
-#endif
+                                }
+                            }
+
+                            // 数量を戻すし大仕分け状態も未処理へ戻す
+                            if (distcolor.DistWorkMode == (int)Defs.DistWorkMode.Extraction)
+                            {
+                                foreach (var d in itemseq.Details)
+                                {
+                                    var sql = "update TB_DIST set NU_LRPS=@drps,NU_DRPS=@drps,FG_DSTATUS=@status,FG_LSTATUS=@status,CD_SHAIN_LARGE=NULL,NM_SHAIN_LARGE=NULL,DT_WORKDT_LARGE=NULL,CD_SHAIN_DIST=NULL,NM_SHAIN_DIST=NULL,DT_WORKDT_DIST=NULL,updatedAt=@updt where ID_DIST=@iddist";
+
+                                    con.Execute(sql,
+                                    new
+                                    {
+                                        status = (short)DbLib.Defs.Status.Ready,
+                                        drps = 0,
+                                        iddist = d.IdDist,
+                                        updt = DateTime.Now,
+                                    }, tr);
                                 }
                             }
 
