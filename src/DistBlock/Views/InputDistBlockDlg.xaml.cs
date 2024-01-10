@@ -34,5 +34,11 @@ namespace DistBlock.Views
                 dataGrid.Focus();
             }
         }
+
+        private void Regist_Click(object sender, RoutedEventArgs e)
+        {
+            // 入力中の値を確定させる為にフォーカス移動
+            dataGrid2.Focus();
+        }
     }
 }

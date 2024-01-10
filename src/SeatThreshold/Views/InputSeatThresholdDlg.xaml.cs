@@ -34,5 +34,10 @@ namespace SeatThreshold.Views
                 ReferenceDate.Focus();
             }
         }
+
+        private void Regist_Click(object sender, RoutedEventArgs e)
+        {
+            dataGrid2.Focus();
+        }
     }
 }
