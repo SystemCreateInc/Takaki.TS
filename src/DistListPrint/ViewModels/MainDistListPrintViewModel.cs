@@ -126,7 +126,7 @@ namespace DistListPrint.ViewModels
                     var isChunk = vms.Count() > chunkSize;
                     var message = isChunk ? "プレビューは表示しません。" : "プレビューを表示します。";
                     if (MessageDialog.Show(_dialogService, $"{vms.Count()}頁印刷します。よろしいですか？{message}",
-                        "変更確認", ButtonMask.Yes | ButtonMask.No) != ButtonResult.Yes)
+                        "印刷確認", ButtonMask.Yes | ButtonMask.No) != ButtonResult.Yes)
                     {
                         return;
                     }
@@ -160,7 +160,7 @@ namespace DistListPrint.ViewModels
                     var isChunk = vms.Count() > chunkSize;
                     var message = isChunk ? "プレビューは表示しません。" : "プレビューを表示します。";
                     if (MessageDialog.Show(_dialogService, $"{vms.Count()}頁印刷します。よろしいですか？{message}",
-                        "変更確認", ButtonMask.Yes | ButtonMask.No) != ButtonResult.Yes)
+                        "印刷確認", ButtonMask.Yes | ButtonMask.No) != ButtonResult.Yes)
                     {
                         return;
                     }
