@@ -1,13 +1,14 @@
 ﻿<UserControl x:Class="SeatThreshold.Views.InputSeatThresholdDlg"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:prism="http://prismlibrary.com/"
-             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:b="clr-namespace:WindowLib.Behaviors;assembly=WindowLib"
+             xmlns:models="clr-namespace:WindowLib.Models;assembly=WindowLib"
              xmlns:utils="clr-namespace:WindowLib.Utils;assembly=WindowLib"
              xmlns:controls="clr-namespace:WindowLib.Views;assembly=WindowLib"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
-             xmlns:b="clr-namespace:WindowLib.Behaviors;assembly=WindowLib"
+             prism:ViewModelLocator.AutoWireViewModel="True"
              Loaded="UserControl_Loaded">
 
     <prism:Dialog.WindowStyle>
@@ -115,7 +116,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Label Grid.Column="0" Content="参照日"/>
-                    <DatePicker x:Name="ReferenceDate" Grid.Column="1" SelectedDate="{Binding ReferenceDate}"/>
+                    <models:DatePickerEx x:Name="ReferenceDate" Grid.Column="1" SelectedDate="{Binding ReferenceDate}"/>
                     <Button Grid.Column="2" Content="参照" Command="{Binding Refer}" Margin="3" IsEnabled="{Binding IsEdit}"
                                 Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=Height}" Width="80"/>
                 </Grid>
@@ -173,10 +174,10 @@
                     </Grid.ColumnDefinitions>
 
                     <Label Grid.Column="0" Content="適用開始日・無効日"/>
-                    <DatePicker Grid.Column="1" SelectedDate="{Binding DtTekiyoKaishi}"
+                    <models:DatePickerEx Grid.Column="1" SelectedDate="{Binding DtTekiyoKaishi}"
                                  HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{Binding IsDateRelease}"/>
                     <Label Grid.Column="2" Content="～" HorizontalAlignment="Center"/>
-                    <DatePicker Grid.Column="3" SelectedDate="{Binding DtTekiyoMuko}"
+                    <models:DatePickerEx Grid.Column="3" SelectedDate="{Binding DtTekiyoMuko}"
                                  HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" IsEnabled="{Binding IsDateRelease}"/>
                     <Button Grid.Column="4" Content="解除" Command="{Binding Release}" Margin="3"
                                 Height="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Grid}}, Path=Height}"/>
