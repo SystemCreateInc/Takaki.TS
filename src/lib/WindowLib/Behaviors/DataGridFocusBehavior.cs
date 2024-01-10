@@ -1,5 +1,4 @@
-﻿using ControlzEx.Standard;
-using Microsoft.Xaml.Behaviors;
+﻿using Microsoft.Xaml.Behaviors;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -31,16 +30,6 @@ namespace WindowLib.Behaviors
             AssociatedObject.Dispatcher.InvokeAsync(() =>
             {
                 e.EditingElement.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
-
-                // 移動先のコントロール取得
-                UIElement NewFocus = (UIElement)Keyboard.FocusedElement;
-
-                if (NewFocus.GetType().Equals(typeof(TextBox)))
-                {
-                    TextBox textBox = (TextBox)NewFocus;
-                    // 入力項目全選択
-                    textBox.SelectAll();
-                }
 
                 Column = -1;
                 Row = -1;
