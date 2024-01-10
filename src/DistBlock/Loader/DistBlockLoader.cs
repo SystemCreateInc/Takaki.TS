@@ -50,6 +50,19 @@ namespace DistBlock.Loader
                     .Select(q => CreateDistBlockInfo(q))
                     .FirstOrDefault();
             }
+        }        
+        
+        public static DistBlockInfo? GetFromCode(string cdDistGroup)
+        {
+            using (var con = DbFactory.CreateConnection())
+            {
+                return con.Find<TBDISTBLOCKEntity>(s => s
+                .Include<TBDISTBLOCKSEQEntity>(x => x.InnerJoin())
+                .Where(@$"{nameof(TBDISTBLOCKEntity.CDDISTGROUP):C} = {nameof(cdDistGroup):P}")
+                .WithParameters(new { cdDistGroup }))
+                    .Select(q => CreateDistBlockInfo(q))
+                    .FirstOrDefault();
+            }
         }
 
         private static DistBlockInfo CreateDistBlockInfo(TBDISTBLOCKEntity entity)

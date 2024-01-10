@@ -50,6 +50,17 @@ namespace SeatThreshold.Loader
                     .FirstOrDefault();
             }
         }
+        public static ThresholdInfo? GetFromCode(string cdBlock)
+        {
+            using (var con = DbFactory.CreateConnection())
+            {
+                return con.Find<TBBLOCKEntity>(s => s
+                .Where(@$"{nameof(TBBLOCKEntity.CDBLOCK):C} = {nameof(cdBlock):P}")
+                .WithParameters(new { cdBlock }))
+                    .Select(q => CreateThresholdInfo(q))
+                    .FirstOrDefault();
+            }
+        }
 
         private static ThresholdInfo CreateThresholdInfo(TBBLOCKEntity entity)
         {

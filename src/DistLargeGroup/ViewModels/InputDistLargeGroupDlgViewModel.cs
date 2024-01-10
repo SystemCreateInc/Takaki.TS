@@ -257,7 +257,7 @@ namespace DistLargeGroup.ViewModels
 
                 if (IsAdd && LargeGroupRepository.IsExist(CdLargeGroup))
                 {
-                    MessageDialog.Show(_dialogService, "同じ大仕分グループがすでに登録されているため登録できません", "入力エラー");
+                    MessageDialog.Show(_dialogService, "登録済みの大仕分グループです", "入力エラー");
                     return;
                 }
 
