@@ -9,5 +9,8 @@ namespace Picking.Defs
 
         [Description("欠品")]
         Check,
+
+        [Description("抜取")]
+        Extraction,
     }
 }

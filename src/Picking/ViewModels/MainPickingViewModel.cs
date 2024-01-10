@@ -42,7 +42,7 @@ namespace Picking.ViewModels
 
         public DelegateCommand? OnItemInfo { get; }
         public DelegateCommand? OnCheck { get; }
-        public DelegateCommand? OnRemove { get; }
+        public DelegateCommand? OnExtraction { get; }
         public DelegateCommand? OnSetShain { get; }
         public DelegateCommand? OnChangeDistType { get; }
 
@@ -233,6 +233,20 @@ namespace Picking.ViewModels
             set => SetProperty(ref _ischeck, value);
         }
 
+        private SolidColorBrush _extractionColor = new SolidColorBrush(Colors.DarkTurquoise);
+        public SolidColorBrush ExtractionColor
+        {
+            get => _extractionColor;
+            set => SetProperty(ref _extractionColor, value);
+        }
+
+        private bool _isExtraction = false;
+        public bool IsExtraction
+        {
+            get => _isExtraction;
+            set => SetProperty(ref _isExtraction, value);
+        }
+
 
         // 進捗数
         private ProgressCnt? _packcnt = null;
@@ -354,20 +368,27 @@ namespace Picking.ViewModels
                     IsCheck = true;
                     CheckColor = new SolidColorBrush(Colors.Orange);
                 }
+                IsExtraction = false;
+                ExtractionColor = new SolidColorBrush(Colors.DarkTurquoise);
             });
 
-            OnRemove = new DelegateCommand(() =>
+            OnExtraction = new DelegateCommand(() =>
             {
-                Syslog.Info("【抜き取り】:OnRemove");
+                Syslog.Info("【抜き取り】:OnExtraction");
 
-                _regionManager.RequestNavigate("ContentRegion", nameof(Views.DistDetailWindow), new NavigationParameters
+                if (IsExtraction == true)
                 {
-                    {
-                        "currentdistzone", CurrentDistColor
-                    },
-                });
-
-            }).ObservesCanExecute(() => CanDistColor);
+                    IsExtraction = false;
+                    ExtractionColor = new SolidColorBrush(Colors.DarkTurquoise);
+                }
+                else
+                {
+                    IsExtraction = true;
+                    ExtractionColor = new SolidColorBrush(Colors.Orange);
+                }
+                IsCheck = false;
+                CheckColor = new SolidColorBrush(Colors.DarkTurquoise);
+            });
 
             OnSetShain = new DelegateCommand(() =>
             {
@@ -680,6 +701,10 @@ namespace Picking.ViewModels
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
             UpdateProgress();
+            IsCheck = false;
+            CheckColor = new SolidColorBrush(Colors.DarkTurquoise);
+            IsExtraction = false;
+            ExtractionColor = new SolidColorBrush(Colors.DarkTurquoise);
         }
 
         private void Closing(object? sender, CancelEventArgs e)
@@ -867,6 +892,7 @@ namespace Picking.ViewModels
                 {
                     { "color", color },
                     { "ischeck", IsCheck},
+                    { "isextraction", IsExtraction},
                     { "SelectedShain", SelectedShain},
                 });
             return true;

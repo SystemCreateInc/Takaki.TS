@@ -1,4 +1,5 @@
-﻿using LogLib;
+﻿using ImTools;
+using LogLib;
 using Picking.Defs;
 using Picking.Models;
 using Picking.Services;
@@ -99,6 +100,13 @@ namespace Picking.ViewModels
         {
             get => _isCheck;
             set => SetProperty(ref _isCheck, value);
+        }
+
+        private bool _isExtraction = false;
+        public bool IsExtraction
+        {
+            get => _isExtraction;
+            set => SetProperty(ref _isExtraction, value);
         }
 
         private bool _isWorking = false;
@@ -274,10 +282,11 @@ namespace Picking.ViewModels
             {
                 Syslog.Info("【数量変更】DistItemScanWindowModel:OnChangeQty");
 
-                // 検品は数量訂正出来ない
-                if (IsCheck == true)
+                // 検品、抜き取りは数量訂正出来ない
+                if (IsCheck == true || IsExtraction == true)
                 {
-                    MessageBox.Show("検品処理のため数量訂正出来ません", "エラー");
+                    string msg = string.Format("{0}処理のため数量訂正出来ません", IsCheck ? "検品" : "抜き取り");
+                    MessageBox.Show(msg, "エラー");
                     return;
                 }
 
@@ -324,7 +333,7 @@ namespace Picking.ViewModels
                         MessageDialog.Show(_dialogService, "登録出来るのは９商品までです。", "エラー");
                         return;
                     }
-                    var selectitems = DistColorManager.GetItems(DistGroup!, Scancode, IsCheck);
+                    var selectitems = DistColorManager.GetItems(DistGroup!, Scancode, IsCheck, IsExtraction);
 
                     if (selectitems != null)
                     {
@@ -399,7 +408,7 @@ namespace Picking.ViewModels
                         distcolor.ItemSeqs = DisplayDistItemDatas!;
                         distcolor.CdShain = SelectedShain.CdShain;
                         distcolor.NmShain = SelectedShain.NmShain;
-                        distcolor.DistWorkMode = IsCheck ? (int)DistWorkMode.Check : (int)DistWorkMode.Dist;
+                        distcolor.DistWorkMode = IsCheck ? (int)DistWorkMode.Check : IsExtraction ? (int)DistWorkMode.Extraction : (int)DistWorkMode.Dist;
 
                         // 一斉配分の場合は順序を設定
                         if (distcolorinfo.IsDistWorkNormal==true)
@@ -456,6 +465,7 @@ namespace Picking.ViewModels
             {
                 Color = navigationContext.Parameters.GetValue<int>("color");
                 IsCheck = navigationContext.Parameters.GetValue<bool>("ischeck");
+                IsExtraction = navigationContext.Parameters.GetValue<bool>("isextraction");
                 IsWorking = navigationContext.Parameters.GetValue<bool>("isworking");
                 SelectedShain = navigationContext.Parameters.GetValue<Shain>("SelectedShain");
 
@@ -540,6 +550,8 @@ namespace Picking.ViewModels
             DisplayDistItemDatas![inseq].Remain_shop_cnt = distitemseq.Remain_shop_cnt;
             DisplayDistItemDatas![inseq].Left_shop_cnt = distitemseq.Left_shop_cnt;
             DisplayDistItemDatas![inseq].Right_shop_cnt = distitemseq.Right_shop_cnt;
+            DisplayDistItemDatas![inseq].Left_ps_cnt = distitemseq.Left_ps_cnt;
+            DisplayDistItemDatas![inseq].Right_ps_cnt = distitemseq.Right_ps_cnt;
 
             CanDistItem = CurrentDistItemSeq == null || CurrentDistItemSeq.GetUniqueItemKey == "" ? false : true;
         }
@@ -567,6 +579,8 @@ namespace Picking.ViewModels
                 Remain_shop_cnt = distitemseq.Remain_shop_cnt,
                 Left_shop_cnt = distitemseq.Left_shop_cnt,
                 Right_shop_cnt = distitemseq.Right_shop_cnt,
+                Left_ps_cnt = distitemseq.Left_ps_cnt,
+                Right_ps_cnt = distitemseq.Right_ps_cnt,
             };
         }
 
@@ -594,6 +608,8 @@ namespace Picking.ViewModels
                 Remain_shop_cnt = distitemseq.Remain_shop_cnt,
                 Left_shop_cnt = distitemseq.Left_shop_cnt,
                 Right_shop_cnt = distitemseq.Right_shop_cnt,
+                Left_ps_cnt = distitemseq.Left_ps_cnt,
+                Right_ps_cnt = distitemseq.Right_ps_cnt,
             };
         }
 
