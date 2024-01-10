@@ -115,7 +115,9 @@ namespace SetHenkosha.ViewModels
         {
             try
             {
+                Syslog.Warn($"LoadCombo:Start");
                 ShainCombo = ShainComboLoader.GetShainCombos();
+                Syslog.Warn($"LoadCombo:End");
             }
             catch (Exception e)
             {
