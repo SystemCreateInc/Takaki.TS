@@ -2,6 +2,7 @@
 using LogLib;
 using Microsoft.IdentityModel.Tokens;
 using Prism.Mvvm;
+using System.Text.RegularExpressions;
 
 namespace DistBlock.Models
 {
@@ -29,14 +30,23 @@ namespace DistBlock.Models
         public string CdAddrFrom
         {
             get => _cdAddrFrom;
-            set => SetProperty(ref _cdAddrFrom, value);
+            set
+            {
+                // 数値以外を削除
+                var numValue = Regex.Replace(value, @"[^0-9]", "");
+                SetProperty(ref _cdAddrFrom, numValue);
+            }
         }
 
         private string _cdAddrTo = string.Empty;
         public string CdAddrTo
         {
             get => _cdAddrTo;
-            set => SetProperty(ref _cdAddrTo, value);
+            set
+            {
+                var numValue = Regex.Replace(value, @"[^0-9]", "");
+                SetProperty(ref _cdAddrTo, numValue);
+            } 
         }
 
         public long DistBlockId { get; set; }
