@@ -43,7 +43,7 @@
                     </StackPanel>
                 </Button>
 
-                <Button Command="{Binding RegistCommand}">
+                <Button Command="{Binding RegistCommand}" Click="Regist_Click">
                     <StackPanel Orientation="Vertical">
                         <materialDesign:PackIcon Kind="Edit"/>
                         <TextBlock Text="登録"/>
