@@ -5,7 +5,8 @@
              prism:ViewModelLocator.AutoWireViewModel="True"
              xmlns:utils="clr-namespace:WindowLib.Utils;assembly=WindowLib"
              xmlns:controls="clr-namespace:WindowLib.Views;assembly=WindowLib"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:models="clr-namespace:WindowLib.Models;assembly=WindowLib">
 
     <DockPanel>
         <Grid DockPanel.Dock="Top">
@@ -56,11 +57,9 @@
 
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
             <Label Content="納品日範囲 ： " VerticalAlignment="Center" Margin="3"/>
-            <DatePicker Language="ja" SelectedDate="{Binding StartDate}" Width="120" Margin="3"
-                        DateValidationError="DatePicker_DateValidationError"/>
+            <models:DatePickerEx Language="ja" SelectedDate="{Binding StartDate}" Width="120" Margin="3"/>
             <TextBlock Text="～" VerticalAlignment="Center" Margin="3"/>
-            <DatePicker Language="ja" SelectedDate="{Binding EndDate}" Width="120" Margin="3"
-                        DateValidationError="DatePicker_DateValidationError"/>
+            <models:DatePickerEx Language="ja" SelectedDate="{Binding EndDate}" Width="120" Margin="3"/>
         </StackPanel>
 
         <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid}" SettingsKey="WorkReportColumns"/>

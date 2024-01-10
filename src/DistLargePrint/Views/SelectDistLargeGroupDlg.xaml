@@ -5,6 +5,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              prism:ViewModelLocator.AutoWireViewModel="True"
              HorizontalAlignment="Center" VerticalAlignment="Center"
+             xmlns:models="clr-namespace:WindowLib.Models;assembly=WindowLib"
              Loaded="UserControl_Loaded" Width="380">
 
     <prism:Dialog.WindowStyle>
@@ -22,8 +23,7 @@
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="3">
             <TextBlock Text="納品日" Width="150" VerticalAlignment="Center" Margin="3"/>
             <TextBlock Text=":" VerticalAlignment="Center" Margin="3"/>
-            <DatePicker SelectedDate="{Binding DeliveryDate}" Language="ja" Width="150" VerticalAlignment="Center" Margin="3"
-                        DateValidationError="DatePicker_DateValidationError"/>
+            <models:DatePickerEx SelectedDate="{Binding DeliveryDate}" Language="ja" Width="150" VerticalAlignment="Center" Margin="3"/>
         </StackPanel>
 
         <TextBlock DockPanel.Dock="Top" Text="{Binding ErrorMessage}" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>

@@ -5,6 +5,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/shared"
              xmlns:b="clr-namespace:WindowLib.Behaviors;assembly=WindowLib"
+             xmlns:models="clr-namespace:WindowLib.Models;assembly=WindowLib"
              prism:ViewModelLocator.AutoWireViewModel="True"
              HorizontalAlignment="Center" VerticalAlignment="Center"
              Loaded="UserControl_Loaded"
@@ -44,8 +45,7 @@
             <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="20,5,5,5" >
                 <TextBlock Grid.Column="0" Text="納品日:" VerticalAlignment="Center" TextAlignment="Center" 
                            Width="110" Margin="3"/>
-                <DatePicker Grid.Column="1" SelectedDate="{Binding DtDelivery}" PreviewKeyDown="DatePicker_PreviewKeyDown" Language="ja"
-                            DateValidationError="DatePicker_DateValidationError"/>
+                <models:DatePickerEx Grid.Column="1" SelectedDate="{Binding DtDelivery}" PreviewKeyDown="DatePicker_PreviewKeyDown" Language="ja"/>
             </StackPanel>
 
             <TextBlock Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>

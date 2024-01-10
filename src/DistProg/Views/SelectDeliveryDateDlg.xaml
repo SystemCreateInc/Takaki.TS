@@ -4,7 +4,8 @@
              xmlns:prism="http://prismlibrary.com/"             
              Loaded="UserControl_Loaded"
              Padding="20"
-             prism:ViewModelLocator.AutoWireViewModel="True">
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             xmlns:models="clr-namespace:WindowLib.Models;assembly=WindowLib">
     <prism:Dialog.WindowStyle>
         <Style TargetType="Window" BasedOn="{StaticResource DialogWindow}"/>
     </prism:Dialog.WindowStyle>
@@ -13,7 +14,7 @@
 
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="納品日：" VerticalAlignment="Center"/>
-            <DatePicker x:Name="Date" SelectedDate="{Binding Date}" Language="ja" Width="200" DateValidationError="Date_DateValidationError"/>
+            <models:DatePickerEx x:Name="Date" SelectedDate="{Binding Date}" Language="ja" Width="200"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
