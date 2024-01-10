@@ -22,7 +22,9 @@ namespace LargeDistLabelLib
             fmtr.String(410, 0, SatoFont.X22, $"{data.CdJuchuBin}");
 
             fmtr.SetScale(2, 2);
-            fmtr.String(90, 25, SatoFont.K24, $"<{data.CdBlock}ブロック>");
+            fmtr.String(90, 25, SatoFont.K24, "<");
+            fmtr.String(120, 25, SatoFont.X22, $"{data.CdBlock}");
+            fmtr.String(190, 25, SatoFont.K24, "ブロック>");
 
             fmtr.SetScale(1, 1);
             //fmtr.String(10, 50, SatoFont.K24, "仕分G:");
