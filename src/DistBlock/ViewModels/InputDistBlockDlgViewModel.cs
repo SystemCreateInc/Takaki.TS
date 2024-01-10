@@ -363,6 +363,17 @@ namespace DistBlock.ViewModels
                     Blocks = _inputedBlocks.ToList(),
                 };
 
+                if (IsAdd)
+                {
+                    // 登録時：コード一致時点でエラーとする
+                    if (DistBlockLoader.GetFromCode(targetInfo.CdDistGroup) is not null)
+                    {
+                        MessageDialog.Show(_dialogService, "登録済みの仕分グループコードです"
+                            , "入力エラー");
+                        return false;
+                    }
+                }
+
                 var existCustomer = DistBlockLoader.GetFromKey(targetInfo.CdDistGroup, targetInfo.Tekiyokaishi);
                 var isExist = existCustomer is not null;
 
