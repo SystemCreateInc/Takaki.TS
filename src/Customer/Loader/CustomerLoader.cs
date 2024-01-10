@@ -49,6 +49,18 @@ namespace Customer.Loader
                     .FirstOrDefault();
             }
         }
+        public static SumCustomer? GetFromCode(string cdSumTokuisaki)
+        {
+            using (var con = DbFactory.CreateConnection())
+            {
+                return con.Find<TBSUMTOKUISAKIEntity>(s => s
+                .Include<TBSUMTOKUISAKICHILDEntity>()
+                .Where($"{nameof(TBSUMTOKUISAKIEntity.CDSUMTOKUISAKI):C} = {nameof(cdSumTokuisaki):P}")
+                .WithParameters(new { cdSumTokuisaki }))
+                    .Select(q => CreateSumcustomer(q))
+                    .FirstOrDefault();
+            }
+        }
 
         // 同一得意先
         public static SumCustomer? GetSameCustomer(IEnumerable<string> targetCustomers, string startDate, string endDate, long? excludeId)

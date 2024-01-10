@@ -1,8 +1,10 @@
 ﻿using Dapper.FastCrud;
+using DbLib;
 using DbLib.DbEntities;
 using DbLib.Extensions;
 using LogLib;
 using MaterialDesignThemes.Wpf;
+using PrintLib;
 using PrintPreviewLib;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -30,8 +32,6 @@ namespace TakahataDistListPrint.ViewModels
 
         private readonly IDialogService _dialogService;
         private SearchBoxService _searchBoxService = new SearchBoxService();
-
-        private const int _chunkSize = 100;
 
         private PackIconKind _searchIcon = PackIconKind.Search;
         public PackIconKind SearchIcon
@@ -91,16 +91,24 @@ namespace TakahataDistListPrint.ViewModels
 
                 try
                 {
-                    var vms = ReportCreator.CreateCustomerReport(TakahataDistListPrints.Select(x => x.IdDist), DtDelivery, _chunkSize);
-                    var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Portrait);
+                    var chunkSize = GetChunkSize();
+                    var vms = ReportCreator.CreateCustomerReport(TakahataDistListPrints.Select(x => x.IdDist), DtDelivery, chunkSize);
+                    var isChunk = vms.Count() > chunkSize;
+                    var message = isChunk ? "プレビューは表示しません。" : "プレビューを表示します。";
 
-                    // 印刷単位毎にプレビューを表示し、処理を軽くする
-                    var printUnitVms = vms.Select((v, i) => new { v, i })
-                        .GroupBy(x => x.i / _chunkSize).Select(s => s.Select(x => x.v));
-
-                    foreach (var printVms in printUnitVms)
+                    if (MessageDialog.Show(_dialogService, $"{vms.Count()}頁印刷します。よろしいですか？{message}",
+                        "印刷確認", ButtonMask.Yes | ButtonMask.No) != ButtonResult.Yes)
                     {
-                        ppm.PrintPreview("得意先別仕分リスト(対象外)", printVms);
+                        return;
+                    }
+
+                    if (isChunk)
+                    {
+                        SplitPrint("得意先別仕分リスト(対象外)", vms, chunkSize);
+                    }
+                    else
+                    {
+                        Print("得意先別仕分リスト(対象外)", vms);
                     }
                 }
                 catch (Exception e)
@@ -116,16 +124,24 @@ namespace TakahataDistListPrint.ViewModels
 
                 try
                 {
-                    var vms = ReportCreator.CreateItemReport(TakahataDistListPrints.Select(x => x.IdDist), DtDelivery, _chunkSize);
-                    var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Portrait);
+                    var chunkSize = GetChunkSize();
+                    var vms = ReportCreator.CreateItemReport(TakahataDistListPrints.Select(x => x.IdDist), DtDelivery, chunkSize);
+                    var isChunk = vms.Count() > chunkSize;
+                    var message = isChunk ? "プレビューは表示しません。" : "プレビューを表示します。";
 
-                    // 印刷単位毎にプレビューを表示し、処理を軽くする
-                    var printUnitVms = vms.Select((v, i) => new { v, i })
-                        .GroupBy(x => x.i / _chunkSize).Select(s => s.Select(x => x.v));
-
-                    foreach (var printVms in printUnitVms)
+                    if (MessageDialog.Show(_dialogService, $"{vms.Count()}頁印刷します。よろしいですか？{message}",
+                        "印刷確認", ButtonMask.Yes | ButtonMask.No) != ButtonResult.Yes)
                     {
-                        ppm.PrintPreview("商品別仕分リスト(対象外)", printVms);
+                        return;
+                    }
+
+                    if (isChunk)
+                    {
+                        SplitPrint("商品別仕分リスト(対象外)", vms, chunkSize);
+                    }
+                    else
+                    {
+                        Print("商品別仕分リスト(対象外)", vms);
                     }
                 }
                 catch (Exception e)
@@ -185,6 +201,38 @@ namespace TakahataDistListPrint.ViewModels
                 new () { ContentName = "JANコード", TableName = Sql.Format<TBDISTEntity>($"{nameof(TBDISTEntity):T}.{nameof(TBDISTEntity.CDGTIN13):C}") },
                 new () { ContentName = "品名", TableName = "v2.NM_HIN_SEISHIKIMEI"},
             };
+        }
+
+        private int GetChunkSize()
+        {
+            var chunkSize = 0;
+            using (var con = DbFactory.CreateConnection())
+            using (var tr = con.BeginTransaction())
+            {
+                chunkSize = new Settings(tr).GetInt("PrintChunkSize");
+            }
+
+            return chunkSize == 0 ? 100 : chunkSize;
+        }
+
+        private void SplitPrint(string title, IEnumerable<IPrintViewModel> vms, int chunkSize)
+        {
+            // プレビュー画面を表示しないで印刷
+            var printUnitVms = vms.Select((v, i) => new { v, i })
+                .GroupBy(x => x.i / chunkSize).Select(s => s.Select(x => x.v));
+
+            var ppm = new PrintManager(PageMediaSizeName.ISOA4, PageOrientation.Portrait);
+            foreach (var printVms in printUnitVms)
+            {
+                ppm.Print(title, printVms);
+            }
+        }
+
+        private void Print(string title, IEnumerable<IPrintViewModel> vms)
+        {
+            // プレビュー画面を表示
+            var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Portrait);
+            ppm.PrintPreview(title, vms);
         }
     }
 }

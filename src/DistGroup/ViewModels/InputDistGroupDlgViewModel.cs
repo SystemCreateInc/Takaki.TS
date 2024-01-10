@@ -25,6 +25,7 @@ namespace DistGroup.ViewModels
         public DelegateCommand DownReplace { get; }
         public DelegateCommand Add { get; }
         public DelegateCommand Delete { get; }
+        public DelegateCommand<string> EndCodeEdit { get; }
 
         public string Title => "仕分グループ情報入力";
 
@@ -216,6 +217,20 @@ namespace DistGroup.ViewModels
             set => SetProperty(ref _isDateRelease, value);
         }
 
+        private int _gridFocusColumnIndex;
+        public int GridFocusColumnIndex
+        {
+            get => _gridFocusColumnIndex;
+            set => SetProperty(ref _gridFocusColumnIndex, value);
+        }
+
+        private int _gridFocusRowIndex;
+        public int GridFocusRowIndex
+        {
+            get => _gridFocusRowIndex;
+            set => SetProperty(ref _gridFocusRowIndex, value);
+        }
+
         private ShainInfo _shainInfo = new ShainInfo();
 
         public ReferenceLog ReferenceLog { get; set; } = new ReferenceLog();
@@ -225,6 +240,9 @@ namespace DistGroup.ViewModels
         private bool _isChange = false;
 
         private readonly IDialogService _dialogService;
+
+        // ダイアログ終了後に名称取得エラーを出さない為
+        private bool _isClosing = false;
 
         public InputDistGroupDlgViewModel(IDialogService dialogService)
         {
@@ -295,12 +313,15 @@ namespace DistGroup.ViewModels
                 Syslog.Debug("InputDistGroupViewModelDlg:Delete");
                 DeleteCourse();
             });
+
+            EndCodeEdit = new DelegateCommand<string>(inputName => ValidateGetName(inputName));
         }
 
         public bool CanCloseDialog() => ConfirmationExit();
 
         public void OnDialogClosed()
         {
+            _isClosing = true;
         }
 
         public void OnDialogOpened(IDialogParameters parameters)
@@ -310,6 +331,45 @@ namespace DistGroup.ViewModels
             IsAdd = _distGroup.CdDistGroup.IsNullOrEmpty();
             IsEdit = !IsAdd;
             InitDialog();
+        }
+
+        // 名称未取得でフォーカス変更時にエラー
+        private async void ValidateGetName(string inputName)
+        {
+            // BindingのDelay待ち
+            await Task.Delay(350);
+
+            string? errorTextName;
+
+            switch (inputName)
+            {
+                case "Batch":
+                    errorTextName = _inputedBatchs.Any(x => x.NmShukkaBatch.IsNullOrEmpty() || x.NmLargeGroup.IsNullOrEmpty()) ? "バッチ、大仕分" : null;
+                    SetEmptyCustomerNameFocus();
+                    break;
+
+                default:
+                    return;
+            }
+
+            if (!errorTextName.IsNullOrEmpty() && !_isClosing)
+            {
+                MessageDialog.Show(_dialogService, $"{errorTextName}名称が取得できませんでした", "入力エラー");
+            }
+        }
+
+        private void SetEmptyCustomerNameFocus()
+        {
+            if (!_inputedBatchs.Any(x => x.NmShukkaBatch.IsNullOrEmpty() || x.NmLargeGroup.IsNullOrEmpty()))
+            {
+                return;
+            }
+
+            GridFocusColumnIndex = 0;
+            GridFocusRowIndex = -1;
+            GridFocusRowIndex = _inputedBatchs
+                .Select((value, idx) => (value, idx))
+                .First(x => x.value.NmShukkaBatch.IsNullOrEmpty() || x.value.NmLargeGroup.IsNullOrEmpty()).idx;
         }
 
         private void InitDialog()
@@ -537,6 +597,7 @@ namespace DistGroup.ViewModels
 
             if (_inputedBatchs.Any(x => x.NmShukkaBatch.IsNullOrEmpty() || x.NmLargeGroup.IsNullOrEmpty()))
             {
+                SetEmptyCustomerNameFocus();
                 MessageDialog.Show(_dialogService, "対象出荷バッチ内に、名称が取得出来ていない項目があります", "入力エラー");
                 return false;
             }

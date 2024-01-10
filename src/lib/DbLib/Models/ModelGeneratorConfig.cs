@@ -1204,6 +1204,59 @@ namespace DbLib.DbEntities
     }
 
     /// <summary>
+    /// Represents the 'TB_LARGE_LOCK' table.
+    /// </summary>
+    [Table("TB_LARGE_LOCK")]
+    public partial class TBLARGELOCKEntity
+    {
+        /// <summary>
+        /// Represents the column 'CD_LARGE_GROUP'.
+        /// </summary>
+        [Key]
+        [Column("CD_LARGE_GROUP", Order = 1)]
+        public virtual string CDLARGEGROUP { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_SHUKKA_BATCH'.
+        /// </summary>
+        [Key]
+        [Column("CD_SHUKKA_BATCH", Order = 2)]
+        public virtual string CDSHUKKABATCH { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_JUCHU_BIN'.
+        /// </summary>
+        [Key]
+        [Column("CD_JUCHU_BIN", Order = 3)]
+        public virtual string CDJUCHUBIN { get; set; }
+
+        /// <summary>
+        /// Represents the column 'CD_HIMBAN'.
+        /// </summary>
+        [Key]
+        [Column("CD_HIMBAN", Order = 4)]
+        public virtual string CDHIMBAN { get; set; }
+
+        /// <summary>
+        /// Represents the column 'ID_PROCESS'.
+        /// </summary>
+        [Column("ID_PROCESS")]
+        public virtual string IDPROCESS { get; set; }
+
+        /// <summary>
+        /// Represents the column 'createdAt'.
+        /// </summary>
+        [Column("createdAt")]
+        public virtual DateTime CreatedAt { get; set; }
+
+        /// <summary>
+        /// Represents the column 'updatedAt'.
+        /// </summary>
+        [Column("updatedAt")]
+        public virtual DateTime UpdatedAt { get; set; }
+    }
+
+    /// <summary>
     /// Represents the 'TB_LOCPOS' table.
     /// </summary>
     [Table("TB_LOCPOS")]
