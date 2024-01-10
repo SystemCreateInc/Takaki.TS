@@ -49,7 +49,9 @@ namespace DistProg.Models
                         NuOitemcnt = q.NU_OITEMCNT,
                         NuRps = q.NU_RPS,
                         NuOps = q.NU_OPS,
-                    });
+                    })
+                    .OrderBy(x => x.IdPc)
+                    .ThenBy(x => x.CdBlock);
             }
         }
 
