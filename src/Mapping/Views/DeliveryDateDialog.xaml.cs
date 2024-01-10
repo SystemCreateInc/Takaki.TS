@@ -53,22 +53,20 @@ namespace Mapping.Views
 
             var datePicker = (DatePicker)sender;
             var text = datePicker.Text;
-            var date = DateTime.Today.AddDays(1);
 
             try
             {
                 // /を含まないかつ、8文字だった場合にDateTimeに変換
                 if (!text.Contains('/') && text.Length == 8)
                 {
-                    date = DateTime.ParseExact(text, "yyyyMMdd", System.Globalization.DateTimeFormatInfo.InvariantInfo, System.Globalization.DateTimeStyles.None);
+                    var date = DateTime.ParseExact(text, "yyyyMMdd", System.Globalization.DateTimeFormatInfo.InvariantInfo, System.Globalization.DateTimeStyles.None);
+                    datePicker.SelectedDate = date;
                 }
             }
             catch (Exception er)
             {
                 Syslog.Error($"Date_DateValidationError:{er.Message}");
             }
-
-            datePicker.SelectedDate = date;
         }
     }
 }
