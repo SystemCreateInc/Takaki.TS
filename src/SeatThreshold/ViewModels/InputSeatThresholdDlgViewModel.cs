@@ -368,6 +368,16 @@ namespace SeatThreshold.ViewModels
                     TekiyoMuko = DtTekiyoMuko.ToString("yyyyMMdd"),
                 };
 
+                if (IsAdd)
+                {
+                    // 登録時：コード一致時点でエラーとする
+                    if (SeatThresholdLoader.GetFromCode(targetData.CdBlock) is not null)
+                    {
+                        MessageDialog.Show(_dialogService, $"登録済みのブロックです", "入力エラー");
+                        return false;
+                    }
+                }
+
                 var existData = SeatThresholdLoader.GetFromKey(targetData.CdBlock, targetData.Tekiyokaishi);
                 var isExist = existData is not null;
 
