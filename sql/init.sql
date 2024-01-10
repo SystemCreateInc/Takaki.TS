@@ -228,4 +228,4 @@ insert into TB_PC values(6,'06',NULL,NULL,getdate(),getdate());
 -- settings
 --insert into settings(value,data,id,comment)values('importgroup','0','','編集グループ');
 --insert into settings(value,data,id,comment)values('autoimporttime','60','','自動受信間隔');
-
+insert into settings values('PrintChunkSize','100','','印刷分割数指定');
