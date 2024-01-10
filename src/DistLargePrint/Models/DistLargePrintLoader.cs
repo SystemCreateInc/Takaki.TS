@@ -55,7 +55,12 @@ namespace DistLargePrint.Models
                         TotalRemainingPs = x.Sum(x => x.NULOPS) - x.Sum(x => x.NULRPS),
                         DtWorkdtLarge =x.Max(x => x.DTWORKDTLARGE),
                         NMShainLarge = x.Max(x => x.NMSHAINLARGE),
-                    });
+                    })
+                    .OrderBy(x => x.CdHimban)
+                    .ThenBy(x => x.CdJan)
+                    .ThenBy(x => x.NmHinSeishikimei)
+                    .ThenBy(x => x.NuBoxunit)
+                    .ThenBy(x => x.CdBlock);
             }
         }
     }

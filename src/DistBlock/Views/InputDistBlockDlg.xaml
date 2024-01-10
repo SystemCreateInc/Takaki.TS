@@ -249,7 +249,7 @@
                                         </Style>
                                     </DataGridTextColumn.EditingElementStyle>
                                 </DataGridTextColumn>
-                                <DataGridTextColumn Header="開始" Binding="{Binding CdAddrFrom}" Width="1*"
+                                <DataGridTextColumn Header="開始" Binding="{Binding CdAddrFrom, UpdateSourceTrigger=PropertyChanged}" Width="1*"
                                                     ElementStyle="{StaticResource RightTextElement}">
                                     <DataGridTextColumn.EditingElementStyle>
                                         <Style TargetType="TextBox">
@@ -258,7 +258,7 @@
                                         </Style>
                                     </DataGridTextColumn.EditingElementStyle>
                                 </DataGridTextColumn>
-                                <DataGridTextColumn Header="終了" Binding="{Binding CdAddrTo}" Width="*"
+                                <DataGridTextColumn Header="終了" Binding="{Binding CdAddrTo, UpdateSourceTrigger=PropertyChanged}" Width="*"
                                                     ElementStyle="{StaticResource RightTextElement}">
                                     <DataGridTextColumn.EditingElementStyle>
                                         <Style TargetType="TextBox">
