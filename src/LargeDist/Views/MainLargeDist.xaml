@@ -102,7 +102,7 @@
                 <DataGridTextColumn Header="大仕分グループ" Binding="{Binding CdLargeGroup}"/>
                 <DataGridTextColumn Header="大仕分グループ名称" Binding="{Binding NmLargeGroup}"/>
                 <DataGridTextColumn Header="予定商品数" Binding="{Binding OrderItemCount}" ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="残商品数" Binding="{Binding ResultItemCount}" ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="残商品数" Binding="{Binding RemainItemCount}" ElementStyle="{StaticResource RightTextElement}"/>
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>

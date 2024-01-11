@@ -131,7 +131,7 @@
 
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="10,0,0,0">
             <TextBlock Text="{Binding DeliveryDate, StringFormat=納品日:yyyy/MM/dd}" d:Text="納品日:2023/10/15" VerticalAlignment="Center" />
-            <TextBlock VerticalAlignment="Center" Margin="50,0,0,0">
+            <TextBlock VerticalAlignment="Center" Margin="50,0,0,0" FontSize="50" Foreground="Red">
                 大仕分G:<Run Text="{Binding LargeDistGroup.CdLargeGroup}" d:Text="000"/>　　
                 <Run Text="{Binding LargeDistGroup.NmLargeGroup}" d:Text="大仕分グループ"/>
             </TextBlock>

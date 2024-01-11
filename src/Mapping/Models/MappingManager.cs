@@ -99,7 +99,7 @@ namespace Mapping.Models
             if (distgroup != null)
             {
 //                cnt = distgroup.mappings.Where(x => x.tdunitaddrcode != "").Select(x => x.tdunitaddrcode).Count();
-                cnt = distgroup.mappings.Where(x => x.CdTokuisaki != "").Select(x => x.CdTokuisaki).Count();
+                cnt = distgroup.mappings.Where(x => x.CdTokuisaki != "").Select(x => x.CdTokuisaki).Distinct().Count();
             }
             return cnt;
         }
@@ -111,9 +111,8 @@ namespace Mapping.Models
 
             if (distgroup != null)
             {
-                var aa = distgroup.mappings.Where(x => x.tdunitaddrcode != "");
-
-                cnt = distgroup.mappings.Where(x => x.tdunitaddrcode != "").Select(x => x.Maguchi).Sum();
+                cnt = distgroup.mappings.Where(x => x.tdunitaddrcode != "").Select(x => x.tdunitaddrcode + x.CdBlock).Distinct().Count();
+//                cnt = distgroup.mappings.Where(x => x.tdunitaddrcode != "").Select(x => x.Maguchi).Sum();
             }
             return cnt;
         }
