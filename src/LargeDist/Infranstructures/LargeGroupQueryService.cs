@@ -35,7 +35,7 @@ namespace LargeDist.Infranstructures
                         x.CD_LARGE_GROUP,
                         x.CD_LARGE_GROUP_NAME,
                         x.OrderItemCount,
-                        x.ResultItemCount
+                        x.OrderItemCount - x.ResultItemCount
                     ))
                     .ToArray();
             }

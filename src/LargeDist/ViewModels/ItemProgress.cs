@@ -36,7 +36,7 @@ namespace LargeDist.ViewModels
 
         private void UpdatePercent()
         {
-            Percent = Completed * 100 / Total;
+            Percent = Total == 0 ? 0 : Completed * 100 / Total;
         }
     }
 }
