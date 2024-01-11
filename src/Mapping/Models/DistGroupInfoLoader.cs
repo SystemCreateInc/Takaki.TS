@@ -41,6 +41,7 @@ namespace Mapping.Models
                         var sql = "select CD_DIST_GROUP"
                             //+ ", count(distinct case when tdunitaddrcode='' then null else CD_BLOCK+tdunitaddrcode end) shopcnt"
                             + ", count(distinct case when tdunitaddrcode='' then null else CD_TOKUISAKI end) shopcnt"
+                            + ", count(distinct case when tdunitaddrcode='' then null else CD_BLOCK+tdunitaddrcode end) loccnt"
                             + ",count(distinct case when FG_MAPSTATUS = 1 then CD_TOKUISAKI else null end) overshopcnt"
                             + " from TB_DIST"
                             + " inner join TB_DIST_MAPPING on TB_DIST_MAPPING.ID_DIST = TB_DIST.ID_DIST"
@@ -57,11 +58,13 @@ namespace Mapping.Models
                              {
                                  OverShopCnt = q.overshopcnt ?? 0,
                                  ShopCnt = q.shopcnt ?? 0,
+                                 LocCnt = q.loccnt ?? 0,
                              }).FirstOrDefault();
                         if (result != null)
                         {
                             p.OverShopCnt = result.OverShopCnt;
                             p.ShopCnt = result.ShopCnt;
+                            p.LocCnt = result.LocCnt;
                             p.MStatus = result.ShopCnt == 0 ? Defs.MStatus.Ready : Defs.MStatus.Decision;
                         }
                         else
@@ -95,13 +98,13 @@ namespace Mapping.Models
                         })
                              .Select(q => new DistGroupInfo
                              {
-                                 LocCnt = q.maguchi ?? 0,
+//                                 LocCnt = q.maguchi ?? 0,
                                  LStatus = q.lstatus ?? 0,
                                  DStatus = q.dstatus ?? 0,
                              }).FirstOrDefault();
                         if (result != null)
                         {
-                            p.LocCnt = result.LocCnt;
+//                            p.LocCnt = result.LocCnt;
                             p.LStatus = result.LStatus;
                             p.DStatus = result.DStatus;
                         }

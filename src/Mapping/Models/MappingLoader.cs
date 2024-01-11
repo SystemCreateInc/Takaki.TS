@@ -222,7 +222,7 @@ namespace Mapping.Models
                     CdTokuisaki = x.CDTOKUISAKI,
                     CdHimban = x.CDHIMBAN,
                     CdGtin13 = x.CDGTIN13,
-                    Ops = x.NULOPS,
+                    Ops = x.NUOPS,
                     CdHaishoBin = x.CDHAISHOBIN,
                     CdJuchuBin = x.CDJUCHUBIN,
                     CdGtin14 = x.CDGTIN14,
