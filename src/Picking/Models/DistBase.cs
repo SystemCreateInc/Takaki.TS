@@ -344,6 +344,9 @@ namespace Picking.Models
                     case (int)DistTypeStatus.CheckWorking:
                         DistType_name = "検品中";
                         break;
+                    case (int)DistTypeStatus.ExtractionWorking:
+                        DistType_name = "抜取中";
+                        break;
                 }
             }
         }
