@@ -28,7 +28,7 @@ namespace LargeDist.Infranstructures
                 ) tt1";
 
             using var con = DbFactory.CreateConnection();
-            var entity = con.Query(sql, new { group = group.CdLargeGroup, dtDelivery })
+            var entity = con.Query(sql, new { group = group.CdLargeGroup, dtDelivery = dtDelivery.ToString("yyyyMMdd") })
                 .First();
             return new ItemProgress
             {
