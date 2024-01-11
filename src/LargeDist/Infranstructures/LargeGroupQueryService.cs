@@ -26,6 +26,7 @@ namespace LargeDist.Infranstructures
                         group by tt1.CD_LARGE_GROUP
                     ) ttt1
                     inner join TB_LARGE_GROUP ttt2 on ttt1.CD_LARGE_GROUP = ttt2.CD_LARGE_GROUP
+                        and @date >= ttt2.DT_TEKIYOKAISHI and @date < ttt2.DT_TEKIYOMUKO
                     order by CD_LARGE_GROUP";
 
                 return con.Query(sql, new { date = deliveryDate.ToString("yyyyMMdd") })
