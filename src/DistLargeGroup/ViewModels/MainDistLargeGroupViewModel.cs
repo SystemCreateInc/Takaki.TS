@@ -73,6 +73,14 @@ namespace DistLargeGroup.ViewModels
             {
                 Shain = ShainLoader.Get();
                 IsSelectedShain = Shain is not null;
+
+                // 社員情報取得失敗で終了
+                if (!IsSelectedShain)
+                {
+                    MessageDialog.Show(_dialogService, $"変更社員情報が選択されていません", "エラー");
+                    Application.Current.MainWindow.Close();
+                    return;
+                }
             }
             catch (Exception ex)
             {

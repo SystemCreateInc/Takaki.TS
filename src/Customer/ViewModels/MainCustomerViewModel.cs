@@ -108,7 +108,16 @@ namespace Customer.ViewModels
         private void SetShain()
         {
             _shainInfo = ShainLoader.Get();
+
             SelectedShain = _shainInfo is not null;
+
+            // 社員情報取得失敗で終了
+            if (!SelectedShain)
+            {
+                MessageDialog.Show(_dialogService, $"変更社員情報が選択されていません", "エラー");
+                Application.Current.MainWindow.Close();
+                return;
+            }
             Shain = $"{_shainInfo?.HenkoshaCode}  {_shainInfo?.HenkoshaName}";
         }
 
