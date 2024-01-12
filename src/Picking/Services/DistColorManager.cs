@@ -78,10 +78,10 @@ namespace Picking.Services
                          Ops = q.ops ?? 0,
                          Dops = q.dops ?? 0,
                          Drps = q.drps ?? 0,
-                         Ddps = q.dops ?? 0 - q.drps ?? 0,
+                         Ddps = q.ops - q.drps,
                          Order_shop_cnt = q.order_shop_cnt ?? 0,
                          Result_shop_cnt = q.result_shop_cnt ?? 0,
-                         Remain_shop_cnt = q.order_shop_cnt ?? 0 - q.result_shop_cnt ?? 0,
+                         Remain_shop_cnt = q.order_shop_cnt - q.result_shop_cnt,
                          Left_shop_cnt = q.leftshopcnt ?? 0,
                          Right_shop_cnt = q.rightshopcnt ?? 0,
                          Left_ps_cnt = q.leftpscnt ?? 0,
@@ -283,10 +283,10 @@ namespace Picking.Services
                          Ops = q.ops ?? 0,
                          Dops = q.dops ?? 0,
                          Drps = q.drps ?? 0,
-                         Ddps = q.dops ?? 0 - q.drps ?? 0,
+                         Ddps = q.dops - q.drps,
                          Order_shop_cnt = q.order_shop_cnt ?? 0,
                          Result_shop_cnt = q.result_shop_cnt ?? 0,
-                         Remain_shop_cnt = q.order_shop_cnt ?? 0 - q.result_shop_cnt ?? 0,
+                         Remain_shop_cnt = q.order_shop_cnt - q.result_shop_cnt,
                          Left_shop_cnt = q.leftshopcnt ?? 0,
                          Right_shop_cnt = q.rightshopcnt ?? 0,
                          Left_ps_cnt = q.leftpscnt ?? 0,
@@ -325,10 +325,10 @@ namespace Picking.Services
                              Ops = q.ops ?? 0,
                              Dops = q.dops ?? 0,
                              Drps = q.drps ?? 0,
-                             Ddps = q.dops ?? 0 - q.drps ?? 0,
+                             Ddps = q.dops - q.drps,
                              Order_shop_cnt = q.order_shop_cnt ?? 0,
                              Result_shop_cnt = q.result_shop_cnt ?? 0,
-                             Remain_shop_cnt = q.order_shop_cnt ?? 0 - q.result_shop_cnt ?? 0,
+                             Remain_shop_cnt = q.order_shop_cnt - q.result_shop_cnt,
                              Left_shop_cnt = q.leftshopcnt ?? 0,
                              Right_shop_cnt = q.rightshopcnt ?? 0,
                          }).ToList();
@@ -409,16 +409,20 @@ namespace Picking.Services
                             {
                                 foreach (var d in itemseq.Details)
                                 {
-                                    var sql = "update TB_DIST set NU_LRPS=@drps,NU_DRPS=@drps,FG_DSTATUS=@status,FG_LSTATUS=@status,CD_SHAIN_LARGE=NULL,NM_SHAIN_LARGE=NULL,DT_WORKDT_LARGE=NULL,CD_SHAIN_DIST=NULL,NM_SHAIN_DIST=NULL,DT_WORKDT_DIST=NULL,updatedAt=@updt where ID_DIST=@iddist";
-
-                                    con.Execute(sql,
-                                    new
+                                    // 押下したもののみ更新
+                                    if (d.TdUnitPushTm != null)
                                     {
-                                        status = (short)DbLib.Defs.Status.Ready,
-                                        drps = 0,
-                                        iddist = d.IdDist,
-                                        updt = DateTime.Now,
-                                    }, tr);
+                                        var sql = "update TB_DIST set NU_DRPS=@drps,FG_DSTATUS=@status,CD_SHAIN_DIST=NULL,NM_SHAIN_DIST=NULL,DT_WORKDT_DIST=NULL,updatedAt=@updt where ID_DIST=@iddist";
+
+                                        con.Execute(sql,
+                                        new
+                                        {
+                                            status = (short)DbLib.Defs.Status.Ready,
+                                            drps = 0,
+                                            iddist = d.IdDist,
+                                            updt = DateTime.Now,
+                                        }, tr);
+                                    }
                                 }
                             }
 

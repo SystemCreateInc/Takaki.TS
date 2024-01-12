@@ -22,5 +22,7 @@ namespace Picking.Defs
         [Description("検品中")]
         CheckWorking,
 
+        [Description("抜取中")]
+        ExtractionWorking,
     }
 }

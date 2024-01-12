@@ -254,12 +254,12 @@
 
                     <DataGridTextColumn Header="状態" Width="Auto" Binding="{Binding DistType_name}" IsReadOnly="True"/>
                     <DataGridTextColumn Header="担当者" Width="Auto" Binding="{Binding NmShain}" IsReadOnly="True"/>
-                    <DataGridTextColumn Header="仕分商品種類" Width="Auto" Binding="{Binding DisplayDistitem_cnt}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="仕分&#xa;商品種類" Width="Auto" Binding="{Binding DisplayDistitem_cnt}" IsReadOnly="True"/>
 
                     <DataGridTextColumn Header="予定数" Width="Auto" Binding="{Binding Display_Dops}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
                     <DataGridTextColumn Header="残数" Width="Auto" Binding="{Binding Display_Ddps}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
-                    <DataGridTextColumn Header="店舗予定" Width="Auto" Binding="{Binding DisplayOrderShop_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
-                    <DataGridTextColumn Header="店舗残" Width="Auto" Binding="{Binding DisplayRemainShop_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="店舗&#xa;予定" Width="Auto" Binding="{Binding DisplayOrderShop_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="店舗&#xa;残数" Width="Auto" Binding="{Binding DisplayRemainShop_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
                 </DataGrid.Columns>
             </DataGrid>
 

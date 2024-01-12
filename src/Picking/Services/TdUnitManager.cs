@@ -53,7 +53,7 @@ namespace Picking.Models
             // 開始時刻設定
             distcolor.DistStartTm = DateTime.Now;
             distcolor.Distitem_cnt = 0;
-            distcolor.DistType = distcolor.DistWorkMode == (int)DistWorkMode.Dist ? (int)DistTypeStatus.DistWorking : (int)DistTypeStatus.CheckWorking;
+            distcolor.DistType = distcolor.DistWorkMode == (int)DistWorkMode.Dist ? (int)DistTypeStatus.DistWorking : distcolor.DistWorkMode == (int)DistWorkMode.Check ? (int)DistTypeStatus.CheckWorking : (int)DistTypeStatus.ExtractionWorking;
 
             List<TdUnitDisplay> tmotdunit = new List<TdUnitDisplay>();
 
@@ -407,11 +407,13 @@ namespace Picking.Models
                                     else
                                     {
                                         // 検品
-                                        int ps = detail.Ddps;
+                                        int ps = detail.Dops;
                                         distcolor.Drps += ps;
                                         distcolor.Ddps -= ps;
                                         detail.Drps += ps;
                                         detail.Ddps -= ps;
+                                        detail.TdUnitPushTm = nowtm;
+                                        now.Status = (int)DbLib.Defs.Status.Completed;
                                     }
                                     itemseq.Remain_shop_cnt--;
                                     itemseq.Result_shop_cnt++;

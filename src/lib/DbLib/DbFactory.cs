@@ -1,4 +1,5 @@
 ﻿using DbLib.DbLogging;
+using LogLib;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
@@ -14,6 +15,8 @@ namespace DbLib
         }
         public IDbConnection CreateConnectionRaw(string? serverip)
         {
+            Syslog.Info("IDbConnection CreateConnectionRaw:Start");
+
             var config = new ConfigurationBuilder()
                 .AddJsonFile("common.json", true, true)
                 .Build();
@@ -28,7 +31,9 @@ namespace DbLib
             var factory = DbProviderFactories.GetFactory("System.Data.SqlClient");
             var con = new LoggedDbConnection(factory.CreateConnection(), new SyslogHook());
             con.ConnectionString = builder.ConnectionString;
+            Syslog.Info("IDbConnection CreateConnectionRaw:Open");
             con.Open();
+            Syslog.Info("IDbConnection CreateConnectionRaw:Exit");
             return con;
         }
 
