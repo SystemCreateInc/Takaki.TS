@@ -1,8 +1,5 @@
-﻿using DbLib.Defs;
+﻿using Dapper;
 using DbLib;
-using Dapper;
-using System.Windows.Controls.Primitives;
-using TakakiLib.Models;
 
 namespace SeatMapping.Models
 {
@@ -10,6 +7,14 @@ namespace SeatMapping.Models
     {
         public static List<Combo> Create()
         {
+            int blockBorder = 10;
+
+            using (var con = DbFactory.CreateConnection())
+            using (var tr = con.BeginTransaction())
+            {
+                blockBorder = new Settings(tr).GetInt("VirtualSeatBlockBorder", blockBorder);
+            }
+
             var sql = "SELECT"
                       + " CD_BLOCK "
                       + ",max(ST_TDUNIT_TYPE) ST_TDUNIT_TYPE"
@@ -19,13 +24,15 @@ namespace SeatMapping.Models
 
             using (var con = DbFactory.CreateConnection())
             {
+                // 仮想ブロック(指定数以上)を表示しない
                 return con.Query(sql, new { selectDate = DateTime.Now.ToString("yyyyMMdd") })
                     .Select((q, idx) => new Combo
                     {
                         Index = idx,
                         Id = q.CD_BLOCK,
                         UnitType = q.ST_TDUNIT_TYPE,
-                    }).ToList();
+                    }).Where(x => int.TryParse(x.Id, out int block) && block < blockBorder)
+                    .ToList();
             }
         }
     }
