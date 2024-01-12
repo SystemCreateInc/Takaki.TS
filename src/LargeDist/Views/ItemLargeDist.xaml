@@ -7,6 +7,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:Height="1000" d:Width="1000"
+             Loaded="UserControl_Loaded"
+             PreviewKeyDown="UserControl_PreviewKeyDown"
              prism:ViewModelLocator.AutoWireViewModel="True">
     <DockPanel>
         <Grid DockPanel.Dock="Top">
@@ -144,7 +146,7 @@
                     </Viewbox>
                 </StackPanel>
             </Button>
-            <Button Content="大仕分完了" Grid.Column="3"  Command="{Binding CompleteCommand}" />
+            <Button x:Name="CompleteButton" Content="大仕分完了" Grid.Column="3"  Command="{Binding CompleteCommand}" />
         </Grid>
 
         <Grid Margin="10">
