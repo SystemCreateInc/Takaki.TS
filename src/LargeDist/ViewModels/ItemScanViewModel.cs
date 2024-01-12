@@ -179,7 +179,7 @@ namespace LargeDist.ViewModels
 
         private void ScanCancelMode()
         {
-            var items = LargeDistQueryService.FindItem(LargeDistGroup!, Scancode, IsCancelMode);
+            var items = LargeDistQueryService.FindItem(DeliveryDate, LargeDistGroup!, Scancode, IsCancelMode);
             var item = SelectItem(items);
             if (item is null)
             {
@@ -201,7 +201,7 @@ namespace LargeDist.ViewModels
 
         private void ScanDistMode()
         {
-            var items = LargeDistQueryService.FindItem(LargeDistGroup!, Scancode, IsCancelMode);
+            var items = LargeDistQueryService.FindItem(DeliveryDate, LargeDistGroup!, Scancode, IsCancelMode);
             // スキャン済みの商品を除く
             items = items.Where(x => !ScanGrid.IsPushedItem(x)).ToArray();
             if (!items.Any())
