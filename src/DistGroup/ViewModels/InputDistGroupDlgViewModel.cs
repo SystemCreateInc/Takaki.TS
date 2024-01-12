@@ -430,6 +430,7 @@ namespace DistGroup.ViewModels
                 Batches = new ObservableCollection<BatchInfo>(GetJoinBatch(data.Batches, data.LargeDists));
                 Courses = new ObservableCollection<Course>(data.Courses);
 
+                NmDistGroup = data.NmDistGroup;
                 DtTorokuNichiji = data.CreatedAt;
                 DtKoshinNichiji = data.UpdatedAt;
                 CdShain = _shainInfo.HenkoshaCode;
