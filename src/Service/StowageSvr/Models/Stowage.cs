@@ -24,7 +24,6 @@ namespace StowageSvr.Models
         public string PersonName { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime? WorkDate { get; set; }
-        public bool IsChangeCount { get; set; }
 
         public TBSTOWAGEEntity Entity { get; set; }
 
@@ -66,16 +65,6 @@ namespace StowageSvr.Models
             FgSStatus = Status.Completed;
             UpdatedAt = DateTime.Now;
             WorkDate = DateTime.Now;
-            IsChangeCount = true;
-        }
-
-        // 数量変更無し、ステータスのみ更新
-        public void UpdateStatus()
-        {
-            FgSStatus = Status.Completed;
-            WorkDate = DateTime.Now;
-            UpdatedAt = DateTime.Now;
-            IsChangeCount = false;
         }
     }
 }

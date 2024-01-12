@@ -169,18 +169,10 @@ namespace StowageSvr
                     throw new Exception("更新対象の積付情報が見つかりません");
                 }
 
+                // 各箱毎に更新
                 foreach (var stowage in targetStowages)
                 {
-                    // 数量変更画面から確定
-                    if (request.IsQuantityChange)
-                    {
-                        stowage.Update(GetBoxCount(stowage.StBoxType, request));
-                    }
-                    else
-                    {
-                        stowage.UpdateStatus();
-                    }
-
+                    stowage.Update(GetBoxCount(stowage.StBoxType, request));
                     repo.UpdateStowageEntity(stowage);
                 }
                 repo.Commit();

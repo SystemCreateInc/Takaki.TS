@@ -75,28 +75,14 @@ namespace StowageSvr.Reporitories
 
         public void UpdateStowageEntity(Stowage stowage)
         {
-            // 数量変更
-            if (stowage.IsChangeCount)
-            {
-                var sql = Sql.Format<TBSTOWAGEEntity>($@"update {nameof(TBSTOWAGEEntity):T} set
+            var sql = Sql.Format<TBSTOWAGEEntity>($@"update {nameof(TBSTOWAGEEntity):T} set
                 {nameof(TBSTOWAGEEntity.NURBOXCNT):C} = {nameof(stowage.ResultBoxCount):P},
                 {nameof(TBSTOWAGEEntity.FGSSTATUS):C} = {nameof(stowage.FgSStatus):P},
                 {nameof(TBSTOWAGEEntity.DTWORKDTSTOWAGE):C} = {nameof(stowage.WorkDate):P},
                 {nameof(TBSTOWAGEEntity.UpdatedAt):C} = {nameof(stowage.UpdatedAt):P}
                 where {nameof(TBSTOWAGEEntity.IDSTOWAGE):C} = {nameof(stowage.Id):P}");
 
-                Connection.Execute(sql, new { stowage.ResultBoxCount, stowage.FgSStatus, stowage.WorkDate, stowage.UpdatedAt, stowage.Id }, Transaction);
-            }
-            else
-            {
-                var sql = Sql.Format<TBSTOWAGEEntity>($@"update {nameof(TBSTOWAGEEntity):T} set
-                {nameof(TBSTOWAGEEntity.FGSSTATUS):C} = {nameof(stowage.FgSStatus):P},
-                {nameof(TBSTOWAGEEntity.DTWORKDTSTOWAGE):C} = {nameof(stowage.WorkDate):P},
-                {nameof(TBSTOWAGEEntity.UpdatedAt):C} = {nameof(stowage.UpdatedAt):P}
-                where {nameof(TBSTOWAGEEntity.IDSTOWAGE):C} = {nameof(stowage.Id):P}");
-
-                Connection.Execute(sql, new { stowage.FgSStatus, stowage.WorkDate, stowage.UpdatedAt, stowage.Id }, Transaction);
-            }
+            Connection.Execute(sql, new { stowage.ResultBoxCount, stowage.FgSStatus, stowage.WorkDate, stowage.UpdatedAt, stowage.Id }, Transaction);
         }
     }
 }
