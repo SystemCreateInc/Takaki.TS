@@ -37,16 +37,17 @@ namespace LargeDist.Infranstructures
             };
         }
 
-        internal static IEnumerable<LargeDistItem> FindItem(LargeDistGroup group, string scancode, bool cancelMode)
+        internal static IEnumerable<LargeDistItem> FindItem(DateTime dtDelivery, LargeDistGroup group, string scancode, bool cancelMode)
         {
             Syslog.Debug($"FindItem: {group.NmLargeGroup} {scancode}");
 
             using var con = DbFactory.CreateConnection();
             var recs = con.Find<TBDISTEntity>(s => s
                 .Include<TBDISTMAPPINGEntity>(ss => ss.InnerJoin())
-                .Where($@"{nameof(TBDISTMAPPINGEntity.CDLARGEGROUP):of TB_DIST_MAPPING} = {nameof(group.CdLargeGroup):P}
+                .Where($@"{nameof(TBDISTEntity.DTDELIVERY):C} = @dtDelivery
+                        and {nameof(TBDISTMAPPINGEntity.CDLARGEGROUP):of TB_DIST_MAPPING} = {nameof(group.CdLargeGroup):P}
                         and ({nameof(TBDISTEntity.CDGTIN13):C} = {nameof(scancode):P} or {nameof(TBDISTEntity.CDHIMBAN):C} = {nameof(scancode):P})")
-                .WithParameters(new { group.CdLargeGroup, scancode }))
+                .WithParameters(new { dtDelivery = dtDelivery.ToString("yyyyMMdd"), group.CdLargeGroup, scancode }))
                 .Select(x => CreateDistItem(x))
                 .ToArray();
 
@@ -94,15 +95,15 @@ namespace LargeDist.Infranstructures
             return items;
         }
 
-        internal static IEnumerable<LargeDistItem> GetItemsByLargeDist(LargeDistGroup group, bool uncompletedOnly)
+        internal static IEnumerable<LargeDistItem> GetItemsByLargeDist(DateTime dtDelivery, LargeDistGroup group, bool uncompletedOnly)
         {
             using var con = DbFactory.CreateConnection();
             var extraWhere = uncompletedOnly ? " and NU_LRPS=0" : " and 0=0";
 
             var recs = con.Find<TBDISTEntity>(s => s
                 .Include<TBDISTMAPPINGEntity>(ss => ss.InnerJoin())
-                .Where($@"{nameof(TBDISTMAPPINGEntity.CDLARGEGROUP):of TB_DIST_MAPPING}={nameof(group.CdLargeGroup):P} {extraWhere}")
-                .WithParameters(new { group.CdLargeGroup }))
+                .Where($@"{nameof(TBDISTEntity.DTDELIVERY):C} = @dtDelivery and  {nameof(TBDISTMAPPINGEntity.CDLARGEGROUP):of TB_DIST_MAPPING}={nameof(group.CdLargeGroup):P} {extraWhere}")
+                .WithParameters(new { dtDelivery = dtDelivery.ToString("yyyyMMdd"), group.CdLargeGroup }))
                 .Select(x => CreateDistItem(x))
                 .ToArray();
 
