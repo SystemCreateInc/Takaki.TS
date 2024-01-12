@@ -25,7 +25,7 @@ namespace TakakiLib.Models
             {
                 var entity = con.Get(new TBPCEntity { IDPC = idpc }, null);
 
-                if (entity is null)
+                if (entity is null || entity.CDHENKOSHA is null)
                 {
                     return null;
                 }
