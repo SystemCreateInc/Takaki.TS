@@ -414,6 +414,27 @@ namespace Picking.ViewModels
                             ColorBtnName3 = rc.Parameters.GetValue<Shain>("Shain3");
                             ColorBtnName4 = rc.Parameters.GetValue<Shain>("Shain4");
                             ColorBtnName5 = rc.Parameters.GetValue<Shain>("Shain5");
+
+                            for (int idx = 0; idx < _distcolorinfo.DistColors?.Count(); idx++)
+                            {
+                                Shain ?syain = null;
+                                switch (idx)
+                                {
+                                    case 0: syain = ColorBtnName1; break;
+                                    case 1: syain = ColorBtnName2; break;
+                                    case 2: syain = ColorBtnName3; break;
+                                    case 3: syain = ColorBtnName4; break;
+                                    case 4: syain = ColorBtnName5; break;
+                                }
+                                if (syain != null)
+                                {
+                                    if (_distcolorinfo.DistColors[idx].IsWorking() == false)
+                                    {
+                                        _distcolorinfo.DistColors[idx].CdShain = syain.CdShain;
+                                        _distcolorinfo.DistColors[idx].NmShain = syain.NmShain;
+                                    }
+                                }
+                            }
                         }
                     });
             });

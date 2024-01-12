@@ -36,15 +36,15 @@
             </StackPanel>
         </StackPanel>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0" FocusManager.FocusedElement="{Binding ElementName=OKButton}">
             <StackPanel.Resources>
                 <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
                     <Setter Property="Width" Value="100" />
                 </Style>
             </StackPanel.Resources>
 
-            <Button Command="{Binding OKCommand}" Content="OK" Margin="0,0,30,0"/>
-            <Button Command="{Binding CancelCommand}" Content="キャンセル" />
+            <Button Command="{Binding OKCommand}" Content="OK" Margin="0,0,30,0" x:Name="OKButton" />
+            <Button Command="{Binding CancelCommand}" Content="キャンセル" IsCancel="True" />
         </StackPanel>
     </StackPanel>
 </UserControl>

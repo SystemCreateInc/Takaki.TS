@@ -7,11 +7,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:Height="500" d:Width="1000"
+             Loaded="UserControl_Loaded"
+             PreviewKeyDown="UserControl_PreviewKeyDown"
              prism:ViewModelLocator.AutoWireViewModel="True">
-    <UserControl.InputBindings>
-        <KeyBinding Key="F9" Command="{Binding StopItemCommand}" />
-    </UserControl.InputBindings>
-    
     <DockPanel>
         <Grid DockPanel.Dock="Top">
             <Grid.ColumnDefinitions>
@@ -22,11 +20,6 @@
             <ToolBarTray>
                 <ToolBar ClipToBounds="False">
                     <ToolBar.Resources>
-                        <Style TargetType="Button">
-                            <Setter Property="Focusable" Value="False"/>
-                            <Setter Property="Margin" Value="1"/>
-                            <Setter Property="Padding" Value="5"/>
-                        </Style>
                         <Style TargetType="materialDesign:PackIcon">
                             <Setter Property="VerticalContentAlignment" Value="Center"/>
                             <Setter Property="Margin" Value="1"/>
@@ -41,35 +34,35 @@
                         </Style>
                     </ToolBar.Resources>
 
-                    <Button Command="{Binding ItemListCommand}">
+                    <Button Command="{Binding ItemListCommand}" Focusable="False">
                         <StackPanel Orientation="Vertical">
                             <materialDesign:PackIcon Kind="ViewList"/>
                             <TextBlock Text="商品一覧"/>
                         </StackPanel>
                     </Button>
 
-                    <Button Command="{Binding ItemDescCommand}">
+                    <Button Command="{Binding ItemDescCommand}" Focusable="False">
                         <StackPanel Orientation="Vertical">
                             <materialDesign:PackIcon Kind="ViewList"/>
                             <TextBlock Text="商品明細"/>
                         </StackPanel>
                     </Button>
 
-                    <Button Command="{Binding ModifyQtyCommand}">
+                    <Button Command="{Binding ModifyQtyCommand}" Focusable="False">
                         <StackPanel Orientation="Vertical">
                             <materialDesign:PackIcon Kind="Edit"/>
                             <TextBlock Text="数量変更"/>
                         </StackPanel>
                     </Button>
 
-                    <Button Command="{Binding ModifyBoxUnitCommand}">
+                    <Button Command="{Binding ModifyBoxUnitCommand}" Focusable="False">
                         <StackPanel Orientation="Vertical">
                             <materialDesign:PackIcon Kind="EditBox"/>
                             <TextBlock Text="箱入数変更"/>
                         </StackPanel>
                     </Button>
                     <Separator/>
-                    <Button Command="{Binding StopItemCommand}">
+                    <Button Command="{Binding StopItemCommand}" Focusable="False">
                         <StackPanel Orientation="Vertical">
                             <materialDesign:PackIcon Kind="StopCircle"/>
                             <TextBlock Text="商品停止"/>
@@ -160,7 +153,7 @@
                     </Viewbox>
                 </StackPanel>
             </Button>
-            <Button Content="大仕分完了" Grid.Column="3"  Command="{Binding CompleteCommand}" />
+            <Button x:Name="CompleteButton" Content="大仕分完了" Grid.Column="3"  Command="{Binding CompleteCommand}" />
         </Grid>
 
         <Grid>
