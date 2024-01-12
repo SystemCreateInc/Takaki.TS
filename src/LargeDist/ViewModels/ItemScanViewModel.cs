@@ -128,6 +128,15 @@ namespace LargeDist.ViewModels
             ItemLargeDistCommand = new DelegateCommand(ItemLargeDist).ObservesCanExecute(() => IsScannedItem);
             EnterScancodeCommand = new DelegateCommand(EnterScancode);
             SlotPushCommand = new DelegateCommand<object>(SlotPush);
+
+            try
+            {
+                LargeLockRepository.UnlockAll();
+            }
+            catch (Exception ex)
+            {
+                WindowLib.Utils.MessageDialog.Show(_dialogService, ex.Message, "エラー");
+            }
         }
 
         private void SlotPush(object obj)
