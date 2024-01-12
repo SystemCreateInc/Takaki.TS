@@ -7,7 +7,8 @@
              xmlns:controls="clr-namespace:WindowLib.Views;assembly=WindowLib"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:b="clr-namespace:WindowLib.Behaviors;assembly=WindowLib"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Loaded="UserControl_Loaded">
 
     <UserControl.Resources>
         <ResourceDictionary>
