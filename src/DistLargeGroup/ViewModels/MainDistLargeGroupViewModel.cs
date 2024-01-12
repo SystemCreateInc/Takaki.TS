@@ -1,19 +1,11 @@
 ﻿using DistLargeGroup.Infranstructures;
-using DistLargeGroup.Models;
 using DistLargeGroup.Views;
 using LogLib;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
 using Prism.Services.Dialogs;
-using ReferenceLogLib;
-using ReferenceLogLib.Models;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using TakakiLib.Models;
 using WindowLib.Utils;
@@ -50,7 +42,7 @@ namespace DistLargeGroup.ViewModels
             set
             {
                 SetProperty(ref _currentDistLargeGroup, value);
-                CanEdit = CurrentDistLargeGroup != null;
+                CanEdit = CurrentDistLargeGroup != null && IsSelectedShain;
             }
         }
 
@@ -61,11 +53,18 @@ namespace DistLargeGroup.ViewModels
             set => SetProperty(ref _canEdit, value);
         }
 
+        private bool _isSelectedShain = false;
+        public bool IsSelectedShain
+        {
+            get => _isSelectedShain;
+            set => SetProperty(ref _isSelectedShain, value);
+        }
+
         public MainDistLargeGroupViewModel(IDialogService dialogService, IRegionManager regionManager)
         {
             _dialogService = dialogService;
 
-            AddCommand = new DelegateCommand(Add);
+            AddCommand = new DelegateCommand(Add).ObservesCanExecute(() => IsSelectedShain);
             EditCommand = new DelegateCommand(Edit).ObservesCanExecute(() => CanEdit);
             ExitCommand = new DelegateCommand(Exit);
             LeftDoubleClick = new DelegateCommand(Edit).ObservesCanExecute(() => CanEdit);
@@ -73,6 +72,7 @@ namespace DistLargeGroup.ViewModels
             try
             {
                 Shain = ShainLoader.Get();
+                IsSelectedShain = Shain is not null;
             }
             catch (Exception ex)
             {
