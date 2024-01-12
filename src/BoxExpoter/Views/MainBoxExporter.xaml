@@ -76,7 +76,11 @@
                 <DataGridTemplateColumn MinWidth="50">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
+                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}">
+                                <CheckBox.LayoutTransform>
+                                    <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                </CheckBox.LayoutTransform>
+                            </CheckBox>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -85,6 +89,7 @@
                 <DataGridTextColumn Header="仕分G名" Binding="{Binding NmDistGroup}"/>
                 <DataGridTextColumn Header="得意先数" Binding="{Binding CustomerCount}" ElementStyle="{StaticResource RightTextElement}"/>
                 <DataGridTextColumn Header="座席数" Binding="{Binding SeatCount}" ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="あふれ得意先数" Binding="{Binding OverCount}" ElementStyle="{StaticResource RightTextElement}"/>
                 <DataGridTextColumn Header="積付カウント済み" Binding="{Binding CompletedCount}" ElementStyle="{StaticResource RightTextElement}"/>
                 <DataGridTextColumn Header="積付カウント未作業" Binding="{Binding UncompletedCount}" ElementStyle="{StaticResource RightTextElement}"/>
             </DataGrid.Columns>
