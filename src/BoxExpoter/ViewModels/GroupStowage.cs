@@ -70,7 +70,14 @@ namespace BoxExpoter.ViewModels
             set => SetProperty(ref _uncompletedCount, value);
         }
 
-        public GroupStowage(int sendedCount, string cD_DIST_GROUP, string nM_DIST_GROUP, int customerCount, int seatCount, int uncompletedCount, int completedCount)
+        private int _overCount;
+        public int OverCount
+        {
+            get => _overCount;
+            set => SetProperty(ref _overCount, value);
+        }
+
+        public GroupStowage(int sendedCount, string cD_DIST_GROUP, string nM_DIST_GROUP, int customerCount, int seatCount, int uncompletedCount, int completedCount, int overCount)
         {
             IsSended = (completedCount + uncompletedCount) == sendedCount;
             IsSelected = uncompletedCount == 0;
@@ -81,6 +88,7 @@ namespace BoxExpoter.ViewModels
             SeatCount = seatCount;
             UncompletedCount = uncompletedCount;
             CompletedCount = completedCount;
+            OverCount = overCount;
         }
     }
 }
