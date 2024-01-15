@@ -8,11 +8,13 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="30.0.1" />
+    <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\LogLib\LogLib.csproj" />
     <ProjectReference Include="..\ProcessorLib\ProcessorLib.csproj" />
+    <ProjectReference Include="..\WindowLib\WindowLib.csproj" />
   </ItemGroup>
 
 </Project>
