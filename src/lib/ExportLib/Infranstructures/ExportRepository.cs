@@ -67,7 +67,8 @@ namespace ExportLib.Infranstructures
                 false,
                 null,
                 dao.Expdays,
-                Enumerable.Empty<TimeSpan>()
+                Enumerable.Empty<TimeSpan>(),
+                dao.Comment     // Hulftid
             );
         }
 

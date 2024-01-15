@@ -23,6 +23,7 @@ namespace ExportLib.Processors
 
         public DateTime? LastExportedTime { get; set; }
         public int? ExpDays { get; set; }
+        public string? HulftId { get; set; }
 
         public ExportProcessor(DataType dataType, string lockKey)
         {
@@ -32,7 +33,7 @@ namespace ExportLib.Processors
 
         public InterfaceFile GetInterfaceFile()
         {
-            return new InterfaceFile(Name, FileName, DataType, EnableInterval, EnableTiming, IntervalSec, ExpDays, SpecifiedTimings);
+            return new InterfaceFile(Name, FileName, DataType, EnableInterval, EnableTiming, IntervalSec, ExpDays, SpecifiedTimings, HulftId);
         }
 
         // 送信対象時間、待機時間後を対象にする

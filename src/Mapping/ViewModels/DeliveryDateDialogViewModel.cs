@@ -11,11 +11,8 @@ namespace Mapping.ViewModels
     {
         public DelegateCommand OKCommand { get; }
         public DelegateCommand CancelCommand { get; }
-#if DEBUG
-        private DateTime _date = new DateTime(2023,12,24,0,0,0);
-#else
         private DateTime _date = DateTime.Today + new TimeSpan(1, 0, 0, 0);
-#endif
+
         public DateTime Date
         {
             get => _date;

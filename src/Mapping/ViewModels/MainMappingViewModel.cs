@@ -470,10 +470,6 @@ namespace Mapping.ViewModels
                     using (var busy = new WaitCursor())
                     {
                         Mapping.Saves(SelectedDistGroupInfo.CdDistGroup);
-
-                        Mapping.Export(SelectedDistGroupInfo.CdDistGroup);
-
-                        Mapping.ExecHulft(SelectedDistGroupInfo.CdDistGroup);
                     }
                 }
 

@@ -17,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -36,6 +37,17 @@ namespace Mapping.Models
         {
             code = dist.CdHimban;
             name = NameLoader.GetHimban(dist.CdHimban);
+        }
+
+        public string code = string.Empty;
+        public string name = string.Empty;
+    }
+    public class ShopMst
+    {
+        public ShopMst(Dist dist)
+        {
+            code = dist.CdTokuisaki;
+            name = NameLoader.GetTokuisaki(dist.CdTokuisaki);
         }
 
         public string code = string.Empty;
@@ -393,11 +405,24 @@ namespace Mapping.Models
             List<ItemMst> itemmsts = new List<ItemMst>();
             foreach (var dist in distgroup.dists)
             {
-                if (itemmsts.Find(x => x.code == dist.CdHimban)==null)
+                if (itemmsts.Find(x => x.code == dist.CdHimban) == null)
                 {
                     itemmsts.Add(new ItemMst(dist));
                 }
             }
+
+            // distに得意先設定
+            List<ShopMst> shopmsts = new List<ShopMst>();
+            foreach (var dist in distgroup.dists)
+            {
+                if (shopmsts.Find(x => x.code == dist.CdTokuisaki) == null)
+                {
+                    shopmsts.Add(new ShopMst(dist));
+                }
+            }
+
+
+
 
             // dist,stowageに項目設定
             foreach (var dist in distgroup.dists)
@@ -414,10 +439,15 @@ namespace Mapping.Models
                     dist.Maguchi = mapping.Maguchi;
                     dist.CdBinSum = mapping.Tokuisakis.Count==1 ? (int)BinSumType.No : (int)BinSumType.Yes;
 
+                    if ("252963"== dist.CdTokuisaki)
+                    {
+                        int a =0;
+                    }
+
                     var shop = mapping.Tokuisakis.Find(x => x.CdSumTokuisaki == dist.CdSumTokuisaki);
                     if (shop != null)
                     {
-                        dist.NmTokuisaki = shop.NmTokuisaki;
+                        dist.NmTokuisaki = shopmsts.Where(x => x.code == dist.CdTokuisaki).Select(x => x.name).FirstOrDefault()??"";
                         dist.NmSumTokuisaki = shop.NmSumTokuisaki;
                         dist.CdShukkaBatch = shop.CdShukkaBatch;
                         dist.NmShukkaBatch = shop.NmShukkaBatch;
@@ -440,7 +470,7 @@ namespace Mapping.Models
                     var shop = mapping.Tokuisakis.Find(x => x.CdSumTokuisaki == stowage.CdSumTokuisaki);
                     if (shop != null)
                     {
-                        stowage.NmTokuisaki = shop.NmTokuisaki;
+                        stowage.NmTokuisaki = shopmsts.Where(x => x.code == stowage.CdTokuisaki).Select(x => x.name).FirstOrDefault() ?? "";
                         stowage.NmSumTokuisaki = shop.NmSumTokuisaki;
                         stowage.CdShukkaBatch = shop.CdShukkaBatch;
                         stowage.NmShukkaBatch = shop.NmShukkaBatch;
@@ -670,6 +700,12 @@ namespace Mapping.Models
                         }
                     }
 
+                    // 実績作成
+                    Export(cdDistGroup);
+
+                    // 実績をＨＵＬＦＴ送信
+                    ExecHulft(cdDistGroup);
+
                     tr.Commit();
                 }
                 catch (Exception)
@@ -684,9 +720,17 @@ namespace Mapping.Models
         {
             foreach (var d in lists)
             {
-                foreach (var shop in d.Tokuisakis)
+                if (d.Tokuisakis.Count==0)
                 {
-                    Syslog.Info($"{title} Seq[{d.MappingSeq}] CdShukkaBatch[{shop.CdShukkaBatch}] CdSumCourse[{shop.CdSumCourse}] CdSumRoute[{shop.CdSumRoute}] CdCourse[{shop.CdCourse}] CdRoute[{shop.CdRoute}] CdSumTokuisaki[{shop.CdSumTokuisaki}] CdTokuisaki[{shop.CdTokuisaki}] SmallBox[{d.SmallBox}] LargeBox[{d.LargeBox}] Block[{d.CdBlock}] Addr[{d.tdunitaddrcode}] 間口[{d.Maguchi}]");
+                    Syslog.Info($"{title} CdSumCourse[{d.CdSumCourse}] CdSumRoute[{d.CdSumRoute}] CdCourse[{d.CdCourse}] CdRoute[{d.CdRoute}] CdSumTokuisaki[{d.CdSumTokuisaki}] CdTokuisaki[{d.CdTokuisaki}] Block[{d.CdBlock}] Addr[{d.tdunitaddrcode}] 間口[{d.Maguchi}]");
+                }
+                else
+                {
+
+                    foreach (var shop in d.Tokuisakis)
+                    {
+                        Syslog.Info($"{title} Seq[{d.MappingSeq}] CdShukkaBatch[{shop.CdShukkaBatch}] CdSumCourse[{shop.CdSumCourse}] CdSumRoute[{shop.CdSumRoute}] CdCourse[{shop.CdCourse}] CdRoute[{shop.CdRoute}] CdSumTokuisaki[{shop.CdSumTokuisaki}] CdTokuisaki[{shop.CdTokuisaki}] SmallBox[{d.SmallBox}] LargeBox[{d.LargeBox}] Block[{d.CdBlock}] Addr[{d.tdunitaddrcode}] 間口[{d.Maguchi}]");
+                    }
                 }
             }
         }
@@ -732,8 +776,25 @@ namespace Mapping.Models
 
         public void ExecHulft(string cdDistGroup)
         {
-            //
-            // C:\HULFT Family\hulft7\binnt\utlsend - f S2AOT001 - sync
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("common.json", true, true)
+                .Build();
+
+            var hulftpath = config.GetSection("hulft")?["path"] ?? "";
+
+            string hulftid = GetExportHulftId();
+            if (hulftid == "" || hulftpath=="")
+            {
+                Syslog.Warn($"ExecHulft:Skip");
+                return;
+            }
+
+            var app = new ProcessStartInfo();
+            app.FileName = hulftpath;
+            app.Arguments = hulftid;
+
+            Syslog.Warn($"ExecHulft:Exec{app.FileName} {app.Arguments}");
+            Process.Start(app);
 
             foreach (var distgroup in distgroups)
             {
@@ -758,6 +819,18 @@ namespace Mapping.Models
             }
             return "";
         }
+        public string GetExportHulftId()
+        {
+            using (var repo = new ExportRepository())
+            {
+                if (repo.GetInterfaceFile(DbLib.Defs.DataType.PickResult) is InterfaceFile interfaceFile)
+                {
+                    return interfaceFile.HulftId??"";
+                }
+            }
+            return "";
+        }
+
 
         // データ初期化
         public void ClearDatas(string dtdelivery, List<string> seldistgroups)
