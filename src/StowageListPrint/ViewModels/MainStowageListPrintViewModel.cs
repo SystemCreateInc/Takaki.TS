@@ -163,7 +163,7 @@ namespace StowageListPrint.ViewModels
 
                 try
                 {
-                    CsvFileService.Save(StowageListPrints.ToList(), $"{nameof(MainStowageListPrint)}CSVPath", "積付表発行");
+                    CsvFileService.Save(obj, $"{nameof(MainStowageListPrint)}CSVPath", "積付表発行");
                 }
                 catch (Exception e)
                 {

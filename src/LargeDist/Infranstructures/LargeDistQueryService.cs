@@ -37,25 +37,21 @@ namespace LargeDist.Infranstructures
             };
         }
 
-        internal static IEnumerable<LargeDistItem> FindItem(LargeDistGroup group, string scancode, bool cancelMode)
+        internal static IEnumerable<LargeDistItem> FindItem(DateTime dtDelivery, LargeDistGroup group, string scancode, bool cancelMode)
         {
             Syslog.Debug($"FindItem: {group.NmLargeGroup} {scancode}");
 
             using var con = DbFactory.CreateConnection();
             var recs = con.Find<TBDISTEntity>(s => s
                 .Include<TBDISTMAPPINGEntity>(ss => ss.InnerJoin())
-                .Where($@"{nameof(TBDISTMAPPINGEntity.CDLARGEGROUP):of TB_DIST_MAPPING} = {nameof(group.CdLargeGroup):P}
+                .Where($@"{nameof(TBDISTEntity.DTDELIVERY):C} = @dtDelivery
+                        and {nameof(TBDISTMAPPINGEntity.CDLARGEGROUP):of TB_DIST_MAPPING} = {nameof(group.CdLargeGroup):P}
                         and ({nameof(TBDISTEntity.CDGTIN13):C} = {nameof(scancode):P} or {nameof(TBDISTEntity.CDHIMBAN):C} = {nameof(scancode):P})")
-                .WithParameters(new { group.CdLargeGroup, scancode }))
+                .WithParameters(new { dtDelivery = dtDelivery.ToString("yyyyMMdd"), group.CdLargeGroup, scancode }))
                 .Select(x => CreateDistItem(x))
                 .ToArray();
 
-            var items = recs
-                .GroupBy(x => new LargeDistItemKey(group.CdLargeGroup, x.CdHimban, x.CdJuchuBin, x.CdShukkaBatch),
-                    (key, value) => new LargeDistItem(group, value))
-                .ToArray();
-
-            if (items.Length == 0)
+            if (recs.Length == 0)
             {
                 Syslog.Debug($"Not found");
                 throw new Exception("商品が見つかりませんでした");
@@ -64,24 +60,36 @@ namespace LargeDist.Infranstructures
             if (cancelMode)
             {
                 // 配分が始まった商品はキャンセルできない
-                if (items.Any(x => x.DistStatus != Status.Ready))
+                if (recs.Any(x => x.FgDStatus != Status.Ready))
                 {
                     Syslog.Debug($"already processed picking");
                     throw new Exception("仕分済みのため取り消しできません");
                 }
 
                 // キャンセルモードは実績のあるもの
-                items = items.Where(x => x.Result.Total > 0).ToArray();
+                var items = recs
+                    .Where(x => x.ResultPiece > 0)
+                    .GroupBy(x => new LargeDistItemKey(group.CdLargeGroup, x.CdHimban),
+                        (key, value) => new LargeDistItem(group, value))
+                    .ToArray();
 
                 if (items.Length == 0)
                 {
                     Syslog.Debug($"all item not completed");
                     throw new Exception("未処理の商品です");
                 }
+
+                return items;
             }
             else
             {
                 // 配分モードは残りのあるもの
+                var items = recs
+                    .Where(x => x.RemainPiece > 0)
+                    .GroupBy(x => new LargeDistItemKey(group.CdLargeGroup, x.CdHimban),
+                        (key, value) => new LargeDistItem(group, value))
+                    .ToArray();
+
                 items = items.Where(x => x.Remain.Total > 0).ToArray();
 
                 if (items.Length == 0)
@@ -89,25 +97,25 @@ namespace LargeDist.Infranstructures
                     Syslog.Debug($"all item completed");
                     throw new Exception("大仕分は終了しています");
                 }
-            }
 
-            return items;
+                return items;
+            }
         }
 
-        internal static IEnumerable<LargeDistItem> GetItemsByLargeDist(LargeDistGroup group, bool uncompletedOnly)
+        internal static IEnumerable<LargeDistItem> GetItemsByLargeDist(DateTime dtDelivery, LargeDistGroup group, bool uncompletedOnly)
         {
             using var con = DbFactory.CreateConnection();
             var extraWhere = uncompletedOnly ? " and NU_LRPS=0" : " and 0=0";
 
             var recs = con.Find<TBDISTEntity>(s => s
                 .Include<TBDISTMAPPINGEntity>(ss => ss.InnerJoin())
-                .Where($@"{nameof(TBDISTMAPPINGEntity.CDLARGEGROUP):of TB_DIST_MAPPING}={nameof(group.CdLargeGroup):P} {extraWhere}")
-                .WithParameters(new { group.CdLargeGroup }))
+                .Where($@"{nameof(TBDISTEntity.DTDELIVERY):C} = @dtDelivery and  {nameof(TBDISTMAPPINGEntity.CDLARGEGROUP):of TB_DIST_MAPPING}={nameof(group.CdLargeGroup):P} {extraWhere}")
+                .WithParameters(new { dtDelivery = dtDelivery.ToString("yyyyMMdd"), group.CdLargeGroup }))
                 .Select(x => CreateDistItem(x))
                 .ToArray();
 
             return recs
-                .GroupBy(x => new LargeDistItemKey(group.CdLargeGroup, x.CdHimban, x.CdJuchuBin, x.CdShukkaBatch))
+                .GroupBy(x => new LargeDistItemKey(group.CdLargeGroup, x.CdHimban))
                 .Select(x => new LargeDistItem(group, x))
                 .OrderBy(x => x.Status)
                 .ThenBy(x => x.DistStatus)

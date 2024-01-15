@@ -24,5 +24,18 @@ namespace Mapping.Views
         {
             InitializeComponent();
         }
+        private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            // 毎回スクロールバーを先頭へ移動
+            var border = VisualTreeHelper.GetChild(gridovertokuisaki, 0) as Decorator;
+            if (border != null)
+            {
+                var scrollViewer = border.Child as ScrollViewer;
+                if (scrollViewer != null)
+                {
+                    scrollViewer.ScrollToTop();
+                }
+            }
+        }
     }
 }

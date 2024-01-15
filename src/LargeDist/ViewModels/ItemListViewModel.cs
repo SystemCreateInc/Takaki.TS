@@ -85,7 +85,7 @@ namespace LargeDist.ViewModels
         {
             try
             {
-                var items = LargeDistQueryService.GetItemsByLargeDist(LargeDistGroup!, !IsFilterAll);
+                var items = LargeDistQueryService.GetItemsByLargeDist(DeliveryDate, LargeDistGroup!, !IsFilterAll);
                 Items = new(SetScanOrder(items));
             }
             catch (Exception ex)

@@ -87,7 +87,7 @@ namespace WorkReport.ViewModels
 
                 try
                 {
-                    CsvFileService.Save(WorkReports.ToList(), $"{nameof(MainWorkReport)}CSVPath", "作業報告書発行");
+                    CsvFileService.Save(obj, $"{nameof(MainWorkReport)}CSVPath", "作業報告書発行");
                 }
                 catch (Exception e)
                 {

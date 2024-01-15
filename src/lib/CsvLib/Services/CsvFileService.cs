@@ -1,16 +1,22 @@
 ﻿using CsvLib.Models;
 using LogLib;
+using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Windows.Forms;
+using System.Windows.Controls;
 
 namespace CsvLib.Services
 {
     public static class CsvFileService
     {
         // 指定PathCSV保存
-        public static void Save<T>(List<T> datas, string configName = "", string defaultFileName = "")
+        public static void Save(object obj, string configName = "", string defaultFileName = "")
         {
+            var dataGrid = obj as DataGrid;
+            if (dataGrid == null)
+            {
+                throw new ArgumentNullException(nameof(dataGrid));
+            }
+
             var needConfig = !string.IsNullOrEmpty(configName);
             var defaultPath = string.Empty;
 
@@ -29,7 +35,7 @@ namespace CsvLib.Services
             }
 
             // CSV保存
-            CsvManager.Create<T>(datas, savePath);
+            CsvManager.Create(dataGrid, savePath);
             Syslog.Debug($"CsvManager SelectSavePath:{savePath}");
 
             // 初期Path保存
