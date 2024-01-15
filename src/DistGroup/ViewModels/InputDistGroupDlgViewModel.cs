@@ -578,7 +578,7 @@ namespace DistGroup.ViewModels
                 return false;
             }
 
-            if (BinSumType == BinSumType.No && Batches.Count > 1)
+            if (BinSumType == BinSumType.No && _inputedBatchs.Count() > 1)
             {
                 MessageDialog.Show(_dialogService, "配送便集計をしない場合は、出荷バッチは１バッチだけにして下さい。", "入力エラー");
                 return false;
