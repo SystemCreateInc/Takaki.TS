@@ -10,8 +10,6 @@ using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using SearchBoxLib;
 using SearchBoxLib.Models;
-using SelDistGroupLib.Models;
-using SelDistGroupLib.Services.Auth;
 using StowageListPrint.Models;
 using StowageListPrint.Reports;
 using StowageListPrint.Views;
@@ -195,14 +193,21 @@ namespace StowageListPrint.ViewModels
 
         private bool SelectDistGroup()
         {
-            if (AuthenticateService.AuthDistGroupDialog(_dialogService) is DistGroup distGroup)
+            IDialogResult? result = null;
+            _dialogService.ShowDialog(
+                nameof(SelectDistGroupDlg),
+                null,
+                r => result = r);
+
+            if (result?.Result != ButtonResult.OK)
             {
-                CdDistGroup = distGroup.CdDistGroup;
-                NmDistGroup = distGroup.NmDistGroup;
-                DtDelivery = distGroup.DtDelivery.ToString("yyyyMMdd");
-                return true;
+                return false;
             }
-            return false;
+
+            CdDistGroup = result.Parameters.GetValue<string>("CdDistGroup");
+            NmDistGroup = result.Parameters.GetValue<string>("NmDistGroup");
+            DtDelivery = result.Parameters.GetValue<string>("DtDelivery");
+            return true;
         }
 
         private void LoadDatas()
