@@ -61,7 +61,8 @@ namespace StowageSvr
                 repo.Commit();
                 return new GetDistGroupListResponse
                 {
-                    DistGroups = stowageEntitys.SelectMany(x => x.TBSTOWAGEMAPPING!).GroupBy(x => x.CDDISTGROUP).Where(x => !x.Key.IsNullOrEmpty()).Select(x => new ListRow
+                    DistGroups = stowageEntitys.SelectMany(x => x.TBSTOWAGEMAPPING!).GroupBy(x => x.CDDISTGROUP)
+                    .Where(x => !x.Key.IsNullOrEmpty()).OrderBy(x => x.Key).Select(x => new ListRow
                     {
                         Code = x.Key ?? string.Empty,
                         Name = x.Max(x => x.NMDISTGROUP) ?? string.Empty,

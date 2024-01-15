@@ -51,12 +51,7 @@ namespace LargeDist.Infranstructures
                 .Select(x => CreateDistItem(x))
                 .ToArray();
 
-            var items = recs
-                .GroupBy(x => new LargeDistItemKey(group.CdLargeGroup, x.CdHimban, x.CdJuchuBin, x.CdShukkaBatch),
-                    (key, value) => new LargeDistItem(group, value))
-                .ToArray();
-
-            if (items.Length == 0)
+            if (recs.Length == 0)
             {
                 Syslog.Debug($"Not found");
                 throw new Exception("商品が見つかりませんでした");
@@ -65,24 +60,36 @@ namespace LargeDist.Infranstructures
             if (cancelMode)
             {
                 // 配分が始まった商品はキャンセルできない
-                if (items.Any(x => x.DistStatus != Status.Ready))
+                if (recs.Any(x => x.FgDStatus != Status.Ready))
                 {
                     Syslog.Debug($"already processed picking");
                     throw new Exception("仕分済みのため取り消しできません");
                 }
 
                 // キャンセルモードは実績のあるもの
-                items = items.Where(x => x.Result.Total > 0).ToArray();
+                var items = recs
+                    .Where(x => x.ResultPiece > 0)
+                    .GroupBy(x => new LargeDistItemKey(group.CdLargeGroup, x.CdHimban),
+                        (key, value) => new LargeDistItem(group, value))
+                    .ToArray();
 
                 if (items.Length == 0)
                 {
                     Syslog.Debug($"all item not completed");
                     throw new Exception("未処理の商品です");
                 }
+
+                return items;
             }
             else
             {
                 // 配分モードは残りのあるもの
+                var items = recs
+                    .Where(x => x.RemainPiece > 0)
+                    .GroupBy(x => new LargeDistItemKey(group.CdLargeGroup, x.CdHimban),
+                        (key, value) => new LargeDistItem(group, value))
+                    .ToArray();
+
                 items = items.Where(x => x.Remain.Total > 0).ToArray();
 
                 if (items.Length == 0)
@@ -90,9 +97,9 @@ namespace LargeDist.Infranstructures
                     Syslog.Debug($"all item completed");
                     throw new Exception("大仕分は終了しています");
                 }
-            }
 
-            return items;
+                return items;
+            }
         }
 
         internal static IEnumerable<LargeDistItem> GetItemsByLargeDist(DateTime dtDelivery, LargeDistGroup group, bool uncompletedOnly)
@@ -108,7 +115,7 @@ namespace LargeDist.Infranstructures
                 .ToArray();
 
             return recs
-                .GroupBy(x => new LargeDistItemKey(group.CdLargeGroup, x.CdHimban, x.CdJuchuBin, x.CdShukkaBatch))
+                .GroupBy(x => new LargeDistItemKey(group.CdLargeGroup, x.CdHimban))
                 .Select(x => new LargeDistItem(group, x))
                 .OrderBy(x => x.Status)
                 .ThenBy(x => x.DistStatus)
