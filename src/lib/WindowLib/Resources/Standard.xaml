@@ -119,6 +119,7 @@
         <Setter Property="SelectionMode" Value="Single"/>
         <Setter Property="SelectionUnit" Value="FullRow"/>
         <Setter Property="GridLinesVisibility" Value="All"/>
+        <Setter Property="CanUserReorderColumns" Value="False"/>
     </Style>
 
     <!-- データグリッドヘッダー背景 -->
