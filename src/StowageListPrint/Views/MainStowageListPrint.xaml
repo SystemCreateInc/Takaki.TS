@@ -115,6 +115,7 @@
                 <DataGridTextColumn Header="薄箱" Binding="{Binding DispSmallBoxPs}" ElementStyle="{StaticResource RightTextElement}"/>
                 <DataGridTextColumn Header="青箱" Binding="{Binding DispBlueBoxPs}" ElementStyle="{StaticResource RightTextElement}"/>
                 <DataGridTextColumn Header="その他" Binding="{Binding DispEtcBoxPs}" ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="作業日時" Binding="{Binding DtWorkdtStowage, StringFormat=yyyy/MM/dd HH:mm:ss}"/>
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>
