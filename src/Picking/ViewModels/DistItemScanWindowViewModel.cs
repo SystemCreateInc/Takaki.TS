@@ -18,6 +18,7 @@ using System.Windows;
 using System.Windows.Media;
 using TdDpsLib.Models;
 using WindowLib.Utils;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Picking.ViewModels
 {
@@ -327,6 +328,13 @@ namespace Picking.ViewModels
 
                     if (Scancode.Count()==0)
                         return;
+
+                    // ９桁未満は０埋めし９桁へ変更
+                    if (Scancode.Count() < 9)
+                    {
+                        Scancode = Scancode.PadLeft(9, '0');
+                    }
+ 
 
                     if (InSeq == DistBase.ITEMMAX)
                     {
