@@ -86,7 +86,7 @@ namespace LargeDist.Models
             get
             {
                 var item = Items.First();
-                return new LargeDistItemKey(Group.CdLargeGroup, item.CdHimban, item.CdJuchuBin, item.CdShukkaBatch);
+                return new LargeDistItemKey(Group.CdLargeGroup, item.CdHimban);
             }
         }
 
