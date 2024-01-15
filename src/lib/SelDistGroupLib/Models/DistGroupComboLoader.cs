@@ -1,12 +1,7 @@
-﻿using Azure;
-using Dapper.FastCrud;
+﻿using Dapper;
 using DbLib;
-using DbLib.DbEntities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SelDistGroupLib.Models
 {
@@ -16,15 +11,22 @@ namespace SelDistGroupLib.Models
         {
             using (var con = DbFactory.CreateConnection())
             {
-                return con.Find<TBDISTGROUPEntity>(s => s
-                    .Where($"{nameof(TBDISTGROUPEntity.DTTEKIYOKAISHI):C} <= @DT_DELIVERY and @DT_DELIVERY < {nameof(TBDISTGROUPEntity.DTTEKIYOMUKO):C}")
-                    .WithParameters(new { DT_DELIVERY })
-                    .OrderBy($"{nameof(TBDISTGROUPEntity.CDDISTGROUP)}"))
-                    .Select((x, index) => new DistGroup
+                var sql = "select "
+                    + "CD_DIST_GROUP, "
+                    + "NM_DIST_GROUP, "
+                    + "CD_KYOTEN "
+                    + "from TB_DIST "
+                    + "inner join TB_DIST_MAPPING on TB_DIST.ID_DIST = TB_DIST_MAPPING.ID_DIST "
+                    + "where DT_DELIVERY = @DT_DELIVERY "
+                    + "group by CD_DIST_GROUP, NM_DIST_GROUP, CD_KYOTEN "
+                    + "order by CD_DIST_GROUP";
+
+                return con.Query(sql, new { DT_DELIVERY })
+                    .Select(q => new DistGroup
                     {
-                        CdDistGroup = x.CDDISTGROUP,
-                        NmDistGroup = x.NMDISTGROUP,
-                        CdKyoten = x.CDKYOTEN,
+                        CdDistGroup = q.CD_DIST_GROUP,
+                        NmDistGroup = q.NM_DIST_GROUP,
+                        CdKyoten = q.CD_KYOTEN
                     }).ToList();
             }
         }

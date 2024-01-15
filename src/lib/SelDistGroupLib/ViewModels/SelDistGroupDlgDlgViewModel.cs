@@ -1,6 +1,4 @@
-﻿using Azure;
-using ImTools;
-using LogLib;
+﻿using LogLib;
 using Microsoft.Extensions.Configuration;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -9,7 +7,6 @@ using SelDistGroupLib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 
 namespace SelDistGroupLib.ViewModels
 {
@@ -35,6 +32,18 @@ namespace SelDistGroupLib.ViewModels
             set => SetProperty(ref _distgroup, value);
         }
 
+        private int _distGroupIndex;
+        public int DistGroupIndex
+        {
+            get => _distGroupIndex;
+            set
+            {
+                SetProperty(ref _distGroupIndex, value);
+                DistGroup = DistGroupIndex < 0 || !DistGroupCombo.Any() ? null : DistGroupCombo[DistGroupIndex];
+                CanOK = DistGroupCombo.Any();
+            }
+        }
+
         private IList<DistGroup> _distgroupCombo = Array.Empty<DistGroup>();
         public IList<DistGroup> DistGroupCombo
         {
@@ -58,6 +67,13 @@ namespace SelDistGroupLib.ViewModels
         {
             get => _errorMessage;
             set => SetProperty(ref _errorMessage, value);
+        }
+
+        private bool _canOK = false;
+        public bool CanOK
+        {
+            get => _canOK;
+            set => SetProperty(ref _canOK, value);
         }
 
 
@@ -90,7 +106,7 @@ namespace SelDistGroupLib.ViewModels
                     { "DistGroup", DistGroup },
                     { "DtDelivery", DtDelivery },
                 }));
-            });
+            }).ObservesCanExecute(() => CanOK);
 
             Enter = new DelegateCommand(() =>
             {
@@ -131,12 +147,9 @@ namespace SelDistGroupLib.ViewModels
         {
             try
             {
-                var cddistgroup = DistGroup?.CdDistGroup; ;
-
+                DistGroupIndex = -1;
                 DistGroupCombo = DistGroupComboLoader.GetDistGroupCombos(DtDelivery.ToString("yyyyMMdd"));
-
-                DistGroup = cddistgroup == null ? DistGroupCombo.FirstOrDefault()
-                    : DistGroupCombo.FindFirst(x => x.CdDistGroup == cddistgroup);
+                DistGroupIndex = 0;
             }
             catch (Exception e)
             {

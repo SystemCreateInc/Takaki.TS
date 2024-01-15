@@ -3,7 +3,6 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:prism="http://prismlibrary.com/"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mah="http://metro.mahapps.com/winfx/xaml/shared"
              xmlns:b="clr-namespace:WindowLib.Behaviors;assembly=WindowLib"
              xmlns:models="clr-namespace:WindowLib.Models;assembly=WindowLib"
              prism:ViewModelLocator.AutoWireViewModel="True"
@@ -18,6 +17,11 @@
 
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Margin="5">
+            <StackPanel Orientation="Horizontal" Margin="20,5,5,5">
+                <TextBlock Text="納品日:" VerticalAlignment="Center" TextAlignment="Center" Width="110" Margin="3"/>
+                <models:DatePickerEx x:Name="DtDelivery" SelectedDate="{Binding DtDelivery}" PreviewKeyDown="DatePicker_PreviewKeyDown" Language="ja"/>
+            </StackPanel>
+
             <Grid Margin="0" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="6*"/>
@@ -27,7 +31,7 @@
 
                 <TextBlock Grid.Column="0" Text="仕分グループ:" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" 
                            Width="140" Margin="3"/>
-                <ComboBox x:Name="DistGroup" Grid.Column="1" SelectedItem="{Binding DistGroup}" ItemsSource="{Binding DistGroupCombo}" Margin="3" 
+                <ComboBox Grid.Column="1" SelectedItem="{Binding DistGroup}" ItemsSource="{Binding DistGroupCombo}" Margin="3" 
                           IsEditable="True" TextSearch.TextPath="CdDistGroup" b:ComboBoxBehavior.MaxLength="5">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
@@ -42,13 +46,7 @@
                 <TextBlock Grid.Column="2" Text="{Binding DistGroup.NmDistGroup}" VerticalAlignment="Center" Margin="20 0 0 0" />
             </Grid>
 
-            <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="20,5,5,5" >
-                <TextBlock Grid.Column="0" Text="納品日:" VerticalAlignment="Center" TextAlignment="Center" 
-                           Width="110" Margin="3"/>
-                <models:DatePickerEx Grid.Column="1" SelectedDate="{Binding DtDelivery}" PreviewKeyDown="DatePicker_PreviewKeyDown" Language="ja"/>
-            </StackPanel>
-
-            <TextBlock Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Center">

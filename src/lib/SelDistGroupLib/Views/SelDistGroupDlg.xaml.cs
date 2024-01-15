@@ -1,6 +1,4 @@
-﻿using LogLib;
-using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -29,7 +27,7 @@ namespace SelDistGroupLib.Views
 
         private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            DistGroup.Focus();
+            DtDelivery.Focus();
         }
 
         private void DatePicker_PreviewKeyDown(object sender, KeyEventArgs e)
