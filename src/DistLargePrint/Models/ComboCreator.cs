@@ -1,6 +1,6 @@
-﻿using DbLib.DbEntities;
-using DbLib;
-using Dapper.FastCrud;
+﻿using DbLib;
+using DbLib.Defs;
+using Dapper;
 
 namespace DistLargePrint.Models
 {
@@ -10,14 +10,22 @@ namespace DistLargePrint.Models
         {
             using (var con = DbFactory.CreateConnection())
             {
-                return con.Find<TBLARGEGROUPEntity>(s => s
-                .Where($"{nameof(TBLARGEGROUPEntity.DTTEKIYOKAISHI):C}<={nameof(deliveryDate):P} and {nameof(deliveryDate):P}<{nameof(TBLARGEGROUPEntity.DTTEKIYOMUKO):C}")
-                .OrderBy($"{nameof(TBLARGEGROUPEntity.CDLARGEGROUP)}")
-                .WithParameters(new { deliveryDate }))
+                var sql = "select "
+                    + "DT_DELIVERY, "
+                    + "CD_LARGE_GROUP, "
+                    + "NM_LARGE_GROUP "
+                    + "from TB_DIST "
+                    + "inner join TB_DIST_MAPPING on TB_DIST.ID_DIST = TB_DIST_MAPPING.ID_DIST "
+                    + "where DT_DELIVERY = @deliveryDate and FG_MAPSTATUS = @mapStatus "
+                    + "group by DT_DELIVERY, CD_LARGE_GROUP, NM_LARGE_GROUP "
+                    + "order by CD_LARGE_GROUP";
+
+                return con.Query(sql, new { deliveryDate, mapStatus = MapStatus.Completed })
                     .Select((value, index) => new Combo
                     {
                         Index = index,
-                        Name = value.CDLARGEGROUP,
+                        CdLargeGroup = value.CD_LARGE_GROUP,
+                        NmLargeGroup = value.NM_LARGE_GROUP,
                     }).ToList();
             }
         }

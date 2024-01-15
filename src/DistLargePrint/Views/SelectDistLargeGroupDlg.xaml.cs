@@ -27,7 +27,7 @@ namespace DistLargePrint.Views
 
         private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            LargeDistGroupCombo.Focus();
+            DeliveryDate.Focus();
         }
 
         private void DatePicker_PreviewKeyDown(object sender, KeyEventArgs e)
