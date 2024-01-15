@@ -4,14 +4,14 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using WindowLib.Utils;
 
-namespace DistLargePrint.Views
+namespace StowageListPrint.Views
 {
     /// <summary>
-    /// SelectDistLargeGroupDlg.xaml の相互作用ロジック
+    /// SelectDistGroupDlg.xaml の相互作用ロジック
     /// </summary>
-    public partial class SelectDistLargeGroupDlg : UserControl
+    public partial class SelectDistGroupDlg : UserControl
     {
-        public SelectDistLargeGroupDlg()
+        public SelectDistGroupDlg()
         {
             InitializeComponent();
 
@@ -27,7 +27,7 @@ namespace DistLargePrint.Views
 
         private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            DeliveryDate.Focus();
+            DtDelivery.Focus();
         }
 
         private void DatePicker_PreviewKeyDown(object sender, KeyEventArgs e)

@@ -41,6 +41,11 @@ namespace LargeDist.Infranstructures
         {
             Syslog.Debug($"FindItem: {group.NmLargeGroup} {scancode}");
 
+            if (scancode.Length < 9)
+            {
+                scancode = scancode.PadLeft(9, '0');
+            }
+
             using var con = DbFactory.CreateConnection();
             var recs = con.Find<TBDISTEntity>(s => s
                 .Include<TBDISTMAPPINGEntity>(ss => ss.InnerJoin())

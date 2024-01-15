@@ -5,6 +5,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              prism:ViewModelLocator.AutoWireViewModel="True"
              HorizontalAlignment="Center" VerticalAlignment="Center"
+             xmlns:b="clr-namespace:WindowLib.Behaviors;assembly=WindowLib"
              xmlns:models="clr-namespace:WindowLib.Models;assembly=WindowLib"
              Loaded="UserControl_Loaded" Width="380">
 
@@ -13,18 +14,28 @@
     </prism:Dialog.WindowStyle>
 
     <DockPanel>
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5">
-            <TextBlock Text="大仕分グループ" Width="150" VerticalAlignment="Center" Margin="3"/>
-            <TextBlock Text=":" VerticalAlignment="Center" Margin="3"/>
-            <ComboBox x:Name="LargeDistGroupCombo" SelectedItem="{Binding LargeDistGroupItem}" ItemsSource="{Binding LargeDistGroupCombo}"
-                      DisplayMemberPath="Name" Width="150" Margin="3"/>
-        </StackPanel>
-
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="3">
             <TextBlock Text="納品日" Width="150" VerticalAlignment="Center" Margin="3"/>
             <TextBlock Text=":" VerticalAlignment="Center" Margin="3"/>
-            <models:DatePickerEx SelectedDate="{Binding DeliveryDate}" Language="ja" Width="150" VerticalAlignment="Center" Margin="3"
+            <models:DatePickerEx x:Name="DeliveryDate" SelectedDate="{Binding DeliveryDate}" Language="ja" Width="150" VerticalAlignment="Center" Margin="3"
                                  PreviewKeyDown="DatePicker_PreviewKeyDown"/>
+        </StackPanel>
+            
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5">
+            <TextBlock Text="大仕分グループ" Width="150" VerticalAlignment="Center" Margin="3"/>
+            <TextBlock Text=":" VerticalAlignment="Center" Margin="3"/>
+            <ComboBox SelectedIndex="{Binding LargeDistGroupIndex}" ItemsSource="{Binding LargeDistGroupCombo}"
+                      IsEditable="True" TextSearch.TextPath="CdLargeGroup" b:ComboBoxBehavior.MaxLength="3" Width="150" Margin="3">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding CdLargeGroup}" />
+                            <TextBlock Text="  "/>
+                            <TextBlock Text="{Binding NmLargeGroup}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
         </StackPanel>
 
         <TextBlock DockPanel.Dock="Top" Text="{Binding ErrorMessage}" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
