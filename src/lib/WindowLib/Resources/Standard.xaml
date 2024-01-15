@@ -113,12 +113,12 @@
         <Setter Property="FontSize" Value="24"/>
         <Setter Property="AutoGenerateColumns" Value="False"/>
         <Setter Property="CanUserSortColumns" Value="True"/>
-        <Setter Property="CanUserReorderColumns" Value="True"/>
         <Setter Property="IsReadOnly" Value="True"/>
         <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
         <Setter Property="SelectionMode" Value="Single"/>
         <Setter Property="SelectionUnit" Value="FullRow"/>
         <Setter Property="GridLinesVisibility" Value="All"/>
+        <Setter Property="CanUserReorderColumns" Value="False"/>
     </Style>
 
     <!-- データグリッドヘッダー背景 -->
