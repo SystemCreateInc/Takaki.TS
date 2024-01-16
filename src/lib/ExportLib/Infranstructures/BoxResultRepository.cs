@@ -37,7 +37,14 @@ namespace ExportLib.Infranstructures
                 .AttachToTransaction(tr)
                 .Include<TBSTOWAGEMAPPINGEntity>(j => j.InnerJoin())
                 .Where($"{where}")
-                .OrderBy($"{nameof(TBSTOWAGEEntity.IDSTOWAGE):of TB_STOWAGE}"));
+                .OrderBy($@"{nameof(TBSTOWAGEEntity.DTDELIVERY):of TB_STOWAGE}, 
+                    {nameof(TBSTOWAGEEntity.CDSHUKKABATCH):of TB_STOWAGE},
+                    {nameof(TBSTOWAGEEntity.CDKYOTEN):of TB_STOWAGE},
+                    {nameof(TBSTOWAGEEntity.CDHAISHOBIN):of TB_STOWAGE},
+                    {nameof(TBSTOWAGEEntity.CDCOURSE):of TB_STOWAGE},
+                    {nameof(TBSTOWAGEEntity.CDROUTE):of TB_STOWAGE},
+                    {nameof(TBSTOWAGEEntity.CDTOKUISAKI):of TB_STOWAGE},
+                    {nameof(TBSTOWAGEEntity.STBOXTYPE):of TB_STOWAGE}"));
         }
     }
 }

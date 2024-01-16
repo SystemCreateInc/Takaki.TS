@@ -80,8 +80,8 @@ namespace BoxExpoter.ViewModels
         public GroupStowage(int sendedCount, string cD_DIST_GROUP, string nM_DIST_GROUP, int customerCount, int seatCount, int uncompletedCount, int completedCount, int overCount)
         {
             IsSended = (completedCount + uncompletedCount) == sendedCount;
-            IsSelected = uncompletedCount == 0;
             IsEnabled = !IsSended && uncompletedCount == 0;
+            IsSelected = IsEnabled && !IsSended;
             CdDistGroup = cD_DIST_GROUP;
             NmDistGroup = nM_DIST_GROUP;
             CustomerCount = customerCount;
