@@ -161,7 +161,9 @@ namespace StowageListPrint.ViewModels
 
                 try
                 {
-                    CsvFileService.Save(obj, $"{nameof(MainStowageListPrint)}CSVPath", "積付表発行");
+                    LoadDatas();
+                    var rows = StowageListPrints.ToList().Select(x => x.GetRow());
+                    CsvFileService.Save(obj, rows, $"{nameof(MainStowageListPrint)}CSVPath", "積付表発行");
                 }
                 catch (Exception e)
                 {

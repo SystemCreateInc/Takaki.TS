@@ -1,6 +1,5 @@
 ﻿using LogLib;
 using Microsoft.Win32;
-using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace CsvLib.Models
 {
@@ -8,13 +7,13 @@ namespace CsvLib.Models
     {
         public static string SelectSavePath(string defaultPath = "", string fileName = "", string filter = "CSVファイル (*.csv)|*.csv")
         {
-            var dialog = new CommonSaveFileDialog();
-            dialog.DefaultDirectory = defaultPath;
-            dialog.DefaultFileName = fileName;
-            dialog.Filters.Add(new CommonFileDialogFilter("CSVファイル", "*.csv"));
-            dialog.Filters.Add(new CommonFileDialogFilter("全てのファイル", "*.*"));
-            
-            if(dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            var dialog = new SaveFileDialog();
+
+            dialog.InitialDirectory = defaultPath;
+            dialog.FileName = fileName;
+            dialog.Filter = filter;
+
+            if (dialog.ShowDialog() == true)
             {
                 return dialog.FileName;
             }

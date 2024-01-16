@@ -1,9 +1,10 @@
-﻿using DbLib.Extensions;
+﻿using CsvLib.Models;
+using DbLib.Extensions;
 using Prism.Mvvm;
 
 namespace WorkReport.Models
 {
-    public class WorkReport : BindableBase
+    public class WorkReport : BindableBase, ICsvData
     {
         private string _dtDelivery = string.Empty;
         public string DtDelivery
@@ -110,5 +111,20 @@ namespace WorkReport.Models
 
         public TimeSpan DispNmChecktime => new TimeSpan(0, 0, NmChecktime);
         public string WorkDate => DtStart.ToString("yyyyMMdd");
+
+
+        // CSV出力用メソッド
+        public string GetRow()
+        {
+            return $"{DispDtDelivery},{FormatDtStart},{FormatDtEnd},{CdDistGroup},{CdBlock},{FormatAllWorkTime},{FormatDispNmIdle},"
+                + $"{NmSyain},{FormatDispNmWorktime},{NmItemcnt},{Shopcnt},{NmDistcnt},{NmCheckcnt},{FormatDispNmChecktime}";
+        }
+
+        public string FormatDtStart => DtStart.ToString("yyyy/MM/dd HH:mm:ss");
+        public string FormatDtEnd => DtEnd.ToString("yyyy/MM/dd HH:mm:ss");
+        public string FormatAllWorkTime => AllWorkTime.ToString("hh\\:mm\\:ss");
+        public string FormatDispNmIdle => DispNmIdle.ToString("hh\\:mm\\:ss");
+        public string FormatDispNmWorktime => DispNmWorktime.ToString("hh\\:mm\\:ss");
+        public string FormatDispNmChecktime => DispNmChecktime.ToString("hh\\:mm\\:ss");
     }
 }

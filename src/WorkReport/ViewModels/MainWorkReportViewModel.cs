@@ -5,7 +5,6 @@ using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System.Collections.ObjectModel;
-using System.Drawing.Printing;
 using System.Printing;
 using System.Windows;
 using WindowLib.Utils;
@@ -87,7 +86,9 @@ namespace WorkReport.ViewModels
 
                 try
                 {
-                    CsvFileService.Save(obj, $"{nameof(MainWorkReport)}CSVPath", "作業報告書発行");
+                    LoadDatas();
+                    var rows = WorkReports.ToList().Select(x => x.GetRow());
+                    CsvFileService.Save(obj, rows, $"{nameof(MainWorkReport)}CSVPath", "作業報告書発行");
                 }
                 catch (Exception e)
                 {

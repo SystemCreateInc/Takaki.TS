@@ -1,9 +1,9 @@
-﻿using Microsoft.Identity.Client;
+﻿using CsvLib.Models;
 using Prism.Mvvm;
 
 namespace StowageListPrint.Models
 {
-    public class StowageListPrint : BindableBase
+    public class StowageListPrint : BindableBase, ICsvData
     {
         // 積付数更新用
         private List<long> _idStowages = new List<long>();
@@ -153,5 +153,14 @@ namespace StowageListPrint.Models
             get => _dtWorkdtStowage;
             set => SetProperty(ref _dtWorkdtStowage, value);
         }
+
+        // CSV出力用メソッド
+        public string GetRow()
+        {
+            return $"{CdBlock},{Tdunitcode},{CdShukkaBatch},{CdCourse},{CdRoute},{CdTokuisaki},{NmTokuisaki},"
+                + $"{DispLargeBoxPs},{DispSmallBoxPs},{DispBlueBoxPs},{DispEtcBoxPs},{FormatDtWorkdtStowage}";
+        }
+
+        public string FormatDtWorkdtStowage => DtWorkdtStowage.HasValue ? DtWorkdtStowage.Value.ToString("yyyy/MM/dd HH:mm:ss") : string.Empty;
     }
 }
