@@ -10,7 +10,7 @@
             <Setter Property="ResizeMode" Value="NoResize" />
             <Setter Property="ShowInTaskbar" Value="False" />
             <Setter Property="SizeToContent" Value="WidthAndHeight" />
-          <Setter Property="Topmost" Value="True" />
+            <Setter Property="Topmost" Value="True" />
         </Style>
     </prism:Dialog.WindowStyle>
 
@@ -93,7 +93,7 @@
                     </Style>
                 </materialDesign:PackIcon.Style>
             </materialDesign:PackIcon>
-            <TextBlock Text="{Binding Message}" DockPanel.Dock="Top" />
+            <TextBlock Text="{Binding Message}" DockPanel.Dock="Top" MaxWidth="1600" TextWrapping="Wrap" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Content="OK" Width="100" Command="{Binding OK}" Margin="5" Style="{StaticResource OKStyle}" />
