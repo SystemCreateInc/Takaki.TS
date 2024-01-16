@@ -5,6 +5,7 @@ using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Printing;
 using System.Windows;
 using WindowLib.Utils;
@@ -89,6 +90,14 @@ namespace WorkReport.ViewModels
                     LoadDatas();
                     var rows = WorkReports.ToList().Select(x => x.GetRow());
                     CsvFileService.Save(obj, rows, $"{nameof(MainWorkReport)}CSVPath", "作業報告書発行");
+                }
+                catch (IOException e)
+                {
+                    Syslog.Error($"CSV:{e.Message}");
+                    var errorMessage = e.Message.Contains("it is being used by another process")
+                        ? "同じファイルを開いているので保存できません。" : e.Message;
+
+                    MessageDialog.Show(_dialogService, errorMessage, "エラー");
                 }
                 catch (Exception e)
                 {

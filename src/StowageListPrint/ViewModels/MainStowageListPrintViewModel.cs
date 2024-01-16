@@ -14,6 +14,7 @@ using StowageListPrint.Models;
 using StowageListPrint.Reports;
 using StowageListPrint.Views;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Printing;
 using System.Windows;
 using System.Windows.Controls;
@@ -164,6 +165,14 @@ namespace StowageListPrint.ViewModels
                     LoadDatas();
                     var rows = StowageListPrints.ToList().Select(x => x.GetRow());
                     CsvFileService.Save(obj, rows, $"{nameof(MainStowageListPrint)}CSVPath", "積付表発行");
+                }
+                catch (IOException e)
+                {
+                    Syslog.Error($"CSV:{e.Message}");
+                    var errorMessage = e.Message.Contains("it is being used by another process")
+                        ? "同じファイルを開いているので保存できません。" : e.Message;
+
+                    MessageDialog.Show(_dialogService, errorMessage, "エラー");
                 }
                 catch (Exception e)
                 {
