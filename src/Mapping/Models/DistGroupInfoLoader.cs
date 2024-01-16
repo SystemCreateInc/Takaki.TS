@@ -146,7 +146,7 @@ namespace Mapping.Models
                          CdCourse = q.CD_SUM_COURSE,
                          CdRoute = q.CD_SUM_ROUTE.ToString(),
                          CdBinSum = q.CD_BIN_SUM == (int)BinSumType.Yes ? "●" : "",
-                         CdSumTokuisaki = q.mintokuisaki == q.maxtokuisaki && q.maxtokuisaki == q.CD_SUM_TOKUISAKI ? "" : "●",
+                         CdSumTokuisaki = q.mintokuisaki != q.maxtokuisaki ? "●" : "",
                          Maguchi = q.NU_MAGICHI.ToString(),
                      }).ToList();
             }

@@ -185,7 +185,7 @@ namespace Mapping.ViewModels
                             loc.CdTokuisaki = p.CdSumTokuisaki;
                             loc.NmTokuisaki = p.NmSumTokuisaki;
                             loc.CdBinSum = p.CdBinSum == (int)BinSumType.Yes ? "●" : "";
-                            loc.CdSumTokuisaki = p.CdTokuisaki != p.CdSumTokuisaki ? "●" : "";
+                            loc.CdSumTokuisaki = _mapping.sumtokuisakis.Find(x => x.CdSumTokuisaki == p.CdSumTokuisaki)!= null ? "●" : "";
                             loc.Maguchi = p.Maguchi.ToString();
                             TokuisakiCnt++;
                         }
@@ -203,7 +203,7 @@ namespace Mapping.ViewModels
                             loc.CdTokuisaki = p.CdTokuisaki;
                             loc.NmTokuisaki = p.NmTokuisaki;
                             loc.CdBinSum = p.CdBinSum;
-                            loc.CdSumTokuisaki = p.CdSumTokuisaki;
+                            loc.CdSumTokuisaki = _mapping.sumtokuisakis.Find(x => x.CdSumTokuisaki == p.CdSumTokuisaki) != null ? "●" : "";
                             loc.Maguchi = p.Maguchi;
                             TokuisakiCnt++;
                         }

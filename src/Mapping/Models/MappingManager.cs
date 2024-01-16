@@ -44,10 +44,18 @@ namespace Mapping.Models
     }
     public class ShopMst
     {
-        public ShopMst(Dist dist)
+        public ShopMst(Dist dist, bool bSum=false)
         {
-            code = dist.CdTokuisaki;
-            name = NameLoader.GetTokuisaki(dist.CdTokuisaki);
+            if (bSum)
+            {
+                code = dist.CdSumTokuisaki;
+                name = NameLoader.GetTokuisaki(dist.CdSumTokuisaki);
+            }
+            else
+            {
+                code = dist.CdTokuisaki;
+                name = NameLoader.GetTokuisaki(dist.CdTokuisaki);
+            }
         }
 
         public string code = string.Empty;
@@ -74,12 +82,12 @@ namespace Mapping.Models
         {
             if (Object.ReferenceEquals(x, y)) return true;
             if (x == null || y == null) return false;
-            return x.CdSumCourse == y.CdSumCourse && x.CdSumRoute == y.CdSumRoute;
+            return x.CdSumCourse == y.CdSumCourse && x.CdSumRoute == y.CdSumRoute && x.CdSumTokuisaki == y.CdSumTokuisaki;
         }
 
         public int GetHashCode(Dist obj)
         {
-            string hash = obj.CdSumCourse + string.Format("{0:000}",obj.CdSumRoute);
+            string hash = obj.CdSumCourse + string.Format("{0:000}",obj.CdSumRoute) + obj.CdSumTokuisaki;
 
             return (obj.CdCourse == null ? 0 : hash.GetHashCode());
         }
@@ -266,8 +274,8 @@ namespace Mapping.Models
         {
             List<Dist> lists =
                 distgroup.CdBinSum == (int)BinSumType.Yes 
-                ? distgroup.dists.Distinct(new CourseRouteComparer()).ToList()  // 集計する
-                : distgroup.dists.Distinct(new TokusakiComparer()).ToList();    // 集計しない
+                ? distgroup.dists.Distinct(new CourseRouteComparer()).OrderBy(x=>x.CdCourse).ThenBy(x=>x.CdRoute).ToList()  // 集計する
+                : distgroup.dists.Distinct(new TokusakiComparer()).OrderBy(x => x.CdCourse).ThenBy(x => x.CdRoute).ToList();    // 集計しない
 
             LogOut("得意先抽出", lists);
 
@@ -285,16 +293,15 @@ namespace Mapping.Models
 
                         foreach (var syukkabatch in distgroup.ShukkaBatchs)
                         {
-                            var shops =
-                                distgroup.CdBinSum == (int)BinSumType.Yes ?
-                                distgroup.dists.Where(x => x.CdCourse == pp.CdCourse && x.CdRoute == pp.CdRoute).Distinct(new TokusakiComparer()).ToList()
-                                : distgroup.dists.Where(x => x.CdCourse == pp.CdCourse && x.CdRoute == pp.CdRoute && x.CdSumTokuisaki == pp.CdSumTokuisaki).Distinct(new TokusakiComparer()).ToList();
+                            var shops = distgroup.dists
+                                .Where(x => x.CdCourse == pp.CdCourse && x.CdRoute == pp.CdRoute && x.CdSumTokuisaki == pp.CdSumTokuisaki)
+                                .Distinct(new TokusakiComparer()).ToList();
 
                             foreach (var shop in shops)
                             {
-                                if (pp.Tokuisakis.Find(x=>x.CdSumTokuisaki == shop.CdSumTokuisaki)==null)
+                                if (pp.Tokuisakis.Find(x => x.CdSumTokuisaki == shop.CdSumTokuisaki && x.CdShukkaBatch == shop.CdShukkaBatch) == null)
                                 {
-                                    shop.NmTokuisaki = NameLoader.GetTokuisaki(shop.CdTokuisaki);
+                                    //shop.NmTokuisaki = NameLoader.GetTokuisaki(shop.CdTokuisaki);
 
                                     pp.Tokuisakis.Add(
                                         new Tokuisaki
@@ -304,11 +311,11 @@ namespace Mapping.Models
                                             CdLargeGroup = syukkabatch.CdLargeGroup,
                                             NmLargeGroup = syukkabatch.NmLargeGroup,
                                             CdTokuisaki = shop.CdTokuisaki,
-                                            NmTokuisaki = shop.NmTokuisaki,
+                                            //NmTokuisaki = shop.NmTokuisaki,
                                             CdCourse = shop.CdCourse,
                                             CdRoute = shop.CdRoute,
                                             CdSumTokuisaki = shop.CdSumTokuisaki,
-                                            NmSumTokuisaki = shop.CdSumTokuisaki == shop.CdTokuisaki ? shop.NmTokuisaki : NameLoader.GetTokuisaki(shop.CdSumTokuisaki),
+                                            //NmSumTokuisaki = shop.CdSumTokuisaki == shop.CdTokuisaki ? shop.NmTokuisaki : NameLoader.GetTokuisaki(shop.CdSumTokuisaki),
                                             CdSumCourse = shop.CdSumCourse,
                                             CdSumRoute = shop.CdSumRoute,
                                         }
@@ -325,19 +332,19 @@ namespace Mapping.Models
             {
                 foreach (var shop in d.Tokuisakis)
                 {
-                    var p = distgroup.stowages.Find(x => x.CdSumTokuisaki == shop.CdSumTokuisaki && x.StBoxType == (int)BoxType.SmallBox);
+                    var p = distgroup.stowages.Find(x => x.CdShukkaBatch == shop.CdShukkaBatch && x.CdSumTokuisaki == shop.CdSumTokuisaki && x.StBoxType == (int)BoxType.SmallBox);
                     if (p != null)
                     {
                         d.SmallBox += p.NuBoxCnt;
                     }
 
-                    p = distgroup.stowages.Find(x => x.CdSumTokuisaki == shop.CdSumTokuisaki && x.StBoxType == (int)BoxType.LargeBox);
+                    p = distgroup.stowages.Find(x => x.CdShukkaBatch == shop.CdShukkaBatch && x.CdSumTokuisaki == shop.CdSumTokuisaki && x.StBoxType == (int)BoxType.LargeBox);
                     if (p != null)
                     {
                         d.LargeBox += p.NuBoxCnt;
                     }
 
-                    p = distgroup.stowages.Find(x => x.CdSumTokuisaki == shop.CdSumTokuisaki && x.StBoxType == (int)BoxType.BlueBox);
+                    p = distgroup.stowages.Find(x => x.CdShukkaBatch == shop.CdShukkaBatch && x.CdSumTokuisaki == shop.CdSumTokuisaki && x.StBoxType == (int)BoxType.BlueBox);
                     if (p != null)
                     {
                         d.BlueBox += p.NuBoxCnt;
@@ -413,73 +420,50 @@ namespace Mapping.Models
 
             // distに得意先設定
             List<ShopMst> shopmsts = new List<ShopMst>();
-            foreach (var dist in distgroup.dists)
+            for (int i = 0; i < 2; i++)
             {
-                if (shopmsts.Find(x => x.code == dist.CdTokuisaki) == null)
+                foreach (var dist in i==0?distgroup.dists : distgroup.stowages)
                 {
-                    shopmsts.Add(new ShopMst(dist));
+                    if (shopmsts.Find(x => x.code == dist.CdTokuisaki) == null)
+                    {
+                        shopmsts.Add(new ShopMst(dist));
+                    }
+                    if (shopmsts.Find(x => x.code == dist.CdSumTokuisaki) == null)
+                    {
+                        shopmsts.Add(new ShopMst(dist,true));
+                    }
                 }
             }
-
-
-
 
             // dist,stowageに項目設定
-            foreach (var dist in distgroup.dists)
+            for (int i = 0; i < 2; i++)
             {
-                //var mapping = distgroup.mappings.Find(x => x.CdSumTokuisaki == dist.CdSumTokuisaki);
-                var mapping = distgroup.mappings.Find(x => x.CdSumCourse == dist.CdSumCourse && x.CdSumRoute == dist.CdSumRoute);
-                if (mapping != null)
-                {
-                    dist.CdBlock = mapping.CdBlock;
-                    dist.tdunitaddrcode = mapping.tdunitaddrcode;
-                    dist.NmKyoten = distgroup.NmKyoten;
-                    var item = itemmsts.Where(x => x.code == dist.CdHimban).FirstOrDefault();
-                    dist.NmHinSeishikimei = item == null ? "" : item.name;
-                    dist.Maguchi = mapping.Maguchi;
-                    dist.CdBinSum = mapping.Tokuisakis.Count==1 ? (int)BinSumType.No : (int)BinSumType.Yes;
-
-                    if ("252963"== dist.CdTokuisaki)
+                foreach (var dist in i==0?distgroup.dists : distgroup.stowages)
+                { 
+                    var mapping = distgroup.mappings.Find(x => x.CdSumTokuisaki == dist.CdSumTokuisaki && x.CdSumCourse == dist.CdSumCourse && x.CdSumRoute == dist.CdSumRoute);
+//                    var mapping = distgroup.mappings.Find(x => x.CdSumCourse == dist.CdSumCourse && x.CdSumRoute == dist.CdSumRoute);
+                    if (mapping != null)
                     {
-                        int a =0;
-                    }
+                        dist.CdBlock = mapping.CdBlock;
+                        dist.tdunitaddrcode = mapping.tdunitaddrcode;
+                        dist.NmKyoten = distgroup.NmKyoten;
+                        var item = itemmsts.Where(x => x.code == dist.CdHimban).FirstOrDefault();
+                        dist.NmHinSeishikimei = item == null ? "" : item.name;
+                        dist.Maguchi = mapping.Maguchi;
+                        dist.CdBinSum = mapping.Tokuisakis.Count == 1 ? (int)BinSumType.No : (int)BinSumType.Yes;
 
-                    var shop = mapping.Tokuisakis.Find(x => x.CdSumTokuisaki == dist.CdSumTokuisaki);
-                    if (shop != null)
-                    {
-                        dist.NmTokuisaki = shopmsts.Where(x => x.code == dist.CdTokuisaki).Select(x => x.name).FirstOrDefault()??"";
-                        dist.NmSumTokuisaki = shop.NmSumTokuisaki;
-                        dist.CdShukkaBatch = shop.CdShukkaBatch;
-                        dist.NmShukkaBatch = shop.NmShukkaBatch;
-                        dist.CdLargeGroup = shop.CdLargeGroup;
-                        dist.NmLargeGroup = shop.NmLargeGroup;
+                        var shop = mapping.Tokuisakis.Find(x => x.CdShukkaBatch == dist.CdShukkaBatch && x.CdSumTokuisaki == dist.CdSumTokuisaki);
+                        if (shop != null)
+                        {
+                            dist.NmTokuisaki = shopmsts.Where(x => x.code == dist.CdTokuisaki).Select(x => x.name).FirstOrDefault() ?? "";
+                            dist.NmSumTokuisaki = shopmsts.Where(x => x.code == dist.CdSumTokuisaki).Select(x => x.name).FirstOrDefault() ?? "";
+                            dist.NmShukkaBatch = shop.NmShukkaBatch;
+                            dist.CdLargeGroup = shop.CdLargeGroup;
+                            dist.NmLargeGroup = shop.NmLargeGroup;
+                        }
                     }
                 }
             }
-            foreach (var stowage in distgroup.stowages)
-            {
-                //var mapping = distgroup.mappings.Find(x => x.CdSumTokuisaki == stowage.CdSumTokuisaki);
-                var mapping = distgroup.mappings.Find(x => x.CdSumCourse == stowage.CdSumCourse && x.CdSumRoute == stowage.CdSumRoute);
-                if (mapping != null)
-                {
-                    stowage.CdBlock = mapping.CdBlock;
-                    stowage.tdunitaddrcode = mapping.tdunitaddrcode;
-                    stowage.NmShukkaBatch = mapping.NmShukkaBatch;
-                    stowage.NmKyoten = distgroup.NmKyoten;
-                    stowage.Maguchi = mapping.Maguchi;
-                    var shop = mapping.Tokuisakis.Find(x => x.CdSumTokuisaki == stowage.CdSumTokuisaki);
-                    if (shop != null)
-                    {
-                        stowage.NmTokuisaki = shopmsts.Where(x => x.code == stowage.CdTokuisaki).Select(x => x.name).FirstOrDefault() ?? "";
-                        stowage.NmSumTokuisaki = shop.NmSumTokuisaki;
-                        stowage.CdShukkaBatch = shop.CdShukkaBatch;
-                        stowage.NmShukkaBatch = shop.NmShukkaBatch;
-                        stowage.CdLargeGroup = shop.CdLargeGroup;
-                        stowage.NmLargeGroup = shop.NmLargeGroup;
-                    }
-                }
-            }
-
         }
 
         public void Saves(string cdDistGroup)
@@ -651,52 +635,58 @@ namespace Mapping.Models
                                     UpdatedAt = DateTime.Now,
                                 },tr);
 
+                            // アドレスなしは設定しません
+                            if (dist.tdunitaddrcode != "")
+                            {
+                                sql = "INSERT INTO TB_STOWAGE_MAPPING VALUES (IDENT_CURRENT('TB_STOWAGE'),@NMSHUKKABATCH,@NMKYOTEN,@NMTOKUISAKI,@CDBLOCK,@CDDISTGROUP,@NMDISTGROUP,@CDBINSUM,@CDSUMTOKUISAKI,@NMSUMTOKUISAKI,@CDSUMCOURSE,@CDSUMROUTE,@tdunitaddrcode,@NUMAGICHI,@createdAt,@updatedAt);";
+                                con.Query<long>(sql,
+                                    new
+                                    {
+                                        NMSHUKKABATCH = dist.NmShukkaBatch,
+                                        NMKYOTEN = dist.NmKyoten,
+                                        NMTOKUISAKI = dist.NmTokuisaki,
+                                        CDSUMTOKUISAKI = dist.CdSumTokuisaki,
+                                        NMSUMTOKUISAKI = dist.NmSumTokuisaki,
+                                        CDSUMCOURSE = dist.CdSumCourse,
+                                        CDSUMROUTE = (short)dist.CdSumRoute,
+                                        CDBINSUM = (short)dist.CdBinSum,
+                                        CDBLOCK = dist.CdBlock,
+                                        CDDISTGROUP = distgroup.CdDistGroup,
+                                        NMDISTGROUP = distgroup.NmDistGroup,
+                                        Tdunitaddrcode = dist.tdunitaddrcode,
+                                        NUMAGICHI = dist.Maguchi,
 
-                            sql = "INSERT INTO TB_STOWAGE_MAPPING VALUES (IDENT_CURRENT('TB_STOWAGE'),@NMSHUKKABATCH,@NMKYOTEN,@NMTOKUISAKI,@CDBLOCK,@CDDISTGROUP,@NMDISTGROUP,@CDBINSUM,@CDSUMTOKUISAKI,@NMSUMTOKUISAKI,@CDSUMCOURSE,@CDSUMROUTE,@tdunitaddrcode,@NUMAGICHI,@createdAt,@updatedAt);";
-                            con.Query<long>(sql,
-                                new
-                                {
-                                    NMSHUKKABATCH = dist.NmShukkaBatch,
-                                    NMKYOTEN = dist.NmKyoten,
-                                    NMTOKUISAKI = dist.NmTokuisaki,
-                                    CDSUMTOKUISAKI = dist.CdSumTokuisaki,
-                                    NMSUMTOKUISAKI = dist.NmSumTokuisaki,
-                                    CDSUMCOURSE = dist.CdSumCourse,
-                                    CDSUMROUTE = (short)dist.CdSumRoute,
-                                    CDBINSUM = (short)dist.CdBinSum,
-                                    CDBLOCK = dist.CdBlock,
-                                    CDDISTGROUP = distgroup.CdDistGroup,
-                                    NMDISTGROUP = distgroup.NmDistGroup,
-                                    Tdunitaddrcode = dist.tdunitaddrcode,
-                                    NUMAGICHI = dist.Maguchi,
-
-                                    CreatedAt = DateTime.Now,
-                                    UpdatedAt = DateTime.Now,
-                                },tr);
+                                        CreatedAt = DateTime.Now,
+                                        UpdatedAt = DateTime.Now,
+                                    }, tr);
+                            }
                         }
                         foreach (var stowage in distgroup.stowages)
                         {
-                            var stowagemapping = new TBSTOWAGEMAPPINGEntity
+                            if (stowage.tdunitaddrcode != "")
                             {
-                                IDSTOWAGE = stowage.Id,
-                                NMSHUKKABATCH = stowage.NmShukkaBatch,
-                                NMKYOTEN = stowage.NmKyoten,
-                                NMTOKUISAKI = stowage.NmTokuisaki,
-                                CDSUMTOKUISAKI = stowage.CdSumTokuisaki,
-                                NMSUMTOKUISAKI = stowage.NmSumTokuisaki,
-                                CDSUMCOURSE = stowage.CdSumCourse,
-                                CDSUMROUTE = (short)stowage.CdSumRoute,
-                                CDBINSUM = 0,
-                                CDBLOCK = stowage.CdBlock,
-                                CDDISTGROUP = distgroup.CdDistGroup,
-                                NMDISTGROUP = distgroup.NmDistGroup,
-                                Tdunitaddrcode = stowage.tdunitaddrcode,
-                                NUMAGICHI = stowage.Maguchi,
+                                var stowagemapping = new TBSTOWAGEMAPPINGEntity
+                                {
+                                    IDSTOWAGE = stowage.Id,
+                                    NMSHUKKABATCH = stowage.NmShukkaBatch,
+                                    NMKYOTEN = stowage.NmKyoten,
+                                    NMTOKUISAKI = stowage.NmTokuisaki,
+                                    CDSUMTOKUISAKI = stowage.CdSumTokuisaki,
+                                    NMSUMTOKUISAKI = stowage.NmSumTokuisaki,
+                                    CDSUMCOURSE = stowage.CdSumCourse,
+                                    CDSUMROUTE = (short)stowage.CdSumRoute,
+                                    CDBINSUM = 0,
+                                    CDBLOCK = stowage.CdBlock,
+                                    CDDISTGROUP = distgroup.CdDistGroup,
+                                    NMDISTGROUP = distgroup.NmDistGroup,
+                                    Tdunitaddrcode = stowage.tdunitaddrcode,
+                                    NUMAGICHI = stowage.Maguchi,
 
-                                CreatedAt = DateTime.Now,
-                                UpdatedAt = DateTime.Now,
-                            };
-                            con.Insert(stowagemapping, x => x.AttachToTransaction(tr));
+                                    CreatedAt = DateTime.Now,
+                                    UpdatedAt = DateTime.Now,
+                                };
+                                con.Insert(stowagemapping, x => x.AttachToTransaction(tr));
+                            }
                         }
                     }
 
