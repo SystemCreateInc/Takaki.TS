@@ -166,13 +166,10 @@ namespace StowageListPrint.ViewModels
                     var rows = StowageListPrints.ToList().Select(x => x.GetRow());
                     CsvFileService.Save(obj, rows, $"{nameof(MainStowageListPrint)}CSVPath", "積付表発行");
                 }
-                catch (IOException e)
+                catch (IOException e) when ((e.HResult & 0x0000FFFF) == 32)
                 {
                     Syslog.Error($"CSV:{e.Message}");
-                    var errorMessage = e.Message.Contains("it is being used by another process")
-                        ? "同じファイルを開いているので保存できません。" : e.Message;
-
-                    MessageDialog.Show(_dialogService, errorMessage, "エラー");
+                    MessageDialog.Show(_dialogService, "同じファイルを開いているので保存できません。", "エラー");
                 }
                 catch (Exception e)
                 {
