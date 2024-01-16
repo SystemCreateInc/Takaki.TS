@@ -74,7 +74,7 @@
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="大仕分G：" TextAlignment="Right" Width="150"/>
-                    <TextBlock Text="{Binding CdLargeGroup}"/>
+                    <TextBlock Text="{Binding LargeGroupInfo}"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">

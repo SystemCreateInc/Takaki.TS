@@ -23,7 +23,6 @@ namespace DistLargePrint.Models
                 return con.Query(sql, new { deliveryDate, mapStatus = MapStatus.Completed })
                     .Select((value, index) => new Combo
                     {
-                        Index = index,
                         CdLargeGroup = value.CD_LARGE_GROUP,
                         NmLargeGroup = value.NM_LARGE_GROUP,
                     }).ToList();

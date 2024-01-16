@@ -16,6 +16,13 @@ namespace DistLargePrint.ViewModels
         public event Action<IDialogResult>? RequestClose;
 
 
+        private Combo? _largeDistGroup;
+        public Combo? LargeDistGroup
+        {
+            get => _largeDistGroup;
+            set => SetProperty(ref _largeDistGroup, value);
+        }
+
         private int _largeDistGroupIndex;
         public int LargeDistGroupIndex
         {
@@ -23,6 +30,7 @@ namespace DistLargePrint.ViewModels
             set
             {
                 SetProperty(ref _largeDistGroupIndex, value);
+                LargeDistGroup = LargeDistGroupIndex < 0 || !LargeDistGroupCombo.Any() ? null : LargeDistGroupCombo[LargeDistGroupIndex];
                 CanOK = LargeDistGroupCombo.Any();
             }
         }
@@ -65,9 +73,17 @@ namespace DistLargePrint.ViewModels
             OK = new DelegateCommand(() =>
             {
                 Syslog.Debug("SelectDistLargeGroupDlgViewModel:OK");
+                ErrorMessage = string.Empty;
+
+                if (LargeDistGroup == null)
+                {
+                    return;
+                }
+
                 RequestClose?.Invoke(new DialogResult(ButtonResult.OK, new DialogParameters
                 {
-                    { "CdLargeGroup", LargeDistGroupCombo[LargeDistGroupIndex].CdLargeGroup },
+                    { "CdLargeGroup", LargeDistGroup.CdLargeGroup },
+                    { "NmLargeGroup", LargeDistGroup.NmLargeGroup },
                     { "DtDelivery", DeliveryDate.ToString("yyyyMMdd") },
                 }));
             }).ObservesCanExecute(() => CanOK);

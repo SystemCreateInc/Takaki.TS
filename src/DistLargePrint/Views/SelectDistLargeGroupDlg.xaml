@@ -7,38 +7,45 @@
              HorizontalAlignment="Center" VerticalAlignment="Center"
              xmlns:b="clr-namespace:WindowLib.Behaviors;assembly=WindowLib"
              xmlns:models="clr-namespace:WindowLib.Models;assembly=WindowLib"
-             Loaded="UserControl_Loaded" Width="380">
+             Loaded="UserControl_Loaded" Width="500">
 
     <prism:Dialog.WindowStyle>
         <Style TargetType="Window" BasedOn="{StaticResource DialogWindow}"/>
     </prism:Dialog.WindowStyle>
 
     <DockPanel>
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="3">
-            <TextBlock Text="納品日" Width="150" VerticalAlignment="Center" Margin="3"/>
-            <TextBlock Text=":" VerticalAlignment="Center" Margin="3"/>
-            <models:DatePickerEx x:Name="DeliveryDate" SelectedDate="{Binding DeliveryDate}" Language="ja" Width="150" VerticalAlignment="Center" Margin="3"
-                                 PreviewKeyDown="DatePicker_PreviewKeyDown"/>
-        </StackPanel>
-            
-        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="5">
-            <TextBlock Text="大仕分グループ" Width="150" VerticalAlignment="Center" Margin="3"/>
-            <TextBlock Text=":" VerticalAlignment="Center" Margin="3"/>
-            <ComboBox SelectedIndex="{Binding LargeDistGroupIndex}" ItemsSource="{Binding LargeDistGroupCombo}"
-                      IsEditable="True" TextSearch.TextPath="CdLargeGroup" b:ComboBoxBehavior.MaxLength="3" Width="150" Margin="3">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding CdLargeGroup}" />
-                            <TextBlock Text="  "/>
-                            <TextBlock Text="{Binding NmLargeGroup}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-        </StackPanel>
+        <StackPanel DockPanel.Dock="Top" Margin="5">
+            <StackPanel Orientation="Horizontal" Margin="20,5,5,5">
+                <TextBlock Text="納品日:" VerticalAlignment="Center" TextAlignment="Center" Width="110" Margin="3"/>
+                <models:DatePickerEx x:Name="DeliveryDate" SelectedDate="{Binding DeliveryDate}" PreviewKeyDown="DatePicker_PreviewKeyDown" Language="ja"/>
+            </StackPanel>
 
-        <TextBlock DockPanel.Dock="Top" Text="{Binding ErrorMessage}" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+            <Grid Margin="0" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="7*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="12*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Text="大仕分グループ:" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"
+                           Width="150" Margin="3"/>
+                <ComboBox Grid.Column="1" SelectedItem="{Binding LargeDistGroup}" ItemsSource="{Binding LargeDistGroupCombo}" Margin="3"
+                          IsEditable="True" TextSearch.TextPath="CdLargeGroup" b:ComboBoxBehavior.MaxLength="5">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding CdLargeGroup}" />
+                                <TextBlock Text="  "/>
+                                <TextBlock Text="{Binding NmLargeGroup}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBlock Grid.Column="2" Text="{Binding LargeDistGroup.NmLargeGroup}" VerticalAlignment="Center" Margin="20 0 0 0" />
+            </Grid>
+
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+        </StackPanel>
 
         <StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Center">
             <Button Width="125" Command="{Binding OK}" Margin="5">

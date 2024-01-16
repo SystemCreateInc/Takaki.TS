@@ -44,6 +44,15 @@ namespace DistLargePrint.ViewModels
             set => SetProperty(ref _cdLargeGroup, value);
         }
 
+        private string _nmLargeGroup = string.Empty;
+        public string NmLargeGroup
+        {
+            get => _nmLargeGroup;
+            set => SetProperty(ref _nmLargeGroup, value);
+        }
+
+        public string LargeGroupInfo => CdLargeGroup + " " + NmLargeGroup;
+
         private string _dtDelivery = string.Empty;
         public string DtDelivery
         {
@@ -137,6 +146,7 @@ namespace DistLargePrint.ViewModels
             }
 
             CdLargeGroup = result.Parameters.GetValue<string>("CdLargeGroup");
+            NmLargeGroup = result.Parameters.GetValue<string>("NmLargeGroup");
             DtDelivery = result.Parameters.GetValue<string>("DtDelivery");
             return true;
         }
