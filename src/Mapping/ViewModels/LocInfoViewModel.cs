@@ -203,7 +203,7 @@ namespace Mapping.ViewModels
                             loc.CdTokuisaki = p.CdTokuisaki;
                             loc.NmTokuisaki = p.NmTokuisaki;
                             loc.CdBinSum = p.CdBinSum;
-                            loc.CdSumTokuisaki = _mapping.sumtokuisakis.Find(x => x.CdSumTokuisaki == p.CdSumTokuisaki) != null ? "●" : "";
+                            loc.CdSumTokuisaki = _mapping.sumtokuisakis.Find(x => x.CdSumTokuisaki == p.CdTokuisaki) != null ? "●" : "";
                             loc.Maguchi = p.Maguchi;
                             TokuisakiCnt++;
                         }
