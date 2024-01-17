@@ -229,7 +229,11 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <CheckBox IsChecked="{Binding Select, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                        <CheckBox IsChecked="{Binding Select, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                            <CheckBox.LayoutTransform>
+                                                <ScaleTransform ScaleX="2" ScaleY="2"/>
+                                            </CheckBox.LayoutTransform>
+                                        </CheckBox>
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
