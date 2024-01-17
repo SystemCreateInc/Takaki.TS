@@ -31,7 +31,7 @@ namespace DistBlock.Views
             }
             else
             {
-                dataGrid.Focus();
+                ReferenceDate.Focus();
             }
         }
 
