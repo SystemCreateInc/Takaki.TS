@@ -237,7 +237,7 @@ namespace ImportLib.Repositories
                     {
                         DtDelivery = q.Key.DTDELIVERY,
                         ShukkaBatch = q.Key.CDSHUKKABATCH,
-                        IsWork = q.Any(x => x.FGDSTATUS != (short)Status.Ready),
+                        IsWork = q.Any(x => x.FGDSTATUS != (short)Status.Ready || x.FGLSTATUS != (short)Status.Ready),
                     });
         }
 
