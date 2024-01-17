@@ -4,6 +4,7 @@
 
 namespace LightTest.ViewModels
 {
+    using DbLib.Defs;
     using LightTest.Models;
     using LightTest.Views;
     using LogLib;
@@ -347,7 +348,7 @@ namespace LightTest.ViewModels
                             // 1ボタンなのでどのボタンを押しても消灯するように変更
                             if (led.IsLight == false)
                             {
-                                color = addrdata.GetBlinkButton();
+                                color = addrdata.GetLightButton();
                                 led = addrdata.GetLedButton(color);
                             }
                             if (led == null)
@@ -451,9 +452,11 @@ namespace LightTest.ViewModels
                 }
 
                 if (TdDps.TdAddrs != null)
-                { 
-                    DisplayAddrs = TdDps.TdAddrs
-                    .ConvertAll(new Converter<TdAddrData, TdShowAddrData>(Tdaddr2Showaddr));
+                {
+                    var tmp = TdDps.TdAddrs
+                    .ConvertAll(new Converter<TdAddrData, TdShowAddrData>(Tdaddr2Showaddr)).OrderBy(x => x.TdUnitAddrCode).ToList();
+
+                    DisplayAddrs = tmp.OrderBy(x => x.TdUnitAddrCode).ToList();
                 }
 
                 // イベント設定
@@ -530,8 +533,16 @@ namespace LightTest.ViewModels
                     int color = 0;
                     foreach (var btn in Buttons)
                     {
+                        bool bBtnLight = btn;
                         color++;
-                        if (btn == true)
+
+                        // スタートＢＯＸの点灯はしての色のみ
+                        if (addrdata.IsUnitStartBox())
+                        {
+                            bBtnLight = (color == addrdata.TddButton) ? true : false;
+                        }
+
+                        if (bBtnLight == true)
                         {
                             TdDps.Light(ref addrdata, true, blink, color, display);
                         }
