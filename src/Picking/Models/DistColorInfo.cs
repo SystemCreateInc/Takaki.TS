@@ -74,8 +74,9 @@ namespace Picking.Models
         // 一斉配分で次の色に点灯表示器があるか
         public DistColor? GetNextDistSeq(int distseq, string tdunitaddrcode)
         {
-            var tmp = DistColors!.Where(x => x.DistSeq[1] != 0 && distseq < x.DistSeq[1])
-                .OrderBy(x => x.DistSeq).ToList();
+            // DistSeqs[1]固定
+            var tmp = DistColors!.Where(x => x.DistSeqs[1] != 0 && distseq < x.DistSeqs[1])
+                .OrderBy(x => x.DistSeqs[1]).ToList();
 
             foreach (var distcolor in tmp)
             {

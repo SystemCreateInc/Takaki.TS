@@ -433,7 +433,7 @@ namespace Picking.Models
                                 {
                                     // 次の商品表示(別色が待機中なら点滅表示)
                                     string text = next != null ? next.TdDisplay : "";
-                                    var distnextcolor = distcolorinfo.GetNextDistSeq(distcolor.DistSeq[zone], addrdata!.TdUnitAddrCode);
+                                    var distnextcolor = distcolorinfo.GetNextDistSeq(distcolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
                                     bool blink = false;
                                     if (distcolorinfo.IsDistWorkNormal && distnextcolor != null)
                                     {
@@ -446,7 +446,7 @@ namespace Picking.Models
                                     if (distcolorinfo.IsDistWorkNormal)
                                     {
                                         // 次に投入した色の数量があれば表示する
-                                        var distnextcolor = distcolorinfo.GetNextDistSeq(distcolor.DistSeq[zone], addrdata!.TdUnitAddrCode);
+                                        var distnextcolor = distcolorinfo.GetNextDistSeq(distcolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
                                         if (distnextcolor == null)
                                         {
                                             // 消灯
@@ -456,7 +456,7 @@ namespace Picking.Models
                                         {
                                             next = distnextcolor.Tdunitdisplay.Find(x => x.Tdunitaddrcode == addrdata.TdUnitAddrCode);
 
-                                            var distnextnextcolor = distcolorinfo.GetNextDistSeq(distnextcolor.DistSeq[zone], addrdata!.TdUnitAddrCode);
+                                            var distnextnextcolor = distcolorinfo.GetNextDistSeq(distnextcolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
                                             bool blink = false;
                                             if (distcolorinfo.IsDistWorkNormal && distnextnextcolor != null)
                                             {
@@ -473,7 +473,7 @@ namespace Picking.Models
                                         // 消灯
                                         tddps.Light(ref addrdata, false, false, color, "", true);
 
-                                        TdUnitChaseLight(ref distcolorinfo, tddps, color, zone, distcolor.DistSeq[zone]);
+                                        TdUnitChaseLight(ref distcolorinfo, tddps, color, zone, distcolor.DistSeqs[zone]);
                                     }
                                 }
                             }
@@ -774,7 +774,7 @@ namespace Picking.Models
                 }
 
                 // スタートＢＯＸ表示を変更
-                distcolor.DistSeq[zone] = ++distcolorinfo.DistSeq;
+                distcolor.DistSeqs[zone] = ++distcolorinfo.DistSeq;
 
                 SetZoneOrderIn(zone,front);
                 // INへ変更
@@ -795,8 +795,8 @@ namespace Picking.Models
 
             int mintdunitseq = 99999;
             // 点灯対象のdistseqを取得
-            var colors = distcolorinfo.DistColors!.Where(x => x.DistSeq[zone] != 0 && x.DistSeq[zone] <= distseq)
-                .OrderBy(x => x.DistSeq[zone])
+            var colors = distcolorinfo.DistColors!.Where(x => x.DistSeqs[zone] != 0 && x.DistSeqs[zone] <= distseq)
+                .OrderBy(x => x.DistSeqs[zone])
                 .Select(x => x.DistColor_code)
                 .ToList();
             foreach (var col in colors)
@@ -820,8 +820,8 @@ namespace Picking.Models
             Syslog.Info($"TdUnitChaseLight:mintdunitseq={mintdunitseq}");
 
             // 点灯対象のdistseqを取得
-            var distcolors = distcolorinfo.DistColors!.Where(x => x.DistSeq[zone] != 0 && distseq < x.DistSeq[zone])
-                .OrderBy(x => x.DistSeq[zone]).ToList();
+            var distcolors = distcolorinfo.DistColors!.Where(x => x.DistSeqs[zone] != 0 && distseq < x.DistSeqs[zone])
+                .OrderBy(x => x.DistSeqs[zone]).ToList();
 
             foreach (var distcolor in distcolors)
             {

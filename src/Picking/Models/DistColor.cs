@@ -98,7 +98,7 @@ namespace Picking.Models
         }
 
         private List<int> _distseqs = new List<int>() { 0, 0, 0 };
-        public List<int> DistSeq
+        public List<int> DistSeqs
         {
             get => _distseqs;
             set => SetProperty(ref _distseqs, value);
@@ -116,8 +116,8 @@ namespace Picking.Models
             ItemSeqs = new List<DistItemSeq>();
             Tdunitdisplay.Clear();
             DStatus = (int)Status.Ready;
-            for (int i = 0; i < DistSeq.Count(); i++)
-                DistSeq[i] = 0;
+            for (int i = 0; i < DistSeqs.Count(); i++)
+                DistSeqs[i] = 0;
             Clear();
         }
         public override string QtyFieldSpace(int ps)

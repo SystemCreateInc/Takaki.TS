@@ -116,7 +116,8 @@
                   AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="状態" Width="Auto" Binding="{Binding DStatus_name}"  ElementStyle="{StaticResource LeftTextElement}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="配分&#xa;状態" Width="Auto" Binding="{Binding DStatus_name}"  ElementStyle="{StaticResource LeftTextElement}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="大分&#xa;状態" Width="Auto" Binding="{Binding LStatus_name}"  ElementStyle="{StaticResource LeftTextElement}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="品番" Width="Auto" Binding="{Binding CdHimban}"  ElementStyle="{StaticResource LeftTextElement}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="JANｺｰﾄﾞ" Width="Auto" Binding="{Binding CdGtin13}"  ElementStyle="{StaticResource LeftTextElement}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="品名" Width="Auto" Binding="{Binding NmHinSeishikimei}" IsReadOnly="True">
