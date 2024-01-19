@@ -437,11 +437,21 @@ namespace Picking.ViewModels
 
                         bool bRet = TdUnitManager.TdLight(ref distcolor, distcolorinfo.IsDistWorkNormal, TdDps);
 
-                        // 作業報告書開始
-                        distcolor.ReportStart(SelectedShain, distcolor.Distitem_cnt, distcolor.DistWorkMode);
-                        DisplayDistItemDatas = null;
+                        int dops = distcolor.ItemSeqs.Sum(x => x.Dops);
+                        if (dops==0)
+                        {
+                            // 即座に完了処理へ
+                            DistColorManager.DistUpdate(distcolor);
+                            DisplayDistItemDatas = null;
+                        }
+                        else
+                        {
+                            // 作業報告書開始
+                            distcolor.ReportStart(SelectedShain, distcolor.Distitem_cnt, distcolor.DistWorkMode);
+                            DisplayDistItemDatas = null;
 
-                        UpdateProgress();
+                            UpdateProgress();
+                        }
 
                         _regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
                     }
@@ -500,6 +510,17 @@ namespace Picking.ViewModels
                 CanDistItem = false;
                 InSeq = 0;
             }
+            else
+            {
+                for (int i = 0; i < DistBase.ITEMMAX; i++)
+                {
+                    var item = DisplayDistItemDatas[i];
+                    if (item.CdHimban != "")
+                    {
+                        RefreshItem(item);
+                    }
+                }
+            }
 
             Syslog.Info($"DistItemScanWindowViewModel:OnNavigatedTo");
         }
@@ -553,6 +574,7 @@ namespace Picking.ViewModels
             DisplayDistItemDatas![inseq].Dops = distitemseq.Dops;
             DisplayDistItemDatas![inseq].Drps = distitemseq.Drps;
             DisplayDistItemDatas![inseq].Ddps = distitemseq.Ddps;
+            DisplayDistItemDatas![inseq].Lrps = distitemseq.Lrps;
             DisplayDistItemDatas![inseq].Order_shop_cnt = distitemseq.Order_shop_cnt;
             DisplayDistItemDatas![inseq].Result_shop_cnt = distitemseq.Result_shop_cnt;
             DisplayDistItemDatas![inseq].Remain_shop_cnt = distitemseq.Remain_shop_cnt;
@@ -582,6 +604,7 @@ namespace Picking.ViewModels
                 Dops = distitemseq.Dops,
                 Drps = distitemseq.Drps,
                 Ddps = distitemseq.Ddps,
+                Lrps = distitemseq.Lrps,
                 Order_shop_cnt = distitemseq.Order_shop_cnt,
                 Result_shop_cnt = distitemseq.Result_shop_cnt,
                 Remain_shop_cnt = distitemseq.Remain_shop_cnt,
@@ -611,6 +634,7 @@ namespace Picking.ViewModels
                 Dops = distitemseq.Dops,
                 Drps = distitemseq.Drps,
                 Ddps = distitemseq.Ddps,
+                Lrps = distitemseq.Lrps,
                 Order_shop_cnt = distitemseq.Order_shop_cnt,
                 Result_shop_cnt = distitemseq.Result_shop_cnt,
                 Remain_shop_cnt = distitemseq.Remain_shop_cnt,
@@ -648,13 +672,14 @@ namespace Picking.ViewModels
         {
             List<DistDetail>? details = DistColorManager.LoadInfoDetails(DistGroup!, distdetail);
 
+
             if(details != null)
             {
                 // 残数を昇順に設定
                 int ops = distdetail.Dops - distdetail.Drps;
                 details.ForEach(d =>
                 {
-                    int zan = d.Ops - d.Drps;
+                    int zan = d.Lrps - d.Drps;
 
                     if (ops < zan)
                         zan = ops;
@@ -664,13 +689,33 @@ namespace Picking.ViewModels
                 });
                 DistColorManager.UpdateQtyDetail(details);
 
-                if (CurrentDistItemSeq != null)
+                RefreshItem(distdetail);
+            }
+        }
+
+        private void RefreshItem(DistBase distdetail)
+        {
+            var refreshitem = DistColorManager.RefreshItems(DistGroup!, distdetail, IsCheck, IsExtraction);
+
+            if (CurrentDistItemSeq != null)
+            {
+                if (refreshitem != null)
                 {
-                    CurrentDistItemSeq.Ops = distdetail.Ops;
-                    CurrentDistItemSeq.Dops = distdetail.Dops;
+                    CurrentDistItemSeq.Ops = refreshitem.Ops;
+                    CurrentDistItemSeq.Dops = refreshitem.Dops;
+                    CurrentDistItemSeq.Drps = refreshitem.Drps;
+                    CurrentDistItemSeq.Ddps = refreshitem.Ddps;
+                    CurrentDistItemSeq.Remain_shop_cnt = refreshitem.Remain_shop_cnt;
+                }
+                else
+                {
+                    CurrentDistItemSeq.Dops = 0;
+                    CurrentDistItemSeq.Ddps = 0;
+                    CurrentDistItemSeq.Remain_shop_cnt = 0;
                 }
             }
         }
+
         private void UpdateProgress()
         {
             try

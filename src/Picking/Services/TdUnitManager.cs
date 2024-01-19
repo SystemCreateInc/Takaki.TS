@@ -104,6 +104,10 @@ namespace Picking.Models
                     string tdunitaddr = item.Key;
                     int ttlps = item.Value;
 
+                    // 表示なし
+                    if (ttlps == 0)
+                        continue;
+
                     int ttl_cs = ttlps / itemseq.GetCsunit;
                     int ttl_ps = ttlps % itemseq.GetCsunit;
 
@@ -144,54 +148,43 @@ namespace Picking.Models
                 }
             }
 
-            var querys = distcolor.Tdunitdisplay
-                 .Where(x => x.Status == (int)DbLib.Defs.Status.Ready)
-                 .GroupBy(x => x.Tdunitaddrcode)
-                 .Select(x => x.First());
 
-            // 各表示の最後はＥを設定
-            foreach (var query in querys)
+            // 数量がある場合のみ処理する
+            if (distcolor.ItemSeqs.Sum(x => x.Dops) != 0)
             {
-                TdUnitDisplay? last = distcolor.Tdunitdisplay.FindLast(x => x.Tdunitaddrcode == query.Tdunitaddrcode);
-                if (last != null)
-                {
-                    last.TdDisplay = 'E' + last.TdDisplay.Remove(0, 1);
-                }
-            }
+                var querys = distcolor.Tdunitdisplay
+                     .Where(x => x.Status == (int)DbLib.Defs.Status.Ready)
+                     .GroupBy(x => x.Tdunitaddrcode)
+                     .Select(x => x.First());
 
-#if false
-            for (int i = 0; i < distcolor.Tdunitdisplay.Count; i++)
-            {
-                TdUnitDisplay? last = distcolor.Tdunitdisplay[distcolor.Tdunitdisplay.Count() - 1];
-
-                // 最終の商品なら先頭をＥに置き換え
-                if (last != null)
-                {
-                    last.TdDispaly.Remove(0, 1);
-                    last.TdDispaly.Insert(0, "E");
-                }
-            }
-#endif
-
-
-            if (IsDistWorkNormal)
-            {
-                // 一斉仕分け
+                // 各表示の最後はＥを設定
                 foreach (var query in querys)
                 {
-                    TdUnitLight(query.Tdunitaddrcode, tddps, true, false, distcolor.DistColor_code, query.TdDisplay, true);
+                    TdUnitDisplay? last = distcolor.Tdunitdisplay.FindLast(x => x.Tdunitaddrcode == query.Tdunitaddrcode);
+                    if (last != null)
+                    {
+                        last.TdDisplay = 'E' + last.TdDisplay.Remove(0, 1);
+                    }
                 }
-            }
-            else
-            {
-                // 追いかけはスタートＢＯＸを点灯
-                TdUnitLightChaseStartBox(tddps, distcolor.Tdunitdisplay, StartBoxMode.Go, distcolor.DistColor_code);
-            }
 
-            // 表示器数
-            distcolor.Order_shop_cnt = querys.Count();
-            distcolor.Plan_shop_cnt = querys.Count();
-            distcolor.Remain_shop_cnt = querys.Count();
+                if (IsDistWorkNormal)
+                {
+                    // 一斉仕分け
+                    foreach (var query in querys)
+                    {
+                        TdUnitLight(query.Tdunitaddrcode, tddps, true, false, distcolor.DistColor_code, query.TdDisplay, true);
+                    }
+                }
+                else
+                {
+                    // 追いかけはスタートＢＯＸを点灯
+                    TdUnitLightChaseStartBox(tddps, distcolor.Tdunitdisplay, StartBoxMode.Go, distcolor.DistColor_code);
+                }
+                // 表示器数
+                distcolor.Order_shop_cnt = querys.Count();
+                distcolor.Plan_shop_cnt = querys.Count();
+                distcolor.Remain_shop_cnt = querys.Count();
+            }
 
             return true;
         }
