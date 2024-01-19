@@ -1,6 +1,7 @@
 ﻿using ControlzEx.Standard;
 using CsvHelper;
 using CsvHelper.Configuration;
+using CsvHelper.TypeConversion;
 using CsvLib.Models;
 using Dapper;
 using Dapper.FastCrud;
@@ -294,7 +295,7 @@ namespace Mapping.Models
                         foreach (var syukkabatch in distgroup.ShukkaBatchs)
                         {
                             var shops = distgroup.dists
-                                .Where(x => x.CdCourse == pp.CdCourse && x.CdRoute == pp.CdRoute && x.CdSumTokuisaki == pp.CdSumTokuisaki)
+                                .Where(x => x.CdSumCourse == pp.CdSumCourse && x.CdSumRoute == pp.CdSumRoute && x.CdSumTokuisaki == pp.CdSumTokuisaki && x.CdShukkaBatch == syukkabatch.CdShukkaBatch)
                                 .Distinct(new TokusakiComparer()).ToList();
 
                             foreach (var shop in shops)
@@ -450,8 +451,7 @@ namespace Mapping.Models
                         var item = itemmsts.Where(x => x.code == dist.CdHimban).FirstOrDefault();
                         dist.NmHinSeishikimei = item == null ? "" : item.name;
                         dist.Maguchi = mapping.Maguchi;
-                        dist.CdBinSum = mapping.Tokuisakis.Count == 1 ? (int)BinSumType.No : (int)BinSumType.Yes;
-
+                        dist.CdBinSum = (int)BinSumType.No;
                         var shop = mapping.Tokuisakis.Find(x => x.CdShukkaBatch == dist.CdShukkaBatch && x.CdSumTokuisaki == dist.CdSumTokuisaki);
                         if (shop != null)
                         {
@@ -461,6 +461,15 @@ namespace Mapping.Models
                             dist.CdLargeGroup = shop.CdLargeGroup;
                             dist.NmLargeGroup = shop.NmLargeGroup;
                         }
+                    }
+                }
+
+                // 便集約設定
+                foreach (var dist in i == 0 ? distgroup.dists : distgroup.stowages)
+                {
+                    if (dist.tdunitaddrcode != "")
+                    {
+                        dist.CdBinSum = distgroup.dists.Where(x => x.CdBlock == dist.CdBlock && x.tdunitaddrcode == dist.tdunitaddrcode).Select(x => x.CdShukkaBatch).Distinct().Count() <= 1 ? (int)BinSumType.No : (int)BinSumType.Yes;
                     }
                 }
             }
@@ -492,6 +501,15 @@ namespace Mapping.Models
                     }
                 }
             }
+
+            DateTime now = DateTime.Now;
+            string now_tostring = now.ToString("yyyyMMddHHmmss");
+            string cd_henkousha = Environment.MachineName;
+            if (10<cd_henkousha.Count())
+            {
+                cd_henkousha = cd_henkousha.Substring(0, 10);
+            }
+
             // データ保存
             using (var con = DbFactory.CreateConnection())
             using (var tr = con.BeginTransaction())
@@ -551,6 +569,10 @@ namespace Mapping.Models
 
                         foreach (var dist in distgroup.dists)
                         {
+                            dist.DtTorokuNichiji = dist.createdAt.ToString("yyyyMMddHHmmss");
+                            dist.DtKoshinNichiji = now_tostring;
+                            dist.CdHenkosha = cd_henkousha;
+
                             bool over = dist.tdunitaddrcode == "" ? true : false;
 
                             // オーバーは完了とする
@@ -561,8 +583,8 @@ namespace Mapping.Models
 
                             // dist更新
                             sql = over 
-                                 ? "update TB_DIST set FG_MAPSTATUS=@mapstatus,FG_DSTATUS=@dstatus,NU_LOPS=@ops,NU_DOPS=@ops,NU_DRPS=@ops,updatedAt=@update,DT_WORKDT_DIST=@update where ID_DIST=@id"
-                                 : "update TB_DIST set FG_MAPSTATUS=@mapstatus,NU_LOPS=@ops,NU_DOPS=@ops where ID_DIST=@id";
+                                 ? "update TB_DIST set FG_MAPSTATUS=@mapstatus,FG_DSTATUS=@dstatus,NU_LOPS=@ops,NU_DOPS=@ops,NU_DRPS=@ops,updatedAt=@update,DT_WORKDT_DIST=@update,CD_HENKOSHA=@cd_henkousha,DT_TOROKU_NICHIJI=@dt_torokuNichiji,DT_KOSHIN_NICHIJI=@dt_koshinNichiji where ID_DIST=@id"
+                                 : "update TB_DIST set FG_MAPSTATUS=@mapstatus,NU_LOPS=@ops,NU_DOPS=@ops,CD_HENKOSHA=@cd_henkousha,DT_TOROKU_NICHIJI=@dt_torokuNichiji,DT_KOSHIN_NICHIJI=@dt_koshinNichiji where ID_DIST=@id";
 
                             con.Execute(sql,
                             new
@@ -573,6 +595,11 @@ namespace Mapping.Models
                                 dops = over ? dist.Ops : 0,
                                 drps = over ? dist.Ops : 0,
                                 update = DateTime.Now,
+                                now_tostring = now_tostring,
+                                cd_henkousha = cd_henkousha,
+                                nm_henkousha = cd_henkousha,
+                                dt_torokuNichiji = dist.DtTorokuNichiji,
+                                dt_koshinNichiji = dist.DtKoshinNichiji,
                                 id = dist.Id,
                             }, tr);
 
@@ -604,7 +631,6 @@ namespace Mapping.Models
                     }
 
                     // 積み付け新規追加
-                    DateTime now = DateTime.Now;
                     foreach (var distgroup in distgroups)
                     {
                         if (distgroup.CdDistGroup != cdDistGroup)
@@ -612,6 +638,10 @@ namespace Mapping.Models
 
                         foreach (var dist in AppendStowages)
                         {
+                            dist.DtTorokuNichiji = dist.createdAt.ToString("yyyyMMddHHmmss");
+                            dist.DtKoshinNichiji = now_tostring;
+                            dist.CdHenkosha = cd_henkousha;
+
                             string sql = "INSERT INTO TB_STOWAGE VALUES (@DTDELIVERY,@CDSHUKKABATCH,@CDKYOTEN,@CDHAISHOBIN,@CDCOURSE,@CDROUTE,@CDTOKUISAKI,@CDHENKOSHA,@DTTOROKUNICHIJI,@DTKOSHINNICHIJI,@FGSSTATUS,@STBOXTYPE,@NUOBOXCNT,@NURBOXCNT,@NMHENKOSHA,NULL,NULL,@createdAt,@updatedAt);";
                             var id = con.Query<long>(sql,
                                 new
@@ -623,14 +653,14 @@ namespace Mapping.Models
                                     CDCOURSE = dist.CdCourse,
                                     CDROUTE = dist.CdRoute,
                                     CDTOKUISAKI = dist.CdTokuisaki,
-                                    CDHENKOSHA = "",
-                                    DTTOROKUNICHIJI = now.ToString("yyyyMMddHHmmss"),
-                                    DTKOSHINNICHIJI = now.ToString("yyyyMMddHHmmss"),
+                                    CDHENKOSHA = dist.CdHenkosha,
+                                    DTTOROKUNICHIJI = dist.DtTorokuNichiji,
+                                    DTKOSHINNICHIJI = dist.DtKoshinNichiji,
                                     FGSSTATUS = 0,
                                     STBOXTYPE = (short)dist.StBoxType,
                                     NUOBOXCNT = 0,
                                     NURBOXCNT = 0,
-                                    NMHENKOSHA = "",
+                                    NMHENKOSHA = dist.CdHenkosha,
                                     CreatedAt = DateTime.Now,
                                     UpdatedAt = DateTime.Now,
                                 },tr);
@@ -663,6 +693,23 @@ namespace Mapping.Models
                         }
                         foreach (var stowage in distgroup.stowages)
                         {
+                            stowage.DtTorokuNichiji = stowage.createdAt.ToString("yyyyMMddHHmmss");
+                            stowage.DtKoshinNichiji = now_tostring;
+                            stowage.CdHenkosha = cd_henkousha;
+
+                            var sql = "update TB_STOWAGE set updatedAt=@update,CD_HENKOSHA=@cd_henkousha,NM_HENKOSHA=@nm_henkousha,DT_TOROKU_NICHIJI=@dt_torokuNichiji,DT_KOSHIN_NICHIJI=@dt_koshinNichiji where ID_STOWAGE=@id";
+
+                            con.Execute(sql,
+                            new
+                            {
+                                update = DateTime.Now,
+                                dt_torokuNichiji = stowage.DtTorokuNichiji,
+                                dt_koshinNichiji = stowage.DtKoshinNichiji,
+                                cd_henkousha = cd_henkousha,
+                                nm_henkousha = cd_henkousha,
+                                id = stowage.Id,
+                            }, tr);
+
                             if (stowage.tdunitaddrcode != "")
                             {
                                 var stowagemapping = new TBSTOWAGEMAPPINGEntity
@@ -750,7 +797,7 @@ namespace Mapping.Models
                 Encoding = Encoding.GetEncoding("Shift_JIS"), // 文字コード指定(default:UTF-8)
                 TrimOptions = TrimOptions.Trim,               // 値のトリムオプション
                 Quote = '"',                                  // 値を囲む文字(default:'"')
-                ShouldQuote = (args) => true,                 // 出力時に値をQuoteで指定した文字で囲むかどうか
+                ShouldQuote = args => args.FieldType == typeof(string),// 出力時に値をQuoteで指定した文字で囲むかどうか
             };
             using (var writer = new StreamWriter(tmppath, false, Encoding.GetEncoding("Shift_JIS")))
             using (var csv = new CsvWriter(writer, config))

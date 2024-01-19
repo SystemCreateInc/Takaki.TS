@@ -185,7 +185,7 @@ namespace Mapping.ViewModels
                             loc.CdTokuisaki = p.CdSumTokuisaki;
                             loc.NmTokuisaki = p.NmSumTokuisaki;
                             loc.CdBinSum = p.CdBinSum == (int)BinSumType.Yes ? "●" : "";
-                            loc.CdSumTokuisaki = _mapping.sumtokuisakis.Find(x => x.CdSumTokuisaki == p.CdSumTokuisaki)!= null ? "●" : "";
+                            loc.CdSumTokuisaki = distgroup.dists.Where(x => x.CdBlock == p.CdBlock && x.tdunitaddrcode == p.tdunitaddrcode).Select(x => x.CdTokuisaki).Distinct().Count() <= 1 ? "" : "●";
                             loc.Maguchi = p.Maguchi.ToString();
                             TokuisakiCnt++;
                         }
@@ -203,7 +203,7 @@ namespace Mapping.ViewModels
                             loc.CdTokuisaki = p.CdTokuisaki;
                             loc.NmTokuisaki = p.NmTokuisaki;
                             loc.CdBinSum = p.CdBinSum;
-                            loc.CdSumTokuisaki = _mapping.sumtokuisakis.Find(x => x.CdSumTokuisaki == p.CdTokuisaki) != null ? "●" : "";
+                            loc.CdSumTokuisaki = p.CdSumTokuisaki;
                             loc.Maguchi = p.Maguchi;
                             TokuisakiCnt++;
                         }
