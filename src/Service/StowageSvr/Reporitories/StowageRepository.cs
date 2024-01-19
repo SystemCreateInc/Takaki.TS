@@ -44,6 +44,16 @@ namespace StowageSvr.Reporitories
             return new AppLock(Connection, "StowageSvr");
         }
 
+        public string? GetPersonName(string person)
+        {
+            return Connection.Find<TBMSHAINEntity>(s => s
+                .AttachToTransaction(Transaction)
+                .Where($"{nameof(TBMSHAINEntity.CDSHAIN):C} = {nameof(person):P}")
+                .WithParameters(new { person }))
+                .Select(x => x.NMSHAIN)
+                .FirstOrDefault();
+        }
+
         public IEnumerable<TBSTOWAGEEntity> GetStowageEntitys(string block, string deliveryDate,
             string? distGroup = null, string? tdCode = null, string? batch = null, string? tokuisaki = null)
         {
@@ -79,10 +89,15 @@ namespace StowageSvr.Reporitories
                 {nameof(TBSTOWAGEEntity.NURBOXCNT):C} = {nameof(stowage.ResultBoxCount):P},
                 {nameof(TBSTOWAGEEntity.FGSSTATUS):C} = {nameof(stowage.FgSStatus):P},
                 {nameof(TBSTOWAGEEntity.DTWORKDTSTOWAGE):C} = {nameof(stowage.WorkDate):P},
+                {nameof(TBSTOWAGEEntity.DTKOSHINNICHIJI):C} = {nameof(stowage.UpdatedAtStr):P},
+                {nameof(TBSTOWAGEEntity.CDHENKOSHA):C} = {nameof(stowage.Person):P},
+                {nameof(TBSTOWAGEEntity.NMHENKOSHA):C} = {nameof(stowage.PersonName):P},
                 {nameof(TBSTOWAGEEntity.UpdatedAt):C} = {nameof(stowage.UpdatedAt):P}
                 where {nameof(TBSTOWAGEEntity.IDSTOWAGE):C} = {nameof(stowage.Id):P}");
 
-            Connection.Execute(sql, new { stowage.ResultBoxCount, stowage.FgSStatus, stowage.WorkDate, stowage.UpdatedAt, stowage.Id }, Transaction);
+            Connection.Execute(sql, 
+                new { stowage.ResultBoxCount, stowage.FgSStatus, stowage.WorkDate, stowage.Person, stowage.PersonName, stowage.UpdatedAt, stowage.UpdatedAtStr, stowage.Id }, 
+                Transaction);
         }
     }
 }

@@ -1,0 +1,13 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace StowageSvr.HostRequest
+{
+    public class GetPersonRequest
+    {
+        public string Person { get; set; } = string.Empty;
+    }
+}

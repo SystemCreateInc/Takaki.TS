@@ -21,8 +21,10 @@ namespace StowageSvr.Models
         public int OrderBoxCount { get; set; }
         public int ResultBoxCount { get; set; }
 
+        public string Person { get; set; }
         public string PersonName { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public string UpdatedAtStr => UpdatedAt.ToString("yyyyMMddHHmmss");
         public DateTime? WorkDate { get; set; }
 
         public TBSTOWAGEEntity Entity { get; set; }
@@ -59,12 +61,15 @@ namespace StowageSvr.Models
             return FgSStatus == Status.Completed ? ResultBoxCount : OrderBoxCount;
         }
 
-        public void Update(int boxCount)
+        public void Update(int boxCount, string person, string personName)
         {
             ResultBoxCount = boxCount;
             FgSStatus = Status.Completed;
-            UpdatedAt = DateTime.Now;
             WorkDate = DateTime.Now;
+            Person = person;
+            PersonName = personName;
+
+            UpdatedAt = DateTime.Now;
         }
     }
 }

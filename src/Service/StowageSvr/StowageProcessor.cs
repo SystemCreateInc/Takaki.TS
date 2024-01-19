@@ -18,6 +18,27 @@ namespace StowageSvr
             _repositoryFactory = repositoryFactory;
         }
 
+        // 作業者入力
+        public GetPersonResponse GetPerson(GetPersonRequest request)
+        {
+            using (var repo = _repositoryFactory.Create())
+            {
+                var personName = repo.GetPersonName(request.Person.PadLeft(7, '0'));
+
+                if (personName is null)
+                {
+                    throw new Exception("該当する社員情報がありません");
+                }
+                repo.Commit();
+
+                return new GetPersonResponse
+                {
+                    Person = request.Person.PadLeft(7, '0'),
+                    PersonName = personName,
+                };
+            }
+        }
+
         // 仕分グループ選択
         public GetDistGroupResponse GetDistGroup(GetDistGroupRequest request)
         {
@@ -173,7 +194,7 @@ namespace StowageSvr
                 // 各箱毎に更新
                 foreach (var stowage in targetStowages)
                 {
-                    stowage.Update(GetBoxCount(stowage.StBoxType, request));
+                    stowage.Update(GetBoxCount(stowage.StBoxType, request), request.Person, request.PersonName);
                     repo.UpdateStowageEntity(stowage);
                 }
                 repo.Commit();
