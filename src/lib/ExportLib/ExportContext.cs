@@ -9,6 +9,7 @@ namespace ExportLib
         public IExportProcessor Processor { get; internal set; }
         public DataType DataType { get; internal set; }
         public string FileName { get; internal set; }
+        public string HulftId { get; internal set; }
         public bool IsForce { get; internal set; }
         public int FileSize { get; internal set; }
         public int ExportedCount { get; internal set; }
@@ -20,12 +21,13 @@ namespace ExportLib
         private StreamWriter? _streamWriter;
         public StreamWriter StreamWriter => _streamWriter!;
 
-        public ExportContext(ExportService service, IExportProcessor processor, DataType dataType, string fileName, bool isForce, CancellationToken cancellationToken)
+        public ExportContext(ExportService service, IExportProcessor processor, DataType dataType, string fileName, string hulftId, bool isForce, CancellationToken cancellationToken)
         {
             Service = service;
             Processor = processor;
             DataType = dataType;
             FileName = fileName;
+            HulftId = hulftId;
             IsForce = isForce;
             CancellationToken = cancellationToken;
         }

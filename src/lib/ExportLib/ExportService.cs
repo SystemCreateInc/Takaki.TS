@@ -3,6 +3,8 @@ using DbLib.DbEntities;
 using ExportLib.Exceptions;
 using InterfaceTimingLib;
 using LogLib;
+using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 using System.Text;
 
 namespace ExportLib
@@ -51,6 +53,7 @@ namespace ExportLib
                 proc.IntervalSec = ifile.IntervalSec;
                 proc.SpecifiedTimings = ifile.Timings;
                 proc.ExpDays = ifile.ExpDays;
+                proc.HulftId = ifile.HulftId??"";
                 TimingCalculator.InitializeTiming(proc);
             }
         }
@@ -118,11 +121,15 @@ namespace ExportLib
                 proc,
                 proc.DataType,
                 proc.FileName,
+                proc.HulftId,
                 force,
                 token);
 
             try
             {
+                _logger.Debug($"Delete file {ctxt.FileName}");
+                File.Delete(ctxt.FileName);
+
                 var tmpFileName = CreateTempFileName(ctxt);
                 _logger.Debug($"Create tmp file {tmpFileName}");
 
@@ -154,6 +161,9 @@ namespace ExportLib
 
                     _logger.Debug($"Delete tmp file {tmpFileName}");
                     File.Delete(tmpFileName);
+
+                    // ハルフト送信
+                    ExecHulft(ctxt);
 
                     repo.Commit();
                     NotifyStatus(ctxt, "終了");
@@ -246,6 +256,30 @@ namespace ExportLib
                 });
                 repo.Commit();
             }
+        }
+
+        private void ExecHulft(ExportContext ctxt)
+        {
+            var config = new ConfigurationBuilder()
+            .AddJsonFile("common.json", true, true)
+            .Build();
+
+            var hulftpath = config.GetSection("hulft")?["path"] ?? "";
+
+            string hulftid = ctxt.HulftId;
+            if (hulftid == "" || hulftpath == "")
+            {
+                Syslog.Warn($"ExecHulft:Skip");
+                return;
+            }
+
+            // ハルフト起動
+            var app = new ProcessStartInfo();
+            app.FileName = hulftpath;
+            app.Arguments = hulftid;
+
+            Syslog.Warn($"ExecHulft:Exec{app.FileName} {app.Arguments}");
+            Process.Start(app);
         }
     }
 }
