@@ -422,8 +422,8 @@ namespace Picking.ViewModels
                         if (distcolorinfo.IsDistWorkNormal==true)
                         {
                             int distseq = ++_distcolorinfo!.DistSeq;
-                            for (int i=0; i<distcolor.DistSeq.Count();i++)
-                                distcolor.DistSeq[i] = distseq;
+                            for (int i=0; i<distcolor.DistSeqs.Count();i++)
+                                distcolor.DistSeqs[i] = distseq;
                         }
 
                         // 明細データ読み込み

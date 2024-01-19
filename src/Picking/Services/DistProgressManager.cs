@@ -107,7 +107,7 @@ namespace Picking.Services
                             // 更新
                             p.IDPC = distgroup.IdPc;
 
-                            if (bCpmpleted = false && p.DTEND != null)
+                            if (bCpmpleted == false && p.DTEND != null)
                             {
                                 p.DTEND = null;
                             }

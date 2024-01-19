@@ -392,6 +392,7 @@ namespace DispShop.ViewModels
         }
         private void DpsLightOn(CancellationTokenSource ct)
         {
+            string oldCourse = "";
             bool bOn = true;
             foreach (var p in DistItems)
             {
@@ -401,6 +402,7 @@ namespace DispShop.ViewModels
 
                 string tddsplay = "";
                 int ledColor = (int)TdLedColor.Red;
+                bool ledBlink = true;
                 if (p.CdKyoten != "")
                 {
                     switch (LightType)
@@ -408,6 +410,8 @@ namespace DispShop.ViewModels
                         case 0:
                             tddsplay = string.Format("{0,3}{1,3}", p.CdSumCource, p.CdSumRoute);
                             ledColor = (int)TdLedColor.Red;
+                            ledBlink = oldCourse != p.CdSumCource ? true : false;
+                            oldCourse = p.CdSumCource;
                             break;
                         case 1:
                             tddsplay = string.Format("{0,6}", p.CdSumTokuisaki);
@@ -423,7 +427,6 @@ namespace DispShop.ViewModels
                             break;
                     }
 
-                    bool ledBlink = true;
 
                     Syslog.Info($"DpsLightOn: addr:{p.TdUnitAddrCode} ledColor:{ledColor} ledBlink:{ledBlink} display:{tddsplay}");
 

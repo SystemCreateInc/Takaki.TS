@@ -314,7 +314,6 @@ namespace Picking.Models
                 }
             }
         }
-
         // 配分タイプ
         private int _disttype;
         public int DistType
@@ -364,12 +363,35 @@ namespace Picking.Models
             set => SetProperty(ref _disttype_name, value);
         }
 
-        private int _lstatus = 0;
+        private int _lstatus=0;
         public int LStatus
         {
             get => _lstatus;
-            set => SetProperty(ref _lstatus, value);
+            set
+            {
+                SetProperty(ref _lstatus, value);
+
+                switch (value)
+                {
+                    case 0:
+                        LStatus_name = "未処理";
+                        break;
+                    case 1:
+                        LStatus_name = "分納";
+                        break;
+                    case 2:
+                        LStatus_name = "完了";
+                        break;
+                }
+            }
         }
+        private string _lstatus_name = "";
+        public string LStatus_name
+        {
+            get => _lstatus_name;
+            set => SetProperty(ref _lstatus_name, value);
+        }
+
 
         // 総店舗数
         private int _order_shop_cnt;
