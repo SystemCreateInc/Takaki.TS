@@ -298,29 +298,36 @@ namespace Mapping.Models
                                 .Where(x => x.CdSumCourse == pp.CdSumCourse && x.CdSumRoute == pp.CdSumRoute && x.CdSumTokuisaki == pp.CdSumTokuisaki && x.CdShukkaBatch == syukkabatch.CdShukkaBatch)
                                 .Distinct(new TokusakiComparer()).ToList();
 
-                            foreach (var shop in shops)
-                            {
-                                if (pp.Tokuisakis.Find(x => x.CdSumTokuisaki == shop.CdSumTokuisaki && x.CdShukkaBatch == shop.CdShukkaBatch) == null)
-                                {
-                                    //shop.NmTokuisaki = NameLoader.GetTokuisaki(shop.CdTokuisaki);
+                            var shops2 = distgroup.stowages
+                                .Where(x => x.CdSumCourse == pp.CdSumCourse && x.CdSumRoute == pp.CdSumRoute && x.CdSumTokuisaki == pp.CdSumTokuisaki && x.CdShukkaBatch == syukkabatch.CdShukkaBatch)
+                                .Distinct(new TokusakiComparer()).ToList();
 
-                                    pp.Tokuisakis.Add(
-                                        new Tokuisaki
-                                        {
-                                            CdShukkaBatch = syukkabatch.CdShukkaBatch,
-                                            NmShukkaBatch = syukkabatch.NmShukkaBatch,
-                                            CdLargeGroup = syukkabatch.CdLargeGroup,
-                                            NmLargeGroup = syukkabatch.NmLargeGroup,
-                                            CdTokuisaki = shop.CdTokuisaki,
-                                            //NmTokuisaki = shop.NmTokuisaki,
-                                            CdCourse = shop.CdCourse,
-                                            CdRoute = shop.CdRoute,
-                                            CdSumTokuisaki = shop.CdSumTokuisaki,
-                                            //NmSumTokuisaki = shop.CdSumTokuisaki == shop.CdTokuisaki ? shop.NmTokuisaki : NameLoader.GetTokuisaki(shop.CdSumTokuisaki),
-                                            CdSumCourse = shop.CdSumCourse,
-                                            CdSumRoute = shop.CdSumRoute,
-                                        }
-                                    );
+                            for (int i = 0; i < 2; i++)
+                            {
+                                foreach (var shop in i==0?shops: shops2)
+                                {
+                                    if (pp.Tokuisakis.Find(x => x.CdSumTokuisaki == shop.CdSumTokuisaki && x.CdShukkaBatch == shop.CdShukkaBatch) == null)
+                                    {
+                                        //shop.NmTokuisaki = NameLoader.GetTokuisaki(shop.CdTokuisaki);
+
+                                        pp.Tokuisakis.Add(
+                                            new Tokuisaki
+                                            {
+                                                CdShukkaBatch = syukkabatch.CdShukkaBatch,
+                                                NmShukkaBatch = syukkabatch.NmShukkaBatch,
+                                                CdLargeGroup = syukkabatch.CdLargeGroup,
+                                                NmLargeGroup = syukkabatch.NmLargeGroup,
+                                                CdTokuisaki = shop.CdTokuisaki,
+                                                //NmTokuisaki = shop.NmTokuisaki,
+                                                CdCourse = shop.CdCourse,
+                                                CdRoute = shop.CdRoute,
+                                                CdSumTokuisaki = shop.CdSumTokuisaki,
+                                                //NmSumTokuisaki = shop.CdSumTokuisaki == shop.CdTokuisaki ? shop.NmTokuisaki : NameLoader.GetTokuisaki(shop.CdSumTokuisaki),
+                                                CdSumCourse = shop.CdSumCourse,
+                                                CdSumRoute = shop.CdSumRoute,
+                                            }
+                                        );
+                                    }
                                 }
                             }
                         }
