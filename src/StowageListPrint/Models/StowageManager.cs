@@ -42,6 +42,13 @@ namespace StowageListPrint.Models
                     entity.DTWORKDTSTOWAGE = DateTime.Now;
                     entity.UpdatedAt = DateTime.Now;
                     entity.FGSSTATUS = (int)Status.Completed;
+                    entity.DTKOSHINNICHIJI = DateTime.Now.ToString("yyyyMMddHHmmss");
+                    entity.CDHENKOSHA = Environment.MachineName;
+                    if (10 < entity.CDHENKOSHA.Count())
+                    {
+                        entity.CDHENKOSHA = entity.CDHENKOSHA.Substring(0, 10);
+                    }
+                    entity.NMHENKOSHA = entity.CDHENKOSHA;
 
                     con.Update(entity, x => x.AttachToTransaction(tr));
                 }
