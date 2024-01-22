@@ -9,10 +9,10 @@ namespace WindowLib.Models
     {
         public DatePickerEx() 
         {
-            DateValidationError += DatePickerSt_DateValidationError;
+            DateValidationError += DatePickerEx_DateValidationError;
         }
 
-        private void DatePickerSt_DateValidationError(object? sender, DatePickerDateValidationErrorEventArgs e)
+        private void DatePickerEx_DateValidationError(object? sender, DatePickerDateValidationErrorEventArgs e)
         {
             if (sender == null)
             {
