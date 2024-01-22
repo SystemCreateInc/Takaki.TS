@@ -230,7 +230,8 @@ namespace Mapping.Models
                     DtTorokuNichiji = x.DTTOROKUNICHIJI,
                     DtKoshinNichiji = x.DTKOSHINNICHIJI,
                     CdHenkosha = x.CDHENKOSHA,
-    
+                    createdAt = x.CreatedAt,
+
                 }).ToList();
 
                 return dists;
@@ -271,6 +272,7 @@ namespace Mapping.Models
                     StBoxType = x.STBOXTYPE,
                     NuBoxCnt = x.NUOBOXCNT,
                     CdHaiShobin = x.CDHAISHOBIN,
+                    createdAt = x.CreatedAt,
 
                 }).ToList();
 

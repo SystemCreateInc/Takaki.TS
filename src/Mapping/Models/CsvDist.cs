@@ -18,7 +18,7 @@ namespace Mapping.Models
             TdUnitAddrCode = dist.tdunitaddrcode;
             CdHaishoBin = dist.CdHaishoBin;
             CdCourse = dist.CdCourse;
-            CdRoute = dist.CdRoute;
+            CdRoute = dist.CdRoute.ToString();
             CdJuchuBin = dist.CdJuchuBin;
             CdTokuisaki = dist.CdTokuisaki;
             CdHimban = dist.CdHimban;
@@ -46,7 +46,7 @@ namespace Mapping.Models
         [Index(6)]
         public string CdCourse { get; set; } = string.Empty;
         [Index(7)]
-        public int CdRoute { get; set; } = 0;
+        public string CdRoute { get; set; } = string.Empty;
         [Index(8)]
         public string CdJuchuBin { get; set; } = string.Empty;
         [Index(9)]

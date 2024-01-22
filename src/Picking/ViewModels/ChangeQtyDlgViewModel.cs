@@ -106,6 +106,13 @@ namespace Picking.ViewModels
             set => SetProperty(ref _opsall, value);
         }
 
+        private int _lrpsall = 0;
+        public int LrpsAll
+        {
+            get => _lrpsall;
+            set => SetProperty(ref _lrpsall, value);
+        }
+
         private int _csunit = 0;
         public int Csunit
         {
@@ -164,9 +171,10 @@ namespace Picking.ViewModels
             _tokuisakitotal = parameters.GetValue<int>("TokuisakiTotal");
 
             Csunit = DistDetail.GetCsunit;
-            OpsAll = DistDetail.Ops;
-            Cs = string.Format("{0}",DistDetail.Dops / Csunit);
-            Ps = string.Format("{0}", DistDetail.Dops % Csunit);
+            OpsAll = DistDetail.Ops - DistDetail.Drps;
+            LrpsAll = DistDetail.Lrps - DistDetail.Drps;
+            Cs = string.Format("{0}", (DistDetail.Dops - DistDetail.Drps) / Csunit);
+            Ps = string.Format("{0}", (DistDetail.Dops - DistDetail.Drps) % Csunit);
             UpdatePsAll();
 
             if (_tokuisakitotal == 0)
@@ -212,6 +220,16 @@ namespace Picking.ViewModels
                 return false;
             }
             if (OpsAll < DistDetail!.Drps)
+            {
+                ErrorMessage = "済み数より少ないです。";
+                return false;
+            }
+            if (LrpsAll < all)
+            {
+                ErrorMessage = "大仕分済み数をオーバーしています。";
+                return false;
+            }
+            if (LrpsAll < DistDetail!.Drps)
             {
                 ErrorMessage = "済み数より少ないです。";
                 return false;

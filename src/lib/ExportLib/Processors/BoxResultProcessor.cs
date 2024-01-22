@@ -1,9 +1,12 @@
 ﻿using DbLib.DbEntities;
 using DbLib.Defs;
 using ExportLib.Repository;
+using LogLib;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,19 +46,19 @@ namespace ExportLib.Processors
 
                 var list = new[]
                 {
-                    rec.DTDELIVERY,
-                    rec.CDSHUKKABATCH,
-                    rec.CDKYOTEN,
-                    rec.CDHAISHOBIN,
-                    rec.CDCOURSE,
-                    rec.CDROUTE.ToString(),
-                    rec.CDTOKUISAKI,
+                    "\"" + rec.DTDELIVERY + "\"",
+                    "\"" + rec.CDSHUKKABATCH + "\"",
+                    "\"" + rec.CDKYOTEN + "\"",
+                    "\"" + rec.CDHAISHOBIN + "\"",
+                    "\"" + rec.CDCOURSE + "\"",
+                    "\"" + rec.CDROUTE.ToString() + "\"",
+                    "\"" + rec.CDTOKUISAKI + "\"",
                     rec.STBOXTYPE.ToString(),
                     rec.NUOBOXCNT.ToString(),
                     rec.NURBOXCNT.ToString(),
-                    rec.DTTOROKUNICHIJI,
-                    rec.DTKOSHINNICHIJI,
-                    rec.CDHENKOSHA
+                    "\"" + rec.DTTOROKUNICHIJI + "\"",
+                    "\"" + rec.DTKOSHINNICHIJI + "\"",
+                    "\"" + rec.CDHENKOSHA + "\""
                 };
 
                 ctxt.StreamWriter.Write(string.Join(FieldSeparator, list) + LineSeparator);

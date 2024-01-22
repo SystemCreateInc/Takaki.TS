@@ -113,6 +113,7 @@ namespace Mapping.Models
         public string DtTorokuNichiji = string.Empty;
         public string DtKoshinNichiji = string.Empty;
         public string CdHenkosha = string.Empty;
+        public DateTime createdAt = DateTime.Now;
 
 
         public decimal GetBoxSize()

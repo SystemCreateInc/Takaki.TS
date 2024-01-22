@@ -15,5 +15,6 @@ namespace InterfaceTimingLib
         DateTime? NextExportTime { get; set; }
         IEnumerable<TimeSpan> SpecifiedTimings { get; set; }
         DateTime? LastExportedTime { get; set; }
+        string HulftId { get; set; }
     }
 }

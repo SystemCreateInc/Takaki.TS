@@ -68,8 +68,9 @@ namespace Picking.Services
                     var p = GetDistGroupProgress(con, tr, distgroup);
                     if (p==null)
                     {
+                        tr.Commit();
                         return;
-// マッピング作成する様に変更
+// マッピングで作成する様に変更
 #if false
                         // 新規追加
                         p = new TBDISTGROUPPROGRESSEntity
@@ -98,7 +99,7 @@ namespace Picking.Services
                     }
                     else
                     {
-                        if (p.FGDSTATUS == (int)Status.Completed)
+                        if (p.FGDSTATUS == (int)Status.Completed && bCpmpleted==true)
                         {
                             //既に完了しているので作業者のみ更新
                         }

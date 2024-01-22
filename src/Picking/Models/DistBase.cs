@@ -222,6 +222,13 @@ namespace Picking.Models
             set => SetProperty(ref _display_ddps, value);
         }
 
+        private int _lrps = 0;
+        public int Lrps
+        {
+            get => _lrps;
+            set => SetProperty(ref _lrps, value);
+        }
+
         private string _cd_shain = "";
         public string CdShain
         {

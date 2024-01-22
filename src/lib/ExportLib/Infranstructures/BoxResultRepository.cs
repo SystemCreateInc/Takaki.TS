@@ -32,7 +32,7 @@ namespace ExportLib.Infranstructures
         public IEnumerable<TBSTOWAGEEntity> GetTargetData(IDbTransaction tr)
         {
             var where = string.Join(" or ", _targetIds.Select(x => $@"(DT_DELIVERY='{x.DtDelivery.ToString("yyyyMMdd")}' 
-                and CD_DIST_GROUP='{x.CdDistGroup}' and DT_SENDDT_STOWAGE is null and )"));
+                and CD_DIST_GROUP='{x.CdDistGroup}' and DT_SENDDT_STOWAGE is null)"));
 
             return tr.Connection!.Find<TBSTOWAGEEntity>(s => s
                 .AttachToTransaction(tr)

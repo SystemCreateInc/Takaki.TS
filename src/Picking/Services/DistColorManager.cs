@@ -39,10 +39,10 @@ namespace Picking.Services
                         + ",sum(NU_OPS) ops,sum(NU_DOPS) dops,sum(NU_DRPS) drps"
                         + ",(case when min(TB_DIST.FG_DSTATUS) = max(TB_DIST.FG_DSTATUS) then max(TB_DIST.FG_DSTATUS) else @dstatus end) dstatus"
                         + ",(case when min(TB_DIST.FG_LSTATUS) = max(TB_DIST.FG_LSTATUS) then max(TB_DIST.FG_LSTATUS) else @dstatus end) lstatus"
-                        + ",count(distinct TB_DIST.CD_TOKUISAKI) order_shop_cnt"
-                        + ",count(distinct case when TB_DIST.FG_DSTATUS >= @dstatus then TB_DIST.CD_TOKUISAKI else null end) result_shop_cnt"
-                        + ",count(distinct case when tdunitzonecode = 1 then CD_TOKUISAKI else null end) leftshopcnt"
-                        + ",count(distinct case when tdunitzonecode = 2 then CD_TOKUISAKI else null end) rightshopcnt"
+                        + ",count(distinct TB_DIST_MAPPING.tdunitaddrcode) order_shop_cnt"
+                        + ",count(distinct case when NU_DOPS=NU_DRPS then TB_DIST_MAPPING.tdunitaddrcode else null end) result_shop_cnt"
+                        + ",count(distinct case when tdunitzonecode = 1 then TB_DIST_MAPPING.tdunitaddrcode else null end) leftshopcnt"
+                        + ",count(distinct case when tdunitzonecode = 2 then TB_DIST_MAPPING.tdunitaddrcode else null end) rightshopcnt"
                         + ",sum(case when tdunitzonecode = 1 then NU_OPS-NU_DRPS else 0 end) leftpscnt"
                         + ",sum(case when tdunitzonecode = 2 then NU_OPS-NU_DRPS else 0 end) rightpscnt"
                         + " from TB_DIST"
@@ -113,6 +113,9 @@ namespace Picking.Services
         }
         public static List<DistDetail>? LoadInfoDetails(DistGroup distgroup, DistBase _dist)
         {
+            if (_dist.CdHimban == "")
+                return new List<DistDetail>();
+
             using (var con = DbFactory.CreateConnection())
             {
                 var sql = @"select tb_dist.ID_DIST"
@@ -134,6 +137,7 @@ namespace Picking.Services
                         + ",NU_OPS"
                         + ",NU_DOPS"
                         + ",NU_DRPS"
+                        + ",NU_LRPS"
                         + " from tb_dist"
                         + " inner join tb_dist_mapping on tb_dist.id_dist=tb_dist_mapping.id_dist"
                         + " inner join tdunitaddr on TB_DIST_MAPPING.tdunitaddrcode = tdunitaddr.tdunitaddrcode and tdunitaddr.usageid=@tdunittype"
@@ -176,6 +180,7 @@ namespace Picking.Services
                          Dops = q.NU_DOPS,
                          Drps = q.NU_DRPS,
                          Ddps = q.NU_OPS - q.NU_DRPS,
+                         Lrps = q.NU_LRPS,
                      }).ToList();
             }
         }
@@ -196,7 +201,7 @@ namespace Picking.Services
                         con.Execute(sql,
                             new
                             {
-                                dops = x.Dops,
+                                dops = x.Dops + x.Drps,
                                 iddist = x.IdDist,
                                 updt = DateTime.Now,
                             }, tr);
@@ -227,13 +232,13 @@ namespace Picking.Services
                 strlarge = " and FG_LSTATUS<>@fg_lstatus";
 
             return @"select CD_DIST_GROUP,DT_DELIVERY,TB_DIST.CD_HIMBAN,ST_BOXTYPE,NU_BOXUNIT,max(NM_HIN_SEISHIKIMEI) NM_HIN_SEISHIKIMEI, CD_GTIN13,CD_GTIN14,CD_SHUKKA_BATCH,CD_JUCHU_BIN"
-                + ",sum(NU_OPS) ops,sum(NU_DOPS) dops,sum(NU_DRPS) drps"
+                + ",sum(NU_OPS) ops,sum(NU_DOPS) dops,sum(NU_DRPS) drps,sum(NU_LRPS) lrps"
                 + ",(case when min(TB_DIST.FG_DSTATUS) = max(TB_DIST.FG_DSTATUS) then max(TB_DIST.FG_DSTATUS) else @dstatus end) dstatus"
                 + ",(case when min(TB_DIST.FG_LSTATUS) = max(TB_DIST.FG_LSTATUS) then max(TB_DIST.FG_LSTATUS) else @dstatus end) lstatus"
-                + ",count(distinct TB_DIST.CD_TOKUISAKI) order_shop_cnt"
-                + ",count(distinct case when TB_DIST.FG_DSTATUS >= @dstatus then TB_DIST.CD_TOKUISAKI else null end) result_shop_cnt"
-                + ",count(distinct case when tdunitzonecode = 1 then CD_TOKUISAKI else null end) leftshopcnt"
-                + ",count(distinct case when tdunitzonecode = 2 then CD_TOKUISAKI else null end) rightshopcnt"
+                + ",count(distinct TB_DIST_MAPPING.tdunitaddrcode) order_shop_cnt"
+                + ",count(distinct case when NU_DOPS=NU_DRPS then TB_DIST_MAPPING.tdunitaddrcode else null end) result_shop_cnt"
+                + ",count(distinct case when tdunitzonecode = 1 then TB_DIST_MAPPING.tdunitaddrcode else null end) leftshopcnt"
+                + ",count(distinct case when tdunitzonecode = 2 then TB_DIST_MAPPING.tdunitaddrcode else null end) rightshopcnt"
                 + ",sum(case when tdunitzonecode = 1 then NU_OPS-NU_DRPS else 0 end) leftpscnt"
                 + ",sum(case when tdunitzonecode = 2 then NU_OPS-NU_DRPS else 0 end) rightpscnt"
                 + " from TB_DIST"
@@ -251,7 +256,7 @@ namespace Picking.Services
             //　スキャンコード読み込み
             using (var con = DbFactory.CreateConnection())
             {
-                string having = (bCheck == true || bExtraction == true) ? "0<sum(NU_DRPS)" : "sum(NU_OPS)<>sum(NU_DRPS)";
+                string having = (bCheck == true || bExtraction == true) ? "0<sum(NU_DRPS)" : "sum(NU_DOPS)<>sum(NU_DRPS)";
 
                 var sql = GetItemSqls(having,true);
 
@@ -286,6 +291,7 @@ namespace Picking.Services
                          Dops = q.dops ?? 0,
                          Drps = q.drps ?? 0,
                          Ddps = q.dops - q.drps,
+                         Lrps = q.lrps ?? 0,
                          Order_shop_cnt = q.order_shop_cnt ?? 0,
                          Result_shop_cnt = q.result_shop_cnt ?? 0,
                          Remain_shop_cnt = q.order_shop_cnt - q.result_shop_cnt,
@@ -328,6 +334,7 @@ namespace Picking.Services
                              Dops = q.dops ?? 0,
                              Drps = q.drps ?? 0,
                              Ddps = q.dops - q.drps,
+                             Lrps = q.lrps ?? 0,
                              Order_shop_cnt = q.order_shop_cnt ?? 0,
                              Result_shop_cnt = q.result_shop_cnt ?? 0,
                              Remain_shop_cnt = q.order_shop_cnt - q.result_shop_cnt,
@@ -364,6 +371,58 @@ namespace Picking.Services
                 return r;
             }
         }
+        public static DistItemSeq? RefreshItems(DistGroup distgroup, DistBase item, bool bCheck, bool bExtraction)
+        {
+            //　スキャンコード読み込み
+            using (var con = DbFactory.CreateConnection())
+            {
+                string having = (bCheck == true || bExtraction == true) ? "0<sum(NU_DRPS)" : "sum(NU_DOPS)<>sum(NU_DRPS)";
+                having += $" and CD_SHUKKA_BATCH='{item.CdShukkaBatch}' and CD_JUCHU_BIN='{item.CdJuchuBin}'";
+
+                var sql = GetItemSqls(having, true);
+
+                return con.Query(sql, new
+                {
+                    dt_delivery = distgroup.DtDelivery.ToString("yyyyMMdd"),
+                    cd_dist_group = distgroup.CdDistGroup,
+                    cd_block = distgroup.CdBlock,
+                    dstatus = (int)Status.Inprog,
+                    dstatus_ready = (int)Status.Ready,
+                    dstatus_completed = (int)Status.Completed,
+                    fg_mapstatus = (int)Status.Completed,
+                    tdunittype = distgroup.TdUnitType,
+                    fg_lstatus = (int)Status.Ready,
+                    scancode = item.CdHimban,
+                })
+                     .Select(q => new DistItemSeq
+                     {
+                         DtDelivery = q.DT_DELIVERY,
+                         CdShukkaBatch = q.CD_SHUKKA_BATCH,
+                         CdJuchuBin = q.CD_JUCHU_BIN,
+                         CdHimban = q.CD_HIMBAN,
+                         NmHinSeishikimei = q.NM_HIN_SEISHIKIMEI,
+                         CdGtin13 = q.CD_GTIN13,
+                         CdGtin14 = q.CD_GTIN14,
+                         StBoxType = q.ST_BOXTYPE,
+                         NuBoxUnit = q.NU_BOXUNIT,
+                         Csunit = q.NU_BOXUNIT,
+                         DStatus = q.dstatus,
+                         LStatus = q.lstatus,
+                         Ops = q.ops ?? 0,
+                         Dops = q.dops ?? 0,
+                         Drps = q.drps ?? 0,
+                         Ddps = q.dops - q.drps,
+                         Lrps = q.lrps ?? 0,
+                         Order_shop_cnt = q.order_shop_cnt ?? 0,
+                         Result_shop_cnt = q.result_shop_cnt ?? 0,
+                         Remain_shop_cnt = q.order_shop_cnt - q.result_shop_cnt,
+                         Left_shop_cnt = q.leftshopcnt ?? 0,
+                         Right_shop_cnt = q.rightshopcnt ?? 0,
+                         Left_ps_cnt = q.leftpscnt ?? 0,
+                         Right_ps_cnt = q.rightpscnt ?? 0,
+                     }).FirstOrDefault();
+            }
+        }
 
         public static bool DistUpdate(DistColor distcolor)
         {
@@ -390,7 +449,7 @@ namespace Picking.Services
                                 {
                                     int status = d.Ops == d.Drps ? (short)DbLib.Defs.Status.Completed : (short)DbLib.Defs.Status.Inprog;
 
-                                    var sql = "update TB_DIST set NU_DRPS=@drps,FG_DSTATUS=@status,CD_SHAIN_DIST=@cdshain,NM_SHAIN_DIST=@nmshain,DT_WORKDT_DIST=@dtwork,updatedAt=@updt where ID_DIST=@iddist";
+                                    var sql = "update TB_DIST set NU_DOPS=NU_LRPS,NU_DRPS=@drps,FG_DSTATUS=@status,CD_SHAIN_DIST=@cdshain,NM_SHAIN_DIST=@nmshain,DT_WORKDT_DIST=@dtwork,updatedAt=@updt where ID_DIST=@iddist";
 
                                     con.Execute(sql,
                                     new
@@ -406,7 +465,7 @@ namespace Picking.Services
                                 }
                             }
 
-                            // 数量を戻すし大仕分け状態も未処理へ戻す
+                            // 未処理へ戻す
                             if (distcolor.DistWorkMode == (int)Defs.DistWorkMode.Extraction)
                             {
                                 foreach (var d in itemseq.Details)
