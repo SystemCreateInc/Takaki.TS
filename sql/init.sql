@@ -12,8 +12,8 @@ insert into interfaceFiles (dataType, name, sortOrder, direction, fileName, expd
 insert into interfaceFiles (dataType, name, sortOrder, direction, fileName, expdays, comment, createdAt, updatedAt) values(11, '箱数予定データ', 0, 0, '箱数予定数データ*.csv', 100, '', getdate(), getdate());
 
 -- 実績ファイル
-insert into interfaceFiles (dataType, name, sortOrder, direction, fileName, expdays, comment, createdAt, updatedAt) values(100, '出荷実績データ', 0, 1, 'pickresult.txt', 0, '', getdate(), getdate());
-insert into interfaceFiles (dataType, name, sortOrder, direction, fileName, expdays, comment, createdAt, updatedAt) values(101, '箱数実績データ', 0, 1, 'hakoresult.txt', 0, '', getdate(), getdate());
+insert into interfaceFiles (dataType, name, sortOrder, direction, fileName, expdays, comment, createdAt, updatedAt) values(100, '出荷実績データ', 0, 1, 'C:\HULFT\snd\pick_result.txt', 0, '-f S2AOT001 -sync', getdate(), getdate());
+insert into interfaceFiles (dataType, name, sortOrder, direction, fileName, expdays, comment, createdAt, updatedAt) values(101, '箱数実績データ', 0, 1, 'C:\HULFT\snd\hako_result.txt', 0, '-f S2AOT002 -sync', getdate(), getdate());
 
 -- 色
 insert into typelists values('distcolor','1','赤',1, getdate(), getdate());
