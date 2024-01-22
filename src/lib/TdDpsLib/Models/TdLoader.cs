@@ -161,9 +161,8 @@ namespace TdDpsLib.Models
 
             using (var con = DbFactory.CreateConnection())
             {
-                string sql = @"select ST_TDUNIT_TYPE from TB_PC"
-                            + " inner join TB_BLOCK on TB_PC.CD_BLOCK=TB_BLOCK.CD_BLOCK"
-                            + " where TB_PC.ID_PC = @idpc;";
+                string sql = @"select ST_TDUNIT_TYPE from TB_BLOCK"
+                            + " where TB_BLOCK.CD_BLOCK = @idpc;";
 
                 var r = con.Query(sql, new { idpc = idpc })
                     .Select(q => new TBBLOCKEntity
