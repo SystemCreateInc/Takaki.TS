@@ -70,7 +70,7 @@ namespace StowageListPrint.Models
                             EtcBoxRps = etcBoxRps,
                             DispEtcBoxPs = etcBoxRps != 0 ? etcBoxRps : etcBoxOps,
                             DtWorkdtStowage = x.Max(x => x.DTWORKDTSTOWAGE),
-                            HenkoshaCode = x.Max(x => x.CDHENKOSHA) ?? string.Empty,
+                            HenkoshaCode = x.Max(x => x.CDHENKOSHA)?.Trim() ?? string.Empty,
                         };
 
                         return stowageListPrint;

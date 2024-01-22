@@ -109,6 +109,20 @@ namespace StowageListPrint.ViewModels
             set => SetProperty(ref _errorMessage, value);
         }
 
+        private int _selectShainIndex = -1;
+        public int SelectShainIndex
+        {
+            get => _selectShainIndex;
+            set => SetProperty(ref _selectShainIndex, value);
+        }
+
+        private List<ShainCombo> _shainList = new List<ShainCombo>();
+        public List<ShainCombo> ShainList
+        {
+            get => _shainList;
+            set => SetProperty(ref _shainList, value);
+        }
+
         public InputStowageDlgViewModel(IDialogService dialogService)
         {
             _dialogService = dialogService;
@@ -141,6 +155,7 @@ namespace StowageListPrint.ViewModels
         public void OnDialogOpened(IDialogParameters parameters)
         {
             _stowageListPrint = parameters.GetValue<Models.StowageListPrint>("CurrentStowageListPrint");
+            SetShainList(parameters.GetValue<string>("DtDelivery"));
             InitDialog();
         }
 
@@ -193,13 +208,31 @@ namespace StowageListPrint.ViewModels
                     return false;
                 }
 
-                StowageManager.Update(_stowageListPrint.IdStowages, (int)NewLargeBoxPs, (int)NewSmallBoxPs, (int)NewBlueBoxPs, (int)NewEtcBoxPs);
+                if (SelectShainIndex == -1)
+                {
+                    MessageDialog.Show(_dialogService, "作業社員コードを選択して下さい。", "入力エラー");
+                    return false;
+                }
+
+                StowageManager.Update(_stowageListPrint.IdStowages, (int)NewLargeBoxPs, (int)NewSmallBoxPs, (int)NewBlueBoxPs, (int)NewEtcBoxPs,
+                    ShainList[SelectShainIndex].Id, ShainList[SelectShainIndex].Name);
                 return true;
             }
             catch (Exception ex)
             {
                 MessageDialog.Show(_dialogService, ex.Message, "エラー");
                 return false;
+            }
+        }
+
+        private void SetShainList(string deliveryDate)
+        {
+            ShainList = ComboCreator.GetShain(deliveryDate);
+
+            var henkoShain = ShainList.FirstOrDefault(x => x.Id == _stowageListPrint.HenkoshaCode.Trim());
+            if (henkoShain is not null)
+            {
+                SelectShainIndex = ShainList.IndexOf(henkoShain);
             }
         }
     }

@@ -8,7 +8,7 @@ namespace StowageListPrint.Models
 {
     public class StowageManager
     {
-        public static void Update(List<long> ids, int largeBoxPs, int smallBoxPs, int blueBoxPs, int etcBoxPs)
+        public static void Update(List<long> ids, int largeBoxPs, int smallBoxPs, int blueBoxPs, int etcBoxPs, string henkoshaCode, string henkoshaName)
         {
             using (var con = DbFactory.CreateConnection())
             using (var tr = con.BeginTransaction())
@@ -43,12 +43,8 @@ namespace StowageListPrint.Models
                     entity.UpdatedAt = DateTime.Now;
                     entity.FGSSTATUS = (int)Status.Completed;
                     entity.DTKOSHINNICHIJI = DateTime.Now.ToString("yyyyMMddHHmmss");
-                    entity.CDHENKOSHA = Environment.MachineName;
-                    if (10 < entity.CDHENKOSHA.Count())
-                    {
-                        entity.CDHENKOSHA = entity.CDHENKOSHA.Substring(0, 10);
-                    }
-                    entity.NMHENKOSHA = entity.CDHENKOSHA;
+                    entity.CDHENKOSHA = henkoshaCode;
+                    entity.NMHENKOSHA = henkoshaName;
 
                     con.Update(entity, x => x.AttachToTransaction(tr));
                 }

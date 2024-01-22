@@ -28,6 +28,7 @@
     <ProjectReference Include="..\lib\PrintLib\PrintLib.csproj" />
     <ProjectReference Include="..\lib\PrintPreviewLib\PrintPreviewLib.csproj" />
     <ProjectReference Include="..\lib\SearchBoxLib\SearchBoxLib.csproj" />
+    <ProjectReference Include="..\lib\TakakiLib\TakakiLib.csproj" />
     <ProjectReference Include="..\lib\WindowLib\WindowLib.csproj" />
   </ItemGroup>
 

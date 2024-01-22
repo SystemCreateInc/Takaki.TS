@@ -241,6 +241,7 @@ namespace StowageListPrint.ViewModels
                 new DialogParameters
                 {
                     { "CurrentStowageListPrint", CurrentStowageListPrint },
+                    { "DtDelivery", DtDelivery },
                 },
                 r => result = r);
 
