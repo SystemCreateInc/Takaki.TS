@@ -64,7 +64,7 @@ namespace Picking.Models
                 {
                     continue;
                 }
-
+#if false
                 // 検品残数再設定
                 if (distcolor.DistWorkMode != (int)DistWorkMode.Dist)
                 {
@@ -74,7 +74,7 @@ namespace Picking.Models
                     itemseq.Remain_shop_cnt = itemseq.Result_shop_cnt;
                     itemseq.Result_shop_cnt = 0;
                 }
-
+#endif
                 distcolor.Distitem_cnt++;
 
                 Dictionary<string, int> psmap = new Dictionary<string, int>();
