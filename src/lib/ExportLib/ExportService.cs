@@ -155,7 +155,7 @@ namespace ExportLib
                     if (ctxt.ExportedCount > 0)
                     {
                         _logger.Debug($"Append to target file {ctxt.FileName}");
-                        AppendTargetFile(ctxt, tmpFileName);
+                        ReplaceTargetFile(ctxt, tmpFileName);
                         Syslog.SLCopy(ctxt.FileName);
                     }
 
@@ -201,6 +201,15 @@ namespace ExportLib
         public void NotifyProgress(string message, int value, int maximum, int minimum)
         {
             ProgressEvent?.Invoke(new ProgressInfo(message, value, maximum, minimum));
+        }
+
+        private void ReplaceTargetFile(ExportContext ctxt, string tmpFileName)
+        {
+            if (File.Exists(ctxt.FileName)) 
+            {
+                File.Delete(ctxt.FileName);
+            }
+            File.Copy(tmpFileName, ctxt.FileName, true);
         }
 
         private void AppendTargetFile(ExportContext ctxt, string srcFile)
