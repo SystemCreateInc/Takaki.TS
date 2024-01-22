@@ -9,7 +9,12 @@
     <BaseOutputPath>..\..\bin\</BaseOutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <ApplicationIcon>Print.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Print.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" />
@@ -28,6 +33,7 @@
     <ProjectReference Include="..\lib\PrintLib\PrintLib.csproj" />
     <ProjectReference Include="..\lib\PrintPreviewLib\PrintPreviewLib.csproj" />
     <ProjectReference Include="..\lib\SearchBoxLib\SearchBoxLib.csproj" />
+    <ProjectReference Include="..\lib\TakakiLib\TakakiLib.csproj" />
     <ProjectReference Include="..\lib\WindowLib\WindowLib.csproj" />
   </ItemGroup>
 

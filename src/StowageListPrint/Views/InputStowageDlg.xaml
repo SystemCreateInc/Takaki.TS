@@ -95,6 +95,11 @@
                     <TextBox Text="{Binding NewEtcBoxPs, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
                 </StackPanel>
 
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,30,0,0">
+                    <Label Content="作業社員コード ： "/>
+                    <ComboBox MinWidth="50" SelectedIndex="{Binding SelectShainIndex}" ItemsSource="{Binding ShainList}" DisplayMemberPath="DispName"/>
+                </StackPanel>
+
                 <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" Margin="5" Width="auto"/>
             </StackPanel>
         </StackPanel>
