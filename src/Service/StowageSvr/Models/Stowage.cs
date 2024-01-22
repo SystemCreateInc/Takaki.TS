@@ -47,6 +47,7 @@ namespace StowageSvr.Models
             StBoxType = (BoxType)entity.STBOXTYPE;
             OrderBoxCount = entity.NUOBOXCNT;
             ResultBoxCount = entity.NURBOXCNT;
+            Person = entity.CDHENKOSHA;
             PersonName = entity.NMHENKOSHA;
 
             TdCodes = entity.TBSTOWAGEMAPPING?.Where(x => !x.Tdunitaddrcode.IsNullOrEmpty()).Select(x => x.Tdunitaddrcode!) ?? Enumerable.Empty<string>();

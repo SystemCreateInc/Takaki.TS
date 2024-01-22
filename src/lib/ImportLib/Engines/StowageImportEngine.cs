@@ -97,7 +97,7 @@ namespace ImportLib.Engines
         {
             if (sameDistInfos.Any(x => x.IsWork))
             {
-                throw new Exception("同じ納品日・出荷バッチコードのデータで作業済みがある為中断します。");
+                throw new Exception("同じ納品日・出荷バッチコードで仕分開始しているデータがある為、中断します。");
             }
 
             if (sameDistInfos.Any())
