@@ -154,11 +154,18 @@ namespace StowageListPrint.Models
             set => SetProperty(ref _dtWorkdtStowage, value);
         }
 
+        private string _henkoshaCode = string.Empty;
+        public string HenkoshaCode
+        {
+            get => _henkoshaCode;
+            set => SetProperty(ref _henkoshaCode, value);
+        }
+
         // CSV出力用メソッド
         public string GetRow()
         {
             return $"{CdBlock},{Tdunitcode},{CdShukkaBatch},{CdCourse},{CdRoute},{CdTokuisaki},{NmTokuisaki},"
-                + $"{DispLargeBoxPs},{DispSmallBoxPs},{DispBlueBoxPs},{DispEtcBoxPs},{FormatDtWorkdtStowage}";
+                + $"{DispLargeBoxPs},{DispSmallBoxPs},{DispBlueBoxPs},{DispEtcBoxPs},{FormatDtWorkdtStowage},{HenkoshaCode}";
         }
 
         public string FormatDtWorkdtStowage => DtWorkdtStowage.HasValue ? DtWorkdtStowage.Value.ToString("yyyy/MM/dd HH:mm:ss") : string.Empty;

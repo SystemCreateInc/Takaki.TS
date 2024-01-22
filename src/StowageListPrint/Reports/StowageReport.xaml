@@ -99,26 +99,28 @@
                 </DataGrid.Resources>
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="出荷バッチ" Width="2cm" Binding="{Binding CdShukkaBatch}" CanUserSort="False"
+                    <DataGridTextColumn Header="出荷バッチ" Width="2*" Binding="{Binding CdShukkaBatch}" CanUserSort="False"
                                         ElementStyle="{StaticResource CenterTextElement}"/>
-                    <DataGridTextColumn Header="コース" Width="1.5cm" Binding="{Binding CdCourse}" CanUserSort="False"
+                    <DataGridTextColumn Header="コース" Width="1.5*" Binding="{Binding CdCourse}" CanUserSort="False"
                                         ElementStyle="{StaticResource CenterTextElement}"/>
-                    <DataGridTextColumn Header="配送順" Width="1.5cm" Binding="{Binding CdRoute}" CanUserSort="False"
+                    <DataGridTextColumn Header="配送順" Width="1.5*" Binding="{Binding CdRoute}" CanUserSort="False"
                                         ElementStyle="{StaticResource CenterTextElement}"/>
-                    <DataGridTextColumn Header="得意先コード" Width="2.5cm" Binding="{Binding CdTokuisaki}" CanUserSort="False"
+                    <DataGridTextColumn Header="得意先コード" Width="2.5*" Binding="{Binding CdTokuisaki}" CanUserSort="False"
                                         ElementStyle="{StaticResource CenterTextElement}"/>
-                    <DataGridTextColumn Header="得意先名" Width="12.21cm" Binding="{Binding NmTokuisaki}" CanUserSort="False"
+                    <DataGridTextColumn Header="得意先名" Width="10*" Binding="{Binding NmTokuisaki}" CanUserSort="False"
                                         ElementStyle="{StaticResource CenterLeftTextElement}"/>
-                    <DataGridTextColumn Header="厚箱" Width="1.3cm" Binding="{Binding DispLargeBoxPs}" CanUserSort="False"
+                    <DataGridTextColumn Header="厚箱" Width="1.3*" Binding="{Binding DispLargeBoxPs}" CanUserSort="False"
                                         ElementStyle="{StaticResource CenterTextElement}"/>
-                    <DataGridTextColumn Header="薄箱" Width="1.3cm" Binding="{Binding DispSmallBoxPs}" CanUserSort="False"
+                    <DataGridTextColumn Header="薄箱" Width="1.3*" Binding="{Binding DispSmallBoxPs}" CanUserSort="False"
                                         ElementStyle="{StaticResource CenterTextElement}"/>
-                    <DataGridTextColumn Header="青箱" Width="1.3cm" Binding="{Binding DispBlueBoxPs}" CanUserSort="False"
+                    <DataGridTextColumn Header="青箱" Width="1.3*" Binding="{Binding DispBlueBoxPs}" CanUserSort="False"
                                         ElementStyle="{StaticResource CenterTextElement}"/>
-                    <DataGridTextColumn Header="その他" Width="1.3cm" Binding="{Binding DispEtcBoxPs}" CanUserSort="False"
+                    <DataGridTextColumn Header="その他" Width="1*" Binding="{Binding DispEtcBoxPs}" CanUserSort="False"
                                         ElementStyle="{StaticResource CenterTextElement}"/>
-                    <DataGridTextColumn Header="作業日時" Width="3.6cm" Binding="{Binding DtWorkdtStowage, StringFormat=yyyy/MM/dd HH:mm:ss}"
+                    <DataGridTextColumn Header="作業日時" Width="3.6*" Binding="{Binding DtWorkdtStowage, StringFormat=yyyy/MM/dd HH:mm:ss}"
                                         CanUserSort="False" ElementStyle="{StaticResource CenterLeftTextElement}"/>
+                    <DataGridTextColumn Header="作業社員コード" Width="2.6*" Binding="{Binding HenkoshaCode}" CanUserSort="False"
+                                        ElementStyle="{StaticResource CenterTextElement}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>
