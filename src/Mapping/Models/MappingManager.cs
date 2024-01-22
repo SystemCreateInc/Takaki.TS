@@ -11,6 +11,7 @@ using DbLib.Defs;
 using DryIoc;
 using ExportLib.Infranstructures;
 using ExportLib.Models;
+using ImTools;
 using LogLib;
 using Mapping.Defs;
 using Microsoft.Data.SqlClient;
@@ -90,7 +91,7 @@ namespace Mapping.Models
         {
             string hash = obj.CdSumCourse + string.Format("{0:000}",obj.CdSumRoute) + obj.CdSumTokuisaki;
 
-            return (obj.CdCourse == null ? 0 : hash.GetHashCode());
+            return (obj.CdSumCourse == null ? 0 : hash.GetHashCode());
         }
     }
 
@@ -191,6 +192,7 @@ namespace Mapping.Models
 
                 // 集計得意先のコース、配順を設定
                 SetSumTokuisakiCourse(distgroup.dists);
+                SetSumTokuisakiCourse(distgroup.stowages);
 
                 // 得意先の親子関係をセット
                 SetSumTokuisaki(ref distgroup.dists);
@@ -458,6 +460,7 @@ namespace Mapping.Models
                         dist.NmHinSeishikimei = item == null ? "" : item.name;
                         dist.Maguchi = mapping.Maguchi;
                         dist.CdBinSum = (int)BinSumType.No;
+
                         var shop = mapping.Tokuisakis.Find(x => x.CdShukkaBatch == dist.CdShukkaBatch && x.CdSumTokuisaki == dist.CdSumTokuisaki);
                         if (shop != null)
                         {
@@ -467,6 +470,10 @@ namespace Mapping.Models
                             dist.CdLargeGroup = shop.CdLargeGroup;
                             dist.NmLargeGroup = shop.NmLargeGroup;
                         }
+                    }
+                    else
+                    {
+                        // 配分データになく積み付けにあるデータの場合
                     }
                 }
 
@@ -644,6 +651,12 @@ namespace Mapping.Models
 
                         foreach (var dist in AppendStowages)
                         {
+                            if (dist.NmTokuisaki=="")
+                            {
+                                Syslog.Info($"出荷データにない箱データは無視 CdSumCourse[{dist.CdSumCourse}] CdSumRoute[{dist.CdSumRoute}] CdCourse[{dist.CdCourse}] CdRoute[{dist.CdRoute}] CdSumTokuisaki[{dist.CdSumTokuisaki}]");
+                                continue;
+                            }
+
                             dist.DtTorokuNichiji = dist.createdAt.ToString("yyyyMMddHHmmss");
                             dist.DtKoshinNichiji = now_tostring;
                             dist.CdHenkosha = cd_henkousha;
@@ -699,6 +712,12 @@ namespace Mapping.Models
                         }
                         foreach (var stowage in distgroup.stowages)
                         {
+                            if (stowage.NmTokuisaki == "")
+                            {
+                                Syslog.Info($"出荷データにない箱データは無視 CdSumCourse[{stowage.CdSumCourse}] CdSumRoute[{stowage.CdSumRoute}] CdCourse[{stowage.CdCourse}] CdRoute[{stowage.CdRoute}] CdSumTokuisaki[{stowage.CdSumTokuisaki}]");
+                                continue;
+                            }
+
                             stowage.DtTorokuNichiji = stowage.createdAt.ToString("yyyyMMddHHmmss");
                             stowage.DtKoshinNichiji = now_tostring;
                             stowage.CdHenkosha = cd_henkousha;
