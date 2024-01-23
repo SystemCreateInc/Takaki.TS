@@ -31,6 +31,7 @@ using System.Windows.Shapes;
 using SelDistGroupLib.Models;
 using System.Windows.Media.Media3D;
 using System.Runtime.Intrinsics.X86;
+using DbLib.Defs;
 
 namespace DispShop.ViewModels
 {
@@ -482,7 +483,7 @@ namespace DispShop.ViewModels
         {
             try
             {
-                CollectionViewHelper.SetCollection(DistItems, DistLoaders.Get(DistGroup.DtDelivery.ToString("yyyyMMdd"), DistGroup.CdDistGroup, DistGroup.CdBlock));
+                CollectionViewHelper.SetCollection(DistItems, DistLoaders.Get(DistGroup.DtDelivery.ToString("yyyyMMdd"), DistGroup.CdDistGroup, DistGroup.CdBlock, TdDps.Tdunittype));
             }
             catch (Exception e)
             {

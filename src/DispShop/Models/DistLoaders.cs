@@ -4,6 +4,7 @@ using Dapper.FastCrud;
 using DbLib;
 using DbLib.DbEntities;
 using ImTools;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Identity.Client.Extensions.Msal;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,16 +14,16 @@ namespace DispShop.Models
 {
     public class DistLoaders
     {
-        public static IEnumerable<Dist> Get(string dt_delivdt, string cd_dist_group, string cd_block)
+        public static IEnumerable<Dist> Get(string dt_delivdt, string cd_dist_group,string cd_block, int tdunityupe)
         {
             using (var con = DbFactory.CreateConnection())
             {
-                var sql = @"select tdunitaddrcode from tb_block"
-                            + " inner join tdunitaddr on usageid = tb_block.ST_TDUNIT_TYPE"
-                            + " where CD_BLOCK = @cdblock";
+                var sql = @"select tdunitaddrcode from tdunitaddr"
+                    + " where usageid = @tdunityupe";
+
                 var locs = con.Query(sql, new
                 {
-                    @cdblock = cd_block,
+                    @tdunityupe = tdunityupe,
                 })
                      .Select(q => new Dist
                      {
