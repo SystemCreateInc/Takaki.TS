@@ -80,8 +80,19 @@
         <DataGrid DockPanel.Dock="Top" x:Name="distdetailgrid" ItemsSource="{Binding DisplayDistDetailDatas}"
                   SelectedItem="{Binding CurrentDistDetail, Mode=TwoWay}"
                   CanUserAddRows="False" SelectionMode="Single"
-                  AutoGenerateColumns="False" IsReadOnly="True"
-                  AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}">
+                  AutoGenerateColumns="False" IsReadOnly="True">
+            <DataGrid.ItemContainerStyle>
+                <Style TargetType="DataGridRow">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding DStatus}" Value="1">
+                            <Setter Property="Background" Value="Yellow"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding DStatus}" Value="2">
+                            <Setter Property="Background" Value="#00ff00"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.ItemContainerStyle>
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="状態" Width="Auto" Binding="{Binding DStatus_name}" ElementStyle="{StaticResource LeftTextElement}" IsReadOnly="True"/>

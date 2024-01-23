@@ -24,5 +24,10 @@ namespace Picking.Views
         {
             InitializeComponent();
         }
+
+        private void distdetailgrid_SelectionChanged()
+        {
+
+        }
     }
 }
