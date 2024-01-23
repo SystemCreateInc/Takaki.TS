@@ -19,7 +19,8 @@ namespace DispShop.Models
             using (var con = DbFactory.CreateConnection())
             {
                 var sql = @"select tdunitaddrcode from tdunitaddr"
-                    + " where usageid = @tdunityupe";
+                    + " where usageid = @tdunityupe"
+                    + " order by tdunitaddrcode";
 
                 var locs = con.Query(sql, new
                 {
@@ -80,16 +81,16 @@ namespace DispShop.Models
 
                 sql = @"select DT_DELIVERY, CD_KYOTEN, CD_DIST_GROUP, CD_SUM_TOKUISAKI, sum(box0) box0 , sum(box1) box1,sum(box2) box2,sum(box3) box3 from "
                     + " (select DT_DELIVERY, CD_KYOTEN, CD_DIST_GROUP, CD_SUM_TOKUISAKI"
-                    + ",(case ST_BOXTYPE when 0 then sum(NU_OBOXCNT) else 0 end) box0"
-                    + ",(case ST_BOXTYPE when 1 then sum(NU_OBOXCNT) else 0 end) box1"
-                    + ",(case ST_BOXTYPE when 2 then sum(NU_OBOXCNT) else 0 end) box2"
-                    + ",(case ST_BOXTYPE when 3 then sum(NU_OBOXCNT) else 0 end) box3"
+                    + ",(case ST_BOXTYPE when 0 then case when FG_SSTATUS=@completed then sum(NU_RBOXCNT) else sum(NU_OBOXCNT) end else 0 end) box0"
+                    + ",(case ST_BOXTYPE when 1 then case when FG_SSTATUS=@completed then sum(NU_RBOXCNT) else sum(NU_OBOXCNT) end else 0 end) box1"
+                    + ",(case ST_BOXTYPE when 2 then case when FG_SSTATUS=@completed then sum(NU_RBOXCNT) else sum(NU_OBOXCNT) end else 0 end) box2"
+                    + ",(case ST_BOXTYPE when 3 then case when FG_SSTATUS=@completed then sum(NU_RBOXCNT) else sum(NU_OBOXCNT) end else 0 end) box3"
                     + " from"
                     + " TB_STOWAGE"
                     + " inner join TB_STOWAGE_MAPPING on TB_STOWAGE.ID_STOWAGE = TB_STOWAGE_MAPPING.ID_STOWAGE"
                     + " where TB_STOWAGE.DT_DELIVERY = @dt_delivdt and TB_STOWAGE_MAPPING.CD_DIST_GROUP = @cd_dist_group"
                     + " and CD_BLOCK=@cdblock"
-                    + " group by DT_DELIVERY,CD_KYOTEN,CD_DIST_GROUP,CD_SUM_TOKUISAKI,ST_BOXTYPE"
+                    + " group by DT_DELIVERY,CD_KYOTEN,CD_DIST_GROUP,CD_SUM_TOKUISAKI,ST_BOXTYPE,FG_SSTATUS"
                     + " ) STOWAGE"
                     + " group by DT_DELIVERY,CD_KYOTEN,CD_DIST_GROUP,CD_SUM_TOKUISAKI";
 
@@ -98,6 +99,7 @@ namespace DispShop.Models
                     @dt_delivdt = dt_delivdt,
                     @cd_dist_group = cd_dist_group,
                     @cdblock = cd_block,
+                    @completed = (int)DbLib.Defs.Status.Completed,
                 })
                      .Select(q => new Dist
                      {
