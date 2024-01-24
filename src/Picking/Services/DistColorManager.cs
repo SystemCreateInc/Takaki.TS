@@ -133,6 +133,7 @@ namespace Picking.Services
                         + ",ST_BOXTYPE"
                         + ",tb_dist_mapping.tdunitaddrcode"
                         + ",tdunitzonecode"
+                        + ",FG_LSTATUS"
                         + ",FG_DSTATUS"
                         + ",NU_OPS"
                         + ",NU_DOPS"
@@ -175,6 +176,7 @@ namespace Picking.Services
                          StBoxType = q.ST_BOXTYPE,
                          Tdunitaddrcode = q.tdunitaddrcode,
                          Tdunitzonecode = q.tdunitzonecode,
+                         LStatus = q.FG_LSTATUS,
                          DStatus = q.FG_DSTATUS,
                          Ops = q.NU_OPS,
                          Dops = q.NU_DOPS,

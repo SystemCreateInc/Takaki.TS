@@ -435,23 +435,26 @@ namespace Picking.ViewModels
                             }
                         }
 
-                        bool bRet = TdUnitManager.TdLight(ref distcolor, distcolorinfo.IsDistWorkNormal, TdDps);
-
-                        int dops = distcolor.ItemSeqs.Sum(x => x.Dops);
-                        if (dops==0)
+                        Task.Run(() =>
                         {
-                            // 即座に完了処理へ
-                            DistColorManager.DistUpdate(distcolor);
-                            DisplayDistItemDatas = null;
-                        }
-                        else
-                        {
-                            // 作業報告書開始
-                            distcolor.ReportStart(SelectedShain, distcolor.Distitem_cnt, distcolor.DistWorkMode);
-                            DisplayDistItemDatas = null;
+                            bool bRet = TdUnitManager.TdLight(ref distcolor, distcolorinfo.IsDistWorkNormal, TdDps);
 
-                            UpdateProgress();
-                        }
+                            int dops = distcolor.ItemSeqs.Sum(x => x.Dops);
+                            if (dops==0)
+                            {
+                                // 即座に完了処理へ
+                                DistColorManager.DistUpdate(distcolor);
+                                DisplayDistItemDatas = null;
+                            }
+                            else
+                            {
+                                // 作業報告書開始
+                                distcolor.ReportStart(SelectedShain, distcolor.Distitem_cnt, distcolor.DistWorkMode);
+                                DisplayDistItemDatas = null;
+
+                                UpdateProgress();
+                            }
+                        });
 
                         _regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
                     }
