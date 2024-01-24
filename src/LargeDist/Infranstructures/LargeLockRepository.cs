@@ -53,10 +53,18 @@ namespace LargeDist.Infranstructures
 
         public static void Unlock(string cdLargeGroup, LargeDistItem item)
         {
+            string cdShukkaBatch = item.CdShukkaBatch;
+            string cdJuchuBin = item.CdJuchuBin;
+            string cdHimban = item.CdHimban;
+
             using var con = DbFactory.CreateConnection();
             con.BulkDelete<TBLARGELOCKEntity>(s => s
-                .Where($"{nameof(TBLARGELOCKEntity.IDPROCESS):C} = {nameof(Id):P}")
-                .WithParameters(new { Id }));
+                .Where(@$"{nameof(TBLARGELOCKEntity.IDPROCESS):C} = {nameof(Id):P} and 
+                            { nameof(TBLARGELOCKEntity.CDLARGEGROUP):C} = { nameof(cdLargeGroup):P} and 
+                            { nameof(TBLARGELOCKEntity.CDSHUKKABATCH):C} = { nameof(cdShukkaBatch):P} and 
+                            {nameof(TBLARGELOCKEntity.CDJUCHUBIN):C} = {nameof(cdJuchuBin):P} and 
+                            {nameof(TBLARGELOCKEntity.CDHIMBAN):C} = {nameof(cdHimban):P}")
+                .WithParameters(new { Id, cdLargeGroup, cdShukkaBatch, cdJuchuBin, cdHimban }));
         }
     }
 }

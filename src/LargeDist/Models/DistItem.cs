@@ -40,7 +40,7 @@ namespace LargeDist.Models
             CdJuchuBin = cDJUCHUBIN;
             CdCourse = cDCOURSE;
             CdRoute = cDROUTE;
-            NmHinSeishikimei = nMHINSEISHIKIMEI;
+            NmHinSeishikimei = nMHINSEISHIKIMEI?.TrimEnd();
             Address = tdunitaddrcode;
             StBoxType = sTBOXTYPE;
             NuBoxUnit = nUBOXUNIT;
