@@ -23,7 +23,7 @@ namespace ExportLib.Processors
 
         public DateTime? LastExportedTime { get; set; }
         public int? ExpDays { get; set; }
-        public string? HulftId { get; set; }
+        public string HulftId { get; set; } = string.Empty;
 
         public ExportProcessor(DataType dataType, string lockKey)
         {

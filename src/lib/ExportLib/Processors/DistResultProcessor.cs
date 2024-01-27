@@ -15,7 +15,7 @@ namespace ExportLib.Processors
         private readonly IExportDataRepository<TBDISTEntity> _repository;
 
         public DistResultProcessor(IExportDataRepository<TBDISTEntity> repo)
-            : base(DataType.HakoResult, AppLockKeys.DIST_RESULT)
+            : base(DataType.PickResult, AppLockKeys.DIST_RESULT)
         {
             _repository = repo;
         }
@@ -43,26 +43,28 @@ namespace ExportLib.Processors
 
                 var map = rec.TBDISTMAPPING!.First();
 
+                // 実績数は０固定
                 var list = new[]
                 {
-                    rec.DTDELIVERY,
-                    rec.CDSHUKKABATCH,
-                    rec.CDKYOTEN,
-                    map.CDBLOCK,
+                    "\"" + rec.DTDELIVERY + "\"",
+                    "\"" + rec.CDJUCHUBIN + "\"",
+                    "\"" + rec.CDSHUKKABATCH + "\"",
+                    "\"" + rec.CDKYOTEN + "\"",
+                    "\"" + map.CDBLOCK + "\"",
                     map.Tdunitaddrcode,
-                    rec.CDHAISHOBIN,
-                    rec.CDCOURSE,
+                    "\"" + rec.CDHAISHOBIN + "\"",
+                    "\"" + rec.CDCOURSE + "\"",
                     rec.CDROUTE.ToString(),
-                    rec.CDJUCHUBIN,
-                    rec.CDTOKUISAKI,
-                    rec.CDHIMBAN,
-                    rec.CDGTIN13,
-                    rec.CDGTIN14,
+                    "\"" + rec.CDTOKUISAKI + "\"",
+                    "\"" + rec.CDHIMBAN + "\"",
+                    "\"" + rec.CDGTIN13 + "\"",
+                    "\"" + rec.CDGTIN14 + "\"",
                     rec.NUDOPS.ToString(),
-                    rec.NUDRPS.ToString(),
-                    rec.DTTOROKUNICHIJI,
-                    rec.DTKOSHINNICHIJI,
-                    rec.CDHENKOSHA,
+//                    rec.NUDRPS.ToString(),
+                    "0",
+                    "\"" + rec.DTTOROKUNICHIJI + "\"",
+                    "\"" + rec.DTKOSHINNICHIJI + "\"",
+                    "\"" + rec.CDHENKOSHA + "\"",
                 };
 
                 ctxt.StreamWriter.Write(string.Join(FieldSeparator, list) + LineSeparator);
