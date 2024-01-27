@@ -403,7 +403,7 @@ namespace DispShop.ViewModels
 
                 string tddsplay = "";
                 int ledColor = (int)TdLedColor.Red;
-                bool ledBlink = true;
+                bool ledBlink = false;
                 if (p.CdKyoten != "")
                 {
                     switch (LightType)
