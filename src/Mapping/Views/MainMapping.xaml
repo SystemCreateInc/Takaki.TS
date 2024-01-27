@@ -72,13 +72,6 @@
                         </StackPanel>
                     </Button>
 
-                    <Button Command="{Binding PathCommand}" >
-                        <StackPanel Orientation="Vertical">
-                            <materialDesign:PackIcon Kind="Gear"/>
-                            <TextBlock Text="送信先パス"/>
-                        </StackPanel>
-                    </Button>
-
                     <Button Command="{Binding Exit}" >
                         <StackPanel Orientation="Vertical">
                             <materialDesign:PackIcon Kind="ExitToApp"/>
