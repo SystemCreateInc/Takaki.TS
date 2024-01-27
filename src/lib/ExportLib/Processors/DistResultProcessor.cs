@@ -42,6 +42,12 @@ namespace ExportLib.Processors
                 ctxt.CancellationToken.ThrowIfCancellationRequested();
 
                 var map = rec.TBDISTMAPPING!.First();
+                string cdblock=string.Empty, tdunitaddrcode="0";
+                if (map!=null)
+                {
+                    cdblock = map.CDBLOCK==null ? "": map.CDBLOCK.TrimEnd();
+                    tdunitaddrcode = map.Tdunitaddrcode==null ? "0" : map.Tdunitaddrcode=="" ? "0" : map.Tdunitaddrcode;
+                }
 
                 // 実績数は０固定
                 var list = new[]
@@ -50,8 +56,8 @@ namespace ExportLib.Processors
                     "\"" + rec.CDJUCHUBIN + "\"",
                     "\"" + rec.CDSHUKKABATCH + "\"",
                     "\"" + rec.CDKYOTEN + "\"",
-                    "\"" + map.CDBLOCK + "\"",
-                    map.Tdunitaddrcode,
+                    "\"" + cdblock + "\"",
+                    tdunitaddrcode,
                     "\"" + rec.CDHAISHOBIN + "\"",
                     "\"" + rec.CDCOURSE + "\"",
                     rec.CDROUTE.ToString(),

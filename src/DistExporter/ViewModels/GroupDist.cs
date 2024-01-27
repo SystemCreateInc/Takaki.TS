@@ -96,9 +96,8 @@ namespace DistExpoter.ViewModels
 
         public GroupDist(int sendCount, int sendedCount, string cD_DIST_GROUP, string nM_DIST_GROUP, int customerCount, int seatCount, int uncompletedCount, int completedCount, int overCount)
         {
-            //            IsSended = (completedCount + uncompletedCount) == sendedCount;
             IsSended = sendedCount != 0;
-            IsEnabled = uncompletedCount == 0;
+            IsEnabled = true;
             IsSelected = IsEnabled && !IsSended;
             CdDistGroup = cD_DIST_GROUP;
             NmDistGroup = nM_DIST_GROUP;

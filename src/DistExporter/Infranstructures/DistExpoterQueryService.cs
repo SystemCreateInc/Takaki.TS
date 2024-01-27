@@ -26,8 +26,8 @@ namespace DistExpoter.Infranstructures
                     count(distinct case when tdunitaddrcode='' then null else CD_BLOCK+tdunitaddrcode end) SeatCount,
                     count(case when FG_MAPSTATUS = @statusReady then CD_BLOCK+tdunitaddrcode else null end) UncompletedCount,
                     count(case when FG_MAPSTATUS = @statusCompleted then CD_BLOCK+tdunitaddrcode else null end) CompletedCount,
-                    count(case when DT_SENDDT_DIST is not null and CD_BLOCK<>'' then null else CD_BLOCK+tdunitaddrcode end) SendCount,
-                    count(case when DT_SENDDT_DIST is null and CD_BLOCK<>''then null else CD_BLOCK+tdunitaddrcode end) SendedCount,
+                    count(case when DT_SENDDT_DIST is not null then null else CD_TOKUISAKI end) SendCount,
+                    count(case when DT_SENDDT_DIST is null then null else CD_TOKUISAKI end) SendedCount,
                     count(distinct case when tdunitaddrcode='' then CD_TOKUISAKI else null end) OverCount
                     from TB_DIST t1
                     inner join TB_DIST_MAPPING t2 on t1.ID_DIST = t2.ID_DIST
