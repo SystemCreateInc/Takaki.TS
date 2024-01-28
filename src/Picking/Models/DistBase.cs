@@ -745,6 +745,14 @@ namespace Picking.Models
                    );
             }
         }
+
+        private int _maguchi = 0;
+        public int Maguchi
+        {
+            get => _maguchi;
+            set => SetProperty(ref _maguchi, value);
+        }
+
         public virtual string QtyFieldSpace(int ps)
         {
             if (CdHimban == "")

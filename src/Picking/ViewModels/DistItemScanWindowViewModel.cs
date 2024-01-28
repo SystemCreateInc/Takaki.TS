@@ -13,15 +13,207 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Policy;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 using TdDpsLib.Models;
 using WindowLib.Utils;
+using static ImTools.ImMap;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Picking.ViewModels
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    public class OrderingLockInstance
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        protected string Identifier { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    internal class OrderingLockManager
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        static protected Dictionary<OrderingLockInstance, Queue<OrderingLock>> lockQueue = new Dictionary<OrderingLockInstance, Queue<OrderingLock>>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        static protected OrderingLockManager? instance = null;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static OrderingLockManager Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    lock (lockQueue)
+                    {
+                        if (instance == null)
+                        {
+                            instance = new OrderingLockManager();
+                        }
+                    }
+                }
+                return instance;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="locker"></param>
+        /// <param name="lockInstance"></param>
+        public void EnQueue(OrderingLock locker, OrderingLockInstance lockInstance)
+        {
+            lock (lockQueue)
+            {
+                if (lockQueue.ContainsKey(lockInstance) == true)
+                {
+                    // 誰か忙しい人がいる
+                    lockQueue[lockInstance].Enqueue(locker);
+                }
+                else
+                {
+                    lockQueue.Add(lockInstance, new Queue<OrderingLock>());
+
+                    // 走りだせ!
+                    locker.Ready.Set();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="locker"></param>
+        /// <param name="lockInstance"></param>
+        public void Finished(OrderingLock locker, OrderingLockInstance lockInstance)
+        {
+            lock (lockQueue)
+            {
+                if (lockQueue.ContainsKey(lockInstance) == true)
+                {
+                    if (lockQueue[lockInstance].Count == 0)
+                    {
+                        // 終了
+                        lockQueue.Remove(lockInstance);
+                    }
+                    else
+                    {
+                        // 次へ
+                        lockQueue[lockInstance].Dequeue().Ready.Set();
+                    }
+                }
+                else
+                {
+                    // ERROR!(あってはならないルート)
+                    throw new InvalidOperationException("Method calling sequence error.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected OrderingLockManager()
+        {
+            // NOP
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <example>
+    /// このクラスの一般的な利用方法を次の例に示します。
+    /// <code><![CDATA[
+    /// OrderingLockInstance lockInstance = new OrderingLockInstance();
+    ///
+    /// ...
+    /// 
+    /// using (new OrderingLock(lockInstance))
+    /// {
+    ///     // Do something
+    /// }
+    /// ]]></code>
+    /// </example>
+    public class OrderingLock : IDisposable
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        protected AutoResetEvent ready = new AutoResetEvent(false);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected OrderingLockInstance? lockInstance = null;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        internal AutoResetEvent Ready
+        {
+            get
+            {
+                return ready;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lockInstance"></param>
+        public OrderingLock(OrderingLockInstance lockInstance)
+        {
+            this.lockInstance = lockInstance;
+            OrderingLockManager.Instance.EnQueue(this, lockInstance);
+
+            ready.WaitOne();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        ~OrderingLock()
+        {
+            // using パターンを使わない人のために
+
+            // 次の人へ
+            if (lockInstance != null)
+            {
+                OrderingLockManager.Instance.Finished(this, lockInstance);
+                lockInstance = null;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Dispose()
+        {
+            // 次へ
+            if (lockInstance != null)
+            {
+                OrderingLockManager.Instance.Finished(this, lockInstance);
+                lockInstance = null;
+            }
+        }
+    }
     public class DistItemScanWindowViewModel : BindableBase, INavigationAware
     {
         public DelegateCommand OnItemCancel { get; }
@@ -33,6 +225,7 @@ namespace Picking.ViewModels
         public DelegateCommand OnEnter { get; }
         public DelegateCommand OnStart { get; }
 
+        private ReaderWriterLockSlim _lockLight = new ReaderWriterLockSlim();
 
         private int _color = 0;
         public int Color
@@ -207,13 +400,22 @@ namespace Picking.ViewModels
                 Syslog.Info("【中断】DistItemScanWindowModel:OnStop");
 
                 DisplayDistItemDatas = null;
+
                 DistColor? disstcolor = _distcolorinfo?.GetDistColor(Color);
                 if (disstcolor != null)
                 {
                     Task.Run(() =>
                     {
-                        bool bRet = TdUnitManager.TdLightOff(ref disstcolor, TdDps);
-                        DistColorManager.DistUpdate(disstcolor);
+                        _lockLight.EnterWriteLock();
+                        try
+                        {
+                            bool bRet = TdUnitManager.TdLightOff(ref disstcolor, TdDps, distcolorinfo);
+                            DistColorManager.DistUpdate(disstcolor);
+                        }
+                        finally
+                        {
+                            _lockLight.ExitWriteLock();
+                        }
                     });
                 }
 
@@ -226,15 +428,23 @@ namespace Picking.ViewModels
 
                 DisplayDistItemDatas = null;
 
-                DistColor? disstcolor = _distcolorinfo?.GetDistColor(Color);
-                if (disstcolor != null)
+                Task.Run(() =>
                 {
-                    Task.Run(() =>
+                    DistColor? disstcolor = _distcolorinfo?.GetDistColor(Color);
+                    if (disstcolor != null)
                     {
-                        bool bRet = TdUnitManager.TdLightOff(ref disstcolor, TdDps);
-                        disstcolor.DistColorClear();
-                    });
-                }
+                        _lockLight.EnterWriteLock();
+                        try
+                        {
+                            bool bRet = TdUnitManager.TdLightOff(ref disstcolor, TdDps, distcolorinfo);
+                            disstcolor.DistColorClear();
+                        }
+                        finally
+                        {
+                            _lockLight.ExitWriteLock();
+                        }
+                    }
+                });
                 _regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
             }, () => CanInfo).ObservesProperty(() => CanInfo);
 
@@ -434,25 +644,30 @@ namespace Picking.ViewModels
                                 distcolor.ItemSeqs[i].Details = DistColorManager.LoadInfoDetails(DistGroup!, distcolor.ItemSeqs[i]);
                             }
                         }
+                        DisplayDistItemDatas = null;
 
                         Task.Run(() =>
                         {
-                            bool bRet = TdUnitManager.TdLight(ref distcolor, distcolorinfo.IsDistWorkNormal, TdDps);
-
-                            int dops = distcolor.ItemSeqs.Sum(x => x.Dops);
-                            if (dops==0)
+                            OrderingLockInstance lockInstance = new OrderingLockInstance();
+                            using (new OrderingLock(lockInstance))
                             {
-                                // 即座に完了処理へ
-                                DistColorManager.DistUpdate(distcolor);
-                                DisplayDistItemDatas = null;
-                            }
-                            else
-                            {
-                                // 作業報告書開始
-                                distcolor.ReportStart(SelectedShain, distcolor.Distitem_cnt, distcolor.DistWorkMode);
-                                DisplayDistItemDatas = null;
+                                Syslog.Info($"【点灯開始】DistItemScanWindowModel:TdLight:{distcolor.DistColor_name}");
 
-                                UpdateProgress();
+                                bool bRet = TdUnitManager.TdLight(ref distcolor, distcolorinfo.IsDistWorkNormal, TdDps);
+
+                                int dops = distcolor.ItemSeqs.Sum(x => x.Dops);
+                                if (dops == 0)
+                                {
+                                    // 即座に完了処理へ
+                                    DistColorManager.DistUpdate(distcolor);
+                                }
+                                else
+                                {
+                                    // 作業報告書開始
+                                    distcolor.ReportStart(SelectedShain, distcolor.Distitem_cnt, distcolor.DistWorkMode);
+
+                                    UpdateProgress();
+                                }
                             }
                         });
 

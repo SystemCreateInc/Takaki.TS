@@ -259,12 +259,13 @@ namespace TdDpsLib.Models
             }
             return display;
         }
-        public void EndDisplay(bool bOn)
+        public void EndDisplay(bool bOn, int endcolor)
         {
             if (bOn)
             {
                 EndDispTime.Reset();
                 EndDispTime.Start();
+                _endColor = endcolor;
             }
             else
             {
@@ -287,6 +288,8 @@ namespace TdDpsLib.Models
 
         public string nowDisplay = "";
         public System.Diagnostics.Stopwatch EndDispTime = new System.Diagnostics.Stopwatch();
+        public DateTime _ChatteringTime = DateTime.Now;
+        public int _endColor = 0;
     }
 
     // エリア表示灯制御

@@ -91,6 +91,7 @@ namespace Picking.Services
                      }).ToList();
             }
         }
+
         public static List<DistColor>? SetColors()
         {
             List<DistColor> colors = new List<DistColor>();
@@ -560,6 +561,38 @@ namespace Picking.Services
                     tr.Rollback();
                     throw;
                 }
+            }
+        }
+
+        public static List<DistBase>? LoadMaguchi(DistGroup distgroup)
+        {
+            using (var con = DbFactory.CreateConnection())
+            {
+                var sql = @"select TB_DIST_MAPPING.tdunitaddrcode,NU_MAGICHI"
+                        + " from TB_DIST"
+                        + " inner join TB_DIST_MAPPING on TB_DIST_MAPPING.ID_DIST = TB_DIST.ID_DIST"
+                        + " inner join tdunitaddr on TB_DIST_MAPPING.tdunitaddrcode = tdunitaddr.tdunitaddrcode and tdunitaddr.usageid = @tdunittype"
+                        + " where DT_DELIVERY = @dt_delivery and CD_DIST_GROUP = @cd_dist_group and CD_BLOCK = @cd_block and FG_MAPSTATUS = @fg_mapstatus"
+                        + " and 1<NU_MAGICHI"
+                        + " group by TB_DIST_MAPPING.tdunitaddrcode,NU_MAGICHI";
+
+
+                return con.Query(sql, new
+                {
+                    dt_delivery = distgroup.DtDelivery.ToString("yyyyMMdd"),
+                    cd_dist_group = distgroup.CdDistGroup,
+                    cd_block = distgroup.CdBlock,
+                    dstatus = (int)Status.Inprog,
+                    dstatus_ready = (int)Status.Ready,
+                    dstatus_completed = (int)Status.Completed,
+                    fg_mapstatus = (int)Status.Completed,
+                    tdunittype = distgroup.TdUnitType,
+                })
+                     .Select(q => new DistBase
+                     {
+                         Tdunitaddrcode = q.tdunitaddrcode,
+                         Maguchi = q.NU_MAGICHI,
+                     }).ToList();
             }
         }
     }

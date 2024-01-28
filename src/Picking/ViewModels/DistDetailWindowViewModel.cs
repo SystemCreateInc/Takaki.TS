@@ -124,17 +124,17 @@ namespace Picking.ViewModels
             {
                 Syslog.Info("【数量変更】DistDetailViewModel:OnChangeQty");
 
-                if (CurrentDistDetail?.Dops== CurrentDistDetail?.Drps)
-                {
-                    MessageDialog.Show(_dialogService, "完了しているので数量変更出来ません", "エラー");
-                    return;
-                }
                 if (CurrentDistDetail?.LStatus == (int)DbLib.Defs.Status.Ready)
                 {
                     MessageDialog.Show(_dialogService, "大仕分けされていなので数量変更出来ません", "エラー");
                     return;
                 }
 
+                if (CurrentDistDetail?.Dops== CurrentDistDetail?.Drps)
+                {
+                    MessageDialog.Show(_dialogService, "完了しているので数量変更出来ません", "エラー");
+                    return;
+                }
 
                 dialogService.ShowDialog(
                     nameof(ChangeQtyDlg),
