@@ -366,6 +366,13 @@ namespace Picking.ViewModels
             set => SetProperty(ref _distcolorinfo, value);
         }
 
+        private string _errMsg = string.Empty;
+        public string ErrMsg
+        {
+            get => _errMsg;
+            set => SetProperty(ref _errMsg, value);
+        }
+
         private readonly IDialogService _dialogService;
         private readonly IRegionManager _regionManager;
         private readonly IEventAggregator _eventAggregator;
@@ -397,7 +404,7 @@ namespace Picking.ViewModels
 
             OnStop = new DelegateCommand(() =>
             {
-                Syslog.Info("【中断】DistItemScanWindowModel:OnStop");
+                Syslog.Info($"【中断】DistItemScanWindowModel:OnStop");
 
                 DisplayDistItemDatas = null;
 
@@ -407,6 +414,7 @@ namespace Picking.ViewModels
                     Task.Run(() =>
                     {
                         _lockLight.EnterWriteLock();
+                        Syslog.Info($"【中断】DistItemScanWindowModel:OnStop:{disstcolor.DistColor_name}");
                         try
                         {
                             bool bRet = TdUnitManager.TdLightOff(ref disstcolor, TdDps, distcolorinfo);
@@ -434,6 +442,7 @@ namespace Picking.ViewModels
                     if (disstcolor != null)
                     {
                         _lockLight.EnterWriteLock();
+                        Syslog.Info($"【ｷｬﾝｾﾙ】DistItemScanWindowModel:OnStop:{disstcolor.DistColor_name}");
                         try
                         {
                             bool bRet = TdUnitManager.TdLightOff(ref disstcolor, TdDps, distcolorinfo);
@@ -532,6 +541,8 @@ namespace Picking.ViewModels
 
             OnEnter = new DelegateCommand(() =>
             {
+                ErrMsg = string.Empty;
+
                 try
                 {
                     Syslog.Info($"【商品決定】DistItemScanWindowModel:OnEnter scancode=[{Scancode}]");
@@ -608,7 +619,8 @@ namespace Picking.ViewModels
                 catch (Exception e)
                 {
                     Syslog.Error($"DistItemScanWindowViewModel:OnEnter:{e.Message}");
-                    MessageDialog.Show(_dialogService, e.Message, "エラー");
+                    ErrMsg = e.Message;
+//                    MessageDialog.Show(_dialogService, e.Message, "エラー");
                 }
                 Scancode = "";
             });
@@ -696,6 +708,7 @@ namespace Picking.ViewModels
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
             Scancode = "";
+            ErrMsg = string.Empty;
 
             if (DisplayDistItemDatas == null)
             {

@@ -467,28 +467,10 @@ namespace Picking.ViewModels
                 {
                     try
                     {
-                        if (_maguchis != null)
-                        {
-                            TdUnitManager.LightMaguchi(TdDps, _maguchis, false);
-                        }
-
-                        for (int idx = 0; idx < _distcolorinfo.DistColors?.Count(); idx++)
-                        {
-                            DistColor distcolor = _distcolorinfo.DistColors[idx];
-                            bool bRet = TdUnitManager.TdLightOff(ref distcolor, TdDps, distcolorinfo, true);
-
-                            distcolor.ReportEnd();
-                        }
-
-                        // 作業実績書き込み
-                        DistColorManager.WorkReportAppend(DistGroup, _distcolorinfo.RepotShains);
-
-                        UpdateProgress(true);
-
                         WaitProgressDialog.ShowProgress(
                             "表示器消灯",
                             "表示器消灯中です。しばらくお待ちください。",
-                            null,
+                            DpsLightOff,
                             DspWait,
                             null,
                             _dialogService,
@@ -807,7 +789,6 @@ namespace Picking.ViewModels
                     break;
             }
         }
-
         private void DspWait(CancellationTokenSource ct)
         {
             int max = TdDps.WaitTransCount();
@@ -838,6 +819,33 @@ namespace Picking.ViewModels
                 Thread.Sleep(1000);
             }
         }
+
+        private void DpsLightOff(CancellationTokenSource ct)
+        {
+            if (_maguchis != null)
+            {
+                TdUnitManager.LightMaguchi(TdDps, _maguchis, false);
+            }
+
+            for (int idx = 0; idx < _distcolorinfo.DistColors?.Count(); idx++)
+            {
+                // 中断ボタン押下
+                if (ct.IsCancellationRequested)
+                    break;
+
+                DistColor distcolor = _distcolorinfo.DistColors[idx];
+                bool bRet = TdUnitManager.TdLightOff(ref distcolor, TdDps, _distcolorinfo, true);
+
+                distcolor.ReportEnd();
+            }
+
+            // 作業実績書き込み
+            DistColorManager.WorkReportAppend(DistGroup, _distcolorinfo.RepotShains);
+
+            UpdateProgress(true);
+        }
+
+
 
         private void UpdateColorDisplay()
         {

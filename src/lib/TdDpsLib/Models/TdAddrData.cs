@@ -244,7 +244,7 @@ namespace TdDpsLib.Models
         public string GetNowDisplay()
         {
             string display="";
-            int blinkcolor = GetBlinkButton();
+            int blinkcolor = GetLightButton();
             if (blinkcolor != -1)
             {
                 TdLedButton? led = GetLedButton(blinkcolor);

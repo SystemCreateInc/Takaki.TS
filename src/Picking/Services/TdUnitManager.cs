@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Threading;
 using System.Threading.Tasks;
@@ -196,6 +197,7 @@ namespace Picking.Models
             lock (_tdLock)
             {
                 var querys = distcolor.Tdunitdisplay
+                 .Where(x => x.Status == (int)DbLib.Defs.Status.Ready)
                  .GroupBy(x => x.Tdunitaddrcode)
                  .Select(x => x.First());
 
@@ -203,7 +205,7 @@ namespace Picking.Models
                 foreach (var query in querys)
                 {
                     // 点灯してない表示器は無視
-                    if (distcolorinfo.IsDistWorkNormal == false && query.bLight == false)
+                    if (distcolorinfo.IsDistWorkNormal == false && query.bLight== false)
                         continue;
 
                     TdAddrData? addrdata;
@@ -237,10 +239,21 @@ namespace Picking.Models
                                     tddps.Light(ref addrdata, false, blink, (int)distcolor.DistColor_code, "", true);
                                     if (distnextcolor != null)
                                     {
-                                        var nextnextcolor = distcolorinfo.GetNextDistSeq(distnextcolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
-                                        if (nextnextcolor != null)
+                                        var basecolor = distcolorinfo.GetDistColor(color);
+
+                                        if (basecolor != null)
                                         {
-                                            blink = true;
+                                            var nextnextcolor = distcolorinfo.GetNextDistSeq(basecolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
+
+                                            if (nextnextcolor == distcolor)
+                                            {
+                                                nextnextcolor = distcolorinfo.GetNextDistSeq(distcolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
+                                            }
+
+                                            if (nextnextcolor != null && nextnextcolor != distcolor)
+                                            {
+                                                blink = true;
+                                            }
                                         }
 
                                         // 次の表示器点灯
@@ -267,6 +280,11 @@ namespace Picking.Models
                                     if (basecolor != null)
                                     {
                                         var nextnextcolor = distcolorinfo.GetNextDistSeq(basecolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
+
+                                        if (nextnextcolor == distcolor)
+                                        {
+                                            nextnextcolor = distcolorinfo.GetNextDistSeq(distcolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
+                                        }
 
                                         if (nextnextcolor != null && nextnextcolor != distcolor)
                                         {
@@ -381,16 +399,64 @@ namespace Picking.Models
                 // 欠品処理
                 if (color == (int)TdLedColor.Claim)
                 {
-                    int blinkcolor = addrdata.GetBlinkButton();
+                    int blinkcolor = addrdata.GetLightButton();
                     if (blinkcolor != -1)
                     {
                         // 欠品
                         bLoss = true;
                         color = blinkcolor;
+
+                        Syslog.Info($"TdUnitRcv::欠品:color{blinkcolor}");
+
+                        // END表示
+                        addrdata.EndDisplay(true, color);
+                        tddps.Light(ref addrdata, true, false, color, addrdata.GetNowDisplay(), true);
+
+                        // END表示タスク起動
+                        Task.Run(() =>
+                        {
+                            while (addrdata.EndDispTime.IsRunning)
+                            {
+                                System.Threading.Thread.Sleep(500);
+
+                                if (addrdata.IsEndTimeOver() == true)
+                                {
+                                    addrdata.EndDisplay(false, color);
+                                    if (addrdata.nowDisplay == TdAddrBase.END_DISPLAY)
+                                    {
+                                        tddps.Light(ref addrdata, false, false, addrdata._endColor, "", true);
+
+                                        color = addrdata.GetLightButton();
+                                        if (color == -1)
+                                        {
+                                        }
+                                        else
+                                        {
+                                            var led = addrdata.GetLedButton(color);
+                                            tddps.Light(ref addrdata, true, led!.IsBlink, color, led!.Text!, true);
+                                        }
+                                    }
+                                }
+                            }
+
+                        });
+
+
+                        // 配分処理を中断する
+                        DistColor? disstcolor = distcolorinfo?.GetDistColor(color);
+                        if (disstcolor != null)
+                        {
+                            Task.Run(() =>
+                            {
+                                bool bRet = TdUnitManager.TdLightOff(ref disstcolor, tddps, distcolorinfo!);
+                                DistColorManager.DistUpdate(disstcolor);
+                            });
+                        }
+                        return true;
                     }
                     else
                     {
-                        Syslog.Info($"TdUnitRcv::欠品押下したがい色が点滅していない{blinkcolor}");
+                        Syslog.Info($"TdUnitRcv::欠品押下したが色が点滅していない{blinkcolor}");
                         return false;
                     }
                 }
