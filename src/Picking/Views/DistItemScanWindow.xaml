@@ -136,8 +136,8 @@
                                 <KeyBinding Key="F8" Command="{Binding OnStart}"/>
                             </TextBox.InputBindings>
                          </TextBox>
-                        <TextBlock Text="{Binding DistColorInfo.DistWorkTypeName, Mode=OneWay}" Background="{Binding ColorBack}" Foreground="{Binding ColorText}" FontSize="50" FontWeight="Bold"  Margin="50,0,0,0"/>
-                        <TextBlock Text="{Binding ErrMsg, Mode=OneWay}" Foreground="Red" FontWeight="Bold"  Margin="10,0,0,0"/>
+                        <TextBlock Text="{Binding DistColorInfo.DistWorkTypeName, Mode=OneWay}" Background="{Binding ColorBack}" Foreground="{Binding ColorText}" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="24" Margin="10,0,0,0"/>
+                        <TextBlock Text="{Binding ErrMsg, Mode=OneWay}" Foreground="Red" FontWeight="Bold" FontSize="30" Margin="10,0,0,0" MinHeight="80"/>
                     </StackPanel>
                 </StackPanel>
             </Grid>

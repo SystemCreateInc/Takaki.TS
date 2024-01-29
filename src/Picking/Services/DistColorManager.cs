@@ -347,25 +347,25 @@ namespace Picking.Services
 
                     if (rr.Count == 0)
                     {
-                        throw new Exception($"該当商品が見つかりませんでした。\nスキャンコード:{scancode}");
+                        throw new Exception($"該当商品が見つかりませんでした。\n{scancode}");
                     }else
                     {
                         if (rr[0].LStatus == (int)Status.Ready)
                         {
-                            throw new Exception($"大仕分けされていない商品です。\n品番:{rr[0].CdHimban}\n品名:{rr[0].NmHinSeishikimei}");
+                            throw new Exception($"大仕分けされていない商品です。\n{rr[0].CdGtin13}  {rr[0].NmHinSeishikimei}");
                         }
                         else
                         {
                             if (bCheck || bExtraction)
                             {
                                 if (bCheck)
-                                    throw new Exception($"まだ仕分けしていないので検品出来ません。\n品番:{rr[0].CdHimban}\n品名:{rr[0].NmHinSeishikimei}");
+                                    throw new Exception($"まだ仕分けしていないので検品出来ません。\n{rr[0].CdGtin13} {rr[0].NmHinSeishikimei}");
                                 else
-                                    throw new Exception($"まだ仕分けしていないので抜き取り出来ません。\n品番:{rr[0].CdHimban}\n品名:{rr[0].NmHinSeishikimei}");
+                                    throw new Exception($"まだ仕分けしていないので抜き取り出来ません。\n{rr[0].CdGtin13} {rr[0].NmHinSeishikimei}");
                             }
                             else
                             {
-                                throw new Exception($"既に仕分け済みです。\n品番:{rr[0].CdHimban}\n品名:{rr[0].NmHinSeishikimei}");
+                                throw new Exception($"既に仕分け済みです。\n{rr[0].CdGtin13} {rr[0].NmHinSeishikimei}");
                             }
                         }
                     }

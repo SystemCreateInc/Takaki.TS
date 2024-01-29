@@ -9,6 +9,7 @@ using Picking.Services;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -303,13 +304,25 @@ namespace Picking.Models
                     }
                 }
 
+                // スタートＢＯＸの消灯
+                TdUnitLightChaseStartBox(tddps, distcolor.Tdunitdisplay, StartBoxMode.Off, distcolor.DistColor_code);
+
+                if (zones.Count == 0)
+                {
+                    var dists = distcolor.Tdunitdisplay
+                     .GroupBy(x => x.Tdunitaddrcode);
+
+                    foreach (var d in distcolor.Tdunitdisplay)
+                    {
+                        zones.Add(d.Zone);
+                    }
+                }
+
                 foreach (var z in zones)
                 {
                     ClearZoneOrderIn(tddps, z);
                 }
 
-                // スタートＢＯＸの消灯
-                TdUnitLightChaseStartBox(tddps, distcolor.Tdunitdisplay, StartBoxMode.Off, distcolor.DistColor_code);
             }
             return true;
         }
@@ -834,7 +847,7 @@ namespace Picking.Models
 
                     for (int stidx = 0; stidx < startboxcols.Count(); stidx++)
                     {
-                        var ad = startboxs[stidx];
+                        var ad = startboxcols[stidx];
 
                         // 空きあればGO なければ空白
                         if (ad != null)
@@ -842,13 +855,20 @@ namespace Picking.Models
                             var led = ad.GetLedButton(i);
                             if (led != null)
                             {
+                                gotext = START_TEXT_IN;
+
                                 // 点滅(GO)か？
-                                if (led.IsBlink == true)
+                                if (ad.GetBlinkButton()!=-1)
                                 {
-                                    // 侵入先のみ表示
-                                    if (ad.TdUnitFront != zoneorderin)
+                                    gotext = topseq < mintdunitseq ? START_TEXT_GO : START_TEXT_SPACE;
+
+                                    if (zoneorderin != 0)
                                     {
-                                        gotext = "";
+                                        // 侵入先のみ表示
+                                        if (ad.TdUnitFront != zoneorderin)
+                                        {
+                                            gotext = "";
+                                        }
                                     }
 
                                     // minが１つでもあいていればＧＯを表示あいてなければ空白
@@ -890,6 +910,8 @@ namespace Picking.Models
 
             Syslog.Info($"TdUnitChaseFirstLight:mintdunitseq={mintdunitseq} zone={zone}");
 
+
+
             // 最小のアドレスの１つ前まで点灯させる
             var distcolors = distcolorinfo.DistColors!.Where(x => x.DistColor_code == color).ToList();
             foreach (var distcolor in distcolors)
@@ -902,6 +924,9 @@ namespace Picking.Models
 
                 if (querys.Count() != 0)
                 {
+                    // INへ変更
+                    TdUnitLightChaseStartBox(tddps, null, StartBoxMode.In, distcolor.DistColor_code, zone);
+
                     // 点灯
                     foreach (var query in querys)
                     {
@@ -920,8 +945,10 @@ namespace Picking.Models
                 distcolor.DistSeqs[zone] = ++distcolorinfo.DistSeq;
 
                 SetZoneOrderIn(zone, front);
+
                 // INへ変更
                 TdUnitLightChaseStartBox(tddps, null, StartBoxMode.In, distcolor.DistColor_code, zone);
+
             }
 
             Syslog.Info($"TdUnitChaseFirstLight:end:color={color} zone={zone}");
@@ -983,10 +1010,26 @@ namespace Picking.Models
                     {
                         TdUnitLight(query.Tdunitaddrcode, tddps, true, true, distcolor.DistColor_code, query.TdDisplay, true);
                         query.bLight = true;
-                        if (query.GetTdUnitSeq(zoneorderin) < mintdunitseq)
-                            mintdunitseq = query.GetTdUnitSeq(zoneorderin) - (int)StartBoxMode.SpaceCnt;
+                        //                        if (query.GetTdUnitSeq(zoneorderin) < mintdunitseq)
+                        //                        mintdunitseq = query.GetTdUnitSeq(zoneorderin) - (int)StartBoxMode.SpaceCnt;
                     }
                 }
+
+                var readys = distcolor.Tdunitdisplay
+                        .Where(x => x.Status == (int)DbLib.Defs.Status.Ready && x.Zone == zone)
+                        .GroupBy(x => x.GetTdUnitSeq(zoneorderin))
+                        .Select(x => x.First());
+
+                foreach (var r in readys)
+                {
+                    if (r.GetTdUnitSeq(zoneorderin) < mintdunitseq)
+                    {
+                        mintdunitseq = r.GetTdUnitSeq(zoneorderin) - (int)StartBoxMode.SpaceCnt;
+                        Syslog.Info($"TdUnitChaseLight:再設定:[{distcolor.DistColor_name}]:mintdunitseq={mintdunitseq}");
+                        break;
+                    }
+                }
+
             }
 
             // INへ変更&別色が使用可能になったらＧＯを表示

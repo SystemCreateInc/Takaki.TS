@@ -559,7 +559,8 @@ namespace Picking.ViewModels
 
                     if (InSeq == DistBase.ITEMMAX)
                     {
-                        MessageDialog.Show(_dialogService, "登録出来るのは９商品までです。", "エラー");
+                        ErrMsg = "登録出来るのは９商品までです。";
+//                        MessageDialog.Show(_dialogService, "登録出来るのは９商品までです。", "エラー");
                         return;
                     }
                     var selectitems = DistColorManager.GetItems(DistGroup!, Scancode, IsCheck, IsExtraction);
@@ -609,7 +610,9 @@ namespace Picking.ViewModels
                                         catch (Exception e)
                                         {
                                             Syslog.Error($"DistItemScanWindowViewModel:OnEnter:{e.Message}");
-                                            MessageDialog.Show(_dialogService, e.Message, "エラー");
+                                            //MessageDialog.Show(_dialogService, e.Message, "エラー");
+                                            ErrMsg = e.Message;
+
                                         }
                                     }
                                 });
