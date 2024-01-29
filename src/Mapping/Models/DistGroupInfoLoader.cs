@@ -98,13 +98,13 @@ namespace Mapping.Models
                         })
                              .Select(q => new DistGroupInfo
                              {
-//                                 LocCnt = q.maguchi ?? 0,
+                                 LocCnt = q.maguchi ?? 0,
                                  LStatus = q.lstatus ?? 0,
                                  DStatus = q.dstatus ?? 0,
                              }).FirstOrDefault();
                         if (result != null)
                         {
-//                            p.LocCnt = result.LocCnt;
+                            p.LocCnt = result.LocCnt;
                             p.LStatus = result.LStatus;
                             p.DStatus = result.DStatus;
                         }

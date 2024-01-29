@@ -133,8 +133,8 @@ namespace Mapping.Models
 
             if (distgroup != null)
             {
-                cnt = distgroup.mappings.Where(x => x.tdunitaddrcode != "").Select(x => x.tdunitaddrcode + x.CdBlock).Distinct().Count();
-//                cnt = distgroup.mappings.Where(x => x.tdunitaddrcode != "").Select(x => x.Maguchi).Sum();
+//                cnt = distgroup.mappings.Where(x => x.tdunitaddrcode != "").Select(x => x.tdunitaddrcode + x.CdBlock).Distinct().Count();
+                cnt = distgroup.mappings.Where(x => x.tdunitaddrcode != "").Select(x => x.Maguchi).Sum();
             }
             return cnt;
         }
