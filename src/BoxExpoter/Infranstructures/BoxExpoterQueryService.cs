@@ -19,14 +19,35 @@ namespace BoxExpoter.Infranstructures
         {
             using (var con = DbFactory.CreateConnection())
             {
-                var sql = $@"select 
+                // 座席数取得
+                var sql = $@"select CD_DIST_GROUP, sum(NU_MAGICHI) SeatCount from"
+                        + "(select distinct CD_DIST_GROUP, CD_BLOCK, Tdunitaddrcode, NU_MAGICHI from TB_STOWAGE"
+                        + " inner join TB_STOWAGE_MAPPING on TB_STOWAGE.ID_STOWAGE = TB_STOWAGE_MAPPING.ID_STOWAGE"
+                        + " where DT_DELIVERY = @dtDelivery"
+                        + " )t1"
+                        + " group by CD_DIST_GROUP";
+
+                var r2 = con.Query(sql, new { dtDelivery = dtDelivery.ToString("yyyyMMdd") })
+                    .Select(x => new GroupStowage
+                    (
+                       0,
+                        x.CD_DIST_GROUP,
+                        "",
+                        0,
+                        x.SeatCount,
+                        0,
+                        0,
+                        0
+                    ));
+
+                sql = $@"select 
                     CD_DIST_GROUP,
                     max(NM_DIST_GROUP) NM_DIST_GROUP,
                     count(distinct case when tdunitaddrcode='' then null else CD_TOKUISAKI end) CustomerCount,
-                    count(distinct case when tdunitaddrcode='' then null else CD_BLOCK+tdunitaddrcode end) SeatCount,
-                    count(distinct case when FG_SSTATUS = @statusReady then CD_BLOCK+tdunitaddrcode else null end) UncompletedCount,
-                    count(distinct case when FG_SSTATUS = @statusCompleted then CD_BLOCK+tdunitaddrcode else null end) CompletedCount,
-                    count(distinct case when DT_SENDDT_STOWAGE is null then null else CD_BLOCK+tdunitaddrcode end) SendedCount,
+                    0 SeatCount,
+                    count(case when FG_SSTATUS = @statusReady and NU_RBOXCNT<>0 then 1 else null end) UncompletedCount,
+                    count(case when FG_SSTATUS = @statusCompleted and NU_RBOXCNT<>0 then 1 else null end) CompletedCount,
+                    count(DT_SENDDT_STOWAGE) SendedCount,
                     count(distinct case when tdunitaddrcode='' then CD_TOKUISAKI else null end) OverCount
                     from TB_STOWAGE t1
                     inner join TB_STOWAGE_MAPPING t2 on t1.ID_STOWAGE = t2.ID_STOWAGE
@@ -38,15 +59,16 @@ namespace BoxExpoter.Infranstructures
                     .Select(x => new GroupStowage
                     (
                         x.SendedCount,
-                        x.CD_DIST_GROUP,  
+                        x.CD_DIST_GROUP,
                         x.NM_DIST_GROUP,
                         x.CustomerCount,
-                        x.SeatCount,
+                        (r2.FirstOrDefault(s => s.CdDistGroup == x.CD_DIST_GROUP) ?? new GroupStowage(0, "", "", 0, 0, 0, 0,0)).SeatCount,
                         x.UncompletedCount,
                         x.CompletedCount,
                         x.OverCount
                     ));
             }
+
         }
     }
 }
