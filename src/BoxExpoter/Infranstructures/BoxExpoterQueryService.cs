@@ -45,8 +45,8 @@ namespace BoxExpoter.Infranstructures
                     max(NM_DIST_GROUP) NM_DIST_GROUP,
                     count(distinct case when tdunitaddrcode='' then null else CD_TOKUISAKI end) CustomerCount,
                     0 SeatCount,
-                    count(case when FG_SSTATUS = @statusReady and NU_RBOXCNT<>0 then 1 else null end) UncompletedCount,
-                    count(case when FG_SSTATUS = @statusCompleted and NU_RBOXCNT<>0 then 1 else null end) CompletedCount,
+                    count(case when FG_SSTATUS = @statusReady and (0<NU_OBOXCNT or 0<NU_RBOXCNT) then 1 else null end) UncompletedCount,
+                    count(case when FG_SSTATUS = @statusCompleted and (0<NU_OBOXCNT or 0<NU_RBOXCNT) then 1 else null end) CompletedCount,
                     count(DT_SENDDT_STOWAGE) SendedCount,
                     count(distinct case when tdunitaddrcode='' then CD_TOKUISAKI else null end) OverCount
                     from TB_STOWAGE t1
