@@ -57,7 +57,7 @@ namespace ExportLib.Processors
                     "\"" + rec.CDSHUKKABATCH + "\"",
                     "\"" + rec.CDKYOTEN + "\"",
                     "\"" + cdblock + "\"",
-                    tdunitaddrcode,
+                    tdunitaddrcode.Substring(1,3),
                     "\"" + rec.CDHAISHOBIN + "\"",
                     "\"" + rec.CDCOURSE + "\"",
                     rec.CDROUTE.ToString(),
