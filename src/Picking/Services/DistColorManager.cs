@@ -244,6 +244,8 @@ namespace Picking.Services
                 + ",count(distinct case when tdunitzonecode = 2 then TB_DIST_MAPPING.tdunitaddrcode else null end) rightshopcnt"
                 + ",sum(case when tdunitzonecode = 1 then NU_OPS-NU_DRPS else 0 end) leftpscnt"
                 + ",sum(case when tdunitzonecode = 2 then NU_OPS-NU_DRPS else 0 end) rightpscnt"
+                + ",sum(case when tdunitzonecode = 1 then NU_DRPS else 0 end) leftrpscnt"
+                + ",sum(case when tdunitzonecode = 2 then NU_DRPS else 0 end) rightrpscnt"
                 + " from TB_DIST"
                 + " left join TB_DIST_MAPPING on TB_DIST_MAPPING.ID_DIST=TB_DIST.ID_DIST"
                 + " inner join tdunitaddr on TB_DIST_MAPPING.tdunitaddrcode = tdunitaddr.tdunitaddrcode and tdunitaddr.usageid=@tdunittype"
@@ -300,8 +302,8 @@ namespace Picking.Services
                          Remain_shop_cnt = bCheck || bExtraction ? q.result_shop_cnt ?? 0 : q.order_shop_cnt - q.result_shop_cnt,
                          Left_shop_cnt = q.leftshopcnt ?? 0,
                          Right_shop_cnt = q.rightshopcnt ?? 0,
-                         Left_ps_cnt = q.leftpscnt ?? 0,
-                         Right_ps_cnt = q.rightpscnt ?? 0,
+                         Left_ps_cnt = bCheck || bExtraction ? q.leftrpscnt ?? 0 : q.leftpscnt ?? 0,
+                         Right_ps_cnt = bCheck || bExtraction ? q.rightrpscnt ?? 0 : q.rightpscnt ?? 0,
                      }).ToList();
 
                 if (r.Count==0)
@@ -343,6 +345,8 @@ namespace Picking.Services
                              Remain_shop_cnt = bCheck || bExtraction ? q.result_shop_cnt ?? 0 : q.order_shop_cnt - q.result_shop_cnt,
                              Left_shop_cnt = q.leftshopcnt ?? 0,
                              Right_shop_cnt = q.rightshopcnt ?? 0,
+                             Left_ps_cnt = bCheck || bExtraction ? q.leftrpscnt ?? 0 : q.leftpscnt ?? 0,
+                             Right_ps_cnt = bCheck || bExtraction ? q.rightrpscnt ?? 0 : q.rightpscnt ?? 0,
                          }).ToList();
 
                     if (rr.Count == 0)
