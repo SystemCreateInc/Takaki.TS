@@ -947,6 +947,7 @@ namespace Picking.Models
                 var querys =
                     distcolor.Tdunitdisplay
                      .Where(x => x.Status == (int)DbLib.Defs.Status.Ready && x.bLight == false && x.Zone == zone && x.GetTdUnitSeq(zoneorderin) < mintdunitseq)
+                     .OrderBy(x => x.GetTdUnitSeq(zoneorderin))
                      .GroupBy(x => x.Tdunitaddrcode)
                      .Select(x => x.First());
 
@@ -987,10 +988,9 @@ namespace Picking.Models
         // 追っ駆け配分で消灯した表示器より前の表示器を点灯させる
         public static bool TdUnitChaseLight(ref DistColorInfo distcolorinfo, TdDpsManager tddps, int color, int zone, int distseq)
         {
-            Syslog.Info($"TdUnitChaseLight:Start:color={color} zone={zone} distseq={distseq}");
+            Syslog.Info($"TdUnitChaseLight:Start:color={color} zone={zone} distseq={distseq} 昇順{ZoneOrderIn[zone]}");
 
             int zoneorderin = ZoneOrderIn[zone];
-
             int mintdunitseq = 99999;
             // 点灯対象のdistseqを取得
             var colors = distcolorinfo.DistColors!.Where(x => x.DistSeqs[zone] != 0 && x.DistSeqs[zone] <= distseq)
@@ -1025,6 +1025,7 @@ namespace Picking.Models
             {
                 var querys = distcolor.Tdunitdisplay
                         .Where(x => x.Status == (int)DbLib.Defs.Status.Ready && x.bLight == false && x.Zone == zone && x.GetTdUnitSeq(zoneorderin) < mintdunitseq)
+                        .OrderBy(x => x.GetTdUnitSeq(zoneorderin))
                         .GroupBy(x => x.Tdunitaddrcode)
                         .Select(x => x.First());
 
@@ -1036,14 +1037,16 @@ namespace Picking.Models
 
                     if (addrdata != null)
                     {
+                        Syslog.Info($"TdUnitChaseLight:点灯 色:{distcolor.DistColor_code} tdunitaddrcode:{query.Tdunitaddrcode} text:{query.TdDisplay} tdunitseq:{query.GetTdUnitSeq(zoneorderin)}");
+
                         TdUnitLight(query.Tdunitaddrcode, tddps, true, false, distcolor.DistColor_code, query.TdDisplay, false);
                         query.bLight = true;
                     }
                 }
-
                 var readys = distcolor.Tdunitdisplay
                         .Where(x => x.Status == (int)DbLib.Defs.Status.Ready && x.Zone == zone)
-                        .GroupBy(x => x.GetTdUnitSeq(zoneorderin))
+                        .OrderBy(x => x.GetTdUnitSeq(zoneorderin))
+                        .GroupBy(x => x.Tdunitaddrcode)
                         .Select(x => x.First());
 
                 foreach (var r in readys)
@@ -1055,7 +1058,6 @@ namespace Picking.Models
                         break;
                     }
                 }
-
             }
 
             // INへ変更&別色が使用可能になったらＧＯを表示
@@ -1091,11 +1093,7 @@ namespace Picking.Models
                     // 点灯？
                     if (sd.GetLightButton() != -1)
                     {
-                        // GO以外
-                        if (sd.GetBlinkButton() == -1)
-                        {
-                            return false;
-                        }
+                        return false;
                     }
                 }
             }

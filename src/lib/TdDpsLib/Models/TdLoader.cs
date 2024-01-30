@@ -61,7 +61,7 @@ namespace TdDpsLib.Models
                             + " inner join tdunitmst on tdunitmst.tdunitcode=tdunitaddr.tdunitcode"
                             + " inner join tdunitport on tdunitport.tdunitportcode=tdunitmst.tdunitportcode"
                             + " where usageid in (@tdtype1,@tdtype2)"
-                            + " order by tdunitzonecode,tdunitseq,tdunitaddrcode,tdunitaddr.tdunitcode";
+                            + " order by tdunitzonecode,CONVERT(int,tdunitseq),tdunitaddrcode,tdunitaddr.tdunitcode";
 
                 var r =  con.Query(sql, new { @tdtype1 = tdtype1, @tdtype2 = tdtype2 })
                      .Select(q => new TdAddrData
@@ -83,7 +83,7 @@ namespace TdDpsLib.Models
                          TdUnitPortType = (TdControllerType)q.tdunitporttype,
                      }).ToList();
 
-                int maxseq = r.Max(x => x.TdUnitSeq);
+                int maxseq = r.Max(x => x.TdUnitSeq) + 1;
 
                 // ＳＥＱ降順設定
                 foreach (var row in r)
@@ -92,7 +92,7 @@ namespace TdDpsLib.Models
                     {
                         row.TdUnitSeqReverse = maxseq - row.TdUnitSeq;
 
-                        Syslog.Info($"LoadTdAddrs:addr={row.TdUnitAddrCode} zone={row.TdUnitZoneCode} seq={row.TdUnitSeq} seqreverse={row.TdUnitSeqReverse} Front{row.TdUnitFront}");
+                        Syslog.Info($"LoadTdAddrs:tdunitaddr={row.TdUnitAddrCode} addr={row.TddGroup}-{row.TddAddr} zone={row.TdUnitZoneCode} seq={row.TdUnitSeq} seqreverse={row.TdUnitSeqReverse} Front={row.TdUnitFront}");
                     }
                 }
 
