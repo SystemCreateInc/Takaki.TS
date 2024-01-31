@@ -7,6 +7,7 @@ using ImTools;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Identity.Client.Extensions.Msal;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net.NetworkInformation;
 
@@ -41,7 +42,8 @@ namespace DispShop.Models
                     + " TB_DIST_MAPPING.CD_SUM_COURSE,"
                     + " TB_DIST_MAPPING.CD_SUM_ROUTE,"
                     + " sum(NU_OPS) ops,"
-                    + " sum(NU_DRPS) rps"
+                    + " sum(NU_DRPS) rps,"
+                    + " max(NU_MAGICHI) maguchi"
                     + " from TB_DIST"
                     + " inner join TB_DIST_MAPPING on "
                     + " TB_DIST.ID_DIST=TB_DIST_MAPPING.ID_DIST "
@@ -77,6 +79,7 @@ namespace DispShop.Models
                          CdSumRoute = q.CD_SUM_ROUTE.ToString(),
                          Ops = q.ops,
                          Rps = q.rps,
+                         Maguchi = q.maguchi ?? 0,
                      }).ToList();
 
                 sql = @"select DT_DELIVERY, CD_KYOTEN, CD_DIST_GROUP, CD_SUM_TOKUISAKI, sum(box0) box0 , sum(box1) box1,sum(box2) box2,sum(box3) box3 from "
@@ -115,11 +118,23 @@ namespace DispShop.Models
                          Box3 = q.box3 ?? 0,
                      }).ToList();
 
+                string oldCourse=string.Empty;
+                bool blink = true;
                 foreach (var loc in locs)
                 {
                     var dist = dists.Find(x => x.TdUnitAddrCode == loc.TdUnitAddrCode);
                     if (dist != null)
                     {
+                        if (oldCourse != dist.CdSumCource)
+                        {
+                            oldCourse = dist.CdSumCource;
+                            blink = true;
+                        }
+                        else
+                        {
+                            blink = false;
+                        }
+
                         loc.DtDelivery = dist.DtDelivery;
                         loc.CdKyoten = dist.CdKyoten;
                         loc.CdDistGroup = dist.CdDistGroup;
@@ -129,6 +144,21 @@ namespace DispShop.Models
                         loc.CdSumRoute = dist.CdSumRoute;
                         loc.Ops = dist.Ops;
                         loc.Rps = dist.Rps;
+                        loc.Maguchi = dist.Maguchi;
+                        loc.CdSumCourceMaguchi = dist.CdSumCource;
+                        loc.CdSumRouteMaguchi = dist.CdSumRoute;
+                        loc.Blink_Course = blink;
+
+                        int idx = locs.IndexOf(loc);
+                        for (int i=1;i<dist.Maguchi;i++)
+                        {
+                            if (idx + i < locs.Count())
+                            {
+                                locs[idx + i].CdSumCourceMaguchi = loc.CdSumCourceMaguchi;
+                                locs[idx + i].CdSumRouteMaguchi = loc.CdSumRouteMaguchi;
+                                locs[idx + i].Blink_Course = blink;
+                            }
+                        }
 
                         var stowage = stowages.Find(x => x.CdKyoten == dist.CdKyoten
                                                 && x.CdDistGroup == dist.CdDistGroup
