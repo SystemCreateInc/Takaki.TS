@@ -218,6 +218,14 @@ namespace Picking.Models
                         {
                             int zone = addrdata.TdUnitZoneCode;
 
+                            TdUnitDisplay? now =
+                                distcolorinfo.IsDistWorkNormal == true ?
+                                    distcolor.Tdunitdisplay.Find(x => x.Tdunitaddrcode == addrdata.TdUnitAddrCode && x.Status == (int)DbLib.Defs.Status.Ready)
+                                    : distcolor.Tdunitdisplay.Find(x => x.Tdunitaddrcode == addrdata.TdUnitAddrCode && x.Status == (int)DbLib.Defs.Status.Ready && x.Zone == zone);
+
+                            if (now!=null)
+                                now.Status = (int)DbLib.Defs.Status.Inprog;
+
                             TdUnitDisplay? next =
                                 distcolorinfo.IsDistWorkNormal == true ?
                                     distcolor.Tdunitdisplay.Find(x => x.Tdunitaddrcode == addrdata.TdUnitAddrCode && x.Status == (int)DbLib.Defs.Status.Ready)
@@ -225,6 +233,64 @@ namespace Picking.Models
 
                             if (distcolorinfo.IsDistWorkNormal)
                             {
+                                int color = (int)distcolor.DistColor_code;
+
+                                if (addrdata.GetLightButton() == distcolor.DistColor_code)
+                                {
+                                    // 次に投入した色の数量があれば表示する
+                                    var distnextcolor = distcolorinfo.GetNextDistSeq(distcolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
+                                    if (distnextcolor == null)
+                                    {
+                                        // 消灯
+                                        tddps.Light(ref addrdata, false, false, color, "", true);
+                                    }
+                                    else
+                                    {
+                                        next = distnextcolor.Tdunitdisplay.Find(x => x.Tdunitaddrcode == addrdata.TdUnitAddrCode);
+
+                                        var distnextnextcolor = distcolorinfo.GetNextDistSeq(distnextcolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
+                                        bool blink = false;
+                                        if (distcolorinfo.IsDistWorkNormal && distnextnextcolor != null)
+                                        {
+                                            blink = true;
+                                        }
+
+                                        string text = next != null ? next.TdDisplay : "";
+                                        tddps.Light(ref addrdata, false, false, color, text, true);
+                                        tddps.Light(ref addrdata, true, blink, distnextcolor.DistColor_code, text, true);
+                                    }
+                                }
+                                else
+                                {
+                                    color = addrdata.GetLightButton();
+                                    // ダブりがあれば
+                                    bool blink = false;
+                                    if (next != null)
+                                    {
+                                        var basecolor = distcolorinfo.GetDistColor(color);
+
+                                        if (basecolor != null)
+                                        {
+                                            var nextnextcolor = distcolorinfo.GetNextDistSeq(basecolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
+
+                                            if (nextnextcolor == distcolor)
+                                            {
+                                                nextnextcolor = distcolorinfo.GetNextDistSeq(distcolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
+                                            }
+
+                                            if (nextnextcolor != null && nextnextcolor != distcolor)
+                                            {
+                                                blink = true;
+                                            }
+                                        }
+                                    }
+                                    tddps.Light(ref addrdata, true, blink, color, addrdata.GetNowDisplay(), true);
+                                }
+
+#if false
+
+
+
                                 int color = (int)distcolor.DistColor_code;
                                 if (addrdata.GetLightButton() == distcolor.DistColor_code)
                                 {
@@ -297,7 +363,8 @@ namespace Picking.Models
                                     }
                                     tddps.Light(ref addrdata, true, blink, color, addrdata.GetNowDisplay(), true);
                                 }
-                            }
+#endif
+                                }
                             else
                             {
                                 // 追駆けの消灯

@@ -793,6 +793,8 @@ namespace Picking.ViewModels
 
         void SetItemRow(int inseq, DistItemSeq distitemseq)
         {
+            Syslog.Info($"DistItemScanWindowViewModel:SetItemRow:itemseq:{inseq} item:{distitemseq.CdHimban} {distitemseq.NmHinSeishikimei} Ops:{distitemseq.Ops} Rps:{distitemseq.Drps} OShop:{distitemseq.Order_shop_cnt} RShop:{distitemseq.Result_shop_cnt}");
+
             DisplayDistItemDatas![inseq].DtDelivery = distitemseq.DtDelivery;
             DisplayDistItemDatas![inseq].CdShukkaBatch = distitemseq.CdShukkaBatch;
             DisplayDistItemDatas![inseq].CdJuchuBin = distitemseq.CdJuchuBin;
