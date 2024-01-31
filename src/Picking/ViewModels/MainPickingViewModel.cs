@@ -658,7 +658,7 @@ namespace Picking.ViewModels
                     _maguchis = DistColorManager.LoadMaguchi(DistGroup);
                     if (_maguchis != null)
                     {
-                        TdUnitManager.LightMaguchi(TdDps, _maguchis, true);
+                        TdUnitManager.SetMaguchi(TdDps, _maguchis);
                     }
                 });
             }
@@ -822,11 +822,6 @@ namespace Picking.ViewModels
 
         private void DpsLightOff(CancellationTokenSource ct)
         {
-            if (_maguchis != null)
-            {
-                TdUnitManager.LightMaguchi(TdDps, _maguchis, false);
-            }
-
             for (int idx = 0; idx < _distcolorinfo.DistColors?.Count(); idx++)
             {
                 // 中断ボタン押下

@@ -133,7 +133,6 @@
                 <DataGridTextColumn Header="配分&#xa;状態" Width="Auto" Binding="{Binding DStatus_name}"  ElementStyle="{StaticResource LeftTextElement}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="大分&#xa;状態" Width="Auto" Binding="{Binding LStatus_name}"  ElementStyle="{StaticResource LeftTextElement}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="品番" Width="Auto" Binding="{Binding CdHimban}"  ElementStyle="{StaticResource LeftTextElement}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="JANｺｰﾄﾞ" Width="Auto" Binding="{Binding CdGtin13}"  ElementStyle="{StaticResource LeftTextElement}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="品名" Width="Auto" Binding="{Binding NmHinSeishikimei}" IsReadOnly="True">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
@@ -141,16 +140,21 @@
                         </Style>
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="受注&#xa;便" Width="Auto" Binding="{Binding CdJuchuBin}"  ElementStyle="{StaticResource LeftTextElement}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="出荷&#xa;ﾊﾞｯﾁ" Width="Auto" Binding="{Binding CdShukkaBatch}"  ElementStyle="{StaticResource LeftTextElement}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="入数" Width="Auto" Binding="{Binding NuBoxUnit}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="予定&#xa;総個数" Width="Auto" Binding="{Binding Ops}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="通路&#xa;左" Width="Auto" Binding="{Binding DisplayRightPs_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="通路&#xa;右" Width="Auto" Binding="{Binding DisplayLeftPs_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="入数" Width="Auto" Binding="{Binding Display_Csunit}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="予定&#xa;箱" Width="Auto" Binding="{Binding Display_Dops_Cs}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="予定&#xa;ﾊﾞﾗ" Width="Auto" Binding="{Binding Display_Dops_Ps}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="左&#xa;箱" Width="Auto" Binding="{Binding DisplayRightCs_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="左&#xa;ﾊﾞﾗ" Width="Auto" Binding="{Binding DisplayRightPs_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="右&#xa;箱" Width="Auto" Binding="{Binding DisplayLeftCs_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="右&#xa;ﾊﾞﾗ" Width="Auto" Binding="{Binding DisplayLeftPs_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="残&#xa;箱" Width="Auto" Binding="{Binding Display_Ddps_Cs}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="残&#xa;ﾊﾞﾗ" Width="Auto" Binding="{Binding Display_Ddps_Ps}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="総&#xa;個数" Width="Auto" Binding="{Binding Display_Ddps}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="左&#xa;個数" Width="Auto" Binding="{Binding DisplayRightAll_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="右&#xa;個数" Width="Auto" Binding="{Binding DisplayLeftAll_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="受注&#xa;便" Width="Auto" Binding="{Binding CdJuchuBin}"  ElementStyle="{StaticResource LeftTextElement}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="出荷&#xa;ﾊﾞｯﾁ" Width="Auto" Binding="{Binding CdShukkaBatch}"  ElementStyle="{StaticResource LeftTextElement}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="JANｺｰﾄﾞ" Width="Auto" Binding="{Binding CdGtin13}"  ElementStyle="{StaticResource LeftTextElement}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="店舗&#xa;総数" Width="Auto" Binding="{Binding DisplayOrderShop_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="店舗&#xa;残数" Width="Auto" Binding="{Binding DisplayRemainShop_cnt}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
             </DataGrid.Columns>

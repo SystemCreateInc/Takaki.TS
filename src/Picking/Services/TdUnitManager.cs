@@ -32,7 +32,17 @@ namespace Picking.Models
 {
     internal class TdUnitManager
     {
+        public class TdMaguchi
+        {
+            public string TbUnitAddrCode = string.Empty;
+            public List<string> TbUnitAddrCodes = new List<string>();
+        };
+
         public static int[] ZoneOrderIn = new int[10] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+        // 間口
+        public static List<TdMaguchi> TdMaguchis = new List<TdMaguchi>();
+
 
         private static readonly object _tdLock = new object(); // ロック用のオブジェクト
         // 作業中かチェックする
@@ -243,6 +253,8 @@ namespace Picking.Models
                                     {
                                         // 消灯
                                         tddps.Light(ref addrdata, false, false, color, "", true);
+                                        // 間口消灯
+                                        TdMaguchiLight(addrdata.TdUnitAddrCode, tddps, false, true);
                                     }
                                     else
                                     {
@@ -370,6 +382,9 @@ namespace Picking.Models
                                 // 追駆けの消灯
                                 int color = (int)distcolor.DistColor_code;
                                 tddps.Light(ref addrdata, false, false, color, "", true);
+                                // 間口消灯
+                                TdMaguchiLight(addrdata.TdUnitAddrCode, tddps, false, true);
+
                                 TdUnitChaseLight(ref distcolorinfo, tddps, color, zone, distcolor.DistSeqs[zone]);
                             }
                         }
@@ -437,6 +452,9 @@ namespace Picking.Models
                         addrdata.EndDisplay(false, color);
                     }
                 }
+
+                // 間口点灯
+                TdMaguchiLight(tdunitaddrcode, tddps, bOn,false);
             }
 
             return true;
@@ -702,6 +720,8 @@ namespace Picking.Models
                                         {
                                             // 消灯
                                             tddps.Light(ref addrdata, false, false, color, "", true);
+                                            // 間口消灯
+                                            TdMaguchiLight(addrdata.TdUnitAddrCode, tddps, false, true);
                                         }
                                         else
                                         {
@@ -723,6 +743,8 @@ namespace Picking.Models
                                     {
                                         // 消灯
                                         tddps.Light(ref addrdata, false, false, color, "", true);
+                                        // 間口消灯
+                                        TdMaguchiLight(addrdata.TdUnitAddrCode, tddps, false, true);
 
                                         TdUnitChaseLight(ref distcolorinfo, tddps, color, zone, distcolor.DistSeqs[zone]);
                                     }
@@ -1227,41 +1249,56 @@ namespace Picking.Models
 
             return true;
         }
-        public static void LightMaguchi(TdDpsManager tddps, List<DistBase> Maguchis, bool bOn)
+
+        public static void SetMaguchi(TdDpsManager tddps, List<DistBase> maguchis)
         {
+            TdMaguchis = new List<TdMaguchi>();
+
             var addrs = tddps.TdAddrs!.OrderBy(x => x.TdUnitAddrCode).ToList();
 
-            foreach (var maguchi in Maguchis)
+            foreach (var maguchi in maguchis)
             {
                 TdAddrData? tdaddr;
                 tddps.GetTdAddr(out tdaddr, maguchi.Tdunitaddrcode);
 
+                TdMaguchi p = new TdMaguchi();
+                p.TbUnitAddrCode = maguchi.Tdunitaddrcode;
+
                 if (tdaddr != null)
                 {
+                    TdAddrData? addrdata = addrs.Find(p => p.TdUnitAddrCode == maguchi.Tdunitaddrcode);
                     int idx = addrs.IndexOf(tdaddr);
                     for (int i = 1; i < maguchi.Maguchi; i++)
                     {
                         if ((idx + i) < addrs.Count())
                         {
-                            TdAddrData? addrdata = addrs.Find(p => p.TdUnitAddrCode == maguchi.Tdunitaddrcode);
-
-                            tddps.GetTdAddr(out addrdata, addrs[idx + i].TdUnitAddrCode);
-
-                            if (addrdata != null)
-                            {
-                                if (bOn == true)
-                                {
-                                    tddps.Light(ref addrdata, false, false, (int)TdLedColor.Claim, "ZZZZZZ", false);
-                                }
-                                else
-                                {
-                                    tddps.Light(ref addrdata, false, false, (int)TdLedColor.Claim, "", false);
-                                }
-                            }
+                            p.TbUnitAddrCodes.Add(addrs[idx + i].TdUnitAddrCode);
                         }
                     }
                 }
+                TdMaguchis.Add(p);
             }
         }
+        public static void TdMaguchiLight(string tdunitaddrcode, TdDpsManager tddps, bool bOn, bool bQuick)
+        {
+            TdAddrData? addrdata;
+            tddps.GetTdAddr(out addrdata, tdunitaddrcode);
+
+            // 間口がある場合はＺＺＺＺを点灯消灯
+            var maguchi = TdMaguchis.Find(x => x.TbUnitAddrCode == addrdata.TdUnitAddrCode);
+            if (maguchi != null)
+            {
+                maguchi.TbUnitAddrCodes.ForEach(x =>
+                {
+                    tddps.GetTdAddr(out addrdata, x);
+                    string display = bOn ? "ZZZZZZ" : "";
+                    if (addrdata != null)
+                    {
+                        tddps.Light(ref addrdata, false, false, (int)TdLedColor.Claim, display, bQuick);
+                    }
+                });
+            }
+        }
+
     }
 }
