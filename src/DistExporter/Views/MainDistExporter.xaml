@@ -89,8 +89,8 @@
                 <DataGridTextColumn Header="仕分G名" Binding="{Binding NmDistGroup}"/>
                 <DataGridTextColumn Header="得意先数" Binding="{Binding CustomerCount}" ElementStyle="{StaticResource RightTextElement}"/>
                 <DataGridTextColumn Header="あふれ得意先数" Binding="{Binding OverCount}" ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="送信件数" Binding="{Binding SendCount}" ElementStyle="{StaticResource RightTextElement}"/>
-                <DataGridTextColumn Header="未送信件数" Binding="{Binding SendedCount}" ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="送信件数" Binding="{Binding SendedCount}" ElementStyle="{StaticResource RightTextElement}"/>
+                <DataGridTextColumn Header="未送信件数" Binding="{Binding SendCount}" ElementStyle="{StaticResource RightTextElement}"/>
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>
