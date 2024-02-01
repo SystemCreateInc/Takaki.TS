@@ -500,6 +500,12 @@ namespace Picking.Models
                 }
                 addrdata._ChatteringTime = nowtm + new TimeSpan(0, 0, 0, 0, 500);
 
+                if (addrdata.GetNowDisplay() == TdAddrBase.END_DISPLAY)
+                {
+                    Syslog.Info($"END中は無視");
+                    return false;
+                }
+
                 // ゾーン取得
                 int zone = addrdata.TdUnitZoneCode;
 

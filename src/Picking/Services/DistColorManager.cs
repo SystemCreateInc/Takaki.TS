@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Data.Common;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
@@ -35,6 +36,8 @@ namespace Picking.Services
         {
             using (var con = DbFactory.CreateConnection())
             {
+                con.Query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
+
                 var sql = @"select CD_DIST_GROUP,DT_DELIVERY,TB_DIST.CD_HIMBAN,ST_BOXTYPE,NU_BOXUNIT,max(NM_HIN_SEISHIKIMEI) NM_HIN_SEISHIKIMEI, CD_GTIN13,CD_GTIN14,CD_SHUKKA_BATCH,CD_JUCHU_BIN"
                         + ",sum(NU_OPS) ops,sum(NU_DOPS) dops,sum(NU_DRPS) drps"
                         + ",(case when min(TB_DIST.FG_DSTATUS) = max(TB_DIST.FG_DSTATUS) then max(TB_DIST.FG_DSTATUS) else @dstatus end) dstatus"
@@ -119,6 +122,8 @@ namespace Picking.Services
 
             using (var con = DbFactory.CreateConnection())
             {
+                con.Query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
+
                 var sql = @"select tb_dist.ID_DIST"
                         + ",DT_DELIVERY"
                         + ",CD_DIST_GROUP"
@@ -261,6 +266,8 @@ namespace Picking.Services
             //　スキャンコード読み込み
             using (var con = DbFactory.CreateConnection())
             {
+                con.Query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
+
                 string having = (bCheck == true || bExtraction == true) ? "0<sum(NU_DRPS)" : "sum(NU_DOPS)<>sum(NU_DRPS)";
 
                 var sql = GetItemSqls(having,true);
@@ -383,6 +390,8 @@ namespace Picking.Services
             //　スキャンコード読み込み
             using (var con = DbFactory.CreateConnection())
             {
+                con.Query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
+
                 string having = (bCheck == true || bExtraction == true) ? "0<sum(NU_DRPS)" : "sum(NU_DOPS)<>sum(NU_DRPS)";
                 having += $" and CD_SHUKKA_BATCH='{item.CdShukkaBatch}' and CD_JUCHU_BIN='{item.CdJuchuBin}'";
 
@@ -572,6 +581,8 @@ namespace Picking.Services
         {
             using (var con = DbFactory.CreateConnection())
             {
+                con.Query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
+
                 var sql = @"select TB_DIST_MAPPING.tdunitaddrcode,NU_MAGICHI"
                         + " from TB_DIST"
                         + " inner join TB_DIST_MAPPING on TB_DIST_MAPPING.ID_DIST = TB_DIST.ID_DIST"
