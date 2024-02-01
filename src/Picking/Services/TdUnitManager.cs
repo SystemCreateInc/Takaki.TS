@@ -432,18 +432,32 @@ namespace Picking.Models
             if (addrdata != null)
             {
                 int lightbtn = addrdata.GetLightButton();
+
+                // end表示ならクリア
+                var led = addrdata.GetLedButton(lightbtn);
+                if (led != null)
+                {
+                    if (led.Text == TdAddrBase.END_DISPLAY)
+                    {
+                        addrdata.EndDisplay(false, lightbtn);
+                        tddps.Light(ref addrdata, false, false, lightbtn, "", bQuick);
+                    }
+                }
+
+                lightbtn = addrdata.GetLightButton();
                 if (bOn && lightbtn != -1)
                 {
-                    var led = addrdata.GetLedButton(lightbtn);
-                    bBlink = true;
-                    color = lightbtn;
+                    led = addrdata.GetLedButton(lightbtn);
                     if (led != null)
                     {
+                        bBlink = true;
+                        color = lightbtn;
                         display = led.Text!;
                     }
                 }
 
                 tddps.Light(ref addrdata, bOn, bBlink, color, display, bQuick);
+#if false
                 // endタイマークリア
                 if (bOn == true && color != (int)TdLedColor.Claim)
                 {
@@ -452,7 +466,7 @@ namespace Picking.Models
                         addrdata.EndDisplay(false, color);
                     }
                 }
-
+#endif
                 // 間口点灯
                 TdMaguchiLight(tdunitaddrcode, tddps, bOn,false);
             }
@@ -554,13 +568,18 @@ namespace Picking.Models
 
 
                         // 配分処理を中断する
-                        DistColor? disstcolor = distcolorinfo?.GetDistColor(color);
-                        if (disstcolor != null)
+                        DistColor? distcolor = distcolorinfo?.GetDistColor(color);
+                        if (distcolor != null)
                         {
                             Task.Run(() =>
                             {
-                                bool bRet = TdUnitManager.TdLightOff(ref disstcolor, tddps, distcolorinfo!);
-                                DistColorManager.DistUpdate(disstcolor);
+                                bool bRet = TdUnitManager.TdLightOff(ref distcolor, tddps, distcolorinfo!);
+
+                                // 作業報告書開始
+                                distcolor.ReportEnd();
+                                distcolorinfo!.ReportUpdate(distcolor.ReportShain, distcolor.DistWorkMode);
+
+                                DistColorManager.DistUpdate(distcolor);
                             });
                         }
                         return true;
@@ -659,6 +678,9 @@ namespace Picking.Models
                                         detail.DStatus = detail.Drps == detail.Dops ? (int)DbLib.Defs.Status.Completed : (int)DbLib.Defs.Status.Inprog;
                                         now.Status = (int)DbLib.Defs.Status.Completed;
 
+                                        Syslog.Info($"CountDown::Dist:color:{color} inseq:{itemseq.InSeq} item:{itemseq.CdHimban} Ops{detail.Ops} Ddps:{detail.Ddps} Drps:{detail.Drps} itemseq.Drps:{itemseq.Drps}");
+
+
                                         // 作業報告書開始
                                         distcolor.ReportCountUp(addrdata.TdUnitAddrCode, ps);
                                     }
@@ -668,19 +690,23 @@ namespace Picking.Models
                                         int ps = detail.Dops;
                                         distcolor.Drps += ps;
                                         distcolor.Ddps -= ps;
-                                        itemseq.Drps -= ps;
+                                        itemseq.Drps += ps;
                                         itemseq.Ddps -= ps;
                                         if (detail.Tdunitzonecode == 1)
                                             itemseq.Left_ps_cnt -= ps;
                                         if (detail.Tdunitzonecode == 2)
                                             itemseq.Right_ps_cnt -= ps;
-                                        detail.Drps += ps;
-                                        detail.Ddps -= ps;
+                                        detail.Drps -= ps;
+                                        detail.Ddps += ps;
                                         detail.TdUnitPushTm = nowtm;
                                         now.Status = (int)DbLib.Defs.Status.Completed;
+
+                                        Syslog.Info($"CountDown::Check:color:{color} inseq:{itemseq.InSeq} item:{itemseq.CdHimban} Ops{detail.Ops} Ddps:{detail.Ddps} Drps:{detail.Drps}");
                                     }
                                     itemseq.Remain_shop_cnt--;
                                     itemseq.Result_shop_cnt++;
+
+                                    Syslog.Info($"CountDown::All:color:{color} inseq:{itemseq.InSeq} item:{itemseq.CdHimban} itemseq.Ops:{itemseq.Ops} itemseq.Dops:{itemseq.Dops} itemseq.Drps:{itemseq.Drps} itemseq.Order_shop_cnt:{itemseq.Order_shop_cnt} itemseq.Remain_shop_cnt:{itemseq.Remain_shop_cnt} itemseq.Result_shop_cnt:{itemseq.Result_shop_cnt}");
                                 }
                                 else
                                 {
@@ -808,6 +834,8 @@ namespace Picking.Models
                                 end = distcolor.Tdunitdisplay.Find(x => x.Status == (int)DbLib.Defs.Status.Ready);
                                 if (end == null)
                                 {
+                                    Syslog.Info($"仕分完了::color:{color} inseq:{itemseq.InSeq} item:{itemseq.CdHimban} itemseq.Ops:{itemseq.Ops} itemseq.Dops:{itemseq.Dops} itemseq.Drps:{itemseq.Drps} itemseq.Order_shop_cnt:{itemseq.Order_shop_cnt} itemseq.Remain_shop_cnt:{itemseq.Remain_shop_cnt} itemseq.Result_shop_cnt:{itemseq.Result_shop_cnt}");
+
                                     // 作業報告書開始
                                     distcolor.ReportEnd();
                                     distcolorinfo.ReportUpdate(distcolor.ReportShain, distcolor.DistWorkMode);
@@ -1284,19 +1312,22 @@ namespace Picking.Models
             TdAddrData? addrdata;
             tddps.GetTdAddr(out addrdata, tdunitaddrcode);
 
-            // 間口がある場合はＺＺＺＺを点灯消灯
-            var maguchi = TdMaguchis.Find(x => x.TbUnitAddrCode == addrdata.TdUnitAddrCode);
-            if (maguchi != null)
+            if (addrdata != null)
             {
-                maguchi.TbUnitAddrCodes.ForEach(x =>
+                // 間口がある場合はＺＺＺＺを点灯消灯
+                var maguchi = TdMaguchis.Find(x => x.TbUnitAddrCode == addrdata.TdUnitAddrCode);
+                if (maguchi != null)
                 {
-                    tddps.GetTdAddr(out addrdata, x);
-                    string display = bOn ? "ZZZZZZ" : "";
-                    if (addrdata != null)
+                    maguchi.TbUnitAddrCodes.ForEach(x =>
                     {
-                        tddps.Light(ref addrdata, false, false, (int)TdLedColor.Claim, display, bQuick);
-                    }
-                });
+                        tddps.GetTdAddr(out addrdata, x);
+                        string display = bOn ? "ZZZZZZ" : "";
+                        if (addrdata != null)
+                        {
+                            tddps.Light(ref addrdata, false, false, (int)TdLedColor.Claim, display, bQuick);
+                        }
+                    });
+                }
             }
         }
 

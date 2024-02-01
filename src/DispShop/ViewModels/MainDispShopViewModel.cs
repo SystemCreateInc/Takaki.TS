@@ -531,7 +531,7 @@ namespace DispShop.ViewModels
 
         private bool SelectDistGroup()
         {
-            if (AuthenticateService.AuthDistGroupDialog(_dialogService) is DistGroup distgroup)
+            if (AuthenticateService.AuthDistGroupDialog(_dialogService,false) is DistGroup distgroup)
             {
                 DistGroup = distgroup;
                 return true;

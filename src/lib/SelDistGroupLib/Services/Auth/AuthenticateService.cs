@@ -7,7 +7,7 @@ namespace SelDistGroupLib.Services.Auth
 {
     public static class AuthenticateService
     {
-        public static DistGroup? AuthDistGroupDialog(IDialogService dialogService)
+        public static DistGroup? AuthDistGroupDialog(IDialogService dialogService, bool bAll=true)
         {
             DistGroup? result = null;
 
@@ -15,6 +15,7 @@ namespace SelDistGroupLib.Services.Auth
                 nameof(SelDistGroupDlg),
                 new DialogParameters
                 {
+                    { "bAll", bAll },
                 },
                 (rc) =>
                 {

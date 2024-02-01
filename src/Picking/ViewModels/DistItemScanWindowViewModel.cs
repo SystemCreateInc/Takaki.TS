@@ -418,6 +418,10 @@ namespace Picking.ViewModels
                         try
                         {
                             bool bRet = TdUnitManager.TdLightOff(ref disstcolor, TdDps, distcolorinfo);
+                            // 作業報告書終了
+                            disstcolor.ReportEnd();
+                            distcolorinfo!.ReportUpdate(disstcolor.ReportShain, disstcolor.DistWorkMode);
+
                             DistColorManager.DistUpdate(disstcolor);
                         }
                         finally
@@ -446,6 +450,10 @@ namespace Picking.ViewModels
                         try
                         {
                             bool bRet = TdUnitManager.TdLightOff(ref disstcolor, TdDps, distcolorinfo);
+                            // 作業報告書終了
+                            disstcolor.ReportEnd();
+                            distcolorinfo!.ReportUpdate(disstcolor.ReportShain, disstcolor.DistWorkMode);
+
                             disstcolor.DistColorClear();
                         }
                         finally

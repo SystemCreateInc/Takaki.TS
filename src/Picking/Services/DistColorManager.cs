@@ -50,7 +50,7 @@ namespace Picking.Services
                         + " inner join tdunitaddr on TB_DIST_MAPPING.tdunitaddrcode = tdunitaddr.tdunitaddrcode and tdunitaddr.usageid=@tdunittype"
                         + " where DT_DELIVERY=@dt_delivery and CD_DIST_GROUP=@cd_dist_group and CD_BLOCK=@cd_block and FG_MAPSTATUS=@fg_mapstatus"
                         + " group by CD_DIST_GROUP,DT_DELIVERY,TB_DIST.CD_HIMBAN,ST_BOXTYPE,NU_BOXUNIT,CD_GTIN13,CD_GTIN14,CD_SHUKKA_BATCH,CD_JUCHU_BIN"
-                        + " order by (case when min(TB_DIST.FG_DSTATUS) >= @dstatus and max(TB_DIST.FG_DSTATUS) >= @dstatus then @dstatus_completed else @dstatus_ready end),CD_SHUKKA_BATCH,CD_JUCHU_BIN,TB_DIST.CD_HIMBAN";
+                        + " order by (case when min(TB_DIST.FG_DSTATUS) <> max(TB_DIST.FG_DSTATUS) then @dstatus else max(TB_DIST.FG_DSTATUS) end),TB_DIST.CD_HIMBAN,CD_SHUKKA_BATCH,CD_JUCHU_BIN";
 
                 return con.Query(sql, new
                 {
