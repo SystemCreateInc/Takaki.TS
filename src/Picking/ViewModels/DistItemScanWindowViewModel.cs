@@ -385,6 +385,8 @@ namespace Picking.ViewModels
         }
         public TdDpsManager? TdDps { get; set; } = null;
 
+        private OrderingLockInstance lockInstance = new OrderingLockInstance();
+
         public DistItemScanWindowViewModel(IRegionManager regionManager, IDialogService dialogService, IEventAggregator eventAggregator, DistColorInfo distcolorinfo, DistGroupEx distgroup, TdDpsManager tddps)
         {
             _dialogService = dialogService;
@@ -671,7 +673,6 @@ namespace Picking.ViewModels
 
                         Task.Run(() =>
                         {
-                            OrderingLockInstance lockInstance = new OrderingLockInstance();
                             using (new OrderingLock(lockInstance))
                             {
                                 Syslog.Info($"【点灯開始】DistItemScanWindowModel:TdLight:{distcolor.DistColor_name}");
