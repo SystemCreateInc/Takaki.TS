@@ -193,7 +193,7 @@ namespace Picking.Services
             }
         }
 
-        public static bool UpdateQtyDetail(List<DistDetail> detail)
+        public static bool UpdateQtyDetail(List<DistDetail> details)
         {
             bool bTranBegin = false;
             using (var con = DbFactory.CreateConnection())
@@ -203,13 +203,49 @@ namespace Picking.Services
 
                 try
                 {
-                    detail.ForEach(x =>
+                    details.ForEach(x =>
                     {
                         var sql = "update tb_dist set NU_DOPS=@dops,updatedAt=@updt where ID_DIST=@iddist";
                         con.Execute(sql,
                             new
                             {
                                 dops = x.Dops + x.Drps,
+                                iddist = x.IdDist,
+                                updt = DateTime.Now,
+                            }, tr);
+                    });
+
+                    tr.Commit();
+                    bTranBegin = false;
+                }
+                catch (Exception)
+                {
+                    if (bTranBegin)
+                        tr.Rollback();
+                    throw;
+                }
+            }
+
+            return true;
+        }
+
+        public static bool UpdateBoxUnit(List<DistDetail> details)
+        {
+            bool bTranBegin = false;
+            using (var con = DbFactory.CreateConnection())
+            {
+                var tr = con.BeginTransaction();
+                bTranBegin = true;
+
+                try
+                {
+                    details.ForEach(x =>
+                    {
+                        var sql = "update tb_dist set NU_BOXUNIT=@boxunit,updatedAt=@updt where ID_DIST=@iddist";
+                        con.Execute(sql,
+                            new
+                            {
+                                boxunit = x.NuBoxUnit,
                                 iddist = x.IdDist,
                                 updt = DateTime.Now,
                             }, tr);

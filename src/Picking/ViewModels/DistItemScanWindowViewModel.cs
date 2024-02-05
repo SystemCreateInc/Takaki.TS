@@ -218,6 +218,7 @@ namespace Picking.ViewModels
     {
         public DelegateCommand OnItemCancel { get; }
         public DelegateCommand OnChangeQty { get; }
+        public DelegateCommand OnChangeBoxUnit { get; }
         public DelegateCommand OnShowDetailInfo { get; }
         public DelegateCommand OnBack { get; }
         public DelegateCommand OnCancel { get; }
@@ -516,7 +517,7 @@ namespace Picking.ViewModels
                 if (IsCheck == true || IsExtraction == true)
                 {
                     string msg = string.Format("{0}処理のため数量訂正出来ません", IsCheck ? "検品" : "抜き取り");
-                    MessageBox.Show(msg, "エラー");
+                    MessageDialog.Show(_dialogService, msg, "エラー");
                     return;
                 }
 
@@ -531,17 +532,49 @@ namespace Picking.ViewModels
                     {
                         if (rc.Result == ButtonResult.OK)
                         {
-                            var DistDetail = rc.Parameters.GetValue<DistDetail>("DistDetail");
-                            if (DistDetail != null)
+                            var distDetail = rc.Parameters.GetValue<DistDetail>("DistDetail");
+                            if (distDetail != null)
                             {
                                 try
                                 {
-                                    QtyChange(DistDetail);
+                                    QtyChange(distDetail);
                                 }
                                 catch (Exception e)
                                 {
                                     Syslog.Info($"DistDetailWindowViewModel::OnChangeQty{e.ToString()}");
-                                    MessageBox.Show(e.Message, "エラー");
+                                    MessageDialog.Show(_dialogService, e.Message, "エラー");
+                                }
+                            }
+                            RefreshInfo();
+                        }
+                    });
+            }, () => CanDistItem).ObservesProperty(() => CanDistItem);
+
+            OnChangeBoxUnit = new DelegateCommand(() =>
+            {
+                Syslog.Info("【箱数変更】DistItemScanWindowModel:OnChangeBoxUnit");
+
+                dialogService.ShowDialog(
+                    nameof(ModifyBoxUnitDialog),
+                    new DialogParameters
+                    {
+                        { "CurrentDistDetail", ItemToDetail(CurrentDistItemSeq!) },
+                    },
+                    (rc) =>
+                    {
+                        if (rc.Result == ButtonResult.OK)
+                        {
+                            var distDetail = rc.Parameters.GetValue<DistDetail>("DistDetail");
+                            if (distDetail != null)
+                            {
+                                try
+                                {
+                                    BoxUnitChange(distDetail);
+                                }
+                                catch (Exception e)
+                                {
+                                    Syslog.Info($"DistDetailWindowViewModel::OnChangeBoxUnit{e.ToString()}");
+                                    MessageDialog.Show(_dialogService, e.Message, "エラー");
                                 }
                             }
                             RefreshInfo();
@@ -938,6 +971,26 @@ namespace Picking.ViewModels
             }
         }
 
+        void BoxUnitChange(DistDetail distdetail)
+        {
+            List<DistDetail>? details = DistColorManager.LoadInfoDetails(DistGroup!, distdetail);
+
+            if (details != null)
+            {
+                details.ForEach(d =>
+                {
+                    d.NuBoxUnit = distdetail.NuBoxUnit;
+                    d.Csunit = distdetail.NuBoxUnit;
+                });
+
+
+                DistColorManager.UpdateBoxUnit(details);
+
+                RefreshItem(distdetail);
+            }
+        }
+
+
         private void RefreshItem(DistBase distdetail)
         {
             var refreshitem = DistColorManager.RefreshItems(DistGroup!, distdetail, IsCheck, IsExtraction);
@@ -946,6 +999,8 @@ namespace Picking.ViewModels
             {
                 if (refreshitem != null)
                 {
+                    CurrentDistItemSeq.NuBoxUnit = refreshitem.NuBoxUnit;
+                    CurrentDistItemSeq.Csunit = refreshitem.NuBoxUnit;
                     CurrentDistItemSeq.Ops = refreshitem.Ops;
                     CurrentDistItemSeq.Dops = refreshitem.Dops;
                     CurrentDistItemSeq.Drps = refreshitem.Drps;
@@ -954,6 +1009,7 @@ namespace Picking.ViewModels
                 }
                 else
                 {
+                    CurrentDistItemSeq.NuBoxUnit = 0;
                     CurrentDistItemSeq.Dops = 0;
                     CurrentDistItemSeq.Ddps = 0;
                     CurrentDistItemSeq.Remain_shop_cnt = 0;

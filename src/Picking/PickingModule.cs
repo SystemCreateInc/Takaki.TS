@@ -38,7 +38,8 @@ namespace Picking
             containerRegistry.RegisterDialog<ChangeQtyDlg>();
             // 商品選択
             containerRegistry.RegisterDialog<SelectItemDlg>();
-
+            // 箱入り数変更
+            containerRegistry.RegisterDialog<ModifyBoxUnitDialog>();
 
             // シングルトン登録
             containerRegistry.RegisterSingleton<TdDpsManager>();

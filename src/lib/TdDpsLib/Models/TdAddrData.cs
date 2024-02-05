@@ -276,7 +276,7 @@ namespace TdDpsLib.Models
         {
             if (EndDispTime.IsRunning)
             {
-                if (EndDispTime.ElapsedMilliseconds >= 3000)
+                if (EndDispTime.ElapsedMilliseconds >= 1500)
                 {
                     EndDispTime.Reset();
                     return true;

@@ -94,6 +94,12 @@
                                 </StackPanel>
                             </Button>
 
+                            <Button Command="{Binding OnChangeBoxUnit}">
+                                <StackPanel Orientation="Vertical">
+                                    <materialDesign:PackIcon Kind="EditBox"/>
+                                    <TextBlock Text="箱数変更"/>
+                                </StackPanel>
+                            </Button>
 
                             <Button Command="{Binding OnShowDetailInfo}">
                                 <StackPanel Orientation="Vertical">
