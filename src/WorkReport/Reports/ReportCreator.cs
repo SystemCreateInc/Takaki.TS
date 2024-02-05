@@ -73,8 +73,8 @@ namespace WorkReport.Reports
         {
             // 納品日、作業日付、仕分グループ、ブロックでグループ化
             return workReports
-                .GroupBy(g => new { g.DtDelivery, g.WorkDate, g.CdDistGroup, g.CdBlock })
-                .OrderBy(o => o.Key.DtDelivery).ThenBy(t => t.Key.WorkDate).ThenBy(t => t.Key.CdDistGroup).ThenBy(t => t.Key.CdBlock)
+                .GroupBy(g => new { g.DtDelivery, g.DtStart, g.CdDistGroup, g.CdBlock })
+                .OrderBy(o => o.Key.DtDelivery).ThenBy(t => t.Key.DtStart).ThenBy(t => t.Key.CdDistGroup).ThenBy(t => t.Key.CdBlock)
                 .Select(s => new Group
                 {
                     DtDelivery = s.Key.DtDelivery,
