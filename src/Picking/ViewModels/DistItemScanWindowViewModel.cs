@@ -1001,6 +1001,8 @@ namespace Picking.ViewModels
                 {
                     CurrentDistItemSeq.NuBoxUnit = refreshitem.NuBoxUnit;
                     CurrentDistItemSeq.Csunit = refreshitem.NuBoxUnit;
+                    CurrentDistItemSeq.Left_ps_cnt = refreshitem.Left_ps_cnt;
+                    CurrentDistItemSeq.Right_ps_cnt = refreshitem.Right_ps_cnt;
                     CurrentDistItemSeq.Ops = refreshitem.Ops;
                     CurrentDistItemSeq.Dops = refreshitem.Dops;
                     CurrentDistItemSeq.Drps = refreshitem.Drps;

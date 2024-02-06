@@ -466,12 +466,12 @@ namespace Picking.Services
                          Ddps = q.dops - q.drps,
                          Lrps = q.lrps ?? 0,
                          Order_shop_cnt = q.order_shop_cnt ?? 0,
-                         Result_shop_cnt = q.result_shop_cnt ?? 0,
-                         Remain_shop_cnt = q.order_shop_cnt - q.result_shop_cnt,
+                         Result_shop_cnt = bCheck || bExtraction ? 0 : q.result_shop_cnt ?? 0,
+                         Remain_shop_cnt = bCheck || bExtraction ? q.result_shop_cnt ?? 0 : q.order_shop_cnt - q.result_shop_cnt,
                          Left_shop_cnt = q.leftshopcnt ?? 0,
                          Right_shop_cnt = q.rightshopcnt ?? 0,
-                         Left_ps_cnt = q.leftpscnt ?? 0,
-                         Right_ps_cnt = q.rightpscnt ?? 0,
+                         Left_ps_cnt = bCheck || bExtraction ? q.leftrpscnt ?? 0 : q.leftpscnt ?? 0,
+                         Right_ps_cnt = bCheck || bExtraction ? q.rightrpscnt ?? 0 : q.rightpscnt ?? 0,
                      }).FirstOrDefault();
             }
         }
