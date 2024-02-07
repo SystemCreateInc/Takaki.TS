@@ -1,5 +1,6 @@
 ﻿using DbLib;
 using DryIoc;
+using ImTools;
 using LargeDistLabelLib;
 using System.Collections.Generic;
 using System.Linq;
@@ -132,5 +133,16 @@ namespace LargeDist.Models
         {
             return _items.All(x => x.IsCompleted);
         }
+        public void SetBoxUnit(DistItem distitem, int boxunit)
+        {
+            foreach (var item in _items)
+            {
+                foreach (var p in item.Items.Where(x => x.CdHimban == distitem.CdHimban && x.CdJuchuBin == distitem.CdJuchuBin && x.CdShukkaBatch == distitem.CdShukkaBatch))
+                {
+                    p.NuBoxUnit = boxunit;
+                }
+            }
+        }
+
     }
 }

@@ -257,6 +257,17 @@ namespace LargeDist.ViewModels
                     var unit = rc.Parameters.GetValue<int>("Unit");
                     slotItem.Item.SetBoxUnit(unit);
                     slotItem.UpdateItem();
+
+                    _blockLargeDistController!.SetBoxUnit(slotItem.Item.Items.First(),unit);
+
+                    try
+                    {
+                        LargeDistQueryService.UpdateBoxUnit(slotItem.Item.CdHimban, unit, _deliveryDate, _largeDistGroup!);
+                    }
+                    catch (Exception ex)
+                    {
+                        WindowLib.Utils.MessageDialog.Show(_dialogService, ex.Message, "エラー");
+                    }
                 });
             }
         }

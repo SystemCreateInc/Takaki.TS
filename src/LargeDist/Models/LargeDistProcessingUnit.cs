@@ -18,7 +18,7 @@ namespace LargeDist.Models
         public string? CdHimban { get; }
         public string? CdGtin13 { get; }
         public string? NmHinSeishikimei { get; }
-        public int NuBoxUnit { get; }
+        public int NuBoxUnit { get; set; }
 
         public bool IsCompleted => Items.All(x => x.IsCompleted);
 
