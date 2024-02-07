@@ -29,6 +29,7 @@ namespace DistListPrint.ViewModels
         public DelegateCommand Reload { get; }
         public DelegateCommand CustomerReportPrint { get; }
         public DelegateCommand ItemReportPrint { get; }
+        public DelegateCommand CustomerUnitReportPrint { get; }
         public DelegateCommand Exit { get; }
 
         private readonly IDialogService _dialogService;
@@ -133,11 +134,11 @@ namespace DistListPrint.ViewModels
 
                     if (isChunk)
                     {
-                        SplitPrint("得意先別仕分リスト", vms, chunkSize);
+                        SplitPrint("得意先別仕分リスト", vms, chunkSize, PageOrientation.Landscape);
                     }
                     else
                     {
-                        Print("得意先別仕分リスト", vms);
+                        Print("得意先別仕分リスト", vms, PageOrientation.Landscape);
                     }
                 }
                 catch (Exception e)
@@ -167,16 +168,50 @@ namespace DistListPrint.ViewModels
 
                     if (isChunk)
                     {
-                        SplitPrint("商品別仕分リスト", vms, chunkSize);
+                        SplitPrint("商品別仕分リスト", vms, chunkSize, PageOrientation.Landscape);
                     }
                     else
                     {
-                        Print("商品別仕分リスト", vms);
+                        Print("商品別仕分リスト", vms, PageOrientation.Landscape);
                     }
                 }
                 catch (Exception e)
                 {
                     Syslog.Error($"ItemReportPrint:{e.Message}");
+                    MessageDialog.Show(_dialogService, e.Message, "エラー");
+                }
+            });
+
+            CustomerUnitReportPrint = new DelegateCommand(() =>
+            {
+                Syslog.Debug("MainDistListPrintViewModel:CustomerUnitReportPrint");
+
+                try
+                {
+                    var chunkSize = GetChunkSize();
+                    var vms = ReportCreator.CreateCustomerUnitReport(DistListPrints.Select(x => x.IdDist), CdDistGroup, NmDistGroup,
+                        DispDtDelivery, chunkSize);
+
+                    var isChunk = vms.Count() > chunkSize;
+                    var message = isChunk ? "プレビューは表示しません。" : "プレビューを表示します。";
+                    if (MessageDialog.Show(_dialogService, $"{vms.Count()}頁印刷します。よろしいですか？{message}",
+                        "印刷確認", ButtonMask.Yes | ButtonMask.No, MessageBoxImage.Question) != ButtonResult.Yes)
+                    {
+                        return;
+                    }
+
+                    if (isChunk)
+                    {
+                        SplitPrint("得意先別総個数集計リスト", vms, chunkSize, PageOrientation.Portrait);
+                    }
+                    else
+                    {
+                        Print("得意先別総個数集計リスト", vms, PageOrientation.Portrait);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Syslog.Error($"CustomerUnitReportPrint:{e.Message}");
                     MessageDialog.Show(_dialogService, e.Message, "エラー");
                 }
             });
@@ -249,23 +284,23 @@ namespace DistListPrint.ViewModels
             return chunkSize == 0 ? 100 : chunkSize;
         }
 
-        private void SplitPrint(string title, IEnumerable<IPrintViewModel> vms, int chunkSize)
+        private void SplitPrint(string title, IEnumerable<IPrintViewModel> vms, int chunkSize, PageOrientation orientation)
         {
             // プレビュー画面を表示しないで印刷
             var printUnitVms = vms.Select((v, i) => new { v, i })
                 .GroupBy(x => x.i / chunkSize).Select(s => s.Select(x => x.v));
 
-            var ppm = new PrintManager(PageMediaSizeName.ISOA4, PageOrientation.Landscape);
+            var ppm = new PrintManager(PageMediaSizeName.ISOA4, orientation);
             foreach (var printVms in printUnitVms)
             {
                 ppm.Print(title, printVms);
             }
         }
 
-        private void Print(string title, IEnumerable<IPrintViewModel> vms)
+        private void Print(string title, IEnumerable<IPrintViewModel> vms, PageOrientation orientation)
         {
             // プレビュー画面を表示
-            var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, PageOrientation.Landscape);
+            var ppm = new PrintPreviewManager(PageMediaSizeName.ISOA4, orientation);
             ppm.PrintPreview(title, vms);
         }
     }

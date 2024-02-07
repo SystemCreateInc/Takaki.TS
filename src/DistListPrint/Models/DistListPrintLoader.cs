@@ -79,6 +79,7 @@ namespace DistListPrint.Models
                         IdDist = x.IDDIST,
                         CdShukkaBatch = x.CDSHUKKABATCH,
                         NmShukkaBatch = x.TBDISTMAPPING?.FirstOrDefault()?.NMSHUKKABATCH ?? string.Empty,
+                        CdBlock = x.TBDISTMAPPING?.FirstOrDefault()?.CDBLOCK ?? string.Empty,
                         CdCourse = x.CDCOURSE,
                         CdRoute = x.CDROUTE,
                         CdTokuisaki = x.CDTOKUISAKI,

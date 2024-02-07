@@ -69,6 +69,13 @@
                         </StackPanel>
                     </Button>
 
+                    <Button Command="{Binding CustomerUnitReportPrint}">
+                        <StackPanel Orientation="Vertical">
+                            <materialDesign:PackIcon Kind="Printer"/>
+                            <TextBlock Text="得意先別個数"/>
+                        </StackPanel>
+                    </Button>
+
                     <Button Command="{Binding Exit}">
                         <StackPanel Orientation="Vertical">
                             <materialDesign:PackIcon Kind="ExitToApp"/>
