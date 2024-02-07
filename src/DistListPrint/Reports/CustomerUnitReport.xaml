@@ -82,59 +82,66 @@
         </Grid>
 
         <StackPanel Grid.Row="4" Orientation="Vertical">
-            <DataGrid ItemsSource="{Binding Reports, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-                      VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled" Height="auto"
-                      FontSize="14" RowHeaderWidth="0" RowHeight="32.00" BorderBrush="Black"
-                      Style="{StaticResource DataGridReportStyle}" Margin="2"
-                      AlternatingRowBackground="{StaticResource AlternateReportGridBrush}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="9.25*"/>
+                    <ColumnDefinition Width="0.75*"/>
+                </Grid.ColumnDefinitions>
 
-                <DataGrid.Resources>
-                    <Style x:Key="LeftHeader" TargetType="DataGridColumnHeader">
-                        <Setter Property="Background" Value="White"/>
-                        <Setter Property="BorderBrush" Value="Black"/>
-                        <Setter Property="BorderThickness" Value="0,0,1,1"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                        <Setter Property="Margin" Value="5,0,0,0"/>
-                    </Style>
+                <DataGrid ItemsSource="{Binding Reports, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                          VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled" Height="auto"
+                          FontSize="14" RowHeaderWidth="0" RowHeight="32.00" BorderBrush="Black"
+                          Style="{StaticResource DataGridReportStyle}" Margin="2"
+                          AlternatingRowBackground="{StaticResource AlternateReportGridBrush}">
 
-                    <Style x:Key="CenterTextElement" TargetType="{x:Type TextBlock}">
-                        <Setter Property="HorizontalAlignment" Value="Center"/>
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                    </Style>
+                    <DataGrid.Resources>
+                        <Style x:Key="LeftHeader" TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="White"/>
+                            <Setter Property="BorderBrush" Value="Black"/>
+                            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                            <Setter Property="Margin" Value="5,0,0,0"/>
+                        </Style>
 
-                    <Style x:Key="CenterLeftTextElement" TargetType="{x:Type TextBlock}">
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                        <Setter Property="Margin" Value="5,0,0,0"/>
-                    </Style>
+                        <Style x:Key="CenterTextElement" TargetType="{x:Type TextBlock}">
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
 
-                    <Style x:Key="RightTextElement" TargetType="{x:Type TextBlock}">
-                        <Setter Property="HorizontalAlignment" Value="Right"/>
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                        <Setter Property="Margin" Value="0,0,5,0"/>
-                    </Style>
+                        <Style x:Key="CenterLeftTextElement" TargetType="{x:Type TextBlock}">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Margin" Value="5,0,0,0"/>
+                        </Style>
 
-                    <Style x:Key="TextWrappingElement" TargetType="{x:Type TextBlock}">
-                        <Setter Property="TextWrapping" Value="Wrap"/>
-                        <Setter Property="FontSize" Value="12"/>
-                        <Setter Property="Margin" Value="5,0,0,0"/>
-                        <Setter Property="HorizontalAlignment" Value="Left"/>
-                        <Setter Property="VerticalAlignment" Value="Top"/>
-                    </Style>
-                </DataGrid.Resources>
+                        <Style x:Key="RightTextElement" TargetType="{x:Type TextBlock}">
+                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Margin" Value="0,0,5,0"/>
+                        </Style>
 
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="配送順" Width="1.5cm" Binding="{Binding CdRoute}" CanUserSort="False"
-                                        ElementStyle="{StaticResource CenterTextElement}"/>
-                    <DataGridTextColumn Header="得意先コード" Width="2cm" Binding="{Binding CdTokuisaki}" CanUserSort="False"
-                                        ElementStyle="{StaticResource CenterTextElement}"/>
-                    <DataGridTextColumn Header="得意先名称" Width="13.11cm" Binding="{Binding NmTokuisaki}" CanUserSort="False"
-                                        ElementStyle="{StaticResource CenterLeftTextElement}"/>
-                    <DataGridTextColumn Header="アイテム数" Width="1.7cm" Binding="{Binding TotalItemCount}" CanUserSort="False"
-                                        ElementStyle="{StaticResource RightTextElement}"/>
-                    <DataGridTextColumn Header="総個数" Width="1.5cm" Binding="{Binding TotalNuOps}" CanUserSort="False"
-                                        ElementStyle="{StaticResource RightTextElement}"/>
-                </DataGrid.Columns>
-            </DataGrid>
+                        <Style x:Key="TextWrappingElement" TargetType="{x:Type TextBlock}">
+                            <Setter Property="TextWrapping" Value="Wrap"/>
+                            <Setter Property="FontSize" Value="12"/>
+                            <Setter Property="Margin" Value="5,0,0,0"/>
+                            <Setter Property="HorizontalAlignment" Value="Left"/>
+                            <Setter Property="VerticalAlignment" Value="Top"/>
+                        </Style>
+                    </DataGrid.Resources>
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="配送順" Width="1.5cm" Binding="{Binding CdRoute}" CanUserSort="False"
+                            ElementStyle="{StaticResource CenterTextElement}"/>
+                        <DataGridTextColumn Header="得意先コード" Width="2cm" Binding="{Binding CdTokuisaki}" CanUserSort="False"
+                            ElementStyle="{StaticResource CenterTextElement}"/>
+                        <DataGridTextColumn Header="得意先名称" Width="11.61cm" Binding="{Binding NmTokuisaki}" CanUserSort="False"
+                            ElementStyle="{StaticResource CenterLeftTextElement}"/>
+                        <DataGridTextColumn Header="アイテム数" Width="1.7cm" Binding="{Binding TotalItemCount}" CanUserSort="False"
+                            ElementStyle="{StaticResource RightTextElement}"/>
+                        <DataGridTextColumn Header="総個数" Width="1.5cm" Binding="{Binding TotalNuOps}" CanUserSort="False"
+                            ElementStyle="{StaticResource RightTextElement}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
         </StackPanel>
     </Grid>
 </UserControl>
