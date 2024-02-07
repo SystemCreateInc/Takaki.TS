@@ -118,6 +118,7 @@
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="出荷バッチ" Binding="{Binding CdShukkaBatch}"/>
+                <DataGridTextColumn Header="ブロック" Binding="{Binding CdBlock}"/>
                 <DataGridTextColumn Header="コース" Binding="{Binding CdCourse}"/>
                 <DataGridTextColumn Header="配送順" Binding="{Binding CdRoute}" ElementStyle="{StaticResource RightTextElement}"/>
                 <DataGridTextColumn Header="得意先コード" Binding="{Binding CdTokuisaki}"/>

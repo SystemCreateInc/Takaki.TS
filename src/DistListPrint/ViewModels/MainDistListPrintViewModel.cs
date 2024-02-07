@@ -226,6 +226,7 @@ namespace DistListPrint.ViewModels
             return new List<Content>()
             {
                 new () { ContentName = "出荷バッチ", TableName = Sql.Format<TBDISTEntity>($"{nameof(TBDISTEntity):T}.{nameof(TBDISTEntity.CDSHUKKABATCH):C}") },
+                new () { ContentName = "ブロック", TableName = Sql.Format<TBDISTMAPPINGEntity>($"{nameof(TBDISTMAPPINGEntity):T}.{nameof(TBDISTMAPPINGEntity.CDBLOCK):C}") },
                 new () { ContentName = "コース", TableName = Sql.Format<TBDISTEntity>($"{nameof(TBDISTEntity):T}.{nameof(TBDISTEntity.CDCOURSE):C}") },
                 new () { ContentName = "得意先コード", TableName = Sql.Format<TBDISTEntity>($"{nameof(TBDISTEntity):T}.{nameof(TBDISTEntity.CDTOKUISAKI):C}") },
                 new () { ContentName = "得意先名", TableName = Sql.Format<TBDISTMAPPINGEntity>($"{nameof(TBDISTMAPPINGEntity):T}.{nameof(TBDISTMAPPINGEntity.NMTOKUISAKI):C}") },

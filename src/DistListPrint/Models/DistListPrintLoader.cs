@@ -30,18 +30,19 @@ namespace DistListPrint.Models
                     prm.Add("searchConditionType", Status.Completed);
                 }
 
-                // 出荷バッチ、コース、配送順、得意先、品番でソート
+                // 出荷バッチ、ブロック、コース、配送順、得意先、品番でソート
                 return con.Find<TBDISTEntity>(s => s
                 .Include<TBDISTMAPPINGEntity>(j => j.InnerJoin())
                 .Where(@$"{nameof(TBDISTEntity.FGMAPSTATUS):C}={nameof(mapStatus):P}
                     and {nameof(TBDISTEntity.DTDELIVERY):C}={nameof(dtDelivery):P}
                     and {nameof(TBDISTMAPPINGEntity.CDDISTGROUP):of TB_DIST_MAPPING}={nameof(cdDistGroup):P} {whereSql}")
-                .OrderBy($"{nameof(TBDISTEntity.CDSHUKKABATCH):C}, {nameof(TBDISTEntity.CDCOURSE):C}, {nameof(TBDISTEntity.CDROUTE):C}, {nameof(TBDISTEntity.CDTOKUISAKI):C}, {nameof(TBDISTEntity.CDHIMBAN):C}")
+                .OrderBy($"{nameof(TBDISTEntity.CDSHUKKABATCH):C}, {nameof(TBDISTMAPPINGEntity.CDBLOCK):of TB_DIST_MAPPING}, {nameof(TBDISTEntity.CDCOURSE):C}, {nameof(TBDISTEntity.CDROUTE):C}, {nameof(TBDISTEntity.CDTOKUISAKI):C}, {nameof(TBDISTEntity.CDHIMBAN):C}")
                 .WithParameters(prm))
                     .Select(x => new DistListPrint
                     {
                         IdDist = x.IDDIST,
                         CdShukkaBatch = x.CDSHUKKABATCH,
+                        CdBlock = x.TBDISTMAPPING?.FirstOrDefault()?.CDBLOCK ?? string.Empty,
                         CdCourse = x.CDCOURSE,
                         CdRoute = x.CDROUTE,
                         CdTokuisaki = x.CDTOKUISAKI,
