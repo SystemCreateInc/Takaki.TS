@@ -122,11 +122,11 @@ namespace StowageSvr
 
                 var targetStowages = Enumerable.Empty<Stowage>();
 
-                // 得意先抽出完了
-                if (stowageCustomers.Count() == 1)
+                // 抽出完了
+                if (stowageBatchs.Count() == 1 && stowageCustomers.Count() == 1)
                 {
                     // 箱毎のレコード
-                    targetStowages = stowages.Where(x => x.CustomerCode == stowageCustomers.First().Code);
+                    targetStowages = stowages;
                 }
 
                 repo.Commit();
