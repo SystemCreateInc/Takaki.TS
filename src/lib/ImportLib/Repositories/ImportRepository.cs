@@ -263,7 +263,7 @@ namespace ImportLib.Repositories
         private string GetSameDistWhereSql(IEnumerable<SameDistInfo> sameDistInfos)
         {
             // HACK:列名を属性から取得
-            return string.Join(" or ", sameDistInfos.Select(x => $"(DT_DELIVERY = {x.DtDelivery} and CD_SHUKKA_BATCH = {x.ShukkaBatch})"));
+            return string.Join(" or ", sameDistInfos.Select(x => $"(DT_DELIVERY = '{x.DtDelivery}' and CD_SHUKKA_BATCH = '{x.ShukkaBatch}')"));
         }
 
         private DateTime? GetExpiredDate()
