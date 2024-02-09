@@ -143,15 +143,11 @@ namespace DispShop.ViewModels
                 Application.Current.MainWindow.Close();
                 return;
             }
-
             if(!SelectDistGroup())
             {
                 Application.Current.MainWindow.Close();
                 return;
             }
-
-            LoadDatas();
-
             CourseLightOn = new DelegateCommand(() =>
             {
                 Syslog.Debug("MainDispShopViewModel:CourseLightOn");
@@ -301,6 +297,7 @@ namespace DispShop.ViewModels
                 {
                     TdPorts[i].PropertyChanged += DisplayPropatyChanged;
                 }
+                LoadDatas();
             }
             catch (Exception e)
             {
