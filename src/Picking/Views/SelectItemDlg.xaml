@@ -8,7 +8,7 @@
              xmlns:controls="clr-namespace:WindowLib.Views;assembly=WindowLib"
              prism:ViewModelLocator.AutoWireViewModel="True"
              HorizontalAlignment="Center" VerticalAlignment="Center"
-             Width="1400"
+             Width="1250"
              Loaded="UserControl_Loaded">
 
     <prism:Dialog.WindowStyle>
@@ -29,16 +29,16 @@
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding CdGtin13,StringFormat=商品ＪＡＮ：{0}}" HorizontalAlignment="Left" VerticalAlignment="Center" TextAlignment="Center" Margin="3" MinHeight="40"/>
-            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" MinHeight="400">
+            <Grid Grid.Row="1" Grid.Column="0" MinHeight="600" Cursor="">
                 <controls:GridColumnSetting TargetGrid="{Binding ElementName=distselectitemgrid}" SettingsKey="GridSelectItemColumns"/>
                 <DataGrid x:Name="distselectitemgrid" ItemsSource="{Binding SelectItems}" CurrentItem="{Binding CurrentSelectItem, Mode=TwoWay}"
                   SelectedItem="{Binding CurrentSelectItem, Mode=TwoWay}"
                   SelectedIndex="{Binding SelectItemIdx, Mode=TwoWay}"
                   CanUserAddRows="False" SelectionMode="Single"
                   HorizontalScrollBarVisibility="Visible"
-                  VerticalScrollBarVisibility="Visible"                          
+                  VerticalScrollBarVisibility="Visible"
                   AutoGenerateColumns="False" IsReadOnly="True"
-                  AlternatingRowBackground="{StaticResource AlternateDisplayGridBrush}" Width="1197">
+                  >
 
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="状態" Width="Auto" Binding="{Binding DStatus_name}" IsReadOnly="True"/>
@@ -52,14 +52,14 @@
                         <DataGridTextColumn Header="バラ数" Width="Auto" Binding="{Binding Display_Dops_Ps}" HeaderStyle="{StaticResource RightHeader}" ElementStyle="{StaticResource RightTextElement}" IsReadOnly="True"/>
                     </DataGrid.Columns>
                 </DataGrid>
-            </StackPanel>
+            </Grid>
             <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical">
-                <Button Command="{Binding OnUp}" Focusable="False"  MinHeight="200" Margin="5">
-                    <Viewbox>
+                <Button Command="{Binding OnUp}" Focusable="False"  MinHeight="160" Margin="5" Cursor="Hand">
+                    <Viewbox Cursor="">
                         <TextBlock Text="▲"/>
                     </Viewbox>
                 </Button>
-                <Button Command="{Binding OnDown}" Focusable="False"  MinHeight="200"  Margin="5">
+                <Button Command="{Binding OnDown}" Focusable="False"  MinHeight="160"  Margin="5" Cursor="Hand">
                     <Viewbox>
                         <TextBlock Text="▼"/>
                     </Viewbox>
