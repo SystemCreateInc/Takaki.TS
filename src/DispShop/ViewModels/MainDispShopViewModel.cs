@@ -31,6 +31,7 @@ using System.Windows.Shapes;
 using SelDistGroupLib.Models;
 using System.Windows.Media.Media3D;
 using System.Runtime.Intrinsics.X86;
+using DbLib.Defs;
 
 namespace DispShop.ViewModels
 {
@@ -142,15 +143,11 @@ namespace DispShop.ViewModels
                 Application.Current.MainWindow.Close();
                 return;
             }
-
             if(!SelectDistGroup())
             {
                 Application.Current.MainWindow.Close();
                 return;
             }
-
-            LoadDatas();
-
             CourseLightOn = new DelegateCommand(() =>
             {
                 Syslog.Debug("MainDispShopViewModel:CourseLightOn");
@@ -300,6 +297,7 @@ namespace DispShop.ViewModels
                 {
                     TdPorts[i].PropertyChanged += DisplayPropatyChanged;
                 }
+                LoadDatas();
             }
             catch (Exception e)
             {
@@ -392,7 +390,6 @@ namespace DispShop.ViewModels
         }
         private void DpsLightOn(CancellationTokenSource ct)
         {
-            string oldCourse = "";
             bool bOn = true;
             foreach (var p in DistItems)
             {
@@ -402,36 +399,36 @@ namespace DispShop.ViewModels
 
                 string tddsplay = "";
                 int ledColor = (int)TdLedColor.Red;
-                bool ledBlink = true;
-                if (p.CdKyoten != "")
+                bool ledBlink = false;
+                switch (LightType)
                 {
-                    switch (LightType)
-                    {
-                        case 0:
-                            tddsplay = string.Format("{0,3}{1,3}", p.CdSumCource, p.CdSumRoute);
-                            ledColor = (int)TdLedColor.Red;
-                            ledBlink = oldCourse != p.CdSumCource ? true : false;
-                            oldCourse = p.CdSumCource;
-                            break;
-                        case 1:
-                            tddsplay = string.Format("{0,6}", p.CdSumTokuisaki);
-                            ledColor = (int)TdLedColor.Yellow;
-                            break;
-                        case 2:
-                            tddsplay = string.Format("{0,3}{1,3}", p.Box2 % 1000, p.Box1 % 1000);
-                            ledColor = (int)TdLedColor.Green;
-                            break;
-                        case 3:
-                            tddsplay = string.Format("{0,6}", p.Ops % 1000000);
-                            ledColor = (int)TdLedColor.White;
-                            break;
-                    }
-
-
-                    Syslog.Info($"DpsLightOn: addr:{p.TdUnitAddrCode} ledColor:{ledColor} ledBlink:{ledBlink} display:{tddsplay}");
-
-                    TdUnitManager.TdUnitLight(p.TdUnitAddrCode, TdDps, bOn, ledBlink, ledColor, tddsplay, false);
+                    case 0:
+                        if (p.CdSumCourceMaguchi == "") continue;
+                        tddsplay = string.Format("{0,3}{1,3}", p.CdSumCourceMaguchi, p.CdSumRouteMaguchi);
+                        ledColor = (int)TdLedColor.Red;
+                        ledBlink = p.Blink_Course;
+                        break;
+                    case 1:
+                        if (p.CdKyoten == "") continue;
+                        tddsplay = string.Format("{0,6}", p.CdSumTokuisaki);
+                        ledColor = (int)TdLedColor.Yellow;
+                        break;
+                    case 2:
+                        if (p.CdKyoten == "") continue;
+                        tddsplay = string.Format("{0,3}{1,3}", p.Box2 % 1000, p.Box1 % 1000);
+                        ledColor = (int)TdLedColor.Green;
+                        break;
+                    case 3:
+                        if (p.CdKyoten == "") continue;
+                        tddsplay = string.Format("{0,6}", p.Ops % 1000000);
+                        ledColor = (int)TdLedColor.White;
+                        break;
                 }
+
+
+                Syslog.Info($"DpsLightOn: addr:{p.TdUnitAddrCode} ledColor:{ledColor} ledBlink:{ledBlink} display:{tddsplay}");
+
+                TdUnitManager.TdUnitLight(p.TdUnitAddrCode, TdDps, bOn, ledBlink, ledColor, tddsplay, false);
             }
         }
 
@@ -482,7 +479,7 @@ namespace DispShop.ViewModels
         {
             try
             {
-                CollectionViewHelper.SetCollection(DistItems, DistLoaders.Get(DistGroup.DtDelivery.ToString("yyyyMMdd"), DistGroup.CdDistGroup, DistGroup.CdBlock));
+                CollectionViewHelper.SetCollection(DistItems, DistLoaders.Get(DistGroup.DtDelivery.ToString("yyyyMMdd"), DistGroup.CdDistGroup, DistGroup.CdBlock, TdDps.Tdunittype));
             }
             catch (Exception e)
             {
@@ -531,7 +528,7 @@ namespace DispShop.ViewModels
 
         private bool SelectDistGroup()
         {
-            if (AuthenticateService.AuthDistGroupDialog(_dialogService) is DistGroup distgroup)
+            if (AuthenticateService.AuthDistGroupDialog(_dialogService,false) is DistGroup distgroup)
             {
                 DistGroup = distgroup;
                 return true;

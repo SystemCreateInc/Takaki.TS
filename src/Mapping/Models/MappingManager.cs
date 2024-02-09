@@ -133,8 +133,8 @@ namespace Mapping.Models
 
             if (distgroup != null)
             {
-                cnt = distgroup.mappings.Where(x => x.tdunitaddrcode != "").Select(x => x.tdunitaddrcode + x.CdBlock).Distinct().Count();
-//                cnt = distgroup.mappings.Where(x => x.tdunitaddrcode != "").Select(x => x.Maguchi).Sum();
+//                cnt = distgroup.mappings.Where(x => x.tdunitaddrcode != "").Select(x => x.tdunitaddrcode + x.CdBlock).Distinct().Count();
+                cnt = distgroup.mappings.Where(x => x.tdunitaddrcode != "").Select(x => x.Maguchi).Sum();
             }
             return cnt;
         }
@@ -836,8 +836,10 @@ namespace Mapping.Models
             Syslog.SLCopy(path);
         }
 
+        // ※ハルフト送信を止める
         public void ExecHulft(string cdDistGroup)
         {
+#if false
             var config = new ConfigurationBuilder()
                 .AddJsonFile("common.json", true, true)
                 .Build();
@@ -855,9 +857,9 @@ namespace Mapping.Models
             app.FileName = hulftpath;
             app.Arguments = hulftid;
 
-            Syslog.Warn($"ExecHulft:Exec{app.FileName} {app.Arguments}");
+            Syslog.Warn($"ExecHulft:[{app.FileName} {app.Arguments}]");
             Process.Start(app);
-
+#endif
             foreach (var distgroup in distgroups)
             {
                 if (distgroup.CdDistGroup != cdDistGroup)

@@ -74,6 +74,7 @@ namespace ImportLib.Engines
 
                 var importResults = new List<ImportResult>();
                 repo.DeleteExpiredStowageData();
+                repo.DeleteStowageData(sameDistInfos);
 
                 foreach (var targetFile in TargetImportFiles)
                 {

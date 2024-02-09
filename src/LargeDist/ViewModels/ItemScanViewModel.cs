@@ -216,7 +216,7 @@ namespace LargeDist.ViewModels
             }
 
             LargeLockRepository.Lock(_largeDistGroup!.CdLargeGroup, item);
-            ScanGrid.PushItem(item);
+            ScanGrid.PushItem(_largeDistGroup!.CdLargeGroup,item);
             Refresh();
         }
 

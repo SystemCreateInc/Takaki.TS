@@ -13,19 +13,212 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Policy;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 using TdDpsLib.Models;
 using WindowLib.Utils;
+using static ImTools.ImMap;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Picking.ViewModels
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    public class OrderingLockInstance
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        protected string Identifier { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    internal class OrderingLockManager
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        static protected Dictionary<OrderingLockInstance, Queue<OrderingLock>> lockQueue = new Dictionary<OrderingLockInstance, Queue<OrderingLock>>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        static protected OrderingLockManager? instance = null;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static OrderingLockManager Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    lock (lockQueue)
+                    {
+                        if (instance == null)
+                        {
+                            instance = new OrderingLockManager();
+                        }
+                    }
+                }
+                return instance;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="locker"></param>
+        /// <param name="lockInstance"></param>
+        public void EnQueue(OrderingLock locker, OrderingLockInstance lockInstance)
+        {
+            lock (lockQueue)
+            {
+                if (lockQueue.ContainsKey(lockInstance) == true)
+                {
+                    // 誰か忙しい人がいる
+                    lockQueue[lockInstance].Enqueue(locker);
+                }
+                else
+                {
+                    lockQueue.Add(lockInstance, new Queue<OrderingLock>());
+
+                    // 走りだせ!
+                    locker.Ready.Set();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="locker"></param>
+        /// <param name="lockInstance"></param>
+        public void Finished(OrderingLock locker, OrderingLockInstance lockInstance)
+        {
+            lock (lockQueue)
+            {
+                if (lockQueue.ContainsKey(lockInstance) == true)
+                {
+                    if (lockQueue[lockInstance].Count == 0)
+                    {
+                        // 終了
+                        lockQueue.Remove(lockInstance);
+                    }
+                    else
+                    {
+                        // 次へ
+                        lockQueue[lockInstance].Dequeue().Ready.Set();
+                    }
+                }
+                else
+                {
+                    // ERROR!(あってはならないルート)
+                    throw new InvalidOperationException("Method calling sequence error.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected OrderingLockManager()
+        {
+            // NOP
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <example>
+    /// このクラスの一般的な利用方法を次の例に示します。
+    /// <code><![CDATA[
+    /// OrderingLockInstance lockInstance = new OrderingLockInstance();
+    ///
+    /// ...
+    /// 
+    /// using (new OrderingLock(lockInstance))
+    /// {
+    ///     // Do something
+    /// }
+    /// ]]></code>
+    /// </example>
+    public class OrderingLock : IDisposable
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        protected AutoResetEvent ready = new AutoResetEvent(false);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected OrderingLockInstance? lockInstance = null;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        internal AutoResetEvent Ready
+        {
+            get
+            {
+                return ready;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lockInstance"></param>
+        public OrderingLock(OrderingLockInstance lockInstance)
+        {
+            this.lockInstance = lockInstance;
+            OrderingLockManager.Instance.EnQueue(this, lockInstance);
+
+            ready.WaitOne();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        ~OrderingLock()
+        {
+            // using パターンを使わない人のために
+
+            // 次の人へ
+            if (lockInstance != null)
+            {
+                OrderingLockManager.Instance.Finished(this, lockInstance);
+                lockInstance = null;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Dispose()
+        {
+            // 次へ
+            if (lockInstance != null)
+            {
+                OrderingLockManager.Instance.Finished(this, lockInstance);
+                lockInstance = null;
+            }
+        }
+    }
     public class DistItemScanWindowViewModel : BindableBase, INavigationAware
     {
         public DelegateCommand OnItemCancel { get; }
         public DelegateCommand OnChangeQty { get; }
+        public DelegateCommand OnChangeBoxUnit { get; }
         public DelegateCommand OnShowDetailInfo { get; }
         public DelegateCommand OnBack { get; }
         public DelegateCommand OnCancel { get; }
@@ -33,6 +226,7 @@ namespace Picking.ViewModels
         public DelegateCommand OnEnter { get; }
         public DelegateCommand OnStart { get; }
 
+        private ReaderWriterLockSlim _lockLight = new ReaderWriterLockSlim();
 
         private int _color = 0;
         public int Color
@@ -173,6 +367,13 @@ namespace Picking.ViewModels
             set => SetProperty(ref _distcolorinfo, value);
         }
 
+        private string _errMsg = string.Empty;
+        public string ErrMsg
+        {
+            get => _errMsg;
+            set => SetProperty(ref _errMsg, value);
+        }
+
         private readonly IDialogService _dialogService;
         private readonly IRegionManager _regionManager;
         private readonly IEventAggregator _eventAggregator;
@@ -184,6 +385,8 @@ namespace Picking.ViewModels
             set => SetProperty(ref _distgroup, value);
         }
         public TdDpsManager? TdDps { get; set; } = null;
+
+        private OrderingLockInstance lockInstance = new OrderingLockInstance();
 
         public DistItemScanWindowViewModel(IRegionManager regionManager, IDialogService dialogService, IEventAggregator eventAggregator, DistColorInfo distcolorinfo, DistGroupEx distgroup, TdDpsManager tddps)
         {
@@ -204,16 +407,30 @@ namespace Picking.ViewModels
 
             OnStop = new DelegateCommand(() =>
             {
-                Syslog.Info("【中断】DistItemScanWindowModel:OnStop");
+                Syslog.Info($"【中断】DistItemScanWindowModel:OnStop");
 
                 DisplayDistItemDatas = null;
+
                 DistColor? disstcolor = _distcolorinfo?.GetDistColor(Color);
                 if (disstcolor != null)
                 {
                     Task.Run(() =>
                     {
-                        bool bRet = TdUnitManager.TdLightOff(ref disstcolor, TdDps);
-                        DistColorManager.DistUpdate(disstcolor);
+                        _lockLight.EnterWriteLock();
+                        Syslog.Info($"【中断】DistItemScanWindowModel:OnStop:{disstcolor.DistColor_name}");
+                        try
+                        {
+                            bool bRet = TdUnitManager.TdLightOff(ref disstcolor, TdDps, distcolorinfo);
+                            // 作業報告書終了
+                            disstcolor.ReportEnd();
+                            distcolorinfo!.ReportUpdate(disstcolor.ReportShain, disstcolor.DistWorkMode);
+
+                            DistColorManager.DistUpdate(disstcolor);
+                        }
+                        finally
+                        {
+                            _lockLight.ExitWriteLock();
+                        }
                     });
                 }
 
@@ -226,15 +443,28 @@ namespace Picking.ViewModels
 
                 DisplayDistItemDatas = null;
 
-                DistColor? disstcolor = _distcolorinfo?.GetDistColor(Color);
-                if (disstcolor != null)
+                Task.Run(() =>
                 {
-                    Task.Run(() =>
+                    DistColor? disstcolor = _distcolorinfo?.GetDistColor(Color);
+                    if (disstcolor != null)
                     {
-                        bool bRet = TdUnitManager.TdLightOff(ref disstcolor, TdDps);
-                        disstcolor.DistColorClear();
-                    });
-                }
+                        _lockLight.EnterWriteLock();
+                        Syslog.Info($"【ｷｬﾝｾﾙ】DistItemScanWindowModel:OnStop:{disstcolor.DistColor_name}");
+                        try
+                        {
+                            bool bRet = TdUnitManager.TdLightOff(ref disstcolor, TdDps, distcolorinfo);
+                            // 作業報告書終了
+                            disstcolor.ReportEnd();
+                            distcolorinfo!.ReportUpdate(disstcolor.ReportShain, disstcolor.DistWorkMode);
+
+                            disstcolor.DistColorClear();
+                        }
+                        finally
+                        {
+                            _lockLight.ExitWriteLock();
+                        }
+                    }
+                });
                 _regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
             }, () => CanInfo).ObservesProperty(() => CanInfo);
 
@@ -287,7 +517,7 @@ namespace Picking.ViewModels
                 if (IsCheck == true || IsExtraction == true)
                 {
                     string msg = string.Format("{0}処理のため数量訂正出来ません", IsCheck ? "検品" : "抜き取り");
-                    MessageBox.Show(msg, "エラー");
+                    MessageDialog.Show(_dialogService, msg, "エラー");
                     return;
                 }
 
@@ -302,17 +532,49 @@ namespace Picking.ViewModels
                     {
                         if (rc.Result == ButtonResult.OK)
                         {
-                            var DistDetail = rc.Parameters.GetValue<DistDetail>("DistDetail");
-                            if (DistDetail != null)
+                            var distDetail = rc.Parameters.GetValue<DistDetail>("DistDetail");
+                            if (distDetail != null)
                             {
                                 try
                                 {
-                                    QtyChange(DistDetail);
+                                    QtyChange(distDetail);
                                 }
                                 catch (Exception e)
                                 {
                                     Syslog.Info($"DistDetailWindowViewModel::OnChangeQty{e.ToString()}");
-                                    MessageBox.Show(e.Message, "エラー");
+                                    MessageDialog.Show(_dialogService, e.Message, "エラー");
+                                }
+                            }
+                            RefreshInfo();
+                        }
+                    });
+            }, () => CanDistItem).ObservesProperty(() => CanDistItem);
+
+            OnChangeBoxUnit = new DelegateCommand(() =>
+            {
+                Syslog.Info("【箱数変更】DistItemScanWindowModel:OnChangeBoxUnit");
+
+                dialogService.ShowDialog(
+                    nameof(ModifyBoxUnitDialog),
+                    new DialogParameters
+                    {
+                        { "CurrentDistDetail", ItemToDetail(CurrentDistItemSeq!) },
+                    },
+                    (rc) =>
+                    {
+                        if (rc.Result == ButtonResult.OK)
+                        {
+                            var distDetail = rc.Parameters.GetValue<DistDetail>("DistDetail");
+                            if (distDetail != null)
+                            {
+                                try
+                                {
+                                    BoxUnitChange(distDetail);
+                                }
+                                catch (Exception e)
+                                {
+                                    Syslog.Info($"DistDetailWindowViewModel::OnChangeBoxUnit{e.ToString()}");
+                                    MessageDialog.Show(_dialogService, e.Message, "エラー");
                                 }
                             }
                             RefreshInfo();
@@ -322,6 +584,8 @@ namespace Picking.ViewModels
 
             OnEnter = new DelegateCommand(() =>
             {
+                ErrMsg = string.Empty;
+
                 try
                 {
                     Syslog.Info($"【商品決定】DistItemScanWindowModel:OnEnter scancode=[{Scancode}]");
@@ -338,7 +602,8 @@ namespace Picking.ViewModels
 
                     if (InSeq == DistBase.ITEMMAX)
                     {
-                        MessageDialog.Show(_dialogService, "登録出来るのは９商品までです。", "エラー");
+                        ErrMsg = "登録出来るのは９商品までです。";
+//                        MessageDialog.Show(_dialogService, "登録出来るのは９商品までです。", "エラー");
                         return;
                     }
                     var selectitems = DistColorManager.GetItems(DistGroup!, Scancode, IsCheck, IsExtraction);
@@ -388,7 +653,9 @@ namespace Picking.ViewModels
                                         catch (Exception e)
                                         {
                                             Syslog.Error($"DistItemScanWindowViewModel:OnEnter:{e.Message}");
-                                            MessageDialog.Show(_dialogService, e.Message, "エラー");
+                                            //MessageDialog.Show(_dialogService, e.Message, "エラー");
+                                            ErrMsg = e.Message;
+
                                         }
                                     }
                                 });
@@ -398,7 +665,8 @@ namespace Picking.ViewModels
                 catch (Exception e)
                 {
                     Syslog.Error($"DistItemScanWindowViewModel:OnEnter:{e.Message}");
-                    MessageDialog.Show(_dialogService, e.Message, "エラー");
+                    ErrMsg = e.Message;
+//                    MessageDialog.Show(_dialogService, e.Message, "エラー");
                 }
                 Scancode = "";
             });
@@ -434,24 +702,31 @@ namespace Picking.ViewModels
                                 distcolor.ItemSeqs[i].Details = DistColorManager.LoadInfoDetails(DistGroup!, distcolor.ItemSeqs[i]);
                             }
                         }
+                        DisplayDistItemDatas = null;
 
-                        bool bRet = TdUnitManager.TdLight(ref distcolor, distcolorinfo.IsDistWorkNormal, TdDps);
-
-                        int dops = distcolor.ItemSeqs.Sum(x => x.Dops);
-                        if (dops==0)
+                        Task.Run(() =>
                         {
-                            // 即座に完了処理へ
-                            DistColorManager.DistUpdate(distcolor);
-                            DisplayDistItemDatas = null;
-                        }
-                        else
-                        {
-                            // 作業報告書開始
-                            distcolor.ReportStart(SelectedShain, distcolor.Distitem_cnt, distcolor.DistWorkMode);
-                            DisplayDistItemDatas = null;
+                            using (new OrderingLock(lockInstance))
+                            {
+                                Syslog.Info($"【点灯開始】DistItemScanWindowModel:TdLight:{distcolor.DistColor_name}");
 
-                            UpdateProgress();
-                        }
+                                bool bRet = TdUnitManager.TdLight(ref distcolor, distcolorinfo.IsDistWorkNormal, TdDps);
+
+                                int dops = distcolor.ItemSeqs.Sum(x => x.Dops);
+                                if (dops == 0)
+                                {
+                                    // 即座に完了処理へ
+                                    DistColorManager.DistUpdate(distcolor);
+                                }
+                                else
+                                {
+                                    // 作業報告書開始
+                                    distcolor.ReportStart(SelectedShain, distcolor.Distitem_cnt, distcolor.DistWorkMode);
+
+                                    UpdateProgress();
+                                }
+                            }
+                        });
 
                         _regionManager.Regions["ContentRegion"].NavigationService.Journal.GoBack();
                     }
@@ -478,6 +753,7 @@ namespace Picking.ViewModels
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
             Scancode = "";
+            ErrMsg = string.Empty;
 
             if (DisplayDistItemDatas == null)
             {
@@ -559,6 +835,8 @@ namespace Picking.ViewModels
 
         void SetItemRow(int inseq, DistItemSeq distitemseq)
         {
+            Syslog.Info($"DistItemScanWindowViewModel:SetItemRow:itemseq:{inseq} item:{distitemseq.CdHimban} {distitemseq.NmHinSeishikimei} Ops:{distitemseq.Ops} Rps:{distitemseq.Drps} OShop:{distitemseq.Order_shop_cnt} RShop:{distitemseq.Result_shop_cnt}");
+
             DisplayDistItemDatas![inseq].DtDelivery = distitemseq.DtDelivery;
             DisplayDistItemDatas![inseq].CdShukkaBatch = distitemseq.CdShukkaBatch;
             DisplayDistItemDatas![inseq].CdJuchuBin = distitemseq.CdJuchuBin;
@@ -693,6 +971,26 @@ namespace Picking.ViewModels
             }
         }
 
+        void BoxUnitChange(DistDetail distdetail)
+        {
+            List<DistDetail>? details = DistColorManager.LoadInfoDetails(DistGroup!, distdetail);
+
+            if (details != null)
+            {
+                details.ForEach(d =>
+                {
+                    d.NuBoxUnit = distdetail.NuBoxUnit;
+                    d.Csunit = distdetail.NuBoxUnit;
+                });
+
+
+                DistColorManager.UpdateBoxUnit(details);
+
+                RefreshItem(distdetail);
+            }
+        }
+
+
         private void RefreshItem(DistBase distdetail)
         {
             var refreshitem = DistColorManager.RefreshItems(DistGroup!, distdetail, IsCheck, IsExtraction);
@@ -701,6 +999,10 @@ namespace Picking.ViewModels
             {
                 if (refreshitem != null)
                 {
+                    CurrentDistItemSeq.NuBoxUnit = refreshitem.NuBoxUnit;
+                    CurrentDistItemSeq.Csunit = refreshitem.NuBoxUnit;
+                    CurrentDistItemSeq.Left_ps_cnt = refreshitem.Left_ps_cnt;
+                    CurrentDistItemSeq.Right_ps_cnt = refreshitem.Right_ps_cnt;
                     CurrentDistItemSeq.Ops = refreshitem.Ops;
                     CurrentDistItemSeq.Dops = refreshitem.Dops;
                     CurrentDistItemSeq.Drps = refreshitem.Drps;
@@ -709,6 +1011,7 @@ namespace Picking.ViewModels
                 }
                 else
                 {
+                    CurrentDistItemSeq.NuBoxUnit = 0;
                     CurrentDistItemSeq.Dops = 0;
                     CurrentDistItemSeq.Ddps = 0;
                     CurrentDistItemSeq.Remain_shop_cnt = 0;

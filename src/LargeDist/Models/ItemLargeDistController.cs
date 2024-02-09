@@ -123,5 +123,14 @@ namespace LargeDist.Models
                 })
                 .ToArray();
         }
+        public void SetBoxUnit(DistItem distitem, int boxunit)
+        {
+            Items[_currentItemIndex].NuBoxUnit = boxunit;
+
+            foreach (var item in CurrentItem.Items.Where(x => x.CdHimban == distitem.CdHimban && x.CdJuchuBin == distitem.CdJuchuBin && x.CdShukkaBatch == distitem.CdShukkaBatch))
+            {
+                item.NuBoxUnit = boxunit;
+            }
+        }
     }
 }

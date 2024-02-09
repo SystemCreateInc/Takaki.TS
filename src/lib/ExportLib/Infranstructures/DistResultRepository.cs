@@ -31,14 +31,21 @@ namespace ExportLib.Infranstructures
 
         public IEnumerable<TBDISTEntity> GetTargetData(IDbTransaction tr)
         {
-            //  fixme: 抽出条件を記述
-            var where = "";
+            var where = string.Join(" or ", _targetIds.Select(x => $@"(DT_DELIVERY='{x.DtDelivery.ToString("yyyyMMdd")}' 
+                and CD_DIST_GROUP='{x.CdDistGroup}')"));
 
             return tr.Connection!.Find<TBDISTEntity>(s => s
                 .AttachToTransaction(tr)
                 .Include<TBDISTMAPPINGEntity>(j => j.InnerJoin())
                 .Where($"{where}")
-                .OrderBy($"{nameof(TBDISTEntity.IDDIST):of TB_DIST}"));
+                .OrderBy($@"{nameof(TBSTOWAGEEntity.DTDELIVERY):of TB_DIST}, 
+                    {nameof(TBDISTEntity.CDJUCHUBIN):of TB_DIST},
+                    {nameof(TBDISTEntity.CDSHUKKABATCH):of TB_DIST},
+                    {nameof(TBDISTEntity.CDKYOTEN):of TB_DIST},
+                    {nameof(TBDISTEntity.CDHAISHOBIN):of TB_DIST},
+                    {nameof(TBDISTEntity.CDCOURSE):of TB_DIST},
+                    {nameof(TBDISTEntity.CDROUTE):of TB_DIST},
+                    {nameof(TBDISTEntity.CDTOKUISAKI):of TB_DIST}"));
         }
     }
 }

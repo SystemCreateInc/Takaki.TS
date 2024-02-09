@@ -25,6 +25,13 @@ namespace DistListPrint.Models
             set => SetProperty(ref _nmShukkaBatch, value);
         }
 
+        private string _cdBlock = string.Empty;
+        public string CdBlock
+        {
+            get => _cdBlock;
+            set => SetProperty(ref _cdBlock, value);
+        }
+
         private string _cdCourse = string.Empty;
         public string CdCourse
         {

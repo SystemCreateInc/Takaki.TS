@@ -15,7 +15,7 @@ namespace Picking.Defs
         [Description("    GO")]
         Go,
 
-        [Description("")]
+        [Description("      ")]
         Off,
 
         SpaceCnt = 1,

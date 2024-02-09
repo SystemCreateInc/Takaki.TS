@@ -1,4 +1,5 @@
-﻿using LogLib;
+﻿using ControlzEx.Standard;
+using LogLib;
 using Picking.Models;
 using Picking.Services;
 using Picking.Views;
@@ -16,6 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using WindowLib.Utils;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
 namespace Picking.ViewModels
@@ -121,6 +123,18 @@ namespace Picking.ViewModels
             OnChangeQty = new DelegateCommand(() =>
             {
                 Syslog.Info("【数量変更】DistDetailViewModel:OnChangeQty");
+
+                if (CurrentDistDetail?.LStatus == (int)DbLib.Defs.Status.Ready)
+                {
+                    MessageDialog.Show(_dialogService, "大仕分けされていなので数量変更出来ません", "エラー");
+                    return;
+                }
+
+                if (CurrentDistDetail?.Dops== CurrentDistDetail?.Drps)
+                {
+                    MessageDialog.Show(_dialogService, "完了しているので数量変更出来ません", "エラー");
+                    return;
+                }
 
                 dialogService.ShowDialog(
                     nameof(ChangeQtyDlg),

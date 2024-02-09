@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Data.Common;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
@@ -35,6 +36,8 @@ namespace Picking.Services
         {
             using (var con = DbFactory.CreateConnection())
             {
+                con.Query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
+
                 var sql = @"select CD_DIST_GROUP,DT_DELIVERY,TB_DIST.CD_HIMBAN,ST_BOXTYPE,NU_BOXUNIT,max(NM_HIN_SEISHIKIMEI) NM_HIN_SEISHIKIMEI, CD_GTIN13,CD_GTIN14,CD_SHUKKA_BATCH,CD_JUCHU_BIN"
                         + ",sum(NU_OPS) ops,sum(NU_DOPS) dops,sum(NU_DRPS) drps"
                         + ",(case when min(TB_DIST.FG_DSTATUS) = max(TB_DIST.FG_DSTATUS) then max(TB_DIST.FG_DSTATUS) else @dstatus end) dstatus"
@@ -50,7 +53,7 @@ namespace Picking.Services
                         + " inner join tdunitaddr on TB_DIST_MAPPING.tdunitaddrcode = tdunitaddr.tdunitaddrcode and tdunitaddr.usageid=@tdunittype"
                         + " where DT_DELIVERY=@dt_delivery and CD_DIST_GROUP=@cd_dist_group and CD_BLOCK=@cd_block and FG_MAPSTATUS=@fg_mapstatus"
                         + " group by CD_DIST_GROUP,DT_DELIVERY,TB_DIST.CD_HIMBAN,ST_BOXTYPE,NU_BOXUNIT,CD_GTIN13,CD_GTIN14,CD_SHUKKA_BATCH,CD_JUCHU_BIN"
-                        + " order by (case when min(TB_DIST.FG_DSTATUS) >= @dstatus and max(TB_DIST.FG_DSTATUS) >= @dstatus then @dstatus_completed else @dstatus_ready end),CD_SHUKKA_BATCH,CD_JUCHU_BIN,TB_DIST.CD_HIMBAN";
+                        + " order by (case when min(TB_DIST.FG_DSTATUS) <> max(TB_DIST.FG_DSTATUS) then @dstatus else max(TB_DIST.FG_DSTATUS) end),TB_DIST.CD_HIMBAN,CD_SHUKKA_BATCH,CD_JUCHU_BIN";
 
                 return con.Query(sql, new
                 {
@@ -91,6 +94,7 @@ namespace Picking.Services
                      }).ToList();
             }
         }
+
         public static List<DistColor>? SetColors()
         {
             List<DistColor> colors = new List<DistColor>();
@@ -118,6 +122,8 @@ namespace Picking.Services
 
             using (var con = DbFactory.CreateConnection())
             {
+                con.Query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
+
                 var sql = @"select tb_dist.ID_DIST"
                         + ",DT_DELIVERY"
                         + ",CD_DIST_GROUP"
@@ -133,6 +139,7 @@ namespace Picking.Services
                         + ",ST_BOXTYPE"
                         + ",tb_dist_mapping.tdunitaddrcode"
                         + ",tdunitzonecode"
+                        + ",FG_LSTATUS"
                         + ",FG_DSTATUS"
                         + ",NU_OPS"
                         + ",NU_DOPS"
@@ -175,6 +182,7 @@ namespace Picking.Services
                          StBoxType = q.ST_BOXTYPE,
                          Tdunitaddrcode = q.tdunitaddrcode,
                          Tdunitzonecode = q.tdunitzonecode,
+                         LStatus = q.FG_LSTATUS,
                          DStatus = q.FG_DSTATUS,
                          Ops = q.NU_OPS,
                          Dops = q.NU_DOPS,
@@ -185,7 +193,7 @@ namespace Picking.Services
             }
         }
 
-        public static bool UpdateQtyDetail(List<DistDetail> detail)
+        public static bool UpdateQtyDetail(List<DistDetail> details)
         {
             bool bTranBegin = false;
             using (var con = DbFactory.CreateConnection())
@@ -195,13 +203,49 @@ namespace Picking.Services
 
                 try
                 {
-                    detail.ForEach(x =>
+                    details.ForEach(x =>
                     {
                         var sql = "update tb_dist set NU_DOPS=@dops,updatedAt=@updt where ID_DIST=@iddist";
                         con.Execute(sql,
                             new
                             {
                                 dops = x.Dops + x.Drps,
+                                iddist = x.IdDist,
+                                updt = DateTime.Now,
+                            }, tr);
+                    });
+
+                    tr.Commit();
+                    bTranBegin = false;
+                }
+                catch (Exception)
+                {
+                    if (bTranBegin)
+                        tr.Rollback();
+                    throw;
+                }
+            }
+
+            return true;
+        }
+
+        public static bool UpdateBoxUnit(List<DistDetail> details)
+        {
+            bool bTranBegin = false;
+            using (var con = DbFactory.CreateConnection())
+            {
+                var tr = con.BeginTransaction();
+                bTranBegin = true;
+
+                try
+                {
+                    details.ForEach(x =>
+                    {
+                        var sql = "update tb_dist set NU_BOXUNIT=@boxunit,updatedAt=@updt where ID_DIST=@iddist";
+                        con.Execute(sql,
+                            new
+                            {
+                                boxunit = x.NuBoxUnit,
                                 iddist = x.IdDist,
                                 updt = DateTime.Now,
                             }, tr);
@@ -241,6 +285,8 @@ namespace Picking.Services
                 + ",count(distinct case when tdunitzonecode = 2 then TB_DIST_MAPPING.tdunitaddrcode else null end) rightshopcnt"
                 + ",sum(case when tdunitzonecode = 1 then NU_OPS-NU_DRPS else 0 end) leftpscnt"
                 + ",sum(case when tdunitzonecode = 2 then NU_OPS-NU_DRPS else 0 end) rightpscnt"
+                + ",sum(case when tdunitzonecode = 1 then NU_DRPS else 0 end) leftrpscnt"
+                + ",sum(case when tdunitzonecode = 2 then NU_DRPS else 0 end) rightrpscnt"
                 + " from TB_DIST"
                 + " left join TB_DIST_MAPPING on TB_DIST_MAPPING.ID_DIST=TB_DIST.ID_DIST"
                 + " inner join tdunitaddr on TB_DIST_MAPPING.tdunitaddrcode = tdunitaddr.tdunitaddrcode and tdunitaddr.usageid=@tdunittype"
@@ -256,6 +302,8 @@ namespace Picking.Services
             //　スキャンコード読み込み
             using (var con = DbFactory.CreateConnection())
             {
+                con.Query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
+
                 string having = (bCheck == true || bExtraction == true) ? "0<sum(NU_DRPS)" : "sum(NU_DOPS)<>sum(NU_DRPS)";
 
                 var sql = GetItemSqls(having,true);
@@ -297,8 +345,8 @@ namespace Picking.Services
                          Remain_shop_cnt = bCheck || bExtraction ? q.result_shop_cnt ?? 0 : q.order_shop_cnt - q.result_shop_cnt,
                          Left_shop_cnt = q.leftshopcnt ?? 0,
                          Right_shop_cnt = q.rightshopcnt ?? 0,
-                         Left_ps_cnt = q.leftpscnt ?? 0,
-                         Right_ps_cnt = q.rightpscnt ?? 0,
+                         Left_ps_cnt = bCheck || bExtraction ? q.leftrpscnt ?? 0 : q.leftpscnt ?? 0,
+                         Right_ps_cnt = bCheck || bExtraction ? q.rightrpscnt ?? 0 : q.rightpscnt ?? 0,
                      }).ToList();
 
                 if (r.Count==0)
@@ -340,29 +388,31 @@ namespace Picking.Services
                              Remain_shop_cnt = bCheck || bExtraction ? q.result_shop_cnt ?? 0 : q.order_shop_cnt - q.result_shop_cnt,
                              Left_shop_cnt = q.leftshopcnt ?? 0,
                              Right_shop_cnt = q.rightshopcnt ?? 0,
+                             Left_ps_cnt = bCheck || bExtraction ? q.leftrpscnt ?? 0 : q.leftpscnt ?? 0,
+                             Right_ps_cnt = bCheck || bExtraction ? q.rightrpscnt ?? 0 : q.rightpscnt ?? 0,
                          }).ToList();
 
                     if (rr.Count == 0)
                     {
-                        throw new Exception($"該当商品が見つかりませんでした。\nスキャンコード:{scancode}");
+                        throw new Exception($"該当商品が見つかりませんでした。\n{scancode}");
                     }else
                     {
                         if (rr[0].LStatus == (int)Status.Ready)
                         {
-                            throw new Exception($"大仕分けされていない商品です。\n品番:{rr[0].CdHimban}\n品名:{rr[0].NmHinSeishikimei}");
+                            throw new Exception($"大仕分けされていない商品です。\n{rr[0].CdGtin13}  {rr[0].NmHinSeishikimei}");
                         }
                         else
                         {
                             if (bCheck || bExtraction)
                             {
                                 if (bCheck)
-                                    throw new Exception($"まだ仕分けしていないので検品出来ません。\n品番:{rr[0].CdHimban}\n品名:{rr[0].NmHinSeishikimei}");
+                                    throw new Exception($"まだ仕分けしていないので検品出来ません。\n{rr[0].CdGtin13} {rr[0].NmHinSeishikimei}");
                                 else
-                                    throw new Exception($"まだ仕分けしていないので抜き取り出来ません。\n品番:{rr[0].CdHimban}\n品名:{rr[0].NmHinSeishikimei}");
+                                    throw new Exception($"まだ仕分けしていないので抜き取り出来ません。\n{rr[0].CdGtin13} {rr[0].NmHinSeishikimei}");
                             }
                             else
                             {
-                                throw new Exception($"既に仕分け済みです。\n品番:{rr[0].CdHimban}\n品名:{rr[0].NmHinSeishikimei}");
+                                throw new Exception($"既に仕分け済みです。\n{rr[0].CdGtin13} {rr[0].NmHinSeishikimei}");
                             }
                         }
                     }
@@ -376,6 +426,8 @@ namespace Picking.Services
             //　スキャンコード読み込み
             using (var con = DbFactory.CreateConnection())
             {
+                con.Query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
+
                 string having = (bCheck == true || bExtraction == true) ? "0<sum(NU_DRPS)" : "sum(NU_DOPS)<>sum(NU_DRPS)";
                 having += $" and CD_SHUKKA_BATCH='{item.CdShukkaBatch}' and CD_JUCHU_BIN='{item.CdJuchuBin}'";
 
@@ -414,12 +466,12 @@ namespace Picking.Services
                          Ddps = q.dops - q.drps,
                          Lrps = q.lrps ?? 0,
                          Order_shop_cnt = q.order_shop_cnt ?? 0,
-                         Result_shop_cnt = q.result_shop_cnt ?? 0,
-                         Remain_shop_cnt = q.order_shop_cnt - q.result_shop_cnt,
+                         Result_shop_cnt = bCheck || bExtraction ? 0 : q.result_shop_cnt ?? 0,
+                         Remain_shop_cnt = bCheck || bExtraction ? q.result_shop_cnt ?? 0 : q.order_shop_cnt - q.result_shop_cnt,
                          Left_shop_cnt = q.leftshopcnt ?? 0,
                          Right_shop_cnt = q.rightshopcnt ?? 0,
-                         Left_ps_cnt = q.leftpscnt ?? 0,
-                         Right_ps_cnt = q.rightpscnt ?? 0,
+                         Left_ps_cnt = bCheck || bExtraction ? q.leftrpscnt ?? 0 : q.leftpscnt ?? 0,
+                         Right_ps_cnt = bCheck || bExtraction ? q.rightrpscnt ?? 0 : q.rightpscnt ?? 0,
                      }).FirstOrDefault();
             }
         }
@@ -558,6 +610,40 @@ namespace Picking.Services
                     tr.Rollback();
                     throw;
                 }
+            }
+        }
+
+        public static List<DistBase>? LoadMaguchi(DistGroup distgroup)
+        {
+            using (var con = DbFactory.CreateConnection())
+            {
+                con.Query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
+
+                var sql = @"select TB_DIST_MAPPING.tdunitaddrcode,NU_MAGICHI"
+                        + " from TB_DIST"
+                        + " inner join TB_DIST_MAPPING on TB_DIST_MAPPING.ID_DIST = TB_DIST.ID_DIST"
+                        + " inner join tdunitaddr on TB_DIST_MAPPING.tdunitaddrcode = tdunitaddr.tdunitaddrcode and tdunitaddr.usageid = @tdunittype"
+                        + " where DT_DELIVERY = @dt_delivery and CD_DIST_GROUP = @cd_dist_group and CD_BLOCK = @cd_block and FG_MAPSTATUS = @fg_mapstatus"
+                        + " and 1<NU_MAGICHI"
+                        + " group by TB_DIST_MAPPING.tdunitaddrcode,NU_MAGICHI";
+
+
+                return con.Query(sql, new
+                {
+                    dt_delivery = distgroup.DtDelivery.ToString("yyyyMMdd"),
+                    cd_dist_group = distgroup.CdDistGroup,
+                    cd_block = distgroup.CdBlock,
+                    dstatus = (int)Status.Inprog,
+                    dstatus_ready = (int)Status.Ready,
+                    dstatus_completed = (int)Status.Completed,
+                    fg_mapstatus = (int)Status.Completed,
+                    tdunittype = distgroup.TdUnitType,
+                })
+                     .Select(q => new DistBase
+                     {
+                         Tdunitaddrcode = q.tdunitaddrcode,
+                         Maguchi = q.NU_MAGICHI,
+                     }).ToList();
             }
         }
     }

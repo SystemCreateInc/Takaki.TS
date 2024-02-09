@@ -122,6 +122,32 @@ namespace DispShop.Models
             get => _box3;
             set => SetProperty(ref _box3, value);
         }
+        private int _maguchi = 0;
+        public int Maguchi
+        {
+            get => _maguchi;
+            set => SetProperty(ref _maguchi, value);
+        }
+        private string _cd_sum_course_maguchi = string.Empty;
+        public string CdSumCourceMaguchi
+        {
+            get => _cd_sum_course_maguchi;
+            set => SetProperty(ref _cd_sum_course_maguchi, value);
+        }
+        private string _cd_sum_route_maguchi = string.Empty;
+        public string CdSumRouteMaguchi
+        {
+            get => _cd_sum_route_maguchi;
+            set => SetProperty(ref _cd_sum_route_maguchi, value);
+        }
+
+        private bool _blink_course = false;
+        public bool Blink_Course
+        {
+            get => _blink_course;
+            set => SetProperty(ref _blink_course, value);
+        }
+
         public string BoxCnt
         {
             get { 

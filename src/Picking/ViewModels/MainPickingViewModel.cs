@@ -305,6 +305,8 @@ namespace Picking.ViewModels
             set => SetProperty(ref _distcolorinfo, value);
         }
 
+        private List<DistBase>? _maguchis = new List<DistBase>();
+
         public bool bTdConnectionError { get; set; } = false;
 
         public TdDpsManager TdDps;
@@ -465,23 +467,10 @@ namespace Picking.ViewModels
                 {
                     try
                     {
-                        for (int idx = 0; idx < _distcolorinfo.DistColors?.Count(); idx++)
-                        {
-                            DistColor distcolor = _distcolorinfo.DistColors[idx];
-                            bool bRet = TdUnitManager.TdLightOff(ref distcolor, TdDps, true);
-
-                            distcolor.ReportEnd();
-                        }
-
-                        // 作業実績書き込み
-                        DistColorManager.WorkReportAppend(DistGroup, _distcolorinfo.RepotShains);
-
-                        UpdateProgress(true);
-
                         WaitProgressDialog.ShowProgress(
                             "表示器消灯",
                             "表示器消灯中です。しばらくお待ちください。",
-                            null,
+                            DpsLightOff,
                             DspWait,
                             null,
                             _dialogService,
@@ -580,7 +569,7 @@ namespace Picking.ViewModels
                         catch (Exception ex)
                         {
                             Syslog.Error(ex.ToString());
-                            var message = $"表示器押下持にエラーが発生しました。\n{ex.Message}";
+                            var message = $"表示器押下時にエラーが発生しました。\n{ex.Message}";
                             var buttons = new ButtonResult[] { ButtonResult.OK };
                             MessageDialog.ShowAsync(_dialogService, message, "エラー", buttons);
                             return;
@@ -663,6 +652,15 @@ namespace Picking.ViewModels
                 _distcolorinfo.DistColors = DistColorManager.SetColors();
 
                 UpdateColorDisplay();
+
+                Task.Run(() =>
+                {
+                    _maguchis = DistColorManager.LoadMaguchi(DistGroup);
+                    if (_maguchis != null)
+                    {
+                        TdUnitManager.SetMaguchi(TdDps, _maguchis);
+                    }
+                });
             }
             catch (Exception e)
             {
@@ -791,7 +789,6 @@ namespace Picking.ViewModels
                     break;
             }
         }
-
         private void DspWait(CancellationTokenSource ct)
         {
             int max = TdDps.WaitTransCount();
@@ -822,6 +819,28 @@ namespace Picking.ViewModels
                 Thread.Sleep(1000);
             }
         }
+
+        private void DpsLightOff(CancellationTokenSource ct)
+        {
+            for (int idx = 0; idx < _distcolorinfo.DistColors?.Count(); idx++)
+            {
+                // 中断ボタン押下
+                if (ct.IsCancellationRequested)
+                    break;
+
+                DistColor distcolor = _distcolorinfo.DistColors[idx];
+                bool bRet = TdUnitManager.TdLightOff(ref distcolor, TdDps, _distcolorinfo, true);
+
+                distcolor.ReportEnd();
+            }
+
+            // 作業実績書き込み
+            DistColorManager.WorkReportAppend(DistGroup, _distcolorinfo.RepotShains);
+
+            UpdateProgress(true);
+        }
+
+
 
         private void UpdateColorDisplay()
         {
@@ -879,7 +898,7 @@ namespace Picking.ViewModels
         }
         private bool SelectDistGroup()
         {
-            if (AuthenticateService.AuthDistGroupDialog(_dialogService) is DistGroup distgroup)
+            if (AuthenticateService.AuthDistGroupDialog(_dialogService,false) is DistGroup distgroup)
             {
                 DistGroup.CdDistGroup = distgroup.CdDistGroup;
                 DistGroup.NmDistGroup = distgroup.NmDistGroup;

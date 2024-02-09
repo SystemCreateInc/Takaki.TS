@@ -33,7 +33,7 @@ namespace DispShop.Models
                 {
                     if (display != TdAddrBase.END_DISPLAY)
                     {
-                        addrdata.EndDisplay(false);
+                        addrdata.EndDisplay(false,color);
                     }
                 }
             }

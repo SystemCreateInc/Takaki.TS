@@ -1,4 +1,5 @@
 ﻿using DryIoc;
+using LargeDist.Infranstructures;
 using LargeDist.Views;
 using System;
 using System.Collections.Generic;
@@ -90,11 +91,12 @@ namespace LargeDist.Models
                 .Any(x => x.Item == item);
         }
 
-        public void PushItem(LargeDistItem item)
+        public void PushItem(string cdLargeGroup, LargeDistItem item)
         {
             var slot = CustomOrderItems.FirstOrDefault(x => x.IsHead);
             if (slot is null)
             {
+                LargeLockRepository.Unlock(cdLargeGroup, item);
                 throw new Exception("商品スキャンオーバー");
             }
 

@@ -529,11 +529,25 @@ namespace Picking.Models
             {
                 SetProperty(ref _right_ps_cnt, value);
 
-                DisplayRightPs_cnt = QtyFieldSpace(value);
+                DisplayRightCs_cnt = QtyFieldSpace(value / GetCsunit);
+                DisplayRightPs_cnt = QtyFieldSpace(value % GetCsunit);
+                DisplayRightAll_cnt = QtyFieldSpace(value);
             }
         }
 
-        // 右通路店舗数
+        // 右通路数
+        private string _displayrightall_cnt = "";
+        public string DisplayRightAll_cnt
+        {
+            get => _displayrightall_cnt;
+            set => SetProperty(ref _displayrightall_cnt, value);
+        }
+        private string _displayrightcs_cnt = "";
+        public string DisplayRightCs_cnt
+        {
+            get => _displayrightcs_cnt;
+            set => SetProperty(ref _displayrightcs_cnt, value);
+        }
         private string _displayrightps_cnt = "";
         public string DisplayRightPs_cnt
         {
@@ -549,8 +563,24 @@ namespace Picking.Models
             {
                 SetProperty(ref _left_ps_cnt, value);
 
-                DisplayLeftPs_cnt = QtyFieldSpace(value);
+                DisplayLeftCs_cnt = QtyFieldSpace(value / GetCsunit);
+                DisplayLeftPs_cnt = QtyFieldSpace(value % GetCsunit);
+                DisplayLeftAll_cnt = QtyFieldSpace(value);
             }
+        }
+
+        private string _displayleftall_cnt = "";
+        public string DisplayLeftAll_cnt
+        {
+            get => _displayleftall_cnt;
+            set => SetProperty(ref _displayleftall_cnt, value);
+        }
+
+        private string _displayleftcs_cnt = "";
+        public string DisplayLeftCs_cnt
+        {
+            get => _displayleftcs_cnt;
+            set => SetProperty(ref _displayleftcs_cnt, value);
         }
 
         private string _displayleftps_cnt = "";
@@ -745,6 +775,14 @@ namespace Picking.Models
                    );
             }
         }
+
+        private int _maguchi = 0;
+        public int Maguchi
+        {
+            get => _maguchi;
+            set => SetProperty(ref _maguchi, value);
+        }
+
         public virtual string QtyFieldSpace(int ps)
         {
             if (CdHimban == "")

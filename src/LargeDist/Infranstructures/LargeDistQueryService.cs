@@ -10,6 +10,7 @@ using LogLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Transactions;
 
 namespace LargeDist.Infranstructures
 {
@@ -154,6 +155,24 @@ namespace LargeDist.Infranstructures
                 mapping.NMDISTGROUP,
                 entity.CDSHUKKABATCH,
                 mapping.NMSHUKKABATCH);
+        }
+        public static void UpdateBoxUnit(string cdhimban, int boxunit, DateTime dtDelivery, LargeDistGroup group)
+        {
+            using var con = DbFactory.CreateConnection();
+            var sql = $@"update TB_DIST 
+                set NU_BOXUNIT=@boxunit, TB_DIST.updatedAt=getdate()
+                from TB_DIST inner join TB_DIST_MAPPING on TB_DIST.ID_DIST=TB_DIST_MAPPING.ID_DIST
+                where DT_DELIVERY=@dtdelivery
+                and CD_LARGE_GROUP=@largegroup
+                and CD_HIMBAN=@cdhimban";
+
+            con.Execute(sql, new
+            {
+                largegroup = group.CdLargeGroup,
+                dtdelivery = dtDelivery.ToString("yyyyMMdd"),
+                cdhimban,
+                boxunit,
+            });
         }
     }
 }

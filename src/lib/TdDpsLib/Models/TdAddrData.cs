@@ -244,7 +244,7 @@ namespace TdDpsLib.Models
         public string GetNowDisplay()
         {
             string display="";
-            int blinkcolor = GetBlinkButton();
+            int blinkcolor = GetLightButton();
             if (blinkcolor != -1)
             {
                 TdLedButton? led = GetLedButton(blinkcolor);
@@ -259,12 +259,13 @@ namespace TdDpsLib.Models
             }
             return display;
         }
-        public void EndDisplay(bool bOn)
+        public void EndDisplay(bool bOn, int endcolor)
         {
             if (bOn)
             {
                 EndDispTime.Reset();
                 EndDispTime.Start();
+                _endColor = endcolor;
             }
             else
             {
@@ -275,7 +276,7 @@ namespace TdDpsLib.Models
         {
             if (EndDispTime.IsRunning)
             {
-                if (EndDispTime.ElapsedMilliseconds >= 3000)
+                if (EndDispTime.ElapsedMilliseconds >= 1500)
                 {
                     EndDispTime.Reset();
                     return true;
@@ -287,6 +288,8 @@ namespace TdDpsLib.Models
 
         public string nowDisplay = "";
         public System.Diagnostics.Stopwatch EndDispTime = new System.Diagnostics.Stopwatch();
+        public DateTime _ChatteringTime = DateTime.Now;
+        public int _endColor = 0;
     }
 
     // エリア表示灯制御

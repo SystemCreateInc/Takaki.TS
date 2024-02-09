@@ -16,8 +16,12 @@
 
     <StackPanel Orientation="Vertical">
         <StackPanel.Resources>
-            <Style TargetType="TextBlock">
-                <Setter Property="Margin" Value="0,0,30,0"/>
+            <Style TargetType="TextBox">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="Margin" Value="20,0,0,0"/>
+                <Setter Property="Width" Value="70"/>
             </Style>
         </StackPanel.Resources>
 
@@ -42,7 +46,7 @@
             <TextBlock VerticalAlignment="Center">
                     箱入数：<Run Text="{Binding NuBoxUnit}"/>　⇒
             </TextBlock>
-            <TextBox Text="{Binding Value,UpdateSourceTrigger=PropertyChanged, Delay=100}" Width="100" HorizontalContentAlignment="Right" x:Name="Value" >
+            <TextBox Text="{Binding Value,UpdateSourceTrigger=PropertyChanged, Delay=100}" Width="100" MaxLength="4" HorizontalContentAlignment="Right" x:Name="Value" >
                 <i:Interaction.Behaviors>
                     <b:NumericTextBoxBehavior/>
                     <b:SelectTextOnGotFocusTextBoxBehavior/>

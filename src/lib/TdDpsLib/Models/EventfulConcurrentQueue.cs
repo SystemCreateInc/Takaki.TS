@@ -6,21 +6,211 @@ using System.Threading;
 
 namespace TdDpsLib.Models
 {
+    /// <summary>
+    /// ロックを呼ばれた順に処理する
+    /// </summary>
+    public class OrderingLockInstance
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        protected string Identifier { get; set; } = string.Empty;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    internal class OrderingLockManager
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        static protected Dictionary<OrderingLockInstance, Queue<OrderingLock>> lockQueue = new Dictionary<OrderingLockInstance, Queue<OrderingLock>>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        static protected OrderingLockManager? instance = null;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public static OrderingLockManager Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    lock (lockQueue)
+                    {
+                        if (instance == null)
+                        {
+                            instance = new OrderingLockManager();
+                        }
+                    }
+                }
+                return instance;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="locker"></param>
+        /// <param name="lockInstance"></param>
+        public void EnQueue(OrderingLock locker, OrderingLockInstance lockInstance)
+        {
+            lock (lockQueue)
+            {
+                if (lockQueue.ContainsKey(lockInstance) == true)
+                {
+                    // 誰か忙しい人がいる
+                    lockQueue[lockInstance].Enqueue(locker);
+                }
+                else
+                {
+                    lockQueue.Add(lockInstance, new Queue<OrderingLock>());
+
+                    // 走りだせ!
+                    locker.Ready.Set();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="locker"></param>
+        /// <param name="lockInstance"></param>
+        public void Finished(OrderingLock locker, OrderingLockInstance lockInstance)
+        {
+            lock (lockQueue)
+            {
+                if (lockQueue.ContainsKey(lockInstance) == true)
+                {
+                    if (lockQueue[lockInstance].Count == 0)
+                    {
+                        // 終了
+                        lockQueue.Remove(lockInstance);
+                    }
+                    else
+                    {
+                        // 次へ
+                        lockQueue[lockInstance].Dequeue().Ready.Set();
+                    }
+                }
+                else
+                {
+                    // ERROR!(あってはならないルート)
+                    throw new InvalidOperationException("Method calling sequence error.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected OrderingLockManager()
+        {
+            // NOP
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <example>
+    /// このクラスの一般的な利用方法を次の例に示します。
+    /// <code><![CDATA[
+    /// OrderingLockInstance lockInstance = new OrderingLockInstance();
+    ///
+    /// ...
+    /// 
+    /// using (new OrderingLock(lockInstance))
+    /// {
+    ///     // Do something
+    /// }
+    /// ]]></code>
+    /// </example>
+    public class OrderingLock : IDisposable
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        protected AutoResetEvent ready = new AutoResetEvent(false);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected OrderingLockInstance? lockInstance = null;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        internal AutoResetEvent Ready
+        {
+            get
+            {
+                return ready;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lockInstance"></param>
+        public OrderingLock(OrderingLockInstance lockInstance)
+        {
+            this.lockInstance = lockInstance;
+            OrderingLockManager.Instance.EnQueue(this, lockInstance);
+
+            ready.WaitOne();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        ~OrderingLock()
+        {
+            // using パターンを使わない人のために
+
+            // 次の人へ
+            if (lockInstance != null)
+            {
+                OrderingLockManager.Instance.Finished(this, lockInstance);
+                lockInstance = null;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Dispose()
+        {
+            // 次へ
+            if (lockInstance != null)
+            {
+                OrderingLockManager.Instance.Finished(this, lockInstance);
+                lockInstance = null;
+            }
+        }
+    }
+
     public sealed class EventfulConcurrentQueue<T> : ConcurrentQueue<T>
     {
         private readonly ConcurrentQueue<T> Queue = new ConcurrentQueue<T>();
-        private object _lockObj = new object();
 
         public event EventHandler? ItemEnqueued = null;
         public event EventHandler<ItemEventArgs<T>>? ItemDequeued = null;
 
+        OrderingLockInstance lockInstance = new OrderingLockInstance();
 
         public new void Enqueue(T item)
         {
             if (item == null)
                 return;
 
-            lock (_lockObj)
+            using (new OrderingLock(lockInstance))
             {
                 System.Diagnostics.Debug.WriteLine("QueLock_Enqueue");
 
@@ -126,7 +316,7 @@ namespace TdDpsLib.Models
         {
             get
             {
-                lock (_lockObj)
+                using (new OrderingLock(lockInstance))
                 {
                     System.Diagnostics.Debug.WriteLine("QueLock_cnt");
                     return Queue.Count;
@@ -137,7 +327,7 @@ namespace TdDpsLib.Models
 
         public new bool TryDequeue(out T? result)
         {
-            lock (_lockObj)
+            using (new OrderingLock(lockInstance))
             {
                 System.Diagnostics.Debug.WriteLine("QueLock_TryDequeuet");
                 var success = Queue.TryDequeue(out result);
@@ -158,7 +348,7 @@ namespace TdDpsLib.Models
 
         public new void Clear()
         {
-            lock (_lockObj)
+            using (new OrderingLock(lockInstance))
             {
                 System.Diagnostics.Debug.WriteLine("QueLock_Clear");
                 while (Queue.Any())
@@ -177,7 +367,7 @@ namespace TdDpsLib.Models
             ItemEnqueued?.Invoke(this, EventArgs.Empty);
 
             // オーバーフローを起こすのでWait
-            Thread.Sleep(10);
+//            Thread.Sleep(1);
         }
 
         void OnItemDequeued(T? item)
@@ -188,7 +378,7 @@ namespace TdDpsLib.Models
             ItemDequeued?.Invoke(this, new ItemEventArgs<T> { Item = item });
 
             // オーバーフローを起こすのでWait
-            Thread.Sleep(10);
+//            Thread.Sleep(1);
         }
     }
 

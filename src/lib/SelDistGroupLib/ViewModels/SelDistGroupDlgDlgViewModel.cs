@@ -75,6 +75,7 @@ namespace SelDistGroupLib.ViewModels
             get => _canOK;
             set => SetProperty(ref _canOK, value);
         }
+        private bool _bAll = false;
 
 
         public SelDistGroupDlgViewModel(IDialogService dialogService)
@@ -131,6 +132,8 @@ namespace SelDistGroupLib.ViewModels
 
         public void OnDialogOpened(IDialogParameters parameters)
         {
+            _bAll = parameters.GetValue<bool>("bAll");
+
             LoadCombo();
         }
         private bool Check()
@@ -148,7 +151,7 @@ namespace SelDistGroupLib.ViewModels
             try
             {
                 DistGroupIndex = -1;
-                DistGroupCombo = DistGroupComboLoader.GetDistGroupCombos(DtDelivery.ToString("yyyyMMdd"));
+                DistGroupCombo = DistGroupComboLoader.GetDistGroupCombos(DtDelivery.ToString("yyyyMMdd"), _bAll);
                 DistGroupIndex = 0;
             }
             catch (Exception e)

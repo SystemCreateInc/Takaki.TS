@@ -1,5 +1,6 @@
 ﻿using DbLib;
 using ImTools;
+using LargeDist.Infranstructures;
 using LargeDist.Models;
 using LargeDist.Views;
 using Prism.Commands;
@@ -263,6 +264,16 @@ namespace LargeDist.ViewModels
                 var unit = rc.Parameters.GetValue<int>("Unit");
                 Chart.SetBoxUnit(unit);
                 NuBoxUnit = unit;
+                _itemLargeDistController!.SetBoxUnit(_itemLargeDistController!.CurrentItem.Items.First(), unit);
+
+                try
+                {
+                    LargeDistQueryService.UpdateBoxUnit(_itemLargeDistController!.CurrentItem.Items.First().CdHimban, unit, _deliveryDate, _largeDistGroup!);
+                }
+                catch (Exception ex)
+                {
+                    WindowLib.Utils.MessageDialog.Show(_dialogService, ex.Message, "エラー");
+                }
             });
         }
 
