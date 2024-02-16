@@ -41,6 +41,8 @@ namespace Picking.Models
         public static int[] ZoneOrderIn = new int[10] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
         // 間口
+        public static int LighttingColor = 0;
+
         public static List<TdMaguchi> TdMaguchis = new List<TdMaguchi>();
 
 
@@ -183,10 +185,12 @@ namespace Picking.Models
                 if (IsDistWorkNormal)
                 {
                     // 一斉仕分け
+                    LighttingColor = distcolor.DistColor_code;
                     foreach (var query in querys)
                     {
                         TdUnitLight(query.Tdunitaddrcode, tddps, true, false, distcolor.DistColor_code, query.TdDisplay, false);
                     }
+                    LighttingColor = 0;
                 }
                 else
                 {
@@ -205,6 +209,13 @@ namespace Picking.Models
         // 表示器消灯
         public static bool TdLightOff(ref DistColor distcolor, TdDpsManager tddps, DistColorInfo distcolorinfo, bool bAll = false)
         {
+            // 点灯中の中断処理は点灯が完了するまで待つ
+            while (LighttingColor == distcolor.DistColor_code)
+            {
+                Syslog.Info($"TdLightOff:消灯待機:色:{LighttingColor}");
+                System.Threading.Thread.Sleep(500);
+            }
+
             lock (_tdLock)
             {
                 var querys = distcolor.Tdunitdisplay
@@ -425,52 +436,72 @@ namespace Picking.Models
         // 表示器点灯
         public static bool TdUnitLight(string tdunitaddrcode, TdDpsManager tddps, bool bOn, bool bBlink, int color, string display, bool bQuick)
         {
-            TdAddrData? addrdata;
-            tddps.GetTdAddr(out addrdata, tdunitaddrcode);
-
-            // 表示器の現在の状態取得(点灯中の場合は点滅へ移行)
-            if (addrdata != null)
+            lock (_tdLock)
             {
-                int lightbtn = addrdata.GetLightButton();
+                TdAddrData? addrdata;
+                tddps.GetTdAddr(out addrdata, tdunitaddrcode);
 
-                // end表示ならクリア
-                var led = addrdata.GetLedButton(lightbtn);
-                if (led != null)
+                // 表示器の現在の状態取得(点灯中の場合は点滅へ移行)
+                if (addrdata != null)
                 {
-                    if (led.Text == TdAddrBase.END_DISPLAY)
+                    int lightbtn = (int)TdLedColor.Red;
+                    for (lightbtn = (int)TdLedColor.Red; lightbtn < (int)TdLedColor.Claim; lightbtn++)
                     {
-                        addrdata.EndDisplay(false, lightbtn);
-                        tddps.Light(ref addrdata, false, false, lightbtn, "", bQuick);
+                        if (lightbtn == color)
+                            continue;
+                        if (addrdata.IsLedButtonLight(lightbtn))
+                        {
+                            // end表示ならクリア
+                            var led = addrdata.GetLedButton(lightbtn);
+                            if (led != null)
+                            {
+                                if (led.Text == TdAddrBase.END_DISPLAY)
+                                {
+                                    addrdata.EndDisplay(false, lightbtn);
+                                    tddps.Light(ref addrdata, false, false, lightbtn, "", true);
+                                    break;
+                                }
+                            }
+                        }
                     }
-                }
 
-                lightbtn = addrdata.GetLightButton();
-                if (bOn && lightbtn != -1)
-                {
-                    led = addrdata.GetLedButton(lightbtn);
-                    if (led != null)
+                    lightbtn = addrdata.GetLightButton();
+                    if (bOn && lightbtn != -1)
                     {
-                        bBlink = true;
-                        color = lightbtn;
-                        display = led.Text!;
+                        if (lightbtn != color)
+                        {
+                            var led = addrdata.GetLedButton(lightbtn);
+                            if (led != null)
+                            {
+                                bBlink = true;
+                                color = lightbtn;
+                                display = led.Text!;
+                            }
+                        }
                     }
-                }
-
-                tddps.Light(ref addrdata, bOn, bBlink, color, display, bQuick);
-#if false
-                // endタイマークリア
-                if (bOn == true && color != (int)TdLedColor.Claim)
-                {
+                    
                     if (display != TdAddrBase.END_DISPLAY)
                     {
-                        addrdata.EndDisplay(false, color);
-                    }
-                }
-#endif
-                // 間口点灯
-                TdMaguchiLight(tdunitaddrcode, tddps, bOn,false);
-            }
+                        Syslog.Info($"TdUnitLight:addr[{addrdata.TdUnitAddrCode}] text[{display}]");
 
+                        tddps.Light(ref addrdata, bOn, bBlink, color, display, bQuick);
+                        // 間口点灯
+                        TdMaguchiLight(tdunitaddrcode, tddps, bOn, false);
+                    }
+
+#if false
+                    // endタイマークリア
+                    if (bOn == true && color != (int)TdLedColor.Claim)
+                    {
+                        if (display != TdAddrBase.END_DISPLAY)
+                        {
+                            addrdata.EndDisplay(false, color);
+
+                        }
+                    }
+#endif
+                }
+            }
             return true;
         }
 
@@ -538,10 +569,12 @@ namespace Picking.Models
                         color = blinkcolor;
 
                         Syslog.Info($"TdUnitRcv::欠品:color{blinkcolor}");
-
+#if false
                         // END表示
                         addrdata.EndDisplay(true, color);
                         tddps.Light(ref addrdata, true, false, color, addrdata.GetNowDisplay(), true);
+                        // 間口消灯
+                        TdMaguchiLight(addrdata.TdUnitAddrCode, tddps, false, true);
 
                         // END表示タスク起動
                         Task.Run(() =>
@@ -589,6 +622,7 @@ namespace Picking.Models
                             });
                         }
                         return true;
+#endif
                     }
                     else
                     {
@@ -757,18 +791,25 @@ namespace Picking.Models
                                         }
                                         else
                                         {
-                                            next = distnextcolor.Tdunitdisplay.Find(x => x.Tdunitaddrcode == addrdata.TdUnitAddrCode);
-
-                                            var distnextnextcolor = distcolorinfo.GetNextDistSeq(distnextcolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
-                                            bool blink = false;
-                                            if (distcolorinfo.IsDistWorkNormal && distnextnextcolor != null)
+                                            TdUnitDisplay? isend =
+                                                distcolorinfo.IsDistWorkNormal == true ?
+                                                distcolor.Tdunitdisplay.Find(x => x.Status == (int)DbLib.Defs.Status.Ready)
+                                                 : distcolor.Tdunitdisplay.Find(x => x.Status == (int)DbLib.Defs.Status.Ready && x.Zone == zone);
+                                            if (isend != null || bLoss == false)
                                             {
-                                                blink = true;
-                                            }
+                                                next = distnextcolor.Tdunitdisplay.Find(x => x.Tdunitaddrcode == addrdata.TdUnitAddrCode);
 
-                                            string text = next != null ? next.TdDisplay : "";
-                                            tddps.Light(ref addrdata, false, false, color, text, true);
-                                            tddps.Light(ref addrdata, true, blink, distnextcolor.DistColor_code, text, true);
+                                                var distnextnextcolor = distcolorinfo.GetNextDistSeq(distnextcolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
+                                                bool blink = false;
+                                                if (distcolorinfo.IsDistWorkNormal && distnextnextcolor != null)
+                                                {
+                                                    blink = true;
+                                                }
+
+                                                string text = next != null ? next.TdDisplay : "";
+                                                tddps.Light(ref addrdata, false, false, color, text, true);
+                                                tddps.Light(ref addrdata, true, blink, distnextcolor.DistColor_code, text, true);
+                                            }
                                         }
                                     }
                                     else
@@ -787,7 +828,7 @@ namespace Picking.Models
                                 distcolorinfo.IsDistWorkNormal == true ?
                                 distcolor.Tdunitdisplay.Find(x => x.Status == (int)DbLib.Defs.Status.Ready)
                                  : distcolor.Tdunitdisplay.Find(x => x.Status == (int)DbLib.Defs.Status.Ready && x.Zone == zone);
-                            if (end == null)
+                            if (end == null || bLoss == true)
                             {
                                 bDistEnd = true;
 
@@ -815,9 +856,60 @@ namespace Picking.Models
 
                                         if (addrdata.IsEndTimeOver() == true)
                                         {
+                                            Syslog.Info($"END消灯::color:{color} addr=[{addrdata.TdUnitAddrCode}]");
                                             addrdata.EndDisplay(false, color);
                                             if (addrdata.nowDisplay == TdAddrBase.END_DISPLAY)
                                             {
+                                                if (distcolorinfo.IsDistWorkNormal)
+                                                {
+                                                    // 次に投入した色の数量があれば表示する
+                                                    var distnextcolor = distcolorinfo.GetNextDistSeq(distcolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
+                                                    if (distnextcolor == null)
+                                                    {
+                                                        Syslog.Info($"END消灯:クリア");
+                                                        // 消灯
+                                                        tddps.Light(ref addrdata, false, false, color, "", true);
+                                                        // 間口消灯
+                                                        TdMaguchiLight(addrdata.TdUnitAddrCode, tddps, false, true);
+                                                    }
+                                                    else
+                                                    {
+                                                        next = distnextcolor.Tdunitdisplay.Find(x => x.Tdunitaddrcode == addrdata.TdUnitAddrCode);
+
+                                                        var distnextnextcolor = distcolorinfo.GetNextDistSeq(distnextcolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
+                                                        bool blink = false;
+                                                        if (distcolorinfo.IsDistWorkNormal && distnextnextcolor != null)
+                                                        {
+                                                            blink = true;
+                                                        }
+
+                                                        string text = next != null ? next.TdDisplay : "";
+                                                        Syslog.Info($"END消灯:次点灯:color:{color} addr=[{addrdata.TdUnitAddrCode}] text[{text}]");
+                                                        tddps.Light(ref addrdata, false, false, color, text, true);
+                                                        tddps.Light(ref addrdata, true, blink, distnextcolor.DistColor_code, text, true);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    Syslog.Info($"END消灯:追いかけ：次点灯");
+
+                                                    // 無条件にクリア
+                                                    tddps.Light(ref addrdata, false, false, addrdata._endColor, "", true);
+
+                                                    int lightbtn = (int)TdLedColor.Red;
+                                                    for (lightbtn = (int)TdLedColor.Red; lightbtn < (int)TdLedColor.Claim; lightbtn++)
+                                                    {
+                                                        if (lightbtn == color)
+                                                            continue;
+                                                        if (addrdata.IsLedButtonLight(lightbtn))
+                                                        {
+                                                            var led = addrdata.GetLedButton(lightbtn);
+                                                            tddps.Light(ref addrdata, true, led!.IsBlink, lightbtn, led!.Text!, true);
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+#if false
                                                 tddps.Light(ref addrdata, false, false, addrdata._endColor, "", true);
 
                                                 color = addrdata.GetLightButton();
@@ -830,6 +922,7 @@ namespace Picking.Models
                                                     var led = addrdata.GetLedButton(color);
                                                     tddps.Light(ref addrdata, true, led!.IsBlink, color, led!.Text!, true);
                                                 }
+#endif
                                             }
                                         }
                                     }
@@ -838,13 +931,23 @@ namespace Picking.Models
 
                                 // 全ゾーン処理終了で書き込み
                                 end = distcolor.Tdunitdisplay.Find(x => x.Status == (int)DbLib.Defs.Status.Ready);
-                                if (end == null)
+                                if (end == null || bLoss == true)
                                 {
-                                    Syslog.Info($"仕分完了::color:{color} inseq:{itemseq.InSeq} item:{itemseq.CdHimban} itemseq.Ops:{itemseq.Ops} itemseq.Dops:{itemseq.Dops} itemseq.Drps:{itemseq.Drps} itemseq.Order_shop_cnt:{itemseq.Order_shop_cnt} itemseq.Remain_shop_cnt:{itemseq.Remain_shop_cnt} itemseq.Result_shop_cnt:{itemseq.Result_shop_cnt}");
+                                    Syslog.Info($"作業完了::color:{color} inseq:{itemseq.InSeq} item:{itemseq.CdHimban} itemseq.Ops:{itemseq.Ops} itemseq.Dops:{itemseq.Dops} itemseq.Drps:{itemseq.Drps} itemseq.Order_shop_cnt:{itemseq.Order_shop_cnt} itemseq.Remain_shop_cnt:{itemseq.Remain_shop_cnt} itemseq.Result_shop_cnt:{itemseq.Result_shop_cnt}");
+
+                                    if (bLoss)
+                                    {
+                                        DistColor? distcolorLoss = distcolorinfo?.GetDistColor(color);
+                                        if (distcolorLoss!=null)
+                                        {
+                                            Syslog.Info($"欠品ボタン押下による消灯開始");
+                                            TdUnitManager.TdLightOff(ref distcolorLoss, tddps, distcolorinfo!);
+                                        }
+                                    }
 
                                     // 作業報告書開始
                                     distcolor.ReportEnd();
-                                    distcolorinfo.ReportUpdate(distcolor.ReportShain, distcolor.DistWorkMode);
+                                    distcolorinfo!.ReportUpdate(distcolor.ReportShain, distcolor.DistWorkMode);
 
                                     // 終了処理へ
                                     DistColorManager.DistUpdate(distcolor);
