@@ -6,6 +6,7 @@ using DbLib.Defs;
 using ImportLib.Models;
 using ImTools;
 using LogLib;
+using Microsoft.Extensions.Configuration;
 using System.Data;
 
 namespace ImportLib.Repositories
@@ -117,7 +118,7 @@ namespace ImportLib.Repositories
 
         internal void DeleteExpiredLogs()
         {
-            var expDate = GetExpiredDate();
+            var expDate = GetLogExpiredDate();
             if (expDate is null)
             {
                 Syslog.Debug("Skip delete interface logs");
@@ -184,6 +185,16 @@ namespace ImportLib.Repositories
             Connection.BulkDelete<TBDISTEntity>(s => s
                 .AttachToTransaction(Transaction)
                 .Where($"{nameof(TBDISTEntity.CreatedAt):C} < @expDate")
+                .WithParameters(new { expDate }));
+
+            Connection.BulkDelete<TBDISTGROUPPROGRESSEntity>(s => s
+                .AttachToTransaction(Transaction)
+                .Where($"{nameof(TBDISTGROUPPROGRESSEntity.CreatedAt):C} < @expDate")
+                .WithParameters(new { expDate }));
+
+            Connection.BulkDelete<TBREPORTEntity>(s => s
+                .AttachToTransaction(Transaction)
+                .Where($"{nameof(TBREPORTEntity.CreatedAt):C} < @expDate")
                 .WithParameters(new { expDate }));
         }
 
@@ -266,9 +277,29 @@ namespace ImportLib.Repositories
             return string.Join(" or ", sameDistInfos.Select(x => $"(DT_DELIVERY = '{x.DtDelivery}' and CD_SHUKKA_BATCH = '{x.ShukkaBatch}')"));
         }
 
+        private DateTime? GetLogExpiredDate()
+        {
+            string strexpdays = new ConfigurationBuilder()
+            .AddJsonFile("common.json", true, true)
+            .Build()
+            .GetSection("syslog")["logExpDays"] ?? "0";
+
+            var expdays = int.Parse(strexpdays);
+            if (expdays == 0)
+            {
+                return null;
+            }
+
+            return DateTime.Now.Date.AddDays(-expdays);
+        }
         private DateTime? GetExpiredDate()
         {
-            var expdays = new Settings(Transaction).GetInt("expdays", 0);
+            string strexpdays = new ConfigurationBuilder()
+            .AddJsonFile("common.json", true, true)
+            .Build()
+            .GetSection("syslog")["distExpDays"] ?? "0";
+
+            var expdays = int.Parse(strexpdays);
             if (expdays == 0)
             {
                 return null;
