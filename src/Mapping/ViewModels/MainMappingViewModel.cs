@@ -395,6 +395,14 @@ namespace Mapping.ViewModels
 
                     Mapping.RackAllocMax = DispRackAllocMax;
                     Mapping.LoadDatas(DtDelivery, seldistgroups);
+
+                    // 画面表示内容を更新
+                    foreach (var p in DistGroupInfos)
+                    {
+                        var distgroup = Mapping.distgroups.Find(x => x.CdDistGroup == p.CdDistGroup);
+                        p.ShopCnt = distgroup != null ? distgroup.ShopCnt : 0;
+                    }
+
                 }
                 else
                 {

@@ -44,6 +44,7 @@ namespace Mapping.Models
 
         // 実績
         public List<Dist> mappings = new List<Dist>();
+        public int ShopCnt = 0;
 
         public bool IsSave = false;
         public bool IsCancel = false;
