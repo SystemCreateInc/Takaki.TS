@@ -531,7 +531,7 @@ namespace Picking.Models
                 }
                 addrdata._ChatteringTime = nowtm + new TimeSpan(0, 0, 0, 0, 500);
 
-                if (addrdata.GetNowDisplay() == TdAddrBase.END_DISPLAY)
+                if (addrdata.EndDispTime.IsRunning)
                 {
                     Syslog.Info($"END中は無視");
                     return false;
@@ -851,6 +851,7 @@ namespace Picking.Models
                                 Task.Run(() =>
                                 {
                                     int distseq = distcolor.DistSeqs[zone];
+                                    Syslog.Info($"END:: distseq={distseq}");
 
                                     while (addrdata.EndDispTime.IsRunning)
                                     {
@@ -858,12 +859,12 @@ namespace Picking.Models
 
                                         if (addrdata.IsEndTimeOver() == true)
                                         {
-                                            Syslog.Info($"END消灯::color:{color} addr=[{addrdata.TdUnitAddrCode}]");
-                                            addrdata.EndDisplay(false, color);
+                                            Syslog.Info($"END消灯::color:{color} addr=[{addrdata.TdUnitAddrCode}] distseq={distseq}");
                                             if (addrdata.nowDisplay == TdAddrBase.END_DISPLAY)
                                             {
                                                 if (distcolorinfo.IsDistWorkNormal)
                                                 {
+#if false
                                                     // 次に投入した色の数量があれば表示する
                                                     var distnextcolor = distcolorinfo.GetNextDistSeq(distseq, addrdata!.TdUnitAddrCode);
                                                     if (distnextcolor == null)
@@ -876,7 +877,7 @@ namespace Picking.Models
                                                     }
                                                     else
                                                     {
-                                                        next = distnextcolor.Tdunitdisplay.Find(x => x.Tdunitaddrcode == addrdata.TdUnitAddrCode && x.Status == (int)DbLib.Defs.Status.Ready);
+                                                        next = distnextcolor.Tdunitdisplay.Find(x => x.Tdunitaddrcode == addrdata.TdUnitAddrCode && x.Status== (int)DbLib.Defs.Status.Ready);
 
                                                         var distnextnextcolor = distcolorinfo.GetNextDistSeq(distnextcolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
                                                         bool blink = false;
@@ -888,9 +889,46 @@ namespace Picking.Models
                                                         string text = next != null ? next.TdDisplay : "";
                                                         Syslog.Info($"END消灯:消灯:color:{color} addr=[{addrdata.TdUnitAddrCode}] text[{text}]");
                                                         tddps.Light(ref addrdata, false, false, color, text, true);
-                                                        Syslog.Info($"END消灯:次点灯:color:{distnextcolor.DistColor_code} addr=[{addrdata.TdUnitAddrCode}] text[{text}]");
-                                                        tddps.Light(ref addrdata, true, blink, distnextcolor.DistColor_code, text, true);
+                                                        if (next != null)
+                                                        {
+                                                            Syslog.Info($"END消灯:次点灯:color:{distnextcolor.DistColor_code} addr=[{addrdata.TdUnitAddrCode}] text[{text}]");
+                                                            tddps.Light(ref addrdata, true, blink, distnextcolor.DistColor_code, text, true);
+                                                        }
+                                                        else
+                                                        {
+                                                            Syslog.Info($"END消灯:nextなし color:{distnextcolor.DistColor_code} addr=[{addrdata.TdUnitAddrCode}] text[{text}]");
+                                                        }
                                                     }
+#else
+                                                    Syslog.Info($"END消灯:消灯:color:{color} addr=[{addrdata.TdUnitAddrCode}]");
+                                                    tddps.Light(ref addrdata, false, false, addrdata._endColor, "", true);
+
+                                                    color = addrdata.GetLightButton();
+                                                    if (color == -1)
+                                                    {
+                                                    }
+                                                    else
+                                                    {
+                                                        var led = addrdata.GetLedButton(color);
+                                                        Syslog.Info($"END消灯:次点灯:color:{color} addr=[{addrdata.TdUnitAddrCode}] text[{led!.Text}]");
+                                                        var dc = distcolorinfo.GetDistColor(color);
+                                                        if (dc!=null)
+                                                        {
+                                                            var distnextnextcolor = distcolorinfo.GetNextDistSeq(dc.DistSeqs[zone], addrdata!.TdUnitAddrCode);
+                                                            bool blink = false;
+                                                            if (distcolorinfo.IsDistWorkNormal && distnextnextcolor != null)
+                                                            {
+                                                                blink = true;
+                                                            }
+
+                                                            tddps.Light(ref addrdata, true, blink, color, led!.Text!, true);
+                                                        }
+                                                        else
+                                                        {
+                                                            Syslog.Info($"END消灯:dcnull");
+                                                        }
+                                                    }
+#endif
                                                 }
                                                 else
                                                 {
@@ -912,21 +950,9 @@ namespace Picking.Models
                                                         }
                                                     }
                                                 }
-#if false
-                                                tddps.Light(ref addrdata, false, false, addrdata._endColor, "", true);
-
-                                                color = addrdata.GetLightButton();
-                                                if (color == -1)
-                                                {
-                                                    //                                                    tddps.Light(ref addrdata, false, false, addrdata._endColor, "", true);
-                                                }
-                                                else
-                                                {
-                                                    var led = addrdata.GetLedButton(color);
-                                                    tddps.Light(ref addrdata, true, led!.IsBlink, color, led!.Text!, true);
-                                                }
-#endif
                                             }
+                                            Syslog.Info($"ENDTIMEクリア");
+                                            addrdata.EndDisplay(false, color);
                                         }
                                     }
 

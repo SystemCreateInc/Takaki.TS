@@ -150,6 +150,8 @@ namespace Picking.Services
                         con.Update(p, x => x.AttachToTransaction(tr));
                     }
 
+                    tr.Commit();
+
                     // 同じ納品日のＰＣは全て未処理へ戻す
                     var sql = "update TB_DIST_GROUP_PROGRESS set FG_WORKING = @status"
                             + " where DT_DELIVERY = @dtdelivery and CD_KYOTEN = @cdkyoten and CD_BLOCK = @cdblock and CD_DIST_GROUP<>''";
@@ -161,9 +163,9 @@ namespace Picking.Services
                         dtdelivery = distgroup.DtDelivery.ToString("yyyyMMdd"),
                         cdkyoten = distgroup.CdKyoten,
                         cdblock = distgroup.CdBlock,
-                    }, tr);
+                    });
 
-                    tr.Commit();
+//                    tr.Commit();
                 }
                 catch (Exception)
                 {

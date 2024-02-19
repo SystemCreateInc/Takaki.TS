@@ -1,4 +1,6 @@
-﻿using Picking.Defs;
+﻿using ImTools;
+using LogLib;
+using Picking.Defs;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -80,12 +82,12 @@ namespace Picking.Models
 
             foreach (var distcolor in tmp)
             {
-                if(distcolor.Tdunitdisplay.Find(x => x.Tdunitaddrcode == tdunitaddrcode)!=null)
+                if(distcolor.Tdunitdisplay.Find(x => x.Tdunitaddrcode == tdunitaddrcode && x.Status == (int)DbLib.Defs.Status.Ready) !=null)
                 {
+                    Syslog.Info($"GetNextDistSeq:distseq:{distseq} tdunitaddrcode:{tdunitaddrcode} color={distcolor.DistColor_code} colordistseq={distcolor.DistSeqs[1]}");
                     return distcolor;
                 }
             }
-
             return null;
         }
 

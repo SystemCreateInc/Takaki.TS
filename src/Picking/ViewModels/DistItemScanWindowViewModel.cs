@@ -699,7 +699,7 @@ namespace Picking.ViewModels
                         {
                             if (distcolor.ItemSeqs[i] != null)
                             {
-                                Syslog.Info($"【配分開始商品】:itemseq:{i} item:{distcolor.ItemSeqs[i].CdHimban} {distcolor.ItemSeqs[i].NmHinSeishikimei}");
+                                Syslog.Info($"【配分開始商品】 :distseq={distcolor.DistSeqs[0]} itemseq:{i} item:{distcolor.ItemSeqs[i].CdHimban} {distcolor.ItemSeqs[i].NmHinSeishikimei}");
                                 distcolor.ItemSeqs[i].Details = DistColorManager.LoadInfoDetails(DistGroup!, distcolor.ItemSeqs[i]);
                             }
                         }
