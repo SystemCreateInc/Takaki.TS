@@ -1,4 +1,6 @@
-﻿using Prism.Mvvm;
+﻿using DbLib.Extensions;
+using Prism.Mvvm;
+using System;
 
 namespace BoxExpoter.ViewModels
 {
@@ -27,6 +29,13 @@ namespace BoxExpoter.ViewModels
 
 
         public string SendStatusText => IsSended ? "送信済" : "";
+
+        private DateTime _dtDelivery = DateTime.Today;
+        public DateTime DtDelivery
+        {
+            get => _dtDelivery;
+            set => SetProperty(ref _dtDelivery, value);
+        }
 
         private string _cdDistGroup = string.Empty;
         public string CdDistGroup
@@ -77,11 +86,12 @@ namespace BoxExpoter.ViewModels
             set => SetProperty(ref _overCount, value);
         }
 
-        public GroupStowage(int sendedCount, string cD_DIST_GROUP, string nM_DIST_GROUP, int customerCount, int seatCount, int uncompletedCount, int completedCount, int overCount)
+        public GroupStowage(int sendedCount, string dT_DELIVERY, string cD_DIST_GROUP, string nM_DIST_GROUP, int customerCount, int seatCount, int uncompletedCount, int completedCount, int overCount)
         {
             IsSended = (completedCount + uncompletedCount) == sendedCount;
             IsEnabled = uncompletedCount == 0;
             IsSelected = IsEnabled && !IsSended;
+            DtDelivery = (DateTime)dT_DELIVERY.ParseNonSeparatedDate(DateTime.Today)!;
             CdDistGroup = cD_DIST_GROUP;
             NmDistGroup = nM_DIST_GROUP;
             CustomerCount = customerCount;
