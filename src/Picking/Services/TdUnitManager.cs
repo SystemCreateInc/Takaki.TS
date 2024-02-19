@@ -850,6 +850,8 @@ namespace Picking.Models
                                 // END表示タスク起動
                                 Task.Run(() =>
                                 {
+                                    int distseq = distcolor.DistSeqs[zone];
+
                                     while (addrdata.EndDispTime.IsRunning)
                                     {
                                         System.Threading.Thread.Sleep(500);
@@ -863,7 +865,7 @@ namespace Picking.Models
                                                 if (distcolorinfo.IsDistWorkNormal)
                                                 {
                                                     // 次に投入した色の数量があれば表示する
-                                                    var distnextcolor = distcolorinfo.GetNextDistSeq(distcolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
+                                                    var distnextcolor = distcolorinfo.GetNextDistSeq(distseq, addrdata!.TdUnitAddrCode);
                                                     if (distnextcolor == null)
                                                     {
                                                         Syslog.Info($"END消灯:クリア");
@@ -874,7 +876,7 @@ namespace Picking.Models
                                                     }
                                                     else
                                                     {
-                                                        next = distnextcolor.Tdunitdisplay.Find(x => x.Tdunitaddrcode == addrdata.TdUnitAddrCode);
+                                                        next = distnextcolor.Tdunitdisplay.Find(x => x.Tdunitaddrcode == addrdata.TdUnitAddrCode && x.Status == (int)DbLib.Defs.Status.Ready);
 
                                                         var distnextnextcolor = distcolorinfo.GetNextDistSeq(distnextcolor.DistSeqs[zone], addrdata!.TdUnitAddrCode);
                                                         bool blink = false;
@@ -884,8 +886,9 @@ namespace Picking.Models
                                                         }
 
                                                         string text = next != null ? next.TdDisplay : "";
-                                                        Syslog.Info($"END消灯:次点灯:color:{color} addr=[{addrdata.TdUnitAddrCode}] text[{text}]");
+                                                        Syslog.Info($"END消灯:消灯:color:{color} addr=[{addrdata.TdUnitAddrCode}] text[{text}]");
                                                         tddps.Light(ref addrdata, false, false, color, text, true);
+                                                        Syslog.Info($"END消灯:次点灯:color:{distnextcolor.DistColor_code} addr=[{addrdata.TdUnitAddrCode}] text[{text}]");
                                                         tddps.Light(ref addrdata, true, blink, distnextcolor.DistColor_code, text, true);
                                                     }
                                                 }
