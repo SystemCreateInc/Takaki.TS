@@ -37,13 +37,6 @@ namespace DistExpoter.ViewModels
             set => SetProperty(ref _items, value);
         }
 
-        private DateTime _dtDelivery;
-        public DateTime DtDelivery
-        {
-            get => _dtDelivery;
-            set => SetProperty(ref _dtDelivery, value);
-        }
-
         private bool _canSend;
         public bool CanSend
         {
@@ -60,23 +53,6 @@ namespace DistExpoter.ViewModels
             RefreshCommand = new(Refresh);
             PathCommand = new(SelectFolder);
             ExitCommand = new(Exit);
-
-            SelectDeliveryDate();
-        }
-
-        private void SelectDeliveryDate()
-        {
-            _dialogService.ShowDialog(nameof(DeliveryDateDialog),
-                rc =>
-                {
-                    if (rc.Result != ButtonResult.OK)
-                    {
-                        Exit();
-                        return;
-                    }
-
-                    DtDelivery = rc.Parameters.GetValue<DateTime>("Date");
-                });
         }
 
         private void Exit()
@@ -133,7 +109,7 @@ namespace DistExpoter.ViewModels
                     item.PropertyChanged -= Item_PropertyChanged;
                 }
 
-                CollectionViewHelper.SetCollection(Items, DistExpoterQueryService.GetGroupList(DtDelivery));
+                CollectionViewHelper.SetCollection(Items, DistExpoterQueryService.GetGroupList());
                 UpdateCanSend();
 
                 foreach (var item in Items)
@@ -161,7 +137,7 @@ namespace DistExpoter.ViewModels
         {
             var keys = Items
                 .Where(x => x.IsSelected)
-                .Select(x => new DistResultKey(DtDelivery, x.CdDistGroup))
+                .Select(x => new DistResultKey(x.DtDelivery, x.CdDistGroup))
                 .ToArray();
 
             var service = new ExportService(new ExportRepositoryFactory());

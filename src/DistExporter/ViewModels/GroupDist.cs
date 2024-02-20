@@ -1,4 +1,6 @@
-﻿using Prism.Mvvm;
+﻿using DbLib.Extensions;
+using Prism.Mvvm;
+using System;
 
 namespace DistExpoter.ViewModels
 {
@@ -28,7 +30,14 @@ namespace DistExpoter.ViewModels
 
         public string SendStatusText => IsSended ? "送信済" : "";
 
-        private string _cdDistGroup = string.Empty;
+        private DateTime _dtDelivery = DateTime.Today;
+        public DateTime DtDelivery
+        {
+            get => _dtDelivery;
+            set => SetProperty(ref _dtDelivery, value);
+        }
+
+        private string _cdDistGroup;
         public string CdDistGroup
         {
             get => _cdDistGroup;
@@ -94,11 +103,12 @@ namespace DistExpoter.ViewModels
 
 
 
-        public GroupDist(int sendCount, int sendedCount, string cD_DIST_GROUP, string nM_DIST_GROUP, int customerCount, int seatCount, int uncompletedCount, int completedCount, int overCount)
+        public GroupDist(int sendCount, int sendedCount, string dT_DELIVERY, string cD_DIST_GROUP, string nM_DIST_GROUP, int customerCount, int seatCount, int uncompletedCount, int completedCount, int overCount)
         {
             IsSended = sendedCount != 0;
             IsEnabled = true;
             IsSelected = IsEnabled && !IsSended;
+            DtDelivery = (DateTime)dT_DELIVERY.ParseNonSeparatedDate(DateTime.Today)!;
             CdDistGroup = cD_DIST_GROUP;
             NmDistGroup = nM_DIST_GROUP;
             CustomerCount = customerCount;

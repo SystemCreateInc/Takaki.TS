@@ -158,6 +158,11 @@ namespace Mapping.Models
             sumtokuisakis = MappingLoader.GetSumTokuisakis(DtDelivery);
             blocks = MappingLoader.GetBlocks(DtDelivery);
             distgroups = MappingLoader.GetDistGroups(DtDelivery, seldistgroups);
+
+            foreach (var distgroup in distgroups)
+            {
+                distgroup.ShopCnt = LoadShopCnt(distgroup, DtDelivery);
+            }
         }
         public void Run(string CdDistGroup)
         {
@@ -992,6 +997,37 @@ namespace Mapping.Models
                     tr.Rollback();
                     throw;
                 }
+            }
+        }
+        public static int LoadShopCnt(DistGroup distgroup, string dtdelivery)
+        {
+            string whereCourse = string.Empty;
+            foreach (var syukkabatch in distgroup.ShukkaBatchs)
+            {
+                whereCourse += whereCourse == string.Empty ? " and (" : " or ";
+                whereCourse += $" (CD_SHUKKA_BATCH='" + syukkabatch.CdShukkaBatch + "')";
+            }
+            if (whereCourse != string.Empty)
+                whereCourse += ")";
+
+            if (distgroup.Courses.Count() != 0)
+            {
+                whereCourse += $" and CD_COURSE in ('" + String.Join("','", distgroup.Courses) + "')";
+            }
+
+            using (var con = DbFactory.CreateConnection())
+            {
+                var sql = $"select count(distinct CD_TOKUISAKI) cnt from TB_DIST where CD_KYOTEN=@cdkyoten and DT_DELIVERY=@dtdelivery {whereCourse}";
+
+                var entity = con.Query(sql,
+                    new
+                    {
+                        @cdkyoten = distgroup.CdKyoten,
+                        @dtdelivery = dtdelivery,
+                    })
+                    .FirstOrDefault();
+
+                return entity != null ? entity.cnt : 0;
             }
         }
     }

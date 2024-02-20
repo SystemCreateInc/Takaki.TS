@@ -61,10 +61,6 @@
             </ToolBar>
         </ToolBarTray>
 
-        <TextBlock DockPanel.Dock="Top" Margin="10" VerticalAlignment="Center">
-            納品日：<Run Text="{Binding DtDelivery, StringFormat=yyyy年MM月dd日}" d:Text="2023年12月12日"/>
-        </TextBlock>
-
         <controls:GridColumnSetting TargetGrid="{Binding ElementName=dataGrid}" SettingsKey="DistExporterColumns"/>
         <DataGrid x:Name="dataGrid" ItemsSource="{Binding Items}"
                   AutoGenerateColumns="False"
@@ -85,6 +81,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="送信" Binding="{Binding SendStatusText}"/>
+                <DataGridTextColumn Header="納品日" Binding="{Binding DtDelivery, StringFormat=yyyy/MM/dd}"/>
                 <DataGridTextColumn Header="仕分G" Binding="{Binding CdDistGroup}"/>
                 <DataGridTextColumn Header="仕分G名" Binding="{Binding NmDistGroup}"/>
                 <DataGridTextColumn Header="得意先数" Binding="{Binding CustomerCount}" ElementStyle="{StaticResource RightTextElement}"/>

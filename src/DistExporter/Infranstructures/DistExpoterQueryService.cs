@@ -15,11 +15,12 @@ namespace DistExpoter.Infranstructures
 {
     internal class DistExpoterQueryService
     {
-        internal static IEnumerable<GroupDist> GetGroupList(DateTime dtDelivery)
+        internal static IEnumerable<GroupDist> GetGroupList()
         {
             using (var con = DbFactory.CreateConnection())
             {
                 var sql = $@"select 
+                    DT_DELIVERY,
                     CD_DIST_GROUP,
                     max(NM_DIST_GROUP) NM_DIST_GROUP,
                     count(distinct case when tdunitaddrcode='' then null else CD_TOKUISAKI end) CustomerCount,
@@ -31,15 +32,16 @@ namespace DistExpoter.Infranstructures
                     count(distinct case when tdunitaddrcode='' then CD_TOKUISAKI else null end) OverCount
                     from TB_DIST t1
                     inner join TB_DIST_MAPPING t2 on t1.ID_DIST = t2.ID_DIST
-                    where DT_DELIVERY = @dtDelivery
-                    group by t2.CD_DIST_GROUP
+                    group by t1.DT_DELIVERY, t2.CD_DIST_GROUP
+                    order by t1.DT_DELIVERY, t2.CD_DIST_GROUP
                 ";
 
-                return con.Query(sql, new { statusReady = Status.Ready, statusCompleted = Status.Completed, dtDelivery = dtDelivery.ToString("yyyyMMdd") })
+                return con.Query(sql, new { statusReady = Status.Ready, statusCompleted = Status.Completed })
                     .Select(x => new GroupDist
                     (
                         x.SendCount,
                         x.SendedCount,
+                        x.DT_DELIVERY,
                         x.CD_DIST_GROUP,  
                         x.NM_DIST_GROUP,
                         x.CustomerCount,
@@ -47,7 +49,9 @@ namespace DistExpoter.Infranstructures
                         x.UncompletedCount,
                         x.CompletedCount,
                         x.OverCount
-                    ));
+                    ))
+                    .Where(x => !x.IsSended || x.DtDelivery >= DateTime.Today)
+                    .ToArray();
             }
         }
     }
