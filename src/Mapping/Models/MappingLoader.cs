@@ -309,7 +309,7 @@ namespace Mapping.Models
 
             }
         }
-        public static IEnumerable<DpsOtherInfo> GetDpsOther(string dtDelivery)
+        public static List<DpsOtherInfo> GetDpsOther(string dtDelivery)
         {
             using (var con = DbFactory.CreateConnection())
             {
@@ -337,7 +337,7 @@ namespace Mapping.Models
                         NmShukkaBatch = q.NM_SHUKKA_BATCH,
                         CdCourse = q.CD_COURSE,
                         ShopCnt = q.shopcnt,
-                    });
+                    }).ToList();
             }
         }    }
 }

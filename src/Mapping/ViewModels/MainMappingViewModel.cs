@@ -332,6 +332,7 @@ namespace Mapping.ViewModels
                             {
                                 { "DtDelivery", DtDelivery },
                                 { "DispDtDelivery", DispDtDelivery },
+                                { "Mapping", Mapping },
                             });
                 }
                 catch (Exception e)

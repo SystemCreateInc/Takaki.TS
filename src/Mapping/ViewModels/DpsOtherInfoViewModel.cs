@@ -21,6 +21,7 @@ using PrintPreviewLib;
 using PrintLib;
 using DbLib.Defs;
 using ReferenceLogLib.Models;
+using System.Data;
 
 namespace Mapping.ViewModels
 {
@@ -46,6 +47,13 @@ namespace Mapping.ViewModels
         {
             get => _dpsotherinfos;
             set => SetProperty(ref _dpsotherinfos, value);
+        }
+
+        private MappingManager _mapping = new MappingManager();
+        public MappingManager Mapping
+        {
+            get => _mapping;
+            set => SetProperty(ref _mapping, value);
         }
 
         private readonly IRegionManager _regionManager;
@@ -82,12 +90,13 @@ namespace Mapping.ViewModels
         {
             DtDelivery = navigationContext.Parameters.GetValue<string>("DtDelivery");
             DispDtDelivery = navigationContext.Parameters.GetValue<string>("DispDtDelivery");
+            Mapping = navigationContext.Parameters.GetValue<MappingManager>("Mapping");
 
             try
             {
                 // 画面のソート順をデフォルトへ戻すため一旦クリア
                 DpsOtherInfos = new ObservableCollection<Models.DpsOtherInfo>();
-                CollectionViewHelper.SetCollection(DpsOtherInfos, MappingLoader.GetDpsOther(DtDelivery));
+                CollectionViewHelper.SetCollection(DpsOtherInfos, LoadDatas());
             }
             catch (Exception e)
             {
@@ -96,6 +105,36 @@ namespace Mapping.ViewModels
             }
 
             Syslog.Info($"LocInfoViewModel:OnNavigatedTo");
+        }
+        public IEnumerable<Models.DpsOtherInfo> LoadDatas()
+        {
+            List<Models.DpsOtherInfo> alldatas = MappingLoader.GetDpsOther(DtDelivery);
+            List<Models.DpsOtherInfo> datas = new List<Models.DpsOtherInfo>();
+
+            // 出荷バッチがあってコースがないデータを表示
+            foreach (var data in alldatas)
+            {
+                bool bShukkabatch = false;
+                bool bAppend = true;
+                foreach (var dispgroup in Mapping.distgroups)
+                {
+                    if(dispgroup.ShukkaBatchs.Find(x => x.CdShukkaBatch == data.CdShukkaBatch)!=null)
+                    {
+                        bShukkabatch = true;
+
+                        if (dispgroup.Courses.Find(x => x == data.CdCourse) != null)
+                        {
+                            bAppend = false;
+                            break;
+                        }
+                    }
+                }
+                if (bShukkabatch == true && bAppend == true)
+                {
+                    datas.Add(data);
+                }
+            }
+            return datas;
         }
     }
 }
