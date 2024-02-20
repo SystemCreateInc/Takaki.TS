@@ -38,6 +38,7 @@ namespace Mapping.ViewModels
         public DelegateCommand PathCommand { get; }
         public DelegateCommand Exit { get; }
         public DelegateCommand DistClear { get; }
+        public DelegateCommand DpsOther { get; }
 
         private string _dtDelivery = string.Empty;
         public string DtDelivery
@@ -321,6 +322,26 @@ namespace Mapping.ViewModels
                 }
 
             }).ObservesCanExecute(() => CanShifted);
+
+            DpsOther = new DelegateCommand(() =>
+            {
+                Syslog.Debug("MainMappingViewModel:DpsOther");
+                try
+                {
+                    _regionManager.RequestNavigate("ContentRegion", nameof(Views.DpsOtherInfo), new NavigationParameters
+                            {
+                                { "DtDelivery", DtDelivery },
+                                { "DispDtDelivery", DispDtDelivery },
+                            });
+                }
+                catch (Exception e)
+                {
+                    Syslog.Error($"MainMappingViewModel:DpsOther:{e.Message}");
+                    MessageDialog.Show(_dialogService, e.Message, "エラー");
+                }
+
+            });
+
 
             _idleTimer.Tick += (s, e) => CheckShifted();
             _idleTimer.Start();

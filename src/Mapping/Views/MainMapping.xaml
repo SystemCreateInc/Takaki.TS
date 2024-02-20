@@ -72,6 +72,13 @@
                         </StackPanel>
                     </Button>
 
+                    <Button Command="{Binding DpsOther}">
+                        <StackPanel Orientation="Vertical">
+                            <materialDesign:PackIcon Kind="AlphaDBox"/>
+                            <TextBlock Text="DPS外コース一覧"/>
+                        </StackPanel>
+                    </Button>
+
                     <Button Command="{Binding Exit}" >
                         <StackPanel Orientation="Vertical">
                             <materialDesign:PackIcon Kind="ExitToApp"/>

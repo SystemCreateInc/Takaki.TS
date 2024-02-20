@@ -19,6 +19,7 @@ namespace Mapping
             containerRegistry.RegisterForNavigation<MainMapping>();
             containerRegistry.RegisterForNavigation<OverTokuisaki>();
             containerRegistry.RegisterForNavigation<LocInfo>();
+            containerRegistry.RegisterForNavigation<DpsOtherInfo>();
 
             containerRegistry.RegisterDialog<DeliveryDateDialog>();
             containerRegistry.RegisterDialog<RackAllocMaxDialog>();

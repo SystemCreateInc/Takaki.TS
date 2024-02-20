@@ -14,6 +14,8 @@ using System.Windows.Documents;
 using LogLib;
 using System.Windows;
 using Mapping.Defs;
+using System.Collections.Concurrent;
+using System.Runtime.Intrinsics.X86;
 
 namespace Mapping.Models
 {
@@ -307,5 +309,35 @@ namespace Mapping.Models
 
             }
         }
-    }
+        public static IEnumerable<DpsOtherInfo> GetDpsOther(string dtDelivery)
+        {
+            using (var con = DbFactory.CreateConnection())
+            {
+                var sql = "select "
+                    + "TB_DIST.CD_SHUKKA_BATCH, "
+                    + "max(NM_SHUKKA_BATCH) NM_SHUKKA_BATCH, "
+                    + "CD_COURSE, "
+                    + "count(distinct CD_TOKUISAKI) shopcnt "
+                    + "from TB_DIST "
+                    + "left join(select* from (select CD_SHUKKA_BATCH, NM_SHUKKA_BATCH, row_number() over(partition by CD_SHUKKA_BATCH order by updatedAt desc) no "
+                    + "from TB_MSHUKKA_BATCH where TB_MSHUKKA_BATCH.DT_TEKIYOKAISHI <= @dtDelivery and @dtDelivery<TB_MSHUKKA_BATCH.DT_TEKIYOMUKO) t3 "
+                    + "where no = 1) v3 on TB_DIST.CD_SHUKKA_BATCH = v3.CD_SHUKKA_BATCH "
+                    + "where TB_DIST.FG_MAPSTATUS = @mapStatus and TB_DIST.DT_DELIVERY = @dtDelivery "
+                    + "group by TB_DIST.CD_SHUKKA_BATCH,CD_COURSE "
+                    + "order by TB_DIST.CD_SHUKKA_BATCH,CD_COURSE ";
+
+                return con.Query(sql, new
+                {
+                    @mapStatus = (int)Status.Ready,
+                    @dtDelivery = dtDelivery,
+                })
+                    .Select(q => new DpsOtherInfo
+                    {
+                        CdShukkaBatch = q.CD_SHUKKA_BATCH,
+                        NmShukkaBatch = q.NM_SHUKKA_BATCH,
+                        CdCourse = q.CD_COURSE,
+                        ShopCnt = q.shopcnt,
+                    });
+            }
+        }    }
 }

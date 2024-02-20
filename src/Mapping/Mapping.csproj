@@ -38,4 +38,10 @@
     <ProjectReference Include="..\lib\WindowLib\WindowLib.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Update="Views\DpsOtherInfo.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
 </Project>
