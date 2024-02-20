@@ -24,10 +24,10 @@ namespace DistProg.Models
                 + "v1.NU_OITEMCNT, "
                 + "v1.NU_RPS, "
                 + "v1.NU_OPS "
-                + "from TB_PC "
+                + "from TB_PC(nolock) "
                 + "left join("
                     + "select * from(select ID_PC, CD_BLOCK, NM_SHAIN, CD_DIST_GROUP, NM_DIST_GROUP, DT_DELIVERY, DT_START, DT_END, NU_RITEMCNT, NU_OITEMCNT, NU_RPS, NU_OPS, row_number() over(partition by ID_PC order by updatedAt desc) no "
-                    + "from TB_DIST_GROUP_PROGRESS "
+                    + "from TB_DIST_GROUP_PROGRESS(nolock) "
                     + "where DT_DELIVERY=@dtDelivery) t1 where no = 1) v1 "
                 + "on TB_PC.ID_PC = v1.ID_PC "
                 + "where TB_PC.ID_PC<>0";
