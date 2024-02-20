@@ -16,7 +16,7 @@ namespace BoxExpoter.Infranstructures
 {
     internal class BoxExpoterQueryService
     {
-        internal static IEnumerable<GroupStowage> GetGroupList()
+        internal static IEnumerable<GroupStowage> GetGroupList(DateTime dtDelivery)
         {
             using (var con = DbFactory.CreateConnection())
             {
@@ -24,10 +24,11 @@ namespace BoxExpoter.Infranstructures
                 var sql = $@"select DT_DELIVERY, CD_DIST_GROUP, sum(NU_MAGICHI) SeatCount from"
                         + "(select distinct DT_DELIVERY, CD_DIST_GROUP, CD_BLOCK, Tdunitaddrcode, NU_MAGICHI from TB_STOWAGE"
                         + " inner join TB_STOWAGE_MAPPING on TB_STOWAGE.ID_STOWAGE = TB_STOWAGE_MAPPING.ID_STOWAGE"
+                        + " where DT_DELIVERY >= @dtDelivery"
                         + " )t1"
                         + " group by DT_DELIVERY, CD_DIST_GROUP";
 
-                var r2 = con.Query(sql)
+                var r2 = con.Query(sql, new { dtDelivery = dtDelivery.ToString("yyyyMMdd") })
                     .Select(x => new GroupStowage
                     (
                        0,
@@ -54,11 +55,12 @@ namespace BoxExpoter.Infranstructures
                     count(distinct case when tdunitaddrcode='' then CD_TOKUISAKI else null end) OverCount
                     from TB_STOWAGE t1
                     inner join TB_STOWAGE_MAPPING t2 on t1.ID_STOWAGE = t2.ID_STOWAGE
+                    where DT_DELIVERY >= @dtDelivery
                     group by t1.DT_DELIVERY, t2.CD_DIST_GROUP
-                    order by t1.DT_DELIVERY, t2.CD_DIST_GROUP
+                    order by (case when count(DT_SENDDT_STOWAGE)=0 then 0 else 1 end),t1.DT_DELIVERY, t2.CD_DIST_GROUP
                 ";
 
-                return con.Query(sql, new { statusReady = Status.Ready, statusCompleted = Status.Completed })
+                return con.Query(sql, new { statusReady = Status.Ready, statusCompleted = Status.Completed, dtDelivery = dtDelivery.ToString("yyyyMMdd") })
                     .Select(x => new GroupStowage
                     (
                         x.SendedCount,

@@ -37,6 +37,13 @@ namespace BoxExpoter.ViewModels
             set => SetProperty(ref _items, value);
         }
 
+        private DateTime _dtDelivery;
+        public DateTime DtDelivery
+        {
+            get => _dtDelivery;
+            set => SetProperty(ref _dtDelivery, value);
+        }
+
         private bool _canSend;
         public bool CanSend
         {
@@ -53,6 +60,23 @@ namespace BoxExpoter.ViewModels
             RefreshCommand = new(Refresh);
             PathCommand = new(SelectFolder);
             ExitCommand = new(Exit);
+
+            SelectDeliveryDate();
+        }
+
+        private void SelectDeliveryDate()
+        {
+            _dialogService.ShowDialog(nameof(DeliveryDateDialog),
+                rc =>
+                {
+                    if (rc.Result != ButtonResult.OK)
+                    {
+                        Exit();
+                        return;
+                    }
+
+                    DtDelivery = rc.Parameters.GetValue<DateTime>("Date");
+                });
         }
 
         private void Exit()
@@ -109,7 +133,7 @@ namespace BoxExpoter.ViewModels
                     item.PropertyChanged -= Item_PropertyChanged;
                 }
 
-                CollectionViewHelper.SetCollection(Items, BoxExpoterQueryService.GetGroupList());
+                CollectionViewHelper.SetCollection(Items, BoxExpoterQueryService.GetGroupList(DtDelivery));
                 UpdateCanSend();
 
                 foreach (var item in Items)
