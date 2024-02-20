@@ -468,12 +468,6 @@ namespace Customer.ViewModels
                 return false;
             }
 
-            if (!NotEmptyChildCustomers.Any())
-            {
-                MessageDialog.Show(_dialogService, "子得意先を追加して下さい", "入力エラー");
-                return false;
-            }
-
             if (NotEmptyChildCustomers.Count() > 10)
             {
                 MessageDialog.Show(_dialogService, "子得意先は10件まで登録可能です", "入力エラー");
