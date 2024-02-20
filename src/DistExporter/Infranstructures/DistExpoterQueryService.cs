@@ -15,7 +15,7 @@ namespace DistExpoter.Infranstructures
 {
     internal class DistExpoterQueryService
     {
-        internal static IEnumerable<GroupDist> GetGroupList()
+        internal static IEnumerable<GroupDist> GetGroupList(DateTime dtDelivery)
         {
             using (var con = DbFactory.CreateConnection())
             {
@@ -32,11 +32,12 @@ namespace DistExpoter.Infranstructures
                     count(distinct case when tdunitaddrcode='' then CD_TOKUISAKI else null end) OverCount
                     from TB_DIST t1
                     inner join TB_DIST_MAPPING t2 on t1.ID_DIST = t2.ID_DIST
+                    where DT_DELIVERY >= @dtDelivery
                     group by t1.DT_DELIVERY, t2.CD_DIST_GROUP
-                    order by t1.DT_DELIVERY, t2.CD_DIST_GROUP
+                    order by (case when count(DT_SENDDT_DIST)=0 then 0 else 1 end), t1.DT_DELIVERY, t2.CD_DIST_GROUP
                 ";
 
-                return con.Query(sql, new { statusReady = Status.Ready, statusCompleted = Status.Completed })
+                return con.Query(sql, new { statusReady = Status.Ready, statusCompleted = Status.Completed, dtDelivery = dtDelivery.ToString("yyyyMMdd") })
                     .Select(x => new GroupDist
                     (
                         x.SendCount,
@@ -50,7 +51,6 @@ namespace DistExpoter.Infranstructures
                         x.CompletedCount,
                         x.OverCount
                     ))
-                    .Where(x => !x.IsSended || x.DtDelivery >= DateTime.Today)
                     .ToArray();
             }
         }

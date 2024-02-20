@@ -12,7 +12,7 @@ namespace DistExpoter.ViewModels
         public DelegateCommand OKCommand { get; }
         public DelegateCommand CancelCommand { get; }
 
-        private DateTime _date = DateTime.Today + new TimeSpan(1, 0, 0, 0);
+        private DateTime _date = DateTime.Today;
         public DateTime Date
         {
             get => _date;
