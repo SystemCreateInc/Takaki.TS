@@ -1,8 +1,10 @@
-﻿using System;
+﻿using LogLib;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Windows.Controls;
 
 namespace TdDpsLib.Models
 {
@@ -245,6 +247,8 @@ namespace TdDpsLib.Models
                                     QueCommand p = new QueCommand((object)que as QueCommand);
                                     if (p.Addrdata.Stno == newitem.Addrdata.Stno && p.Addrdata.TddGroup == newitem.Addrdata.TddGroup && p.Addrdata.TddAddr == newitem.Addrdata.TddAddr)
                                     {
+                                        Syslog.Info($"EventfulConcurrentQueue置き換え::addr=[{p.Addrdata.TdUnitAddrCode}] text[{p.Text}]→[{newitem.Text}]  on[{newitem.On}]→[{p.On}]  text[{newitem.Blink}]→[{p.Blink}] color[{newitem.Color}]→[{p.Color}]");
+
                                         // 表示部コピー
                                         p.Text = newitem.Text;
 
@@ -286,7 +290,7 @@ namespace TdDpsLib.Models
                             {
                                 Queue.Enqueue((T)(object)p);
 
-                                if (bAppend == false)
+                                if (bAppend == false && p.Priority==false)
                                 {
                                     bAppend = true;
                                     Queue.Enqueue(item);
@@ -367,7 +371,7 @@ namespace TdDpsLib.Models
             ItemEnqueued?.Invoke(this, EventArgs.Empty);
 
             // オーバーフローを起こすのでWait
-//            Thread.Sleep(1);
+            Thread.Sleep(1);
         }
 
         void OnItemDequeued(T? item)
@@ -378,7 +382,7 @@ namespace TdDpsLib.Models
             ItemDequeued?.Invoke(this, new ItemEventArgs<T> { Item = item });
 
             // オーバーフローを起こすのでWait
-//            Thread.Sleep(1);
+            Thread.Sleep(1);
         }
     }
 

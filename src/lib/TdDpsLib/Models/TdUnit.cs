@@ -1,8 +1,10 @@
 ﻿using LogLib;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using TdDpsLib.Defs;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -12,6 +14,8 @@ namespace TdDpsLib.Models
     // 表示器キュー
     public class QueCommand
     {
+        static public int QueSeqno=0;
+
         public QueCommand(ref TdAddrData addrdata, bool on, bool blink, int color, string text, bool priority = false)
         {
             Addrdata = addrdata;
@@ -22,6 +26,12 @@ namespace TdDpsLib.Models
             // 表示桁数に変換
             Text = string.Format("{0,9}", text).Substring(9 - addrdata.TextLen, addrdata.TextLen);
             Priority = priority;
+
+            On_Base = On;
+            Blink_Base = Blink;
+            Color_Base = Color;
+            Text_Base = Text;
+            QueSeq = QueSeqno++;
         }
 
         public QueCommand(QueCommand? que)
@@ -34,6 +44,13 @@ namespace TdDpsLib.Models
                 Color = que.Color;
                 Text = que.Text;
                 Priority = que.Priority;
+
+                On_Base = que.On_Base;
+                Blink_Base = que.Blink_Base;
+                Color_Base = que.Color_Base;
+                Text_Base = que.Text_Base;
+
+                QueSeq = que.QueSeq;
             }
         }
 
@@ -49,6 +66,15 @@ namespace TdDpsLib.Models
         public string Text = "";
         // 優先度
         public bool Priority = false;
+
+        public bool On_Base = false;
+        // 点滅
+        public bool Blink_Base = false;
+        // 色
+        public int Color_Base = 0;
+        // 表示内容
+        public string Text_Base = "";
+        public int QueSeq = 0;
     }
 
 
@@ -420,6 +446,7 @@ namespace TdDpsLib.Models
                 return;
 
             QueCommand que = e.Item;
+            que.Priority = true; // 優先度はキューで設定するので強制でtrueを設定
 
             int rc = 0;
             if (que.On == true)
@@ -442,9 +469,18 @@ namespace TdDpsLib.Models
             if (rc == 0)
             {
                 // 先に内部ステータスを更新する
-                que.Addrdata.GetLedButton(que.Color)?.Set(que.On, que.Blink, que.Text);
-                que.Addrdata.nowDisplay = que.Text;
-
+                que.Addrdata.GetLedButton(que.Color)?.Set(que.On_Base, que.Blink_Base, que.Text_Base);
+                if (que.Addrdata.QueSeq < que.QueSeq)
+                {
+                    que.Addrdata.nowDisplay = que.Text_Base;
+                    Syslog.Info($"点灯1:color:{que.Color} addr=[{que.Addrdata.TdUnitAddrCode}] nowtext[{que.Addrdata.nowDisplay}] [{que.Text_Base}]  [{que.Text}]");
+                }
+                else
+                {
+                    Syslog.Info($"点灯2:color:{que.Color} addr=[{que.Addrdata.TdUnitAddrCode}] nowtext[{que.Addrdata.nowDisplay}] [{que.Text_Base}]  [{que.Text}]");
+                }
+                que.Addrdata.QueSeq = que.QueSeq;
+#if true
                 // バッファーがなくなるまで待つ（無限ループする？？）
                 while (TdController.WaitTransCount() != 0)
                 {
@@ -456,6 +492,7 @@ namespace TdDpsLib.Models
 
                     Task.Delay(DelaySec);
                 }
+#endif
             }
             return;
         }

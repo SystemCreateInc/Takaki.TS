@@ -290,6 +290,7 @@ namespace TdDpsLib.Models
         public System.Diagnostics.Stopwatch EndDispTime = new System.Diagnostics.Stopwatch();
         public DateTime _ChatteringTime = DateTime.Now;
         public int _endColor = 0;
+        public int QueSeq = 0;
     }
 
     // エリア表示灯制御

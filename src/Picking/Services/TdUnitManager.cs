@@ -808,6 +808,7 @@ namespace Picking.Models
 
                                                 string text = next != null ? next.TdDisplay : "";
                                                 tddps.Light(ref addrdata, false, false, color, text, true);
+                                                Syslog.Info($"次点灯:nextcolor:{distnextcolor.DistColor_code} addr=[{addrdata.TdUnitAddrCode}] text[{text}]");
                                                 tddps.Light(ref addrdata, true, blink, distnextcolor.DistColor_code, text, true);
                                             }
                                         }
@@ -834,6 +835,7 @@ namespace Picking.Models
 
                                 // END表示
                                 addrdata.EndDisplay(true, color);
+                                Syslog.Info($"END点灯::color:{color} addr=[{addrdata.TdUnitAddrCode}]");
                                 tddps.Light(ref addrdata, true, false, color, addrdata.GetNowDisplay(), true);
 
                                 // 追っかけのスタートＢＯＸ消灯
@@ -848,9 +850,9 @@ namespace Picking.Models
                                 }
 
                                 // END表示タスク起動
+                                int distseq = distcolor.DistSeqs[zone];
                                 Task.Run(() =>
                                 {
-                                    int distseq = distcolor.DistSeqs[zone];
                                     Syslog.Info($"END:: distseq={distseq}");
 
                                     while (addrdata.EndDispTime.IsRunning)
